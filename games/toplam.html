@@ -241,8 +241,10 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <div class="names" id="names"></div>
       <div id="lenBox"><h3 id="lenTitle"></h3><div class="seg" data-key="len"></div></div>
       <div id="lvlBox"><h3>Qiyinlik</h3><div class="seg" data-key="L"></div></div>
+      <div id="bigBox"><h3>Javoblar</h3><div class="seg" data-key="big"></div><p class="small">Koʻp xonali javoblarni taxmin qilib topish qiyin.</p></div>
       <div id="coolBox"><h3>Xato javobdan keyin kutish</h3><div class="seg" data-key="cool"></div><p class="small">Tavakkal javob berishning oldini oladi.</p></div>
       <label class="chk"><input type="checkbox" id="soundChk"> Tovushlar</label>
+      <label class="chk"><input type="checkbox" id="musicChk"> Musiqa</label>
     </div>
     <div class="box" id="topicBox">
       <h3>Mavzular</h3>
@@ -261,6 +263,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
     <div class="right">
       <span class="chip" id="timer">00:00</span>
       <button class="ghost" id="soundBtn" aria-label="Tovush">🔊</button>
+      <button class="ghost" id="musicBtn" aria-label="Musiqa">🎵</button>
       <button class="ghost" id="finishBtn">Yakunlash</button>
       <button class="ghost" id="restartBtn">↻ Qaytadan</button>
       <button class="ghost" id="settingsBtn">⚙ Sozlamalar</button>
@@ -462,11 +465,131 @@ const TOPICS=[
 ];
 const G6=[10,11,2,12,6,13,14,15,16,17];
 
-function genQ(level){
+/* ===== 6-sinf mavzulariga qo'shimcha misol turlari =====
+   W(...)  — katta javoblar rejimida ham ishlaydi
+   WO(...) — faqat katta javoblar rejimida (bir xonali javob uchun gʻalati chiqadi) */
+const W=(f,max)=>{f.wide=true;if(max)f.max=max;return f};
+const WO=(f,max)=>{W(f,max);f.wo=true;return f};
+const divs=(n,lo=1,hi=n)=>{const r=[];for(let k=lo;k<=Math.min(n,hi);k++)if(n%k===0)r.push(k);return r};
+const cop=(n,lo,hi)=>{const r=[];for(let k=lo;k<=hi;k++)if(gcd(n,k)===1&&k!==n)r.push(k);return r};
+const fac3=n=>{const da=divs(n,2,12);if(!da.length)return null;const a=pick(da),m=n/a,db=divs(m,2,12);if(!db.length)return null;const b=pick(db),c=m/b;return c>=2&&c<=40?shuffle([a,b,c]):null};
+
+const ADD={
+ /* Algebraik ifodalar */
+ 10:[
+  W(d=>{const k=RR(2,5),mx=Math.floor((d-1)/k);if(mx<1)return null;const p=R(1,Math.min(mx,12));return `x = ${p} boʻlsa, ${k}x + ${d-k*p} = ?`}),
+  W(d=>{const ks=divs(d,2,9);if(!ks.length)return null;const k=pick(ks);return `Soddalashtiring: ${k}(x + ${d/k}) ${M} ${k}x = ?`}),
+  W(d=>{if(d%2)return null;const s=d/2;if(s<2)return null;const p=R(1,s-1);return `Toʻgʻri toʻrtburchak perimetri P = 2(a + b). a = ${p} sm, b = ${s-p} sm boʻlsa, P = ?`}),
+  W(d=>{const q=RR(2,6),p=Math.floor(d/q)+R(1,3);return `y = ${p} boʻlsa, ${q}y ${M} ${q*p-d} = ?`}),
+  W(d=>{if(d<2)return null;const b=R(1,d-1);return `a + b = ${d+b}, a ${M} b = ${d-b}. a = ?`}),
+  W(d=>{const k=RR(2,6),m=RR(1,5);return `${k}a + ${cf(m)}a = ${(k+m)*d}. a = ?`}),
+  W(d=>{const a=RR(2,15);return `Daftar x ming soʻm, ruchka undan ${a} ming soʻm qimmat. Ikkalasi ${2*d+a} ming soʻm. x = ?`}),
+  W(d=>{const k=RR(2,4),b=RR(1,9);return `${k}(m + ${b}) = ${k*(d+b)} boʻlsa, m = ?`})
+ ],
+ /* Kasrlarni boʻlish */
+ 11:[
+  W(d=>{const e=RR(3,9),c=pick(cop(e,1,e-1)),g=gcd(d*c,e);if(g>1&&e/g===1)return null;return `${fr(d*c/g,e/g)} : ${fr(c,e)}`}),
+  W(d=>{const k=RR(2,9);return `x : ${fr(1,k)} = ${d*k}. x = ?`}),
+  W(d=>{const e=RR(3,9),c=pick(cop(e,1,e-1)),g=gcd(d*c,e);if(e/g===1)return null;return `${fr(d*c/g,e/g)} m lenta ${fr(c,e)} m lik boʻlaklarga kesildi. Nechta boʻlak chiqdi?`}),
+  W(d=>{const ks=cop(d,2,9);if(!ks.length)return null;const k=pick(ks);return `${fr(d,k)} : x = ${fr(1,k)}. x = ?`}),
+  W(d=>{const k=RR(2,6),m=RR(2,5);if(gcd(k,m)!==1)return null;return `${d*k} ni ${fr(k,m)} ga boʻlib, natijani ${m} ga boʻling.`}),
+  W(d=>{const bs=divs(d,2,12);if(!bs.length)return null;const b=pick(bs),a=pick(cop(b,1,b-1));return `Sonning ${fr(a,b)} qismi ${d*a/b} ga teng. Shu sonni toping.`})
+ ],
+ /* Tenglamalar */
+ 2:[
+  W(d=>{const ks=divs(d,2,9);if(!ks.length)return null;const k=pick(ks),a=RR(1,15);return `${fr('x',k)} + ${a} = ${d/k+a}. x = ?`}),
+  W(d=>{const a=d+RR(1,20);return `${a} ${M} x = ${a-d}. x = ?`}),
+  W(d=>{const k=RR(2,6),a=RR(1,20);return `Oʻylagan sonimni ${k} ga koʻpaytirib, ${a} ni qoʻshsam, ${k*d+a} chiqadi. Qaysi sonni oʻyladim?`}),
+  W(d=>{const a=RR(2,6),b=RR(1,10);return `${a}(x + ${b}) = ${a*(d+b)}. x = ?`}),
+  W(d=>{const b=RR(1,5),a=b+RR(1,4);return `${a}x ${M} ${cf(b)}x = ${(a-b)*d}. x = ?`}),
+  W(d=>{if(d>60)return null;const a=RR(2,9);return `Akasi ukasidan ${a} yosh katta. Ikkalasining yoshi yigʻindisi ${2*d+a}. Ukasi necha yoshda?`})
+ ],
+ /* Nisbatlar */
+ 12:[
+  W(d=>{const ks=divs(d,1,12);const k=pick(ks),q=d/k;const p=R(1,9);if(p===q||gcd(p,q)!==1)return null;return `Sinfda qizlar va oʻgʻil bolalar soni nisbati ${p} : ${q}. Qizlar ${p*k} ta. Oʻgʻil bolalar nechta?`}),
+  W(d=>{const k=pick([2,5,10,20,50]);return `Xaritada 1 sm ${k} km ni bildiradi. ${d*k} km masofa xaritada necha sm boʻladi?`}),
+  W(d=>{const ks=divs(d,1,15);const k=pick(ks),p=d/k,q=p+R(1,4);if(gcd(p,q)!==1)return null;return `${(p+q)*k} ni ${p} : ${q} nisbatda boʻling. Kichik qism nechaga teng?`}),
+  W(d=>{const ks=divs(d,1,15);const k=pick(ks),q=d/k;if(q<2)return null;const p=R(1,q-1);if(gcd(p,q)!==1)return null;return `Ikki sonning nisbati ${p} : ${q}, yigʻindisi ${(p+q)*k}. Katta son nechaga teng?`}),
+  W(d=>{const ks=divs(d,1,15);const k=pick(ks),q=d/k;if(q<2)return null;const p=R(1,q-1);if(gcd(p,q)!==1)return null;return `Arqon ${p} : ${q} nisbatda kesildi. Kalta qismi ${p*k} m. Uzun qismi necha m?`})
+ ],
+ /* Nisbat va proporsiya */
+ 6:[
+  W(d=>{const m=pick(divs(d,1,12)),p=d/m,qs=cop(p,2,12);if(!qs.length)return null;const q=pick(qs),k=RR(2,4);return `${p*k} : ${q*k} = x : ${q*m}. x = ?`}),
+  W(d=>{const p=RR(2,6),u=RR(2,15);return `${p} kg olma ${p*u} ming soʻm turadi. ${d*u} ming soʻmga necha kg olma olinadi?`}),
+  W(d=>{const t=RR(2,5),v=pick([40,50,60,70,80,90]);return `Avtomobil ${t} soatda ${t*v} km yurdi. Shu tezlikda ${d*v} km ni necha soatda yuradi?`},12),
+  W(d=>{const p=RR(2,6),k=RR(2,5);return `${fr(p,'x')} = ${fr(p*k,d*k)}. x = ?`}),
+  W(d=>{const p=RR(2,4),u=RR(2,5);return `Retseptda ${p} ta tuxumga ${p*u} stakan un kerak. ${d*u} stakan unga nechta tuxum kerak?`})
+ ],
+ /* Foizlar */
+ 13:[
+  W(d=>{const p=pick([10,20,25,50]);return `${d*100/p} ming soʻmlik mahsulotga ${p}% chegirma qilindi. Chegirma necha ming soʻm?`}),
+  W(d=>{const p=pick([10,20,25,50]);return `Kitob ${d*100/p} betdan iborat. Oʻquvchi uning ${p}% ini oʻqidi. Necha bet oʻqidi?`}),
+  WO(d=>{if(d>=100)return null;const b=pick(d%2?[100,200]:[50,100,200]);return `${b*d/100} soni ${b} ning necha foizini tashkil qiladi? (javob % belgisisiz)`}),
+  W(d=>{const p=pick([10,20,25,50]);return `Bankka ${d*100/p} ming soʻm qoʻyildi, yillik foiz ${p}%. Bir yilda necha ming soʻm foyda olinadi?`}),
+  W(d=>{const ps=[10,20,25,50].filter(p=>(d*(100+p))%100===0);if(!ps.length)return null;const p=pick(ps);return `Narx ${p}% oshgach, ${d*(100+p)/100} ming soʻm boʻldi. Avvalgi narx necha ming soʻm edi?`}),
+  W(d=>{const ps=[10,20,25,50].filter(p=>(d*(100-p))%100===0);if(!ps.length)return null;const p=pick(ps);return `Narx ${p}% arzonlashgach, ${d*(100-p)/100} ming soʻm boʻldi. Avvalgi narx necha ming soʻm edi?`})
+ ],
+ /* Geometrik shakllardagi burchaklar */
+ 14:[
+  WO(d=>d<180?`Ikki toʻgʻri chiziq kesishganda hosil boʻlgan burchaklardan biri ${180-d}°. Unga qoʻshni burchak necha gradus?`:null),
+  WO(d=>d<90?`Toʻgʻri burchak ${90-d}° va x° li ikki burchakka boʻlingan. x = ?`:null),
+  WO(d=>{if(d>176)return null;const s=180-d,a=R(1,s-1);return `Uchburchak burchaklari x°, ${a}° va ${s-a}°. x = ?`}),
+  WO(d=>(d%2||d>=180)?null:`Teng yonli uchburchakda asosidagi burchak ${(180-d)/2}°. Uchidagi burchak necha gradus?`),
+  WO(d=>d<90?`Toʻgʻri burchakli uchburchakning bir oʻtkir burchagi ${90-d}°. Ikkinchi oʻtkir burchak necha gradus?`:null),
+  WO(d=>180%d===0&&d<180?`Yoyiq burchak ${180/d} ta teng qismga boʻlindi. Har bir qism necha gradus?`:null),
+  WO(d=>d<180?`Vertikal burchaklar yigʻindisi ${2*d}°. Har biri necha gradus?`:null)
+ ],
+ /* Doira va aylana */
+ 15:[
+  W(d=>`Gʻildirak bir marta aylanganda ${p2(3.14*d)} sm yoʻl bosadi (π ≈ 3,14). Gʻildirak diametri necha sm?`),
+  W(d=>`Yarim doiraning yuzi ${p2(1.57*d*d)} sm² (π ≈ 3,14). Radiusi necha sm?`,40),
+  WO(d=>360%d===0&&d<360?`Doira ${360/d} ta teng sektorga boʻlindi. Har bir sektor burchagi necha gradus?`:null),
+  W(d=>`Aylananing radiusi diametridan ${d} sm qisqa. Radiusi necha sm?`)
+ ],
+ /* Kub va kubsimon jism hajmi */
+ 16:[
+  W(d=>{const f=fac3(d);return f?`Kubsimon jismning oʻlchamlari ${f[0]} sm, ${f[1]} sm va ${f[2]} sm. Hajmi necha sm³?`:null}),
+  W(d=>{const f=fac3(d);return f?`Kubsimon idishning oʻlchamlari ${f[0]} dm × ${f[1]} dm × ${f[2]} dm. Unga necha litr suv sigʻadi?`:null}),
+  W(d=>{const S=RR(4,30);return `Kubsimon jismning hajmi ${S*d} sm³, asosining yuzi ${S} sm². Balandligi necha sm?`}),
+  W(d=>`1 dm³ = 1000 sm³. ${d*1000} sm³ necha dm³ boʻladi?`)
+ ],
+ /* Diagrammalar va oʻrta qiymat */
+ 17:[
+  W(d=>{const a=R(Math.max(1,d-9),d+9),b=R(Math.max(1,d-9),d+9),c=3*d-a-b;return c>0?`${a}, ${b} va ${c} sonlarining oʻrta arifmetigi`:null}),
+  W(d=>{const lo=shuffle(Array.from({length:Math.max(2,d)},(_,i)=>i)).slice(0,2),hi=[d+R(1,9),d+R(10,20)];if(d<2)return null;return `Medianani toping: ${shuffle([d,...lo,...hi]).join('; ')}`}),
+  W(d=>{const m=R(1,30),mid=[R(m,m+d),R(m,m+d)];return `Eng katta va eng kichik son ayirmasini (kattalik oraligʻini) toping: ${shuffle([m,m+d,...mid]).join('; ')}`}),
+  W(d=>{const a=RR(5,40);return `Ustunli diagramma: dushanba ${a} ta, seshanba ${a+d} ta kitob sotildi. Seshanba necha ta koʻp sotildi?`}),
+  WO(d=>{const o=shuffle(Array.from({length:20},(_,i)=>d+i-10).filter(x=>x>0&&x!==d)).slice(0,3);return `Modani toping: ${shuffle([d,d,d,...o,o[0]]).join('; ')}`})
+ ]
+};
+/* eski misol turlaridan katta javoblarga yaroqlilari: [indeks, maksimal javob] */
+const WOLD={2:[[0],[1],[2],[3],[4],[5]],6:[[0],[1],[2],[3]],10:[[0],[1],[4]],11:[[0],[1],[2],[3]],12:[[1],[2],[3]],13:[[0],[3]],15:[[0],[1],[2,40],[3],[4,40]],16:[[0,20],[1],[2],[3,30]],17:[[2]]};
+for(const k in WOLD)WOLD[k].forEach(([i,mx])=>{const g=TOPICS[k].gens[i];g.wide=true;if(mx)g.max=mx});
+for(const k in ADD)TOPICS[k].gens.push(...ADD[k]);
+TOPICS.forEach(T=>{T.dig=T.gens.filter(g=>!g.wo);T.wid=T.gens.filter(g=>g.wide)});
+
+
+/* Misollar takrorlanmasin: mavzular va misol turlari "xaltacha"dan navbat bilan olinadi */
+let QB={};
+function bag(key,make){let b=QB[key];if(!b||!b.length)b=QB[key]=make();return b}
+function genQ(level,wide){
   const save=L;L=Math.max(0,Math.min(2,level));
-  try{for(;;){const T=TOPICS[pick(cfg.topics)],g=pick(T.gens),d=R(1,9),x=g(d);if(x)return{html:x,ans:d,topic:T.name}}}
-  finally{L=save}
+  try{
+    QB.seen=QB.seen||new Set();
+    for(let tries=0;tries<40;tries++){
+      const ti=bag('t',()=>shuffle(cfg.topics)).pop(),T=TOPICS[ti];
+      const useW=!!wide&&T.wid.length>0,list=useW?T.wid:T.dig;
+      const g=list[bag((useW?'w':'d')+ti,()=>shuffle(list.map((_,i)=>i))).pop()];
+      for(let k=0;k<25;k++){
+        const d=useW?R(10,Math.min(g.max||999,[30,60,99][L])):R(1,9),x=g(d);
+        if(x&&!QB.seen.has(x)){QB.seen.add(x);return{html:x,ans:d,topic:T.name}}
+      }
+    }
+    for(;;){const T=TOPICS[pick(cfg.topics)],g=pick(T.dig),d=R(1,9),x=g(d);if(x)return{html:x,ans:d,topic:T.name}}
+  }finally{L=save}
 }
+const BIG=()=>!!(GAMES[GK]&&GAMES[GK].big&&cfg.big);
+const PADMAX=()=>BIG()?4:1;
 const qhtml=q=>`<span class="tn">${q.topic}</span>${q.html}`;
 
 /* ===== sound ===== */
@@ -480,6 +603,56 @@ function snd(type){
   }catch(e){}
 }
 document.addEventListener('pointerdown',()=>{try{if(!cfg.sound)return;AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}});
+
+/* ===== Musiqa: har bir oʻyin uchun oʻzimizning kuylarimiz (WebAudio) ===== */
+const MUSIC=(function(){
+  const SCALES={maj:[0,2,4,5,7,9,11],min:[0,2,3,5,7,8,10],dor:[0,2,3,5,7,9,10],har:[0,2,3,5,7,8,11],pen:[0,2,4,7,9,12,14]};
+  const CT=[0,2,4,7];
+  /* prog — har takt akkord asosi (pogʻona), mel — 32 qadam (2 takt), 0..3 akkord tovushlari, 4..6 — yuqori oktava, null — pauza */
+  const THEMES={
+    minora:{bpm:120,root:60,sc:'maj',prog:[0,3,4,0],mel:[0,null,1,2,3,null,2,1,0,null,1,2,4,null,3,null,2,null,1,0,1,null,2,3,4,null,3,2,1,null,0,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'..x...x...x...x.',mw:'square',bw:'triangle'},
+    xazina:{bpm:104,root:62,sc:'dor',prog:[0,6,3,4],mel:[0,null,null,1,2,null,1,0,null,null,2,null,3,null,null,null,4,null,null,3,2,null,1,null,0,null,2,null,1,null,null,null],bass:'x..x..x.x..x..x.',kick:'x.....x.x.....x.',hat:'...x.....x......',mw:'triangle',bw:'triangle'},
+    raketa:{bpm:128,root:57,sc:'min',prog:[0,5,3,6],mel:[0,1,2,4,2,1,0,1,2,4,5,4,2,1,0,null,0,1,2,4,2,1,2,4,5,6,5,4,2,null,1,null],bass:'x.xxx.xxx.xxx.xx',kick:'x...x...x...x...',hat:'xxxxxxxxxxxxxxxx',mw:'sawtooth',bw:'sawtooth'},
+    mozaika:{bpm:88,root:65,sc:'maj',prog:[0,4,5,3],mel:[2,null,null,null,1,null,0,null,null,null,1,null,2,null,null,null,4,null,null,null,3,null,2,null,1,null,null,null,0,null,null,null],bass:'x.......x.......',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'sine',pad:1},
+    bomba:{bpm:112,root:52,sc:'har',prog:[0,0,5,4],mel:[null,null,null,null,4,null,null,3,null,null,null,null,4,null,3,null,null,null,null,null,4,null,null,3,null,null,2,null,1,null,null,null],bass:'xxxxxxxxxxxxxxxx',kick:'x..x..x.x..x..x.',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'sawtooth'},
+    tez:{bpm:140,root:67,sc:'maj',prog:[0,4,5,3],mel:[0,2,4,2,0,2,4,null,3,2,1,null,2,null,null,null,1,3,4,3,1,3,4,null,5,4,3,2,0,null,null,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'x.x.x.x.x.x.x.x.',mw:'square',bw:'triangle'},
+    nishon:{bpm:96,root:62,sc:'min',prog:[0,5,6,4],mel:[0,null,0,1,2,null,null,null,1,null,0,null,2,null,null,null,3,null,3,2,1,null,null,null,2,null,1,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x.....x.x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'triangle'},
+    zanjir:{bpm:84,root:60,sc:'pen',prog:[0,2,1,3],mel:[2,null,null,1,null,null,0,null,null,null,1,null,null,2,null,null,3,null,null,2,null,null,1,null,null,null,0,null,null,null,null,null],bass:'x.....x...x.....',kick:'x.......x.......',hat:'....x.......x..x',mw:'sine',bw:'sine',pad:1},
+    sirli:{bpm:80,root:57,sc:'har',prog:[0,5,3,4],mel:[0,null,null,1,null,null,2,null,null,null,4,null,3,null,null,null,2,null,null,1,null,null,0,null,null,null,1,null,2,null,null,null],bass:'x.......x...x...',kick:'x.......x.......',hat:'..........x.....',mw:'triangle',bw:'sine',pad:1},
+    kosmik:{bpm:100,root:55,sc:'min',prog:[0,3,5,4],mel:[0,2,4,2,0,2,4,2,1,3,5,3,1,3,5,3,0,2,4,2,0,2,4,6,5,4,2,1,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'sawtooth',bw:'sine',pad:1},
+    eshik:{bpm:92,root:62,sc:'dor',prog:[0,3,0,4],mel:[0,null,1,null,2,null,null,1,0,null,null,null,4,null,3,null,2,null,1,null,0,null,1,2,1,null,null,null,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'triangle'}
+  };
+  let ctx=null,out=null,theme=null,timer=null,step=0,next=0,tempo=1,on=true,playing=false,noise=null;
+  try{on=localStorage.getItem('bk-music')!=='0'}catch(e){}
+  const hz=m=>440*Math.pow(2,(m-69)/12);
+  const semi=(sc,d)=>{const s=SCALES[sc],n=s.length,o=Math.floor(d/n);return s[((d%n)+n)%n]+12*o};
+  function ensure(){
+    if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();out=ctx.createGain();out.gain.value=0;out.connect(ctx.destination);
+      const len=ctx.sampleRate*.2;noise=ctx.createBuffer(1,len,ctx.sampleRate);const d=noise.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1}
+    if(ctx.state==='suspended')ctx.resume();
+  }
+  function tone(f,t,dur,type,vol){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(out);o.start(t);o.stop(t+dur+.05)}
+  function kick(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);g.gain.setValueAtTime(.55,t);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g).connect(out);o.start(t);o.stop(t+.2)}
+  function hat(t){const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();s.buffer=noise;f.type='highpass';f.frequency.value=7000;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+.05);s.connect(f).connect(g).connect(out);s.start(t);s.stop(t+.06)}
+  function play(s,t,dur){
+    const T=theme,bar=Math.floor(s/16)%T.prog.length,pos=s%16,half=Math.floor(s/16)%2,r=T.prog[bar];
+    if(T.bass[pos]==='x')tone(hz(T.root-24+semi(T.sc,r)),t,dur*1.6,T.bw,.16);
+    const m=T.mel[half*16+pos];if(m!=null){const dd=r+(m<4?CT[m]:CT[m-4]+7);tone(hz(T.root+semi(T.sc,dd)),t,dur*(T.pad?3:1.8),T.mw,T.mw==='sine'||T.mw==='triangle'?.14:.06)}
+    if(T.pad&&pos===0)[0,2,4].forEach(k=>tone(hz(T.root-12+semi(T.sc,r+k)),t,dur*15,'sine',.045));
+    if(T.kick[pos]==='x')kick(t);
+    if(T.hat[pos]==='x')hat(t);
+  }
+  function sched(){if(!playing)return;const dur=60/(theme.bpm*tempo)/4;while(next<ctx.currentTime+.2){play(step,next,dur);next+=dur;step=(step+1)%(16*theme.prog.length)}}
+  return{
+    get on(){return on},
+    start(name){if(!on||!THEMES[name])return;try{ensure();if(playing&&theme===THEMES[name])return;this.stop(true);theme=THEMES[name];step=0;tempo=1;next=ctx.currentTime+.1;playing=true;out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setValueAtTime(out.gain.value,ctx.currentTime);out.gain.linearRampToValueAtTime(.32,ctx.currentTime+1.2);timer=setInterval(sched,50)}catch(e){}},
+    stop(quick){playing=false;clearInterval(timer);timer=null;if(ctx&&out){out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setValueAtTime(quick?0:out.gain.value,ctx.currentTime);if(!quick)out.gain.linearRampToValueAtTime(0,ctx.currentTime+.6)}},
+    tempo(x){tempo=Math.max(.5,Math.min(2.2,x))},
+    toggle(name){on=!on;try{localStorage.setItem('bk-music',on?'1':'0')}catch(e){}if(on&&name)this.start(name);else if(!on)this.stop();return on},
+    get playing(){return playing}
+  };
+})();
+
 
 /* ===== keypad ===== */
 function makePad(el,{max=1,onSubmit}){
@@ -499,17 +672,17 @@ function makePad(el,{max=1,onSubmit}){
 
 /* ===== settings ===== */
 const GAMES={
- minora:{icon:'🏗️',name:'Minora qurish',desc:'Har bir toʻgʻri javob minoraga qavat qoʻshadi. 3 ta xatodan keyin tepadagi qavat qulab tushadi.',len:{t:'Minora balandligi (qavat)',o:[6,8,10,12],d:8},lvl:1,topics:1,cool:1},
- xazina:{icon:'🗺️',name:'Xazina xaritasi',desc:'Kema orolma-orol suzib, xazinaga yetib boradi. Ayrim orollarda tinch yoki boʻronli yoʻlni tanlash mumkin.',len:{t:'Orollar soni',o:[8,10,12],d:10},lvl:1,topics:1,cool:1},
- raketa:{icon:'🚀',name:'Raketa poygasi',desc:'Guruh misol qiyinligini oʻzi tanlaydi: oson 1 qadam, oʻrta 2, qiyin 3. Meteorlar zonasida xato raketani orqaga qaytaradi.',len:{t:'Oygacha masofa (qadam)',o:[10,15,20],d:15},lvl:0,topics:1,cool:1},
- mozaika:{icon:'🧩',name:'Rasm ochish',desc:'Har bir toʻgʻri javob yashirin rasmdan bitta katakni ochadi. Rasmni birinchi topgan guruh +5 ball oladi.',len:{t:'Kataklar soni',o:['4×3','5×4','6×5'],d:'5×4'},lvl:1,topics:1,cool:1},
+ minora:{big:1,icon:'🏗️',name:'Minora qurish',desc:'Har bir toʻgʻri javob minoraga qavat qoʻshadi. 3 ta xatodan keyin tepadagi qavat qulab tushadi.',len:{t:'Minora balandligi (qavat)',o:[6,8,10,12],d:8},lvl:1,topics:1,cool:1},
+ xazina:{big:1,icon:'🗺️',name:'Xazina xaritasi',desc:'Kema orolma-orol suzib, xazinaga yetib boradi. Ayrim orollarda tinch yoki boʻronli yoʻlni tanlash mumkin.',len:{t:'Orollar soni',o:[8,10,12],d:10},lvl:1,topics:1,cool:1},
+ raketa:{big:1,icon:'🚀',name:'Raketa poygasi',desc:'Guruh misol qiyinligini oʻzi tanlaydi: oson 1 qadam, oʻrta 2, qiyin 3. Meteorlar zonasida xato raketani orqaga qaytaradi.',len:{t:'Oygacha masofa (qadam)',o:[10,15,20],d:15},lvl:0,topics:1,cool:1},
+ mozaika:{big:1,icon:'🧩',name:'Rasm ochish',desc:'Har bir toʻgʻri javob yashirin rasmdan bitta katakni ochadi. Rasmni birinchi topgan guruh +5 ball oladi.',len:{t:'Kataklar soni',o:['4×3','5×4','6×5'],d:'5×4'},lvl:1,topics:1,cool:1},
  bomba:{icon:'💣',name:'Bombani zararsizlantirish',desc:'Misollar javobi qaysi simni kesishni koʻrsatadi. Notoʻgʻri sim kesilsa, taymer tezlashadi.',len:{t:'Bombalar soni',o:[2,3,5],d:3},lvl:1,topics:1,cool:0},
- tez:{icon:'⚡',name:'Kim tezroq',desc:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob bergan guruh ball oladi.',len:{t:'Savollar soni',o:[8,10,15],d:10},lvl:1,topics:1,cool:0},
- nishon:{icon:'🎯',name:'Nishon',desc:'Guruhlar navbat bilan nishonga oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
+ tez:{big:1,icon:'⚡',name:'Kim tezroq',desc:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob bergan guruh ball oladi.',len:{t:'Savollar soni',o:[8,10,15],d:10},lvl:1,topics:1,cool:0},
+ nishon:{big:1,icon:'🎯',name:'Nishon',desc:'Guruhlar navbat bilan nishonga oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
  zanjir:{icon:'🔗',name:'Son zanjiri',desc:'Bitta sondan boshlab ketma-ket amallar bajariladi. Har bir halqa tekshiriladi, xato qayerda ekani darhol koʻrinadi.',len:{t:'Zanjirlar soni',o:[2,3,5],d:3},lvl:1,topics:0,cool:1}
 };
-const SEGS={n:[[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
-let cfg={n:2,L:1,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
+const SEGS={big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
+let cfg={big:1,music:1,n:2,L:1,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
 try{const s=JSON.parse(localStorage.getItem('bk8-cfg')||'null');if(s)cfg={...cfg,...s}}catch(e){}
 cfg.names=(cfg.names||[]).slice(0,4);while(cfg.names.length<4)cfg.names.push(`${cfg.names.length+1}-guruh`);
 cfg.topics=(cfg.topics||[]).filter(i=>TOPICS[i]);cfg.len=cfg.len||{};
@@ -528,9 +701,9 @@ function renderSettings(){
   SEGS.len=g.len.o.map(v=>[v,String(v)]);
   document.querySelectorAll('#setup .seg').forEach(el=>{const k=el.dataset.key,cur=k==='len'?lenOf(GK):cfg[k];el.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')});
   $('#lenTitle').textContent=g.len.t;
-  $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
+  $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
   $('#names').innerHTML=Array.from({length:cfg.n},(_,i)=>`<input data-i="${i}" style="--tc:${TC[i]}" value="${esc(cfg.names[i]||'')}" maxlength="18" aria-label="${i+1}-guruh nomi">`).join('');
-  $('#soundChk').checked=!!cfg.sound;
+  $('#soundChk').checked=!!cfg.sound;$('#musicChk').checked=MUSIC.on;
   const lab=i=>`<label><input type="checkbox" data-t="${i}" ${cfg.topics.includes(i)?'checked':''}> ${TOPICS[i].name}</label>`;
   $('#topics').innerHTML=`<div class="tg">6-sinf darsligi boʻyicha</div>`+G6.map(lab).join('')+`<div class="tg">Takrorlash uchun</div>`+TOPICS.map((_,i)=>i).filter(i=>!G6.includes(i)).map(lab).join('');
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
@@ -546,6 +719,7 @@ $('#setup').addEventListener('change',e=>{
   const t=e.target;
   if(t.dataset.t!==undefined){const i=+t.dataset.t;cfg.topics=t.checked?[...new Set([...cfg.topics,i])]:cfg.topics.filter(x=>x!==i);$('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`}
   if(t.id==='soundChk')cfg.sound=t.checked?1:0;
+  if(t.id==='musicChk'&&t.checked!==MUSIC.on)MUSIC.toggle();
 });
 $('#names').addEventListener('input',e=>{if(e.target.dataset.i!==undefined)cfg.names[+e.target.dataset.i]=e.target.value});
 $('#toMenu').onclick=()=>{save();show('menu')};
@@ -558,7 +732,7 @@ function startGame(){
   const g=GAMES[GK];
   if(g.topics&&!cfg.topics.length){$('#startErr').textContent='Kamida bitta mavzuni belgilang.';return}
   $('#startErr').textContent='';save();L=cfg.L;
-  S.over=false;S.ending=false;S.start=Date.now();S.finished=0;
+  S.over=false;S.ending=false;S.start=Date.now();S.finished=0;QB={};musLabel();MUSIC.start(GK);
   S.teams=Array.from({length:cfg.n},(_,i)=>({i,name:(cfg.names[i]||'').trim()||`${i+1}-guruh`,color:TC[i],score:0,lockUntil:0}));
   $('#ttl').textContent=`${g.icon} ${g.name}`;
   $('#soundBtn').textContent=cfg.sound?'🔊':'🔇';
@@ -593,7 +767,7 @@ function keyUpd(){if(!S.over&&!S.starting)reportKey(keyText())}
 function finishSoon(ms){S.ending=true;S.teams.forEach(t=>t.pad&&t.pad.disable(true));setTimeout(endGame,ms)}
 function endGame(){
   if(S.over&&!$('#final').classList.contains('hidden'))return;
-  S.over=true;clearInterval(S.tickId);
+  S.over=true;clearInterval(S.tickId);MUSIC.stop();
   const rows=S.game.result().sort((a,b)=>b.score-a.score);
   const best=rows[0].score,win=rows.filter(r=>r.score===best);
   $('#winTitle').textContent=win.length>1?'Durang: '+win.map(r=>r.t.name).join(' va '):`Gʻolib: ${win[0].t.name}`;
@@ -611,9 +785,9 @@ IMPL.minora={
     this.goal=goal;
     teamPanels(st,t=>`<div class="mrow"><div class="tower"></div><div style="display:grid;gap:8px;min-width:0"><div class="lives"></div><div class="qc"></div><div class="msg"></div><div class="padw"></div></div></div>`);
     S.teams.forEach(t=>{t.h=0;t.w=0;q(t,'.tower').style.height=Math.max(220,Math.min(360,goal*34))+'px';
-      t.pad=makePad(q(t,'.padw'),{onSubmit:v=>this.ans(t,v)});this.draw(t);this.next(t)});
+      t.pad=makePad(q(t,'.padw'),{max:PADMAX(),onSubmit:v=>this.ans(t,v)});this.draw(t);this.next(t)});
   },
-  next(t){t.q=genQ(cfg.L);q(t,'.qc').innerHTML=qhtml(t.q);keyUpd()},
+  next(t){t.q=genQ(cfg.L,BIG());q(t,'.qc').innerHTML=qhtml(t.q);keyUpd()},
   draw(t,anim){
     const tw=q(t,'.tower'),hh=100/this.goal;
     tw.innerHTML=`<span class="flag" style="bottom:${t.h*hh}%">${t.h>=this.goal?'🏆':'🚩'}</span>`+Array.from({length:t.h},(_,i)=>`<div class="blk${anim==='add'&&i===t.h-1?' new':''}" style="height:calc(${hh}% - 2px)"></div>`).reverse().join('');
@@ -642,7 +816,7 @@ IMPL.xazina={
     this.pts=Array.from({length:N+1},(_,i)=>{const x=40+i*(520/N),y=95+Math.sin(i*1.25)*48;return[x,y]});
     teamPanels(st,t=>`<div class="map"></div><div class="qc"></div><div class="msg"></div><div class="padw"></div>`);
     S.teams.forEach(t=>{t.pos=0;t.hard=false;t.chosen=false;t.w=0;
-      t.pad=makePad(q(t,'.padw'),{onSubmit:v=>this.ans(t,v)});this.drawMap(t);this.step(t)});
+      t.pad=makePad(q(t,'.padw'),{max:PADMAX(),onSubmit:v=>this.ans(t,v)});this.drawMap(t);this.step(t)});
   },
   drawMap(t){
     const P=this.pts,N=this.N,path=P.map((p,i)=>(i?'L':'M')+p[0]+' '+p[1]).join(' ');
@@ -662,7 +836,7 @@ IMPL.xazina={
     }
     this.newQ(t);
   },
-  newQ(t){t.q=genQ(t.hard?Math.min(2,cfg.L+1):cfg.L);q(t,'.qc').innerHTML=(t.hard?'<span class="tn">🌪️ Boʻronli yoʻl</span>':'')+qhtml(t.q);keyUpd()},
+  newQ(t){t.q=genQ(t.hard?Math.min(2,cfg.L+1):cfg.L,BIG());q(t,'.qc').innerHTML=(t.hard?'<span class="tn">🌪️ Boʻronli yoʻl</span>':'')+qhtml(t.q);keyUpd()},
   ans(t,v){
     if(S.over||locked(t)||typeof t.q.ans!=='number')return;
     if(+v===t.q.ans){const k=t.hard?2:1;t.pos=Math.min(this.N,t.pos+k);t.hard=false;t.chosen=false;snd('ok');setMsg(t,k===2?'Zoʻr! Boʻrondan oʻtdik, +2 orol':'Toʻgʻri! Keyingi orol','good');this.drawMap(t);
@@ -683,14 +857,14 @@ IMPL.raketa={
     race.innerHTML=S.teams.map(t=>`<div class="lane" style="--tc:${t.color}"><b>${esc(t.name)}</b><div class="track"><div class="dots"></div><div class="zone" style="width:${(G-this.zone)/G*92}%"></div><span class="earth">🌍</span><span class="moon">🌕</span><span class="rk" id="rk${t.i}" style="left:5%">🚀</span></div></div>`).join('')+`<div class="small" style="margin:0">☄️ Chiziqli qism — meteorlar zonasi: u yerda xato javob raketani 1 qadam orqaga qaytaradi.</div>`;
     st.appendChild(race);
     teamPanels(st,t=>`<div class="qc"></div><div class="msg"></div><div class="padw"></div>`);
-    S.teams.forEach(t=>{t.pos=0;t.k=0;t.w=0;t.pad=makePad(q(t,'.padw'),{onSubmit:v=>this.ans(t,v)});this.choose(t);this.draw(t)});
+    S.teams.forEach(t=>{t.pos=0;t.k=0;t.w=0;t.pad=makePad(q(t,'.padw'),{max:PADMAX(),onSubmit:v=>this.ans(t,v)});this.choose(t);this.draw(t)});
   },
   draw(t){$('#rk'+t.i).style.left=(5+t.pos/this.G*88)+'%';q(t,'.sc').textContent=`🚀 ${t.pos} / ${this.G}`},
   choose(t){
     t.k=0;t.pad.disable(true);t.q={ans:'(qiyinlik tanlanmoqda)'};
     q(t,'.qc').innerHTML=`<div class="choice"><div style="font-size:.85em">Qanday misol olamiz?</div><button data-k="1">🟢 Oson — 1 qadam</button><button data-k="2">🟡 Oʻrta — 2 qadam</button><button data-k="3">🔴 Qiyin — 3 qadam</button></div>`;
     q(t,'.qc').onclick=e=>{const b=e.target.closest('[data-k]');if(!b||S.over)return;t.k=+b.dataset.k;q(t,'.qc').onclick=null;
-      t.q=genQ(t.k-1);q(t,'.qc').innerHTML=`<span class="tn">${['🟢 Oson','🟡 Oʻrta','🔴 Qiyin'][t.k-1]} · ${t.k} qadam</span>${qhtml(t.q)}`;if(!locked(t))t.pad.disable(false);keyUpd()};
+      t.q=genQ(t.k-1,BIG());q(t,'.qc').innerHTML=`<span class="tn">${['🟢 Oson','🟡 Oʻrta','🔴 Qiyin'][t.k-1]} · ${t.k} qadam</span>${qhtml(t.q)}`;if(!locked(t))t.pad.disable(false);keyUpd()};
     keyUpd();
   },
   ans(t,v){
@@ -726,13 +900,13 @@ IMPL.mozaika={
     st.appendChild(pic);
     teamPanels(st,t=>`<div class="qc"></div><div class="msg"></div><div class="padw"></div><button class="gbtn" type="button">🔍 Rasmni topdik!</button><div class="opts hidden"></div>`);
     S.teams.forEach(t=>{t.open=0;t.bonus=0;t.w=0;t.glock=0;
-      t.pad=makePad(q(t,'.padw'),{onSubmit:v=>this.ans(t,v)});
+      t.pad=makePad(q(t,'.padw'),{max:PADMAX(),onSubmit:v=>this.ans(t,v)});
       q(t,'.gbtn').onclick=()=>this.guessOpen(t);
       q(t,'.opts').onclick=e=>{const b=e.target.closest('[data-o]');if(b)this.guess(t,b.dataset.o)};
       this.next(t);this.sc(t)});
   },
   sc(t){q(t,'.sc').textContent=`🧩 ${t.open} katak${t.bonus?` · ${t.bonus>0?'+':''}${t.bonus}`:''}`},
-  next(t){t.q=genQ(cfg.L);q(t,'.qc').innerHTML=qhtml(t.q);keyUpd()},
+  next(t){t.q=genQ(cfg.L,BIG());q(t,'.qc').innerHTML=qhtml(t.q);keyUpd()},
   ans(t,v){
     if(S.over||locked(t))return;
     if(+v===t.q.ans){
@@ -799,6 +973,7 @@ IMPL.bomba={
     this.arm(t);
   },
   tick(dt){
+    const act=S.teams.filter(t=>t.active);MUSIC.tempo(act.length?1+(Math.max(...act.map(t=>t.speed))-1)*.35+(Math.min(...act.map(t=>t.left))<20?.25:0):1);
     S.teams.forEach(t=>{if(!t.active)return;t.left-=dt*t.speed;
       const sec=Math.ceil(t.left);if(sec<=10&&sec!==t.lastSec&&sec>0)snd('tick');t.lastSec=sec;
       if(t.left<=0){t.left=0;t.active=false;t.stars.push(0);snd('boom');q(t,'.bi').textContent='💥';setMsg(t,'💥 PORTLADI! Bu bomba uchun 0 ⭐','bad');setTimeout(()=>this.nextBomb(t),2500)}
@@ -820,8 +995,10 @@ IMPL.tez={
   round(){
     if(S.over)return;
     if(this.r>=this.N){endGame();return}
-    this.r++;this.done=false;this.q=genQ(cfg.L);
-    const a=this.q.ans,pool=shuffle([a-2,a-1,a+1,a+2,a+3,a-3].filter(x=>x>=0&&x<=12&&x!==a));
+    this.r++;this.done=false;this.q=genQ(cfg.L,BIG());
+    const a=this.q.ans,rev=+String(a).split('').reverse().join('');
+    const cand=a>=10?[a+1,a-1,a+10,a-10,a+2,a-2,rev,a+11]:[a-2,a-1,a+1,a+2,a+3,a-3];
+    const pool=shuffle([...new Set(cand)].filter(x=>x>=0&&x!==a));
     this.opts=shuffle([a,...pool.slice(0,3)]);
     $('#bigq').innerHTML=`<small>${this.r}-savol / ${this.N} · ${this.q.topic}</small>${this.q.html}`;
     S.teams.forEach(t=>{t.out=false;t.el.classList.remove('first');setMsg(t,'');
@@ -850,7 +1027,7 @@ IMPL.nishon={
       <g font-weight="800" font-size="24" fill="#fff" text-anchor="middle" pointer-events="none"><text y="-124">1 ball</text><text y="-70" fill="#3a2a00">2 ball</text><text y="9">3</text></g><g id="hits"></g></svg></div>
       <div><div class="board" id="board"></div><div class="turn" id="turn"><h3 id="turnName"></h3><div class="qc" id="nq"></div><div class="msg" id="nmsg"></div><div id="npad"></div></div></div></div>`;
     $('.target svg').addEventListener('click',e=>{const c=e.target.closest('.ring');if(c)this.aim(+c.dataset.r)});
-    this.pad=makePad($('#npad'),{onSubmit:v=>this.ans(v)});
+    this.pad=makePad($('#npad'),{max:PADMAX(),onSubmit:v=>this.ans(v)});
     this.setTurn();
   },
   cur(){return S.teams[this.turn]},
@@ -862,7 +1039,7 @@ IMPL.nishon={
   },
   aim(r){
     if(S.over||this.phase!=='choose')return;
-    this.phase='answer';this.ring=r;this.q=genQ(r-1);
+    this.phase='answer';this.ring=r;this.q=genQ(r-1,BIG());
     $('#nq').innerHTML=`<span class="tn">${['','🔵 1 ball · oson','🟡 2 ball · oʻrta','🔴 3 ball · qiyin'][r]} · ${this.q.topic}</span>${this.q.html}`;
     this.pad.disable(false);keyUpd();
   },
@@ -946,13 +1123,15 @@ function ask(txt,cb){$('#askText').textContent=txt;askCb=cb;$('#ask').classList.
 $('#askYes').onclick=()=>{$('#ask').classList.add('hidden');const c=askCb;askCb=null;if(c)c()};
 $('#askNo').onclick=()=>{$('#ask').classList.add('hidden');askCb=null};
 
-function toSetup(){clearInterval(S.tickId);S.over=true;['final','keyOv'].forEach(id=>$('#'+id).classList.add('hidden'));renderSettings();show('setup')}
+function toSetup(){clearInterval(S.tickId);S.over=true;MUSIC.stop();['final','keyOv'].forEach(id=>$('#'+id).classList.add('hidden'));renderSettings();show('setup')}
 $('#startBtn').onclick=startGame;
 $('#againBtn').onclick=startGame;
 $('#fSettings').onclick=toSetup;
 $('#settingsBtn').onclick=()=>ask('Oʻyin toʻxtatilib, sozlamalarga qaytilsinmi?',toSetup);
 $('#restartBtn').onclick=()=>ask('Oʻyin yangi misollar bilan boshidan boshlansinmi?',startGame);
 $('#finishBtn').onclick=()=>ask('Oʻyinni hozir yakunlab, natijani koʻrsataylikmi?',endGame);
+$('#musicBtn').onclick=()=>{const on=MUSIC.toggle(S.over?null:GK);musLabel()};
+function musLabel(){$('#musicBtn').textContent=MUSIC.on?'🎵':'🔕';$('#musicBtn').style.opacity=MUSIC.on?1:.6}
 $('#soundBtn').onclick=()=>{cfg.sound=cfg.sound?0:1;save();$('#soundBtn').textContent=cfg.sound?'🔊':'🔇'};
 
 renderMenu();

@@ -417,6 +417,173 @@ const TOPICS=[
  ]}
 ];
 const G6=[10,11,2,12,6,13,14,15,16,17];
+/* BK-EXTRA-START */
+/* ===== 6-sinf mavzulariga qo'shimcha misol turlari =====
+   W(...)  — katta javoblar rejimida ham ishlaydi
+   WO(...) — faqat katta javoblar rejimida (bir xonali javob uchun gʻalati chiqadi) */
+const W=(f,max)=>{f.wide=true;if(max)f.max=max;return f};
+const WO=(f,max)=>{W(f,max);f.wo=true;return f};
+const divs=(n,lo=1,hi=n)=>{const r=[];for(let k=lo;k<=Math.min(n,hi);k++)if(n%k===0)r.push(k);return r};
+const cop=(n,lo,hi)=>{const r=[];for(let k=lo;k<=hi;k++)if(gcd(n,k)===1&&k!==n)r.push(k);return r};
+const fac3=n=>{const da=divs(n,2,12);if(!da.length)return null;const a=pick(da),m=n/a,db=divs(m,2,12);if(!db.length)return null;const b=pick(db),c=m/b;return c>=2&&c<=40?shuffle([a,b,c]):null};
+
+const ADD={
+ /* Algebraik ifodalar */
+ 10:[
+  W(d=>{const k=RR(2,5),mx=Math.floor((d-1)/k);if(mx<1)return null;const p=R(1,Math.min(mx,12));return `x = ${p} boʻlsa, ${k}x + ${d-k*p} = ?`}),
+  W(d=>{const ks=divs(d,2,9);if(!ks.length)return null;const k=pick(ks);return `Soddalashtiring: ${k}(x + ${d/k}) ${M} ${k}x = ?`}),
+  W(d=>{if(d%2)return null;const s=d/2;if(s<2)return null;const p=R(1,s-1);return `Toʻgʻri toʻrtburchak perimetri P = 2(a + b). a = ${p} sm, b = ${s-p} sm boʻlsa, P = ?`}),
+  W(d=>{const q=RR(2,6),p=Math.floor(d/q)+R(1,3);return `y = ${p} boʻlsa, ${q}y ${M} ${q*p-d} = ?`}),
+  W(d=>{if(d<2)return null;const b=R(1,d-1);return `a + b = ${d+b}, a ${M} b = ${d-b}. a = ?`}),
+  W(d=>{const k=RR(2,6),m=RR(1,5);return `${k}a + ${cf(m)}a = ${(k+m)*d}. a = ?`}),
+  W(d=>{const a=RR(2,15);return `Daftar x ming soʻm, ruchka undan ${a} ming soʻm qimmat. Ikkalasi ${2*d+a} ming soʻm. x = ?`}),
+  W(d=>{const k=RR(2,4),b=RR(1,9);return `${k}(m + ${b}) = ${k*(d+b)} boʻlsa, m = ?`})
+ ],
+ /* Kasrlarni boʻlish */
+ 11:[
+  W(d=>{const e=RR(3,9),c=pick(cop(e,1,e-1)),g=gcd(d*c,e);if(g>1&&e/g===1)return null;return `${fr(d*c/g,e/g)} : ${fr(c,e)}`}),
+  W(d=>{const k=RR(2,9);return `x : ${fr(1,k)} = ${d*k}. x = ?`}),
+  W(d=>{const e=RR(3,9),c=pick(cop(e,1,e-1)),g=gcd(d*c,e);if(e/g===1)return null;return `${fr(d*c/g,e/g)} m lenta ${fr(c,e)} m lik boʻlaklarga kesildi. Nechta boʻlak chiqdi?`}),
+  W(d=>{const ks=cop(d,2,9);if(!ks.length)return null;const k=pick(ks);return `${fr(d,k)} : x = ${fr(1,k)}. x = ?`}),
+  W(d=>{const k=RR(2,6),m=RR(2,5);if(gcd(k,m)!==1)return null;return `${d*k} ni ${fr(k,m)} ga boʻlib, natijani ${m} ga boʻling.`}),
+  W(d=>{const bs=divs(d,2,12);if(!bs.length)return null;const b=pick(bs),a=pick(cop(b,1,b-1));return `Sonning ${fr(a,b)} qismi ${d*a/b} ga teng. Shu sonni toping.`})
+ ],
+ /* Tenglamalar */
+ 2:[
+  W(d=>{const ks=divs(d,2,9);if(!ks.length)return null;const k=pick(ks),a=RR(1,15);return `${fr('x',k)} + ${a} = ${d/k+a}. x = ?`}),
+  W(d=>{const a=d+RR(1,20);return `${a} ${M} x = ${a-d}. x = ?`}),
+  W(d=>{const k=RR(2,6),a=RR(1,20);return `Oʻylagan sonimni ${k} ga koʻpaytirib, ${a} ni qoʻshsam, ${k*d+a} chiqadi. Qaysi sonni oʻyladim?`}),
+  W(d=>{const a=RR(2,6),b=RR(1,10);return `${a}(x + ${b}) = ${a*(d+b)}. x = ?`}),
+  W(d=>{const b=RR(1,5),a=b+RR(1,4);return `${a}x ${M} ${cf(b)}x = ${(a-b)*d}. x = ?`}),
+  W(d=>{if(d>60)return null;const a=RR(2,9);return `Akasi ukasidan ${a} yosh katta. Ikkalasining yoshi yigʻindisi ${2*d+a}. Ukasi necha yoshda?`})
+ ],
+ /* Nisbatlar */
+ 12:[
+  W(d=>{const ks=divs(d,1,12);const k=pick(ks),q=d/k;const p=R(1,9);if(p===q||gcd(p,q)!==1)return null;return `Sinfda qizlar va oʻgʻil bolalar soni nisbati ${p} : ${q}. Qizlar ${p*k} ta. Oʻgʻil bolalar nechta?`}),
+  W(d=>{const k=pick([2,5,10,20,50]);return `Xaritada 1 sm ${k} km ni bildiradi. ${d*k} km masofa xaritada necha sm boʻladi?`}),
+  W(d=>{const ks=divs(d,1,15);const k=pick(ks),p=d/k,q=p+R(1,4);if(gcd(p,q)!==1)return null;return `${(p+q)*k} ni ${p} : ${q} nisbatda boʻling. Kichik qism nechaga teng?`}),
+  W(d=>{const ks=divs(d,1,15);const k=pick(ks),q=d/k;if(q<2)return null;const p=R(1,q-1);if(gcd(p,q)!==1)return null;return `Ikki sonning nisbati ${p} : ${q}, yigʻindisi ${(p+q)*k}. Katta son nechaga teng?`}),
+  W(d=>{const ks=divs(d,1,15);const k=pick(ks),q=d/k;if(q<2)return null;const p=R(1,q-1);if(gcd(p,q)!==1)return null;return `Arqon ${p} : ${q} nisbatda kesildi. Kalta qismi ${p*k} m. Uzun qismi necha m?`})
+ ],
+ /* Nisbat va proporsiya */
+ 6:[
+  W(d=>{const m=pick(divs(d,1,12)),p=d/m,qs=cop(p,2,12);if(!qs.length)return null;const q=pick(qs),k=RR(2,4);return `${p*k} : ${q*k} = x : ${q*m}. x = ?`}),
+  W(d=>{const p=RR(2,6),u=RR(2,15);return `${p} kg olma ${p*u} ming soʻm turadi. ${d*u} ming soʻmga necha kg olma olinadi?`}),
+  W(d=>{const t=RR(2,5),v=pick([40,50,60,70,80,90]);return `Avtomobil ${t} soatda ${t*v} km yurdi. Shu tezlikda ${d*v} km ni necha soatda yuradi?`},12),
+  W(d=>{const p=RR(2,6),k=RR(2,5);return `${fr(p,'x')} = ${fr(p*k,d*k)}. x = ?`}),
+  W(d=>{const p=RR(2,4),u=RR(2,5);return `Retseptda ${p} ta tuxumga ${p*u} stakan un kerak. ${d*u} stakan unga nechta tuxum kerak?`})
+ ],
+ /* Foizlar */
+ 13:[
+  W(d=>{const p=pick([10,20,25,50]);return `${d*100/p} ming soʻmlik mahsulotga ${p}% chegirma qilindi. Chegirma necha ming soʻm?`}),
+  W(d=>{const p=pick([10,20,25,50]);return `Kitob ${d*100/p} betdan iborat. Oʻquvchi uning ${p}% ini oʻqidi. Necha bet oʻqidi?`}),
+  WO(d=>{if(d>=100)return null;const b=pick(d%2?[100,200]:[50,100,200]);return `${b*d/100} soni ${b} ning necha foizini tashkil qiladi? (javob % belgisisiz)`}),
+  W(d=>{const p=pick([10,20,25,50]);return `Bankka ${d*100/p} ming soʻm qoʻyildi, yillik foiz ${p}%. Bir yilda necha ming soʻm foyda olinadi?`}),
+  W(d=>{const ps=[10,20,25,50].filter(p=>(d*(100+p))%100===0);if(!ps.length)return null;const p=pick(ps);return `Narx ${p}% oshgach, ${d*(100+p)/100} ming soʻm boʻldi. Avvalgi narx necha ming soʻm edi?`}),
+  W(d=>{const ps=[10,20,25,50].filter(p=>(d*(100-p))%100===0);if(!ps.length)return null;const p=pick(ps);return `Narx ${p}% arzonlashgach, ${d*(100-p)/100} ming soʻm boʻldi. Avvalgi narx necha ming soʻm edi?`})
+ ],
+ /* Geometrik shakllardagi burchaklar */
+ 14:[
+  WO(d=>d<180?`Ikki toʻgʻri chiziq kesishganda hosil boʻlgan burchaklardan biri ${180-d}°. Unga qoʻshni burchak necha gradus?`:null),
+  WO(d=>d<90?`Toʻgʻri burchak ${90-d}° va x° li ikki burchakka boʻlingan. x = ?`:null),
+  WO(d=>{if(d>176)return null;const s=180-d,a=R(1,s-1);return `Uchburchak burchaklari x°, ${a}° va ${s-a}°. x = ?`}),
+  WO(d=>(d%2||d>=180)?null:`Teng yonli uchburchakda asosidagi burchak ${(180-d)/2}°. Uchidagi burchak necha gradus?`),
+  WO(d=>d<90?`Toʻgʻri burchakli uchburchakning bir oʻtkir burchagi ${90-d}°. Ikkinchi oʻtkir burchak necha gradus?`:null),
+  WO(d=>180%d===0&&d<180?`Yoyiq burchak ${180/d} ta teng qismga boʻlindi. Har bir qism necha gradus?`:null),
+  WO(d=>d<180?`Vertikal burchaklar yigʻindisi ${2*d}°. Har biri necha gradus?`:null)
+ ],
+ /* Doira va aylana */
+ 15:[
+  W(d=>`Gʻildirak bir marta aylanganda ${p2(3.14*d)} sm yoʻl bosadi (π ≈ 3,14). Gʻildirak diametri necha sm?`),
+  W(d=>`Yarim doiraning yuzi ${p2(1.57*d*d)} sm² (π ≈ 3,14). Radiusi necha sm?`,40),
+  WO(d=>360%d===0&&d<360?`Doira ${360/d} ta teng sektorga boʻlindi. Har bir sektor burchagi necha gradus?`:null),
+  W(d=>`Aylananing radiusi diametridan ${d} sm qisqa. Radiusi necha sm?`)
+ ],
+ /* Kub va kubsimon jism hajmi */
+ 16:[
+  W(d=>{const f=fac3(d);return f?`Kubsimon jismning oʻlchamlari ${f[0]} sm, ${f[1]} sm va ${f[2]} sm. Hajmi necha sm³?`:null}),
+  W(d=>{const f=fac3(d);return f?`Kubsimon idishning oʻlchamlari ${f[0]} dm × ${f[1]} dm × ${f[2]} dm. Unga necha litr suv sigʻadi?`:null}),
+  W(d=>{const S=RR(4,30);return `Kubsimon jismning hajmi ${S*d} sm³, asosining yuzi ${S} sm². Balandligi necha sm?`}),
+  W(d=>`1 dm³ = 1000 sm³. ${d*1000} sm³ necha dm³ boʻladi?`)
+ ],
+ /* Diagrammalar va oʻrta qiymat */
+ 17:[
+  W(d=>{const a=R(Math.max(1,d-9),d+9),b=R(Math.max(1,d-9),d+9),c=3*d-a-b;return c>0?`${a}, ${b} va ${c} sonlarining oʻrta arifmetigi`:null}),
+  W(d=>{const lo=shuffle(Array.from({length:Math.max(2,d)},(_,i)=>i)).slice(0,2),hi=[d+R(1,9),d+R(10,20)];if(d<2)return null;return `Medianani toping: ${shuffle([d,...lo,...hi]).join('; ')}`}),
+  W(d=>{const m=R(1,30),mid=[R(m,m+d),R(m,m+d)];return `Eng katta va eng kichik son ayirmasini (kattalik oraligʻini) toping: ${shuffle([m,m+d,...mid]).join('; ')}`}),
+  W(d=>{const a=RR(5,40);return `Ustunli diagramma: dushanba ${a} ta, seshanba ${a+d} ta kitob sotildi. Seshanba necha ta koʻp sotildi?`}),
+  WO(d=>{const o=shuffle(Array.from({length:20},(_,i)=>d+i-10).filter(x=>x>0&&x!==d)).slice(0,3);return `Modani toping: ${shuffle([d,d,d,...o,o[0]]).join('; ')}`})
+ ]
+};
+/* eski misol turlaridan katta javoblarga yaroqlilari: [indeks, maksimal javob] */
+const WOLD={2:[[0],[1],[2],[3],[4],[5]],6:[[0],[1],[2],[3]],10:[[0],[1],[4]],11:[[0],[1],[2],[3]],12:[[1],[2],[3]],13:[[0],[3]],15:[[0],[1],[2,40],[3],[4,40]],16:[[0,20],[1],[2],[3,30]],17:[[2]]};
+for(const k in WOLD)WOLD[k].forEach(([i,mx])=>{const g=TOPICS[k].gens[i];g.wide=true;if(mx)g.max=mx});
+for(const k in ADD)TOPICS[k].gens.push(...ADD[k]);
+TOPICS.forEach(T=>{T.dig=T.gens.filter(g=>!g.wo);T.wid=T.gens.filter(g=>g.wide)});
+
+TOPICS.forEach(T=>{T.gens=T.dig});
+/* ===== Musiqa: har bir oʻyin uchun oʻzimizning kuylarimiz (WebAudio) ===== */
+const MUSIC=(function(){
+  const SCALES={maj:[0,2,4,5,7,9,11],min:[0,2,3,5,7,8,10],dor:[0,2,3,5,7,9,10],har:[0,2,3,5,7,8,11],pen:[0,2,4,7,9,12,14]};
+  const CT=[0,2,4,7];
+  /* prog — har takt akkord asosi (pogʻona), mel — 32 qadam (2 takt), 0..3 akkord tovushlari, 4..6 — yuqori oktava, null — pauza */
+  const THEMES={
+    minora:{bpm:120,root:60,sc:'maj',prog:[0,3,4,0],mel:[0,null,1,2,3,null,2,1,0,null,1,2,4,null,3,null,2,null,1,0,1,null,2,3,4,null,3,2,1,null,0,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'..x...x...x...x.',mw:'square',bw:'triangle'},
+    xazina:{bpm:104,root:62,sc:'dor',prog:[0,6,3,4],mel:[0,null,null,1,2,null,1,0,null,null,2,null,3,null,null,null,4,null,null,3,2,null,1,null,0,null,2,null,1,null,null,null],bass:'x..x..x.x..x..x.',kick:'x.....x.x.....x.',hat:'...x.....x......',mw:'triangle',bw:'triangle'},
+    raketa:{bpm:128,root:57,sc:'min',prog:[0,5,3,6],mel:[0,1,2,4,2,1,0,1,2,4,5,4,2,1,0,null,0,1,2,4,2,1,2,4,5,6,5,4,2,null,1,null],bass:'x.xxx.xxx.xxx.xx',kick:'x...x...x...x...',hat:'xxxxxxxxxxxxxxxx',mw:'sawtooth',bw:'sawtooth'},
+    mozaika:{bpm:88,root:65,sc:'maj',prog:[0,4,5,3],mel:[2,null,null,null,1,null,0,null,null,null,1,null,2,null,null,null,4,null,null,null,3,null,2,null,1,null,null,null,0,null,null,null],bass:'x.......x.......',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'sine',pad:1},
+    bomba:{bpm:112,root:52,sc:'har',prog:[0,0,5,4],mel:[null,null,null,null,4,null,null,3,null,null,null,null,4,null,3,null,null,null,null,null,4,null,null,3,null,null,2,null,1,null,null,null],bass:'xxxxxxxxxxxxxxxx',kick:'x..x..x.x..x..x.',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'sawtooth'},
+    tez:{bpm:140,root:67,sc:'maj',prog:[0,4,5,3],mel:[0,2,4,2,0,2,4,null,3,2,1,null,2,null,null,null,1,3,4,3,1,3,4,null,5,4,3,2,0,null,null,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'x.x.x.x.x.x.x.x.',mw:'square',bw:'triangle'},
+    nishon:{bpm:96,root:62,sc:'min',prog:[0,5,6,4],mel:[0,null,0,1,2,null,null,null,1,null,0,null,2,null,null,null,3,null,3,2,1,null,null,null,2,null,1,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x.....x.x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'triangle'},
+    zanjir:{bpm:84,root:60,sc:'pen',prog:[0,2,1,3],mel:[2,null,null,1,null,null,0,null,null,null,1,null,null,2,null,null,3,null,null,2,null,null,1,null,null,null,0,null,null,null,null,null],bass:'x.....x...x.....',kick:'x.......x.......',hat:'....x.......x..x',mw:'sine',bw:'sine',pad:1},
+    sirli:{bpm:80,root:57,sc:'har',prog:[0,5,3,4],mel:[0,null,null,1,null,null,2,null,null,null,4,null,3,null,null,null,2,null,null,1,null,null,0,null,null,null,1,null,2,null,null,null],bass:'x.......x...x...',kick:'x.......x.......',hat:'..........x.....',mw:'triangle',bw:'sine',pad:1},
+    kosmik:{bpm:100,root:55,sc:'min',prog:[0,3,5,4],mel:[0,2,4,2,0,2,4,2,1,3,5,3,1,3,5,3,0,2,4,2,0,2,4,6,5,4,2,1,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'sawtooth',bw:'sine',pad:1},
+    eshik:{bpm:92,root:62,sc:'dor',prog:[0,3,0,4],mel:[0,null,1,null,2,null,null,1,0,null,null,null,4,null,3,null,2,null,1,null,0,null,1,2,1,null,null,null,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'triangle'}
+  };
+  let ctx=null,out=null,theme=null,timer=null,step=0,next=0,tempo=1,on=true,playing=false,noise=null;
+  try{on=localStorage.getItem('bk-music')!=='0'}catch(e){}
+  const hz=m=>440*Math.pow(2,(m-69)/12);
+  const semi=(sc,d)=>{const s=SCALES[sc],n=s.length,o=Math.floor(d/n);return s[((d%n)+n)%n]+12*o};
+  function ensure(){
+    if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();out=ctx.createGain();out.gain.value=0;out.connect(ctx.destination);
+      const len=ctx.sampleRate*.2;noise=ctx.createBuffer(1,len,ctx.sampleRate);const d=noise.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1}
+    if(ctx.state==='suspended')ctx.resume();
+  }
+  function tone(f,t,dur,type,vol){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(out);o.start(t);o.stop(t+dur+.05)}
+  function kick(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);g.gain.setValueAtTime(.55,t);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g).connect(out);o.start(t);o.stop(t+.2)}
+  function hat(t){const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();s.buffer=noise;f.type='highpass';f.frequency.value=7000;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+.05);s.connect(f).connect(g).connect(out);s.start(t);s.stop(t+.06)}
+  function play(s,t,dur){
+    const T=theme,bar=Math.floor(s/16)%T.prog.length,pos=s%16,half=Math.floor(s/16)%2,r=T.prog[bar];
+    if(T.bass[pos]==='x')tone(hz(T.root-24+semi(T.sc,r)),t,dur*1.6,T.bw,.16);
+    const m=T.mel[half*16+pos];if(m!=null){const dd=r+(m<4?CT[m]:CT[m-4]+7);tone(hz(T.root+semi(T.sc,dd)),t,dur*(T.pad?3:1.8),T.mw,T.mw==='sine'||T.mw==='triangle'?.14:.06)}
+    if(T.pad&&pos===0)[0,2,4].forEach(k=>tone(hz(T.root-12+semi(T.sc,r+k)),t,dur*15,'sine',.045));
+    if(T.kick[pos]==='x')kick(t);
+    if(T.hat[pos]==='x')hat(t);
+  }
+  function sched(){if(!playing)return;const dur=60/(theme.bpm*tempo)/4;while(next<ctx.currentTime+.2){play(step,next,dur);next+=dur;step=(step+1)%(16*theme.prog.length)}}
+  return{
+    get on(){return on},
+    start(name){if(!on||!THEMES[name])return;try{ensure();if(playing&&theme===THEMES[name])return;this.stop(true);theme=THEMES[name];step=0;tempo=1;next=ctx.currentTime+.1;playing=true;out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setValueAtTime(out.gain.value,ctx.currentTime);out.gain.linearRampToValueAtTime(.32,ctx.currentTime+1.2);timer=setInterval(sched,50)}catch(e){}},
+    stop(quick){playing=false;clearInterval(timer);timer=null;if(ctx&&out){out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setValueAtTime(quick?0:out.gain.value,ctx.currentTime);if(!quick)out.gain.linearRampToValueAtTime(0,ctx.currentTime+.6)}},
+    tempo(x){tempo=Math.max(.5,Math.min(2.2,x))},
+    toggle(name){on=!on;try{localStorage.setItem('bk-music',on?'1':'0')}catch(e){}if(on&&name)this.start(name);else if(!on)this.stop();return on},
+    get playing(){return playing}
+  };
+})();
+
+const __THEME='sirli',__musPlay=()=>!document.getElementById('game').classList.contains('hidden')&&document.getElementById('final').classList.contains('hidden');
+
+/* musiqa tugmasi */
+(function(){
+  const b=document.createElement('button');b.id='musBtn';b.type='button';b.setAttribute('aria-label','Musiqa');
+  b.style.cssText='position:fixed;right:170px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;border:0;border-radius:999px;padding:9px 14px;font:inherit;font-weight:800;font-size:15px;background:#14203a;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:.9;cursor:pointer';
+  const lab=()=>{b.textContent=MUSIC.on?'🎵 Musiqa':'🔕 Musiqa'};
+  b.onclick=()=>{MUSIC.toggle(__musPlay()?__THEME:null);lab()};
+  document.body.appendChild(b);lab();
+  setInterval(()=>{if(__musPlay()){if(!MUSIC.playing&&MUSIC.on)MUSIC.start(__THEME)}else if(MUSIC.playing)MUSIC.stop()},500);
+})();
+/* BK-EXTRA-END */
+
 
 /* ===== scenes ===== */
 
