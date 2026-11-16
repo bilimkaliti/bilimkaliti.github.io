@@ -515,6 +515,209 @@ const ADD={
   WO(d=>{const o=shuffle(Array.from({length:20},(_,i)=>d+i-10).filter(x=>x>0&&x!==d)).slice(0,3);return `Modani toping: ${shuffle([d,d,d,...o,o[0]]).join('; ')}`})
  ]
 };
+/* ===== 1–4 va 7-sinf mavzulari hamda mantiqiy savollar (qisqa, tez yechiladigan) ===== */
+const EM=['🍎','⭐','🎈','🐟','🌸','🍬','⚽','🐥'];
+const rep=(e,n)=>e.repeat(n);
+const NEW_TOPICS=[
+ /* 18 */ {name:'10 ichida qoʻshish va ayirish',gens:[
+  d=>{const a=R(0,d);return `${a} + ${d-a}`},
+  d=>{if(d>9)return null;const b=R(1,10-d);return `${d+b} ${M} ${b}`},
+  d=>{if(d>10)return null;const a=R(0,10-d);return `□ + ${a} = ${d+a}`},
+  d=>{const a=R(0,10-d);return `${a+d} ${M} □ = ${a}`}
+ ]},
+ /* 19 */ {name:'20 ichida qoʻshish va ayirish',gens:[
+  W(d=>{if(d>20||d<2)return null;const a=R(1,d-1);return `${a} + ${d-a}`},20),
+  W(d=>{if(d>19)return null;const b=R(1,20-d);return `${d+b} ${M} ${b}`},20),
+  W(d=>{if(d>18)return null;const a=R(1,20-d);return `${a} + □ = ${a+d}`},20),
+  W(d=>{if(d>16)return null;const a=R(1,Math.min(9,20-d-1)),b=20-d-a>0?R(1,Math.min(9,20-d-a)):0;if(!b)return null;return `${d+a+b} ${M} ${a} ${M} ${b}`},20)
+ ]},
+ /* 20 */ {name:'Taqqoslash va son qatori',gens:[
+  W(d=>{const b=R(0,d-1);return R(0,1)?`${d} va ${b} sonlaridan qaysi biri katta?`:`${b} va ${d} sonlaridan qaysi biri katta?`},100),
+  W(d=>`${d-1} dan keyin keladigan son`,100),
+  W(d=>`${d+1} dan oldin keladigan son`,100),
+  W(d=>{if(d<2)return null;return `${d-1} va ${d+1} orasidagi son`},100),
+  d=>{const o=shuffle([d,d+R(1,5),d+R(6,10)]);return `Eng kichik sonni toping: ${o.join(', ')}`}
+ ]},
+ /* 21 */ {name:'Sanash (rasmlar bilan)',gens:[
+  d=>{const e=pick(EM);return `Nechta? ${rep(e,d)}`},
+  d=>{if(d<2)return null;const e=pick(EM),a=R(1,d-1);return `${rep(e,a)} + ${rep(e,d-a)} = ?`},
+  d=>{const e=pick(EM),a=R(1,4);return `${rep(e,d+a)} — ${a} tasi ketdi. Nechta qoldi?`},
+  d=>{if(d<2)return null;const e=pick(EM),f=pick(EM.filter(x=>x!==e)),a=R(1,d-1);return `${rep(e,a)}${rep(f,d-a)} — jami nechta?`}
+ ]},
+ /* 22 */ {name:'100 ichida qoʻshish va ayirish',gens:[
+  W(d=>{if(d<2)return null;const a=R(1,d-1);return `${a} + ${d-a}`},100),
+  W(d=>{if(d>99)return null;const b=R(1,100-d);return `${d+b} ${M} ${b}`},100),
+  W(d=>{if(d>95)return null;const a=R(1,100-d);return `${a} + □ = ${a+d}`},100),
+  W(d=>{const t=Math.floor(d/10)*10,u=d%10;return t&&u?`${t} + ${u}`:null},100),
+  W(d=>{if(d>90)return null;const a=R(1,9)*10;return d+a<=100?`${d+a} ${M} ${a}`:null},100)
+ ]},
+ /* 23 */ {name:'Koʻpaytirish jadvali (2–5)',gens:[
+  d=>{const k=R(2,5);return `${k} · □ = ${k*d}`},
+  d=>{const k=R(2,5);return `${k*d} : ${k}`},
+  W(d=>{const p=[];for(let a=2;a<=5;a++)for(let b=2;b<=10;b++)if(a*b===d)p.push([a,b]);if(!p.length)return null;const [a,b]=pick(p);return R(0,1)?`${a} · ${b}`:`${b} · ${a}`},50),
+  d=>{const k=R(2,5),e=pick(EM);return `${d} ta savatning har birida ${k} ta ${e}. Jami ${k*d} ta. Savatlar soni?`}
+ ]},
+ /* 24 */ {name:'Uzunlik va vaqt',gens:[
+  W(d=>`${d*10} sm = ? dm`,20),
+  W(d=>`${d*10} mm = ? sm`,20),
+  W(d=>d<=12?`${d*60} daqiqa = ? soat`:null,12),
+  d=>{const h=R(7,12-Math.min(d,4));if(h+d>12)return null;return `Dars soat ${h}:00 da boshlanib, ${h+d}:00 da tugadi. Necha soat davom etdi?`},
+  W(d=>d<=7?`Bir hafta 7 kun. ${d*7} kun necha hafta?`:null,10)
+ ]},
+ /* 25 */ {name:'Oddiy masalalar',gens:[
+  W(d=>{if(d<2)return null;const a=R(1,d-1);return `Savatda ${a} ta olma bor edi, yana ${d-a} ta solindi. Nechta boʻldi?`},100),
+  W(d=>{const a=R(1,9);return `Daraxtda ${d+a} ta qush bor edi. ${a} tasi uchib ketdi. Nechta qoldi?`},100),
+  W(d=>{const k=R(2,5);return `${k*d} ta qalam ${k} ta bolaga teng boʻlindi. Har biriga nechta?`},50),
+  W(d=>{const a=R(1,9);return `Alida ${d} ta, Valida undan ${a} ta koʻp konfet bor. Valida ${d+a} ta. Alida nechta?`},100)
+ ]},
+ /* 26 */ {name:'Koʻpaytirish jadvali',gens:[
+  W(d=>{const k=R(2,9);return `${k} · □ = ${k*d}`},12),
+  W(d=>{const k=R(2,9);return `${k*d} : ${k}`},12),
+  W(d=>{const p=[];for(let a=2;a<=9;a++)for(let b=2;b<=9;b++)if(a*b===d)p.push([a,b]);if(!p.length)return null;const [a,b]=pick(p);return `${a} · ${b}`},81),
+  W(d=>{const p=[];for(let a=2;a<=9;a++)for(let b=2;b<=9;b++)if(a*b-d>0&&a*b-d<=9)p.push([a,b]);if(!p.length)return null;const [a,b]=pick(p);return `${a} · ${b} ${M} ${a*b-d}`},80)
+ ]},
+ /* 27 */ {name:'Qoldiqli boʻlish',gens:[
+  d=>{const m=R(d+1,Math.max(d+2,9)),q=R(2,9);return `${m*q+d} : ${m} — qoldiq nechaga teng?`},
+  W(d=>{const m=R(2,9),r=R(1,m-1);return `${m*d+r} : ${m} — boʻlinma nechaga teng? (qoldiq ${r})`},20),
+  d=>{const m=R(2,9),r=R(1,m-1);return `${m*d+r} ni ${m} ga boʻlganda boʻlinma nechaga teng?`},
+  W(d=>{const m=R(2,9),r=R(1,m-1);return `${m*d+r} ta konfet ${m} ta bolaga teng boʻlinganda ${r} tasi ortib qoldi. Har biriga nechtadan tegdi?`},30)
+ ]},
+ /* 28 */ {name:'Ifoda qiymati (qavslar)',gens:[
+  W(d=>{const ks=divs(d,2,9);if(!ks.length)return null;const k=pick(ks),s=d/k;if(s<2)return null;const x=R(1,s-1);return `${k} · (${x} + ${s-x})`}),
+  W(d=>{const b=R(2,6),c=R(2,6);return `${d+b*c} ${M} ${b} · ${c}`}),
+  W(d=>{const ks=divs(d,2,9);if(!ks.length)return null;const k=pick(ks),s=d/k,y=R(1,9);return `(${s+y} ${M} ${y}) · ${k}`}),
+  W(d=>{if(d<2)return null;const k=R(2,9),a=R(1,d-1);return `${k*(d-a)} : ${k} + ${a}`})
+ ]},
+ /* 29 */ {name:'Perimetr',gens:[
+  W(d=>`Kvadratning perimetri ${4*d} sm. Tomoni necha sm?`),
+  W(d=>{const a=R(1,15);return `Toʻgʻri toʻrtburchakning boʻyi ${a} sm, perimetri ${2*(a+d)} sm. Eni necha sm?`}),
+  W(d=>{const a=R(2,12),b=R(2,12);return `Uchburchak tomonlari ${a} sm, ${b} sm va x sm. Perimetri ${a+b+d} sm. x = ?`}),
+  W(d=>`Teng tomonli uchburchakning perimetri ${3*d} sm. Tomoni necha sm?`)
+ ]},
+ /* 30 */ {name:'Xona birliklari (1000 ichida)',gens:[
+  d=>{const h=R(1,9),u=R(0,9);return `${h}${d}${u} sonida oʻnliklar raqami nechaga teng?`},
+  d=>{const t=R(0,9),u=R(0,9);return `${d}${t}${u} sonida yuzliklar raqami nechaga teng?`},
+  d=>{const h=R(1,9),t=R(0,9);return `${h} yuzlik, ${t} oʻnlik va □ birlik = ${h}${t}${d}. □ = ?`},
+  W(d=>`${d*10} da nechta oʻnlik bor?`,99)
+ ]},
+ /* 31 */ {name:'Koʻp xonali sonlar',gens:[
+  W(d=>{if(d<20)return null;const a=R(10,d-10);return `${a} + ${d-a}`}),
+  W(d=>{const b=R(100,900);return `${d+b} ${M} ${b}`}),
+  d=>{const a=R(1,9),c=R(0,9),e=R(0,9);return `${a}${d}${c}${e} sonida yuzlar raqami nechaga teng?`},
+  W(d=>`${d*1000} sonida nechta minglik bor?`,99)
+ ]},
+ /* 32 */ {name:'Koʻpaytirish va boʻlish',gens:[
+  W(d=>{const k=R(6,25);return `${d*k} : ${k}`}),
+  W(d=>{const k=R(6,25);return `${k} · □ = ${k*d}`}),
+  W(d=>`${d*100} : 100`),
+  W(d=>{const k=pick([10,100]),m=R(2,5);return `${d*k*m} : ${k} : ${m}`})
+ ]},
+ /* 33 */ {name:'Tezlik, vaqt, masofa',gens:[
+  W(d=>{const v=pick([4,5,40,50,60,70,80]);return `${v} km/soat tezlikda ${v*d} km yoʻlni necha soatda bosib oʻtadi?`},12),
+  W(d=>{const t=R(2,6);return `Velosipedchi ${t} soatda ${t*d} km yurdi. Tezligi necha km/soat?`},40),
+  W(d=>{const t=R(2,5);return `Poyezd ${t} soatda ${t*d} km yurdi. 1 soatda necha km yuradi?`})
+ ]},
+ /* 34 */ {name:'Yuz',gens:[
+  W(d=>{const a=R(2,12);return `Toʻgʻri toʻrtburchakning yuzi ${a*d} sm², boʻyi ${a} sm. Eni necha sm?`}),
+  W(d=>`Kvadratning yuzi ${d*d} sm². Tomoni necha sm?`,30),
+  W(d=>{const ks=divs(d,2,12);if(!ks.length)return null;const a=pick(ks);return `Boʻyi ${a} sm, eni ${d/a} sm boʻlgan toʻgʻri toʻrtburchakning yuzi necha sm²?`})
+ ]},
+ /* 35 */ {name:'Kasrlar (qism)',gens:[
+  W(d=>{const k=R(2,9);return `${d*k} ning ${fr(1,k)} qismi`}),
+  W(d=>{const k=R(2,6),a=R(2,k);if(a>=k)return null;if(d%a)return null;return `${d/a*k} ning ${fr(a,k)} qismi`}),
+  d=>{const k=R(d+1,d+6);return `Doira ${k} ta teng boʻlakka boʻlindi, ${fr(d,k)} qismi boʻyaldi. Nechta boʻlak boʻyaldi?`}
+ ]},
+ /* 36 */ {name:'Oʻlchov birliklari',gens:[
+  W(d=>`${d*1000} m = ? km`),
+  W(d=>`${d*100} sm = ? m`),
+  W(d=>`${d*1000} g = ? kg`),
+  W(d=>d<=10?`${d*24} soat = ? sutka`:null,10),
+  W(d=>`${d*60} soniya = ? daqiqa`,60)
+ ]},
+ /* 37 */ {name:'Birhad va koʻphad',gens:[
+  W(d=>{const a=R(2,9),b=R(2,9);const c=a+b-d;if(c<=0)return null;return `${a}x² + ${b}x² ${M} ${cf(c)}x² = □x²`}),
+  W(d=>{const p=R(1,6),r=d-p*p;return `x = ${p} boʻlsa, x² ${pm(r)} = ?`}),
+  d=>`${d>1?`x<sup>${d}</sup>`:'x'} + ${R(2,9)}x + 1 koʻphadning darajasi`,
+  W(d=>{const ks=divs(d,2,9);if(!ks.length)return null;const k=pick(ks),m=d/k;return `${k}a · ${cf(m)}a = □a²`})
+ ]},
+ /* 38 */ {name:'Darajalar xossalari',gens:[
+  W(d=>{if(d<2)return null;const a=R(1,d-1);return `2<sup>${a}</sup> · 2<sup>${d-a}</sup> = 2<sup>□</sup>`},30),
+  W(d=>{const a=R(1,9);return `x<sup>${a+d}</sup> : x<sup>${a}</sup> = x<sup>□</sup>`},30),
+  W(d=>{const ks=divs(d,2,9).filter(k=>k<d);if(!ks.length)return null;const p=pick(ks);return `(x<sup>${p}</sup>)<sup>${d/p}</sup> = x<sup>□</sup>`},40),
+  d=>{const b=pick([2,3]);if(b===3&&d>4)return null;if(b===2&&d>7)return null;return `${b}<sup>□</sup> = ${b**d}`}
+ ]},
+ /* 39 */ {name:'Qisqa koʻpaytirish formulalari',gens:[
+  W(d=>{const p=[];for(let m=1;m*m<d;m++)if(d%m===0&&((d/m)-m)%2===0&&d/m!==m)p.push([m,d/m]);if(!p.length)return null;const [m,n]=pick(p),a=(m+n)/2,b=(n-m)/2;if(b<1)return null;return `${a}² ${M} ${b}²`}),
+  W(d=>{if(d%2)return null;const h=d/2,ks=divs(h,1,12);const a=pick(ks),b=h/a;return `(${a} + ${b})² ${M} ${a}² ${M} ${b}²`}),
+  W(d=>{if(d%2)return null;const a=d/2;return `(x + ${a})² = x² + □x + ${a*a}. □ = ?`}),
+  W(d=>{const a=R(2,9);if(d<=a)return null;return `(□ ${M} ${a})(□ + ${a}) = ${d*d-a*a}. □ = ?`})
+ ]},
+ /* 40 */ {name:'Chiziqli funksiya',gens:[
+  W(d=>{const k=R(2,5),x=R(1,6),b=d-k*x;return `y = ${k}x ${pm(b)}. x = ${x} boʻlsa, y = ?`}),
+  W(d=>{const k=R(2,9);return `y = ${k}x + ${d} funksiya grafigi Oy oʻqini (0; □) nuqtada kesadi. □ = ?`}),
+  W(d=>{const x=R(2,6);return `y = kx grafigi (${x}; ${d*x}) nuqtadan oʻtadi. k = ?`}),
+  W(d=>{const k=R(2,5),b=R(1,15);return `y = ${k}x + ${b}. y = ${k*d+b} boʻlsa, x = ?`})
+ ]},
+ /* 41 */ {name:'Tenglamalar sistemasi',gens:[
+  W(d=>{if(d<2)return null;const b=R(1,d-1);return `x + y = ${d+b}, x ${M} y = ${d-b}. x = ?`}),
+  W(d=>{const b=R(1,15);return `2x + y = ${2*d+b}, y = ${b}. x = ?`}),
+  W(d=>{const a=R(1,15);return `x + y = ${d+a}, x = ${a}. y = ?`}),
+  W(d=>{const k=R(2,5),a=R(1,9);return `y = ${k}x, x + y = ${(k+1)*d}. x = ?`})
+ ]},
+ /* 42 */ {name:'Mantiqiy savollar (1–2-sinf)',gens:[
+  W(d=>{const k=R(1,3),a=d-3*k;if(a<0)return null;return `Davom ettiring: ${a}, ${a+k}, ${a+2*k}, □`},50),
+  W(d=>{const k=R(1,3),a=d+3*k;return `Davom ettiring: ${a}, ${a-k}, ${a-2*k}, □`},50),
+  W(d=>`□ + □ = ${2*d} (ikkala □ bir xil son)`,50),
+  d=>{const e=pick(EM);return `${e} + ${e} = ${2*d}. ${e} = ?`}
+ ]},
+ /* 43 */ {name:'Mantiqiy savollar (3–4-sinf)',gens:[
+  W(d=>{const k=R(2,9),a=d-3*k;if(a<0)return null;return `Davom ettiring: ${a}, ${a+k}, ${a+2*k}, □`}),
+  W(d=>{const ks=[2,3].filter(k=>d%(k**4)===0);if(!ks.length)return null;const k=pick(ks);return `Davom ettiring: ${d/k**4}, ${d/k**3}, ${d/k**2}, ${d/k}, □`}),
+  W(d=>{const p=R(2,6),q=R(1,p-1),a=d-3*p+2*q;if(a<1)return null;const s=[a,a+p,a+p-q,a+2*p-q,a+2*p-2*q];return `Qonuniyatni toping: ${s.join(', ')}, □`}),
+  W(d=>{if(d%2===0)return null;const ev=shuffle(Array.from({length:30},(_,i)=>2*(i+1))).slice(0,4);return `Ortiqcha sonni toping (qolganlari juft): ${shuffle([...ev,d]).join(', ')}`}),
+  W(d=>{const a=R(1,9),b=R(1,9);return `🍎 + 🍎 = ${2*a}, 🍎 + 🍐 = ${a+d}. 🍐 = ?`}),
+  W(d=>{const k=R(2,9);if(d-k<=0)return null;const a=R(1,20),b=R(1,20);return `${a} → ${a+k}, ${b} → ${b+k}, ${d-k} → □`})
+ ]},
+ /* 44 */ {name:'Mantiqiy savollar (5–7-sinf)',gens:[
+  W(d=>{const ks=[2,3].filter(k=>d%(k**4)===0);if(!ks.length)return null;const k=pick(ks);return `Davom ettiring: ${d/k**4}, ${d/k**3}, ${d/k**2}, ${d/k}, □`}),
+  W(d=>{const a=d-1-2-3-4;if(a<0)return null;return `Davom ettiring: ${a}, ${a+1}, ${a+3}, ${a+6}, □`}),
+  W(d=>{const k=R(2,5);let a=R(1,9);if(a<=d&&d<=a+2)a=d+3;return `${a} → ${a*k}, ${a+1} → ${(a+1)*k}, ${a+2} → ${(a+2)*k}. □ → ${d*k}. □ = ?`}),
+  W(d=>{if(d%5===0)return null;const m=shuffle(Array.from({length:20},(_,i)=>5*(i+1))).slice(0,4);return `Ortiqcha sonni toping (qolganlari 5 ga boʻlinadi): ${shuffle([...m,d]).join(', ')}`}),
+  W(d=>`□ · □ = ${d*d} (ikkala □ bir xil natural son)`,30),
+  W(d=>{const a=R(1,9);return `🔺 + 🔺 + 🔺 = ${3*a}, 🔺 + 🔵 = ${a+d}. 🔵 = ?`})
+ ]}
+,
+ /* 45 */ {name:'Natural sonlar va yaxlitlash',gens:[
+  d=>{const up=Math.random()<.5,th=R(1,9),hh=up?d-1:d,rest=up?R(50,99):R(0,49);if(hh<0)return null;return `${th}${hh}${String(rest).padStart(2,'0')} ni yuzlargacha yaxlitlang. Yuzlar raqami?`},
+  W(d=>`${d*1000+R(0,999)} sonida nechta toʻliq minglik bor?`,99),
+  W(d=>{const b=R(100,900);return `${b} + ${d} ${M} ${b}`}),
+  d=>{const o=shuffle([d*100+R(10,99),(d+1)*100+R(10,99),(d+2)*100+R(10,99)]);return `Eng kichik sonning yuzlar raqami: ${o.join(', ')}`}
+ ]},
+ /* 46 */ {name:'Oddiy kasrlarni qoʻshish va ayirish',gens:[
+  W(d=>{const k=d+R(1,9);if(d<2)return null;const a=R(1,d-1);return `${fr(a,k)} + ${fr(d-a,k)} = ${fr('□',k)}. □ = ?`}),
+  W(d=>{const k=d+R(2,9),b=R(1,k-d-1);if(b<1)return null;return `${fr(d+b,k)} ${M} ${fr(b,k)} = ${fr('□',k)}. □ = ?`}),
+  W(d=>{const k=R(2,9);return `${d}${fr(1,k)} ${M} ${fr(1,k)} = ?`}),
+  d=>{if(d<2)return null;const k=R(d+1,d+8);return R(0,1)?`${fr(d,k)} va ${fr(d-1,k)} kasrlardan kattasining surati nechaga teng?`:`${fr(d-1,k)} va ${fr(d,k)} kasrlardan kattasining surati nechaga teng?`}
+ ]},
+ /* 47 */ {name:'Oʻnli kasrlar bilan amallar',gens:[
+  W(d=>{let x;do{x=R(1,d*10-1)}while(x%10===0);return `${dec(x)} + ${dec(d*10-x)}`}),
+  W(d=>{const c=pick([2,4,5]);const x=d*10/c;if(x%1||x%10===0)return null;return `${dec(x)} · ${c}`}),
+  W(d=>{let a;do{a=d*10+R(1,40)}while(a%10===0);return `${dec(a)} ${M} ${dec(a-d*10)}`}),
+  W(d=>`${String(d/10).replace('.',',')} · 10`),
+  W(d=>`${String(d/100).replace('.',',')} · 100`)
+ ]},
+ /* 48 */ {name:'Burchaklar',gens:[
+  WO(d=>2*d<180?`Bissektrisa ${2*d}° li burchakni teng ikkiga boʻldi. Har bir qism necha gradus?`:null),
+  WO(d=>d<180?`Yoyiq burchakdan ${180-d}° li burchak ajratildi. Qolgan burchak necha gradus?`:null),
+  WO(d=>d<90?`Toʻgʻri burchakdan ${90-d}° li burchak ajratildi. Qolgan burchak necha gradus?`:null),
+  WO(d=>{if(d>=180||d<2)return null;const a=R(1,d-1);return `∠AOB = ${a}°, ∠BOC = ${d-a}°. ∠AOC = ?`}),
+  WO(d=>({30:1,60:2,90:3,120:4,150:5,180:6})[d]?`Soat ${({30:1,60:2,90:3,120:4,150:5,180:6})[d]}:00 ni koʻrsatyapti. Millar orasidagi burchak necha gradus?`:null)
+ ]}
+];
+NEW_TOPICS.forEach(T=>TOPICS.push(T));
+/* sinflar boʻyicha mavzular (indekslar) */
+const GRADES={1:[18,19,20,21,42],2:[22,23,24,25,42],3:[26,27,28,29,30,43],4:[31,32,33,34,35,36,43],5:[45,46,47,48,0,5,3,1,7,29,34,16,9,44],6:[10,11,2,12,6,13,14,15,16,17,4,8,44],7:[37,38,39,40,41,2,14,44]};
+
 /* eski misol turlaridan katta javoblarga yaroqlilari: [indeks, maksimal javob] */
 const WOLD={2:[[0],[1],[2],[3],[4],[5]],6:[[0],[1],[2],[3]],10:[[0],[1],[4]],11:[[0],[1],[2],[3]],12:[[1],[2],[3]],13:[[0],[3]],15:[[0],[1],[2,40],[3],[4,40]],16:[[0,20],[1],[2],[3,30]],17:[[2]]};
 for(const k in WOLD)WOLD[k].forEach(([i,mx])=>{const g=TOPICS[k].gens[i];g.wide=true;if(mx)g.max=mx});
@@ -587,6 +790,14 @@ const __THEME='sirli',__musPlay=()=>!document.getElementById('game').classList.c
   setInterval(()=>{if(__musPlay()){if(!MUSIC.playing&&MUSIC.on)MUSIC.start(__THEME)}else if(MUSIC.playing)MUSIC.stop()},500);
 })();
 /* BK-EXTRA-END */
+
+
+
+
+
+
+
+
 
 
 

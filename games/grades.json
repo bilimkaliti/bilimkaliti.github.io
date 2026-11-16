@@ -1,0 +1,248 @@
+{
+ "1": [
+  {
+   "i": 18,
+   "n": "10 ichida qoʻshish va ayirish"
+  },
+  {
+   "i": 19,
+   "n": "20 ichida qoʻshish va ayirish"
+  },
+  {
+   "i": 20,
+   "n": "Taqqoslash va son qatori"
+  },
+  {
+   "i": 21,
+   "n": "Sanash (rasmlar bilan)"
+  },
+  {
+   "i": 42,
+   "n": "Mantiqiy savollar (1–2-sinf)"
+  }
+ ],
+ "2": [
+  {
+   "i": 22,
+   "n": "100 ichida qoʻshish va ayirish"
+  },
+  {
+   "i": 23,
+   "n": "Koʻpaytirish jadvali (2–5)"
+  },
+  {
+   "i": 24,
+   "n": "Uzunlik va vaqt"
+  },
+  {
+   "i": 25,
+   "n": "Oddiy masalalar"
+  },
+  {
+   "i": 42,
+   "n": "Mantiqiy savollar (1–2-sinf)"
+  }
+ ],
+ "3": [
+  {
+   "i": 26,
+   "n": "Koʻpaytirish jadvali"
+  },
+  {
+   "i": 27,
+   "n": "Qoldiqli boʻlish"
+  },
+  {
+   "i": 28,
+   "n": "Ifoda qiymati (qavslar)"
+  },
+  {
+   "i": 29,
+   "n": "Perimetr"
+  },
+  {
+   "i": 30,
+   "n": "Xona birliklari (1000 ichida)"
+  },
+  {
+   "i": 43,
+   "n": "Mantiqiy savollar (3–4-sinf)"
+  }
+ ],
+ "4": [
+  {
+   "i": 31,
+   "n": "Koʻp xonali sonlar"
+  },
+  {
+   "i": 32,
+   "n": "Koʻpaytirish va boʻlish"
+  },
+  {
+   "i": 33,
+   "n": "Tezlik, vaqt, masofa"
+  },
+  {
+   "i": 34,
+   "n": "Yuz"
+  },
+  {
+   "i": 35,
+   "n": "Kasrlar (qism)"
+  },
+  {
+   "i": 36,
+   "n": "Oʻlchov birliklari"
+  },
+  {
+   "i": 43,
+   "n": "Mantiqiy savollar (3–4-sinf)"
+  }
+ ],
+ "5": [
+  {
+   "i": 45,
+   "n": "Natural sonlar va yaxlitlash"
+  },
+  {
+   "i": 46,
+   "n": "Oddiy kasrlarni qoʻshish va ayirish"
+  },
+  {
+   "i": 47,
+   "n": "Oʻnli kasrlar bilan amallar"
+  },
+  {
+   "i": 48,
+   "n": "Burchaklar"
+  },
+  {
+   "i": 0,
+   "n": "Amallar tartibi"
+  },
+  {
+   "i": 5,
+   "n": "Darajalar va natural sonlar"
+  },
+  {
+   "i": 3,
+   "n": "Boʻlinish va EKUB"
+  },
+  {
+   "i": 1,
+   "n": "Kasrlar va foizlar"
+  },
+  {
+   "i": 7,
+   "n": "Aralash sonlar va oʻnli kasrlar"
+  },
+  {
+   "i": 29,
+   "n": "Perimetr"
+  },
+  {
+   "i": 34,
+   "n": "Yuz"
+  },
+  {
+   "i": 16,
+   "n": "Kub va kubsimon jism hajmi"
+  },
+  {
+   "i": 9,
+   "n": "Ketma-ketlik va shakllar"
+  },
+  {
+   "i": 44,
+   "n": "Mantiqiy savollar (5–7-sinf)"
+  }
+ ],
+ "6": [
+  {
+   "i": 10,
+   "n": "Algebraik ifodalar"
+  },
+  {
+   "i": 11,
+   "n": "Kasrlarni boʻlish"
+  },
+  {
+   "i": 2,
+   "n": "Tenglamalar"
+  },
+  {
+   "i": 12,
+   "n": "Nisbatlar"
+  },
+  {
+   "i": 6,
+   "n": "Nisbat va proporsiya"
+  },
+  {
+   "i": 13,
+   "n": "Foizlar"
+  },
+  {
+   "i": 14,
+   "n": "Geometrik shakllardagi burchaklar"
+  },
+  {
+   "i": 15,
+   "n": "Doira va aylana"
+  },
+  {
+   "i": 16,
+   "n": "Kub va kubsimon jism hajmi"
+  },
+  {
+   "i": 17,
+   "n": "Diagrammalar va oʻrta qiymat"
+  },
+  {
+   "i": 4,
+   "n": "Manfiy sonlar va geometriya"
+  },
+  {
+   "i": 8,
+   "n": "Modul va ifoda qiymati"
+  },
+  {
+   "i": 44,
+   "n": "Mantiqiy savollar (5–7-sinf)"
+  }
+ ],
+ "7": [
+  {
+   "i": 37,
+   "n": "Birhad va koʻphad"
+  },
+  {
+   "i": 38,
+   "n": "Darajalar xossalari"
+  },
+  {
+   "i": 39,
+   "n": "Qisqa koʻpaytirish formulalari"
+  },
+  {
+   "i": 40,
+   "n": "Chiziqli funksiya"
+  },
+  {
+   "i": 41,
+   "n": "Tenglamalar sistemasi"
+  },
+  {
+   "i": 2,
+   "n": "Tenglamalar"
+  },
+  {
+   "i": 14,
+   "n": "Geometrik shakllardagi burchaklar"
+  },
+  {
+   "i": 44,
+   "n": "Mantiqiy savollar (5–7-sinf)"
+  }
+ ]
+}
