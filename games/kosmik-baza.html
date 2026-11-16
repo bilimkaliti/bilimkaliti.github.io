@@ -594,34 +594,38 @@ const MUSIC=(function(){
   const CT=[0,2,4,7];
   /* prog — har takt akkord asosi (pogʻona), mel — 32 qadam (2 takt), 0..3 akkord tovushlari, 4..6 — yuqori oktava, null — pauza */
   const THEMES={
-    minora:{bpm:120,root:60,sc:'maj',prog:[0,3,4,0],mel:[0,null,1,2,3,null,2,1,0,null,1,2,4,null,3,null,2,null,1,0,1,null,2,3,4,null,3,2,1,null,0,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'..x...x...x...x.',mw:'square',bw:'triangle'},
-    xazina:{bpm:104,root:62,sc:'dor',prog:[0,6,3,4],mel:[0,null,null,1,2,null,1,0,null,null,2,null,3,null,null,null,4,null,null,3,2,null,1,null,0,null,2,null,1,null,null,null],bass:'x..x..x.x..x..x.',kick:'x.....x.x.....x.',hat:'...x.....x......',mw:'triangle',bw:'triangle'},
-    raketa:{bpm:128,root:57,sc:'min',prog:[0,5,3,6],mel:[0,1,2,4,2,1,0,1,2,4,5,4,2,1,0,null,0,1,2,4,2,1,2,4,5,6,5,4,2,null,1,null],bass:'x.xxx.xxx.xxx.xx',kick:'x...x...x...x...',hat:'xxxxxxxxxxxxxxxx',mw:'sawtooth',bw:'sawtooth'},
-    mozaika:{bpm:88,root:65,sc:'maj',prog:[0,4,5,3],mel:[2,null,null,null,1,null,0,null,null,null,1,null,2,null,null,null,4,null,null,null,3,null,2,null,1,null,null,null,0,null,null,null],bass:'x.......x.......',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'sine',pad:1},
-    bomba:{bpm:112,root:52,sc:'har',prog:[0,0,5,4],mel:[null,null,null,null,4,null,null,3,null,null,null,null,4,null,3,null,null,null,null,null,4,null,null,3,null,null,2,null,1,null,null,null],bass:'xxxxxxxxxxxxxxxx',kick:'x..x..x.x..x..x.',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'sawtooth'},
-    tez:{bpm:140,root:67,sc:'maj',prog:[0,4,5,3],mel:[0,2,4,2,0,2,4,null,3,2,1,null,2,null,null,null,1,3,4,3,1,3,4,null,5,4,3,2,0,null,null,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'x.x.x.x.x.x.x.x.',mw:'square',bw:'triangle'},
-    nishon:{bpm:96,root:62,sc:'min',prog:[0,5,6,4],mel:[0,null,0,1,2,null,null,null,1,null,0,null,2,null,null,null,3,null,3,2,1,null,null,null,2,null,1,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x.....x.x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'triangle'},
-    zanjir:{bpm:84,root:60,sc:'pen',prog:[0,2,1,3],mel:[2,null,null,1,null,null,0,null,null,null,1,null,null,2,null,null,3,null,null,2,null,null,1,null,null,null,0,null,null,null,null,null],bass:'x.....x...x.....',kick:'x.......x.......',hat:'....x.......x..x',mw:'sine',bw:'sine',pad:1},
-    sirli:{bpm:80,root:57,sc:'har',prog:[0,5,3,4],mel:[0,null,null,1,null,null,2,null,null,null,4,null,3,null,null,null,2,null,null,1,null,null,0,null,null,null,1,null,2,null,null,null],bass:'x.......x...x...',kick:'x.......x.......',hat:'..........x.....',mw:'triangle',bw:'sine',pad:1},
-    kosmik:{bpm:100,root:55,sc:'min',prog:[0,3,5,4],mel:[0,2,4,2,0,2,4,2,1,3,5,3,1,3,5,3,0,2,4,2,0,2,4,6,5,4,2,1,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'sawtooth',bw:'sine',pad:1},
-    eshik:{bpm:92,root:62,sc:'dor',prog:[0,3,0,4],mel:[0,null,1,null,2,null,null,1,0,null,null,null,4,null,3,null,2,null,1,null,0,null,1,2,1,null,null,null,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'triangle'}
+    minora:{bpm:126,root:60,sc:'maj',prog:[0,4,5,3],mel:[4,null,4,5,6,null,5,4,2,null,null,2,3,null,2,null,1,null,2,3,4,null,3,2,1,null,0,null,null,null,null,null],bass:'x.o.x.o.x.o.xxo.',kick:'x...x...x..xx...',sn:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ch:'..x...x...x...x.',arp:'',mw:'square',bw:'triangle',echo:1},
+    xazina:{sn:'......x.......x.',ch:'x.....x.........',bpm:104,root:62,sc:'dor',prog:[0,6,3,4],mel:[0,null,null,1,2,null,1,0,null,null,2,null,3,null,null,null,4,null,null,3,2,null,1,null,0,null,2,null,1,null,null,null],bass:'x..x..x.x..x..x.',kick:'x.....x.x.....x.',hat:'...x.....x......',mw:'triangle',bw:'triangle'},
+    raketa:{sn:'....x.......x...',arp:'x.x.x.x.x.x.x.x.',echo:1,bpm:128,root:57,sc:'min',prog:[0,5,3,6],mel:[0,1,2,4,2,1,0,1,2,4,5,4,2,1,0,null,0,1,2,4,2,1,2,4,5,6,5,4,2,null,1,null],bass:'x.xxx.xxx.xxx.xx',kick:'x...x...x...x...',hat:'xxxxxxxxxxxxxxxx',mw:'sawtooth',bw:'sawtooth'},
+    mozaika:{echo:1,bpm:88,root:65,sc:'maj',prog:[0,4,5,3],mel:[2,null,null,null,1,null,0,null,null,null,1,null,2,null,null,null,4,null,null,null,3,null,2,null,1,null,null,null,0,null,null,null],bass:'x.......x.......',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'sine',pad:1},
+    bomba:{sn:'....x.......x...',bpm:112,root:52,sc:'har',prog:[0,0,5,4],mel:[null,null,null,null,4,null,null,3,null,null,null,null,4,null,3,null,null,null,null,null,4,null,null,3,null,null,2,null,1,null,null,null],bass:'xxxxxxxxxxxxxxxx',kick:'x..x..x.x..x..x.',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'sawtooth'},
+    tez:{sn:'....x.......x...',ch:'..x...x...x...x.',bpm:140,root:67,sc:'maj',prog:[0,4,5,3],mel:[0,2,4,2,0,2,4,null,3,2,1,null,2,null,null,null,1,3,4,3,1,3,4,null,5,4,3,2,0,null,null,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'x.x.x.x.x.x.x.x.',mw:'square',bw:'triangle'},
+    nishon:{sn:'....x.......x..x',ch:'x.......x.......',echo:1,bpm:96,root:62,sc:'min',prog:[0,5,6,4],mel:[0,null,0,1,2,null,null,null,1,null,0,null,2,null,null,null,3,null,3,2,1,null,null,null,2,null,1,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x.....x.x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'triangle'},
+    zanjir:{sn:'........x.......',echo:1,bpm:84,root:60,sc:'pen',prog:[0,2,1,3],mel:[2,null,null,1,null,null,0,null,null,null,1,null,null,2,null,null,3,null,null,2,null,null,1,null,null,null,0,null,null,null,null,null],bass:'x.....x...x.....',kick:'x.......x.......',hat:'....x.......x..x',mw:'sine',bw:'sine',pad:1},
+    sirli:{sn:'........x.......',echo:1,bpm:80,root:57,sc:'har',prog:[0,5,3,4],mel:[0,null,null,1,null,null,2,null,null,null,4,null,3,null,null,null,2,null,null,1,null,null,0,null,null,null,1,null,2,null,null,null],bass:'x.......x...x...',kick:'x.......x.......',hat:'..........x.....',mw:'triangle',bw:'sine',pad:1},
+    kosmik:{sn:'........x.......',arp:'x.x.x.x.x.x.x.x.',echo:1,bpm:100,root:55,sc:'min',prog:[0,3,5,4],mel:[0,2,4,2,0,2,4,2,1,3,5,3,1,3,5,3,0,2,4,2,0,2,4,6,5,4,2,1,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'sawtooth',bw:'sine',pad:1},
+    eshik:{sn:'........x.......',ch:'x.......x.......',bpm:92,root:62,sc:'dor',prog:[0,3,0,4],mel:[0,null,1,null,2,null,null,1,0,null,null,null,4,null,3,null,2,null,1,null,0,null,1,2,1,null,null,null,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'....x.......x...',mw:'triangle',bw:'triangle'}
   };
-  let ctx=null,out=null,theme=null,timer=null,step=0,next=0,tempo=1,on=true,playing=false,noise=null;
+  let ctx=null,out=null,dly=null,theme=null,timer=null,step=0,next=0,tempo=1,on=true,playing=false,noise=null;
   try{on=localStorage.getItem('bk-music')!=='0'}catch(e){}
   const hz=m=>440*Math.pow(2,(m-69)/12);
   const semi=(sc,d)=>{const s=SCALES[sc],n=s.length,o=Math.floor(d/n);return s[((d%n)+n)%n]+12*o};
   function ensure(){
-    if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();out=ctx.createGain();out.gain.value=0;out.connect(ctx.destination);
+    if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=4;comp.connect(ctx.destination);out=ctx.createGain();out.gain.value=0;out.connect(comp);dly=ctx.createDelay(1);const fb=ctx.createGain();fb.gain.value=.28;const wet=ctx.createGain();wet.gain.value=.35;dly.connect(fb).connect(dly);dly.connect(wet).connect(out);
       const len=ctx.sampleRate*.2;noise=ctx.createBuffer(1,len,ctx.sampleRate);const d=noise.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1}
     if(ctx.state==='suspended')ctx.resume();
   }
-  function tone(f,t,dur,type,vol){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(out);o.start(t);o.stop(t+dur+.05)}
+  function tone(f,t,dur,type,vol,send){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(out);if(send&&dly)g.connect(dly);o.start(t);o.stop(t+dur+.05)}
+  function snare(t){const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();s.buffer=noise;f.type='bandpass';f.frequency.value=1900;f.Q.value=.7;g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.0001,t+.14);s.connect(f).connect(g).connect(out);s.start(t);s.stop(t+.16);tone(190,t,.08,'triangle',.18)}
   function kick(t){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);g.gain.setValueAtTime(.55,t);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g).connect(out);o.start(t);o.stop(t+.2)}
   function hat(t){const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();s.buffer=noise;f.type='highpass';f.frequency.value=7000;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+.05);s.connect(f).connect(g).connect(out);s.start(t);s.stop(t+.06)}
   function play(s,t,dur){
     const T=theme,bar=Math.floor(s/16)%T.prog.length,pos=s%16,half=Math.floor(s/16)%2,r=T.prog[bar];
-    if(T.bass[pos]==='x')tone(hz(T.root-24+semi(T.sc,r)),t,dur*1.6,T.bw,.16);
-    const m=T.mel[half*16+pos];if(m!=null){const dd=r+(m<4?CT[m]:CT[m-4]+7);tone(hz(T.root+semi(T.sc,dd)),t,dur*(T.pad?3:1.8),T.mw,T.mw==='sine'||T.mw==='triangle'?.14:.06)}
+    const bc=T.bass[pos];if(bc==='x'||bc==='o')tone(hz(T.root-24+semi(T.sc,r)+(bc==='o'?12:0)),t,dur*1.6,T.bw,.16);
+    if(T.ch&&T.ch[pos]==='x')[0,2,4].forEach(k=>tone(hz(T.root+semi(T.sc,r+k)),t,dur*1.1,'triangle',.05));
+    if(T.arp&&T.arp[pos]==='x')tone(hz(T.root+12+semi(T.sc,r+[0,2,4,7][(pos/2|0)%4])),t,dur*.9,'sine',.05,1);
+    if(T.sn&&T.sn[pos]==='x')snare(t);
+    const m=T.mel[half*16+pos];if(m!=null){const dd=r+(m<4?CT[m]:CT[m-4]+7);tone(hz(T.root+semi(T.sc,dd)),t,dur*(T.pad?3:1.8),T.mw,T.mw==='sine'||T.mw==='triangle'?.14:.06,T.echo)}
     if(T.pad&&pos===0)[0,2,4].forEach(k=>tone(hz(T.root-12+semi(T.sc,r+k)),t,dur*15,'sine',.045));
     if(T.kick[pos]==='x')kick(t);
     if(T.hat[pos]==='x')hat(t);
@@ -629,7 +633,7 @@ const MUSIC=(function(){
   function sched(){if(!playing)return;const dur=60/(theme.bpm*tempo)/4;while(next<ctx.currentTime+.2){play(step,next,dur);next+=dur;step=(step+1)%(16*theme.prog.length)}}
   return{
     get on(){return on},
-    start(name){if(!on||!THEMES[name])return;try{ensure();if(playing&&theme===THEMES[name])return;this.stop(true);theme=THEMES[name];step=0;tempo=1;next=ctx.currentTime+.1;playing=true;out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setValueAtTime(out.gain.value,ctx.currentTime);out.gain.linearRampToValueAtTime(.32,ctx.currentTime+1.2);timer=setInterval(sched,50)}catch(e){}},
+    start(name){if(!on||!THEMES[name])return;try{ensure();if(playing&&theme===THEMES[name])return;this.stop(true);theme=THEMES[name];step=0;tempo=1;next=ctx.currentTime+.1;if(dly)dly.delayTime.value=60/theme.bpm*.75;playing=true;out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setValueAtTime(out.gain.value,ctx.currentTime);out.gain.linearRampToValueAtTime(.32,ctx.currentTime+1.2);timer=setInterval(sched,50)}catch(e){}},
     stop(quick){playing=false;clearInterval(timer);timer=null;if(ctx&&out){out.gain.cancelScheduledValues(ctx.currentTime);out.gain.setValueAtTime(quick?0:out.gain.value,ctx.currentTime);if(!quick)out.gain.linearRampToValueAtTime(0,ctx.currentTime+.6)}},
     tempo(x){tempo=Math.max(.5,Math.min(2.2,x))},
     toggle(name){on=!on;try{localStorage.setItem('bk-music',on?'1':'0')}catch(e){}if(on&&name)this.start(name);else if(!on)this.stop();return on},
@@ -649,6 +653,8 @@ const __THEME='kosmik',__musPlay=()=>!document.getElementById('game').classList.
   setInterval(()=>{if(__musPlay()){if(!MUSIC.playing&&MUSIC.on)MUSIC.start(__THEME)}else if(MUSIC.playing)MUSIC.stop()},500);
 })();
 /* BK-EXTRA-END */
+
+
 
 
 const SECRET=[
