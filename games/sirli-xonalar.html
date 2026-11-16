@@ -233,6 +233,34 @@ table.mg td{width:44px;height:44px;border:2px solid var(--ink);text-align:center
 /* ===== Telegram Mini App ===== */
 const TG=(window.Telegram&&window.Telegram.WebApp)||null;
 try{if(TG){TG.ready();TG.expand()}}catch(e){}
+/* ===== To'liq ekran tugmasi ===== */
+(function(){
+  const css=document.createElement('style');
+  css.textContent=`#fsBtn{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:800;font-size:15px;background:#14203a;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer;opacity:.9}
+#fsBtn:hover{opacity:1}
+body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px))}
+@media (max-width:760px){.arena{grid-template-columns:1fr!important}}`;
+  document.head.appendChild(css);
+  const b=document.createElement('button');b.id='fsBtn';b.type='button';
+  const canTG=()=>TG&&typeof TG.requestFullscreen==='function'&&TG.isVersionAtLeast&&TG.isVersionAtLeast('8.0');
+  const isFS=()=>canTG()?!!TG.isFullscreen:!!document.fullscreenElement;
+  const label=()=>{const f=isFS();b.textContent=f?'🗗 Kichik ekran':'⛶ Toʻliq ekran';document.body.classList.toggle('tgfs',f&&canTG())};
+  b.onclick=()=>{
+    try{
+      if(canTG()){isFS()?TG.exitFullscreen():TG.requestFullscreen()}
+      else if(document.fullscreenElement){document.exitFullscreen()}
+      else if(document.documentElement.requestFullscreen){document.documentElement.requestFullscreen().catch(()=>{if(TG)TG.expand()})}
+      else if(TG){TG.expand()}
+    }catch(e){}
+    setTimeout(label,300);
+  };
+  document.addEventListener('fullscreenchange',label);
+  try{if(TG){TG.onEvent('fullscreenChanged',label);TG.onEvent('fullscreenFailed',label)}}catch(e){}
+  const add=()=>{document.body.appendChild(b);label();
+    try{if(canTG()&&['tdesktop','macos','weba','webk','web'].includes(TG.platform)&&!TG.isFullscreen)TG.requestFullscreen()}catch(e){}};
+  if(document.body)add();else document.addEventListener('DOMContentLoaded',add);
+})();
+
 let _kt=null;
 function reportKey(text,notify){
   if(!TG||!TG.initData)return;
