@@ -539,7 +539,7 @@ $('#names').addEventListener('input',e=>{if(e.target.dataset.i!==undefined)cfg.n
 let AC=null;
 function snd(type){
   if(!st.sound)return;
-  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
     const seq={ok:[[523,.12],[659,.12],[784,.12],[1047,.3]],bad:[[196,.16],[147,.3]],win:[[523,.14],[659,.14],[784,.14],[1047,.14],[784,.12],[1047,.45]]}[type];
     let t0=AC.currentTime+.01;
     for(const [f,d] of seq){const o=AC.createOscillator(),g=AC.createGain();o.type=type==='bad'?'sawtooth':'triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(type==='bad'?.12:.2,t0+.01);g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g).connect(AC.destination);o.start(t0);o.stop(t0+d+.03);t0+=d*.92}

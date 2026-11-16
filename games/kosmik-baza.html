@@ -559,7 +559,7 @@ let AC=null;
 function snd(type){
   if(!st.sound)return;
   try{
-    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
     const seq={ok:[[523,.12],[659,.12],[784,.12],[1047,.3]],bad:[[196,.16],[147,.3]],win:[[523,.14],[659,.14],[784,.14],[1047,.14],[784,.12],[1047,.45]],tick:[[880,.08],[880,.08]],fail:[[330,.2],[262,.2],[196,.4]]}[type];
     let t0=AC.currentTime+.01;
     for(const [f,d] of seq){

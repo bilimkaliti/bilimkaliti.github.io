@@ -146,6 +146,10 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
 .endcard p{color:var(--muted)}
 
 @media (prefers-reduced-motion:reduce){.door{transition:none}.torch::before{animation:none}.doorway.shake{animation:none}}
+.askov{position:fixed;inset:0;background:rgba(10,12,30,.65);display:grid;place-items:center;padding:16px;z-index:40}
+.askbox{background:var(--surface);border-radius:20px;padding:24px;max-width:460px;width:100%;text-align:center}
+.askbox h3{margin:0 0 16px;font-size:1.3rem}
+.askbtns{display:flex;gap:12px;justify-content:center}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -160,7 +164,7 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
       <ul class="rules">
         <li><b>1</b><span>Har bir misolning belgisi bor: <span style="color:var(--s1)">●</span> <span style="color:var(--s2)">▲</span> <span style="color:var(--s3)">■</span> <span style="color:var(--s4)">★</span></span></li>
         <li><b>2</b><span>Javoblarni belgilar tartibida tering: ● ▲ ■ ★</span></li>
-        <li><b>3</b><span>Har eshik uchun 3 ⭐. Maslahat olish yoki 3 marta xato qilish yulduzni kamaytiradi.</span></li>
+        <li><b>3</b><span>Har eshik uchun 3 ⭐. Har 3 ta xato kod uchun −1 ⭐.</span></li>
       </ul>
       <button class="big" id="startBtn">Oʻyinni boshlash</button>
     </div>
@@ -180,6 +184,7 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
     <div class="meta">
       <span class="pill" id="starsTotal">⭐ 0</span>
       <span class="pill" id="timer">00:00</span>
+      <button class="ghost" id="soundBtn" aria-label="Tovush">🔊</button>
       <button class="ghost" id="restartBtn" title="Yangi misollar bilan qaytadan">↻ Qaytadan</button>
     </div>
   </div>
@@ -205,10 +210,6 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
         <div class="slots" id="slots"></div>
         <div class="feedback" id="feedback" aria-live="polite"></div>
         <div class="pad" id="pad"></div>
-        <div class="tools">
-          <button class="ghost" id="hintBtn">💡 Maslahat (−1 ⭐)</button>
-          <button class="ghost" id="answersBtn">👁 Javoblar</button>
-        </div>
       </div>
     </div>
   </div>
@@ -226,6 +227,7 @@ button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
 </section>
 
 </main>
+<div class="askov hidden" id="ask"><div class="askbox"><h3>Oʻyin yangi misollar bilan boshidan boshlansinmi?</h3><div class="askbtns"><button class="big" id="askYes">Ha</button><button class="ghost" id="askNo">Yoʻq</button></div></div></div>
 <script>
 /* ===== Telegram Mini App ===== */
 const TG=(window.Telegram&&window.Telegram.WebApp)||null;
@@ -351,7 +353,6 @@ function buildDoor(){
   $('#tip').textContent=D.tip;
   $('#treasure').textContent=D.treasure;
   $('#feedback').textContent='';$('#feedback').className='feedback';
-  $('#hintBtn').disabled=false;
   renderProgress();renderCards();renderSlots();renderPad();
   reportKey(`🔑 Eshik kodi — ${st.door+1}-eshik: `+st.puzzles.slice().sort((a,b)=>a.sym-b.sym).map(p=>p.d).join(''),st.door===0);
   $('#starsTotal').textContent='⭐ '+totalStars();
@@ -393,20 +394,20 @@ function check(){
   const right=st.puzzles.slice().sort((a,b)=>a.sym-b.sym).map(p=>String(p.d));
   const hits=st.code.filter((c,i)=>c===right[i]).length;
   if(hits===4){openDoor();return}
-  st.wrong++;st.busy=true;
+  st.wrong++;st.busy=true;snd('bad');
   renderSlots('bad');
   const dw=$('#doorway');dw.classList.remove('shake');void dw.offsetWidth;dw.classList.add('shake');
-  $('#feedback').textContent=`Kod notoʻgʻri. Toʻgʻri turgan raqamlar: ${hits} ta. ${st.wrong===3?'(−1 ⭐)':''}`;
+  $('#feedback').textContent=`Kod notoʻgʻri. Toʻgʻri turgan raqamlar: ${hits} ta. ${st.wrong%3===0&&st.wrong<=9?'(−1 ⭐)':''}`;
   $('#feedback').className='feedback bad';
   setTimeout(()=>{st.code=[];st.busy=false;renderSlots()},1100);
 }
 
-function doorStars(){return Math.max(0,3-st.hints-(st.wrong>=3?1:0))}
+function doorStars(){return Math.max(0,3-Math.floor(st.wrong/3))}
 
 function openDoor(){
   st.solved=true;
   const s=doorStars();st.stars.push(s);
-  renderSlots('good');setPadDisabled(true);$('#hintBtn').disabled=true;
+  renderSlots('good');setPadDisabled(true);snd('ok');
   $('#feedback').textContent='Toʻgʻri! Eshik ochilmoqda…';$('#feedback').className='feedback good';
   $('#lock').textContent='🔓';
   st.puzzles.forEach(p=>p.rev=true);refreshCards();
@@ -430,27 +431,35 @@ function finish(){
   $('#endScore').textContent=`⭐ ${t} / ${max}`;
   $('#endTime').textContent=`Sarflangan vaqt: ${fmtTime(Date.now()-st.start)}`;
   $('#endMsg').textContent=t>=13?'Ajoyib! Siz haqiqiy kod ustasisiz.':t>=8?'Yaxshi natija! Yana bir bor urinib, koʻproq yulduz yigʻing.':'Yana urinib koʻring — har safar misollar yangilanadi.';
-  show('end');
+  show('end');snd('win');
 }
 
-function hint(){
-  if(st.solved)return;
-  const left=st.puzzles.filter(p=>!p.rev);
-  if(!left.length)return;
-  pick(left).rev=true;st.hints++;refreshCards();
-  if(left.length===1)$('#hintBtn').disabled=true;
+/* ===== tovush ===== */
+let AC=null,soundOn=true;
+try{soundOn=localStorage.getItem('ek-sound')!=='0'}catch(e){}
+function snd(type){
+  if(!soundOn)return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    const seq={ok:[[523,.12],[659,.12],[784,.12],[1047,.3]],bad:[[196,.16],[147,.3]],win:[[523,.14],[659,.14],[784,.14],[1047,.14],[784,.12],[1047,.45]],key:[[700,.04]]}[type];
+    let t0=AC.currentTime+.02;
+    for(const [f,d] of seq){const o=AC.createOscillator(),g=AC.createGain();o.type=type==='bad'?'sawtooth':'triangle';o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(type==='bad'?.14:type==='key'?.06:.22,t0+.01);g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+      o.connect(g).connect(AC.destination);o.start(t0);o.stop(t0+d+.03);t0+=d*.92}
+  }catch(e){}
 }
-function answers(){
-  if(st.solved)return;
-  st.puzzles.forEach(p=>p.rev=true);st.hints=3;refreshCards();$('#hintBtn').disabled=true;
-}
+function soundLabel(){$('#soundBtn').textContent=soundOn?'🔊':'🔇'}
+$('#soundBtn').onclick=()=>{soundOn=!soundOn;try{localStorage.setItem('ek-sound',soundOn?'1':'0')}catch(e){}soundLabel();if(soundOn)snd('key')};
+soundLabel();
+document.addEventListener('pointerdown',()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}},{once:true});
 
 $('#startBtn').onclick=newGame;
 $('#againBtn').onclick=newGame;
-$('#restartBtn').onclick=newGame;
+$('#restartBtn').onclick=()=>$('#ask').classList.remove('hidden');
+$('#askNo').onclick=()=>$('#ask').classList.add('hidden');
+$('#askYes').onclick=()=>{$('#ask').classList.add('hidden');newGame()};
 $('#nextBtn').onclick=next;
-$('#hintBtn').onclick=hint;
-$('#answersBtn').onclick=answers;
 $('#pad').addEventListener('click',e=>{const b=e.target.closest('button');if(b)press(b.dataset.k)});
 document.addEventListener('keydown',e=>{
   if($('#game').classList.contains('hidden'))return;
