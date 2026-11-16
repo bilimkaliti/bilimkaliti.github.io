@@ -582,6 +582,26 @@ const ADD={
  ]
 };
 /* ===== 1–4 va 7-sinf mavzulari hamda mantiqiy savollar (qisqa, tez yechiladigan) ===== */
+/* chizmalar (SVG) — rang avtomatik: yorugʻ va qorongʻi rejimda ham koʻrinadi */
+const FIG=(()=>{
+  const S=(w,hh,inner)=>`<svg class="fig" viewBox="0 0 ${w} ${hh}" width="${w}" height="${hh}" role="img" aria-label="chizma" style="display:block;max-width:100%;margin:4px 0 6px;color:inherit" fill="none" stroke="currentColor" stroke-width="2.5" font-family="inherit" font-weight="700" font-size="14">${inner}</svg>`;
+  const T=(x,y,t,a='middle',s=14,c='currentColor')=>`<text x="${x}" y="${y}" text-anchor="${a}" fill="${c}" stroke="none" font-size="${s}">${t}</text>`;
+  const ACC='#e8590c';
+  return{
+    rect:(a,b,mid)=>S(200,112,`<rect x="40" y="14" width="130" height="72" rx="2" fill="rgba(62,123,250,.12)"/>${T(105,104,a+' sm')}${T(34,55,b==='?'?'?':b+' sm','end',16,b==='?'?ACC:'currentColor')}${T(105,55,mid,'middle',13)}`),
+    square:(a,mid)=>S(170,120,`<rect x="40" y="10" width="86" height="86" fill="rgba(48,164,108,.14)"/>${T(83,114,a==='?'?'?':a+' sm','middle',16,ACC)}${T(83,58,mid,'middle',12)}`),
+    tri:(a,b)=>S(220,124,`<path d="M20 108L200 108L80 14Z" fill="rgba(245,196,0,.16)"/>${T(46,100,a+'°','start',13)}${T(178,100,b+'°','end',13)}${T(80,38,'?','middle',17,ACC)}<path d="M38 108a18 18 0 0 0-6-13M186 108a14 14 0 0 1 3-9" stroke-width="1.6"/>`),
+    line:(a)=>{const r=Math.PI*a/180,x=110+Math.cos(r)*85,y=100-Math.sin(r)*85,b1=r/2,b2=(r+Math.PI)/2,P=(b,k)=>[(110+Math.cos(b)*k).toFixed(1),(100-Math.sin(b)*k+5).toFixed(1)],[x1,y1]=P(b1,a<40?62:40),[x2,y2]=P(b2,a>140?62:36);return S(220,118,`<path d="M15 100H205M110 100L${x.toFixed(1)} ${y.toFixed(1)}"/>${T(x1,y1,a+'°','middle',14)}${T(x2,y2,'x','middle',17,ACC)}<circle cx="110" cy="100" r="3" fill="currentColor"/>`)},
+    right:(a)=>{const r=Math.PI*a/180,x=30+Math.cos(r)*95,y=110-Math.sin(r)*95;return S(150,124,`<path d="M30 110H140M30 110V10M30 110L${x.toFixed(1)} ${y.toFixed(1)}"/><path d="M30 96h14v14" stroke-width="1.6"/>${T((30+Math.cos(r/2)*(a<30?80:52)).toFixed(1),(115-Math.sin(r/2)*(a<30?80:52)).toFixed(1),a+'°','middle',14)}${T((30+Math.cos((r+Math.PI/2)/2)*(a>60?80:50)).toFixed(1),(115-Math.sin((r+Math.PI/2)/2)*(a>60?80:50)).toFixed(1),'x','middle',17,ACC)}`)},
+    circle:(lab)=>S(160,130,`<circle cx="80" cy="62" r="50" fill="rgba(142,91,216,.12)"/><path d="M30 62H130" stroke-dasharray="5 4"/><path d="M80 62L115 26" stroke="${ACC}"/>${T(80,78,lab,'middle',12)}${T(104,40,'r','start',15,ACC)}<circle cx="80" cy="62" r="3" fill="currentColor"/>`),
+    cube:()=>S(150,132,`<path d="M20 40h70v70H20zM20 40l30-25h70l-30 25M90 110l30-25V15" fill="rgba(62,123,250,.10)"/>${T(55,128,'a','middle',16,ACC)}`),
+    clock:(h)=>{let t='';for(let i=0;i<12;i++){const b=i*Math.PI/6;t+=`<line x1="${70+50*Math.sin(b)}" y1="${70-50*Math.cos(b)}" x2="${70+56*Math.sin(b)}" y2="${70-56*Math.cos(b)}" stroke-width="${i%3?1.5:3}"/>`}const b=h*Math.PI/6;return S(140,140,`<circle cx="70" cy="70" r="62" fill="rgba(255,255,255,.06)"/>${t}<line x1="70" y1="70" x2="${(70+32*Math.sin(b)).toFixed(1)}" y2="${(70-32*Math.cos(b)).toFixed(1)}" stroke-width="5" stroke-linecap="round"/><line x1="70" y1="70" x2="70" y2="20" stroke="${ACC}" stroke-width="3" stroke-linecap="round"/><circle cx="70" cy="70" r="4" fill="currentColor"/>`)},
+    cells:(n)=>{const set=new Set(['0,0']),cells=[[0,0]];while(cells.length<n){const [x,y]=pick(cells),[dx,dy]=pick([[1,0],[-1,0],[0,1],[0,-1]]),k=(x+dx)+','+(y+dy);if(!set.has(k)&&Math.abs(x+dx)<4&&Math.abs(y+dy)<3){set.add(k);cells.push([x+dx,y+dy])}}
+      const xs=cells.map(c=>c[0]),ys=cells.map(c=>c[1]),mx=Math.min(...xs),my=Math.min(...ys),w=(Math.max(...xs)-mx+1)*22+8,hh=(Math.max(...ys)-my+1)*22+8;
+      return S(w,hh,cells.map(([x,y])=>`<rect x="${4+(x-mx)*22}" y="${4+(y-my)*22}" width="22" height="22" fill="rgba(62,123,250,.25)" stroke-width="2"/>`).join(''))},
+    bars:(vals,k)=>{const mx=Math.max(...vals),D=['Du','Se','Ch','Pa'];return S(220,140,vals.map((v,i)=>{const hh=Math.max(8,Math.round(v/mx*90)),x=22+i*50;return `<rect x="${x}" y="${112-hh}" width="34" height="${hh}" fill="${i===k?'rgba(232,89,12,.35)':'rgba(62,123,250,.35)'}" stroke-width="2"/>${T(x+17,106-hh,i===k?'?':v,'middle',14,i===k?ACC:'currentColor')}${T(x+17,130,D[i],'middle',12)}`}).join('')+`<path d="M12 112H212"/>`)}
+  };
+})();
 const EM=['🍎','⭐','🎈','🐟','🌸','🍬','⚽','🐥'];
 const rep=(e,n)=>e.repeat(n);
 const NEW_TOPICS=[
@@ -779,10 +799,29 @@ const NEW_TOPICS=[
   WO(d=>{if(d>=180||d<2)return null;const a=R(1,d-1);return `∠AOB = ${a}°, ∠BOC = ${d-a}°. ∠AOC = ?`}),
   WO(d=>({30:1,60:2,90:3,120:4,150:5,180:6})[d]?`Soat ${({30:1,60:2,90:3,120:4,150:5,180:6})[d]}:00 ni koʻrsatyapti. Millar orasidagi burchak necha gradus?`:null)
  ]}
+,
+ /* 49 */ {name:'Chizmali masalalar (2–4-sinf)',gens:[
+  W(d=>{const a=R(2,15);return FIG.rect(a,'?',`P = ${2*(a+d)} sm`)+`Perimetr ${2*(a+d)} sm. Noma'lum tomon (?) necha sm?`}),
+  W(d=>{const a=R(2,9);if(a*d>150)return null;return FIG.rect(a,'?',`S = ${a*d} sm²`)+`Yuzi ${a*d} sm². Noma'lum tomon (?) necha sm?`}),
+  W(d=>FIG.square('?',`P = ${4*d} sm`)+`Kvadrat perimetri ${4*d} sm. Tomoni necha sm?`),
+  W(d=>d<=12?FIG.clock(d)+`Soat necha boʻldi?`:null,12),
+  W(d=>d<=20?FIG.cells(d)+`Shakl nechta katakdan iborat?`:null,20),
+  W(d=>{const v=[R(2,15),R(2,15),R(2,15)],k=R(0,3),vals=[...v];vals.splice(k,0,d);const s=vals.reduce((a,b)=>a+b,0);return FIG.bars(vals,k)+`Toʻrt kunda jami ${s} ta kitob oʻqildi. ? = ?`},40)
+ ]},
+ /* 50 */ {name:'Chizmali geometriya (5–7-sinf)',gens:[
+  W(d=>{const a=R(3,20);return FIG.rect(a,'?',`P = ${2*(a+d)} sm`)+`Toʻgʻri toʻrtburchak perimetri ${2*(a+d)} sm. Noma'lum tomon (?) necha sm?`}),
+  W(d=>{const a=R(3,12);if(a*d>300)return null;return FIG.rect(a,'?',`S = ${a*d} sm²`)+`Toʻgʻri toʻrtburchak yuzi ${a*d} sm². Noma'lum tomon (?) necha sm?`}),
+  WO(d=>{if(d>170)return null;const s=180-d,a=R(10,s-10);if(s-a<10)return null;return FIG.tri(a,s-a)+`Uchburchakning noma'lum burchagi (?) necha gradus?`}),
+  WO(d=>d<175&&d>5?FIG.line(180-d)+`Yoyiq burchak. x = ?`:null),
+  WO(d=>d<85&&d>5?FIG.right(90-d)+`Toʻgʻri burchak ikkiga boʻlingan. x = ?`:null),
+  W(d=>FIG.circle(`d = ${2*d} sm`)+`Doira diametri ${2*d} sm. Radiusi (r) necha sm?`),
+  W(d=>d<=10?FIG.cube()+`Kubning hajmi ${d**3} sm³. Qirrasi (a) necha sm?`:null,10),
+  W(d=>{const v=[R(5,30),R(5,30),R(5,30)],k=R(0,3),vals=[...v];vals.splice(k,0,d);const s=vals.reduce((a,b)=>a+b,0);return FIG.bars(vals,k)+`Diagrammadagi qiymatlar yigʻindisi ${s}. ? = ?`},60)
+ ]}
 ];
 NEW_TOPICS.forEach(T=>TOPICS.push(T));
 /* sinflar boʻyicha mavzular (indekslar) */
-const GRADES={1:[18,19,20,21,42],2:[22,23,24,25,42],3:[26,27,28,29,30,43],4:[31,32,33,34,35,36,43],5:[45,46,47,48,0,5,3,1,7,29,34,16,9,44],6:[10,11,2,12,6,13,14,15,16,17,4,8,44],7:[37,38,39,40,41,2,14,44]};
+const GRADES={1:[18,19,20,21,42],2:[22,23,24,25,49,42],3:[26,27,28,29,30,49,43],4:[31,32,33,34,35,36,49,43],5:[45,46,47,48,0,5,3,1,7,29,34,16,50,9,44],6:[10,11,2,12,6,13,14,15,16,17,4,8,50,44],7:[37,38,39,40,41,2,14,50,44]};
 
 /* eski misol turlaridan katta javoblarga yaroqlilari: [indeks, maksimal javob] */
 const WOLD={2:[[0],[1],[2],[3],[4],[5]],6:[[0],[1],[2],[3]],10:[[0],[1],[4]],11:[[0],[1],[2],[3]],12:[[1],[2],[3]],13:[[0],[3]],15:[[0],[1],[2,40],[3],[4,40]],16:[[0,20],[1],[2],[3,30]],17:[[2]]};
@@ -856,6 +895,11 @@ const __THEME='kosmik',__musPlay=()=>!document.getElementById('game').classList.
   setInterval(()=>{if(__musPlay()){if(!MUSIC.playing&&MUSIC.on)MUSIC.start(__THEME)}else if(MUSIC.playing)MUSIC.stop()},500);
 })();
 /* BK-EXTRA-END */
+
+
+
+
+
 
 
 
