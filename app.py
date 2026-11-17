@@ -81,6 +81,10 @@ MATH = "🧮 Matematika"
 BTN_AI = "✨ AI bilan savollar"
 BTN_OWN = "✍️ Oʻz savollarim"
 BTN_SETS = "📦 Toʻplamlarim"
+BTN_LIB = "📚 Kutubxona"
+SITE_URL = os.environ.get("SITE_URL", "https://mashrapovbehruz805-crypto.github.io/Bilim-kaliti/").rstrip("/") + "/"
+LIB_CHAT = int(os.environ.get("LIBRARY_CHAT_ID", "0") or 0)
+MATH_FANS = {"matematika", "algebra", "geometriya", "boshlangʻich taʼlim", ""}
 
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 AI_DAILY = int(os.environ.get("AI_DAILY", "20") or 20)   # bir o'qituvchiga kuniga nechta AI so'rov
@@ -111,7 +115,7 @@ def kb(rows: list[list[str]]) -> ReplyKeyboardMarkup:
 
 
 def menu_kb() -> ReplyKeyboardMarkup:
-    return kb([[BTN_CLASSES], [BTN_AI, BTN_OWN], [BTN_SETS, BTN_KEY], [BTN_GAMES], [BTN_FEEDBACK, BTN_HELP]])
+    return kb([[BTN_CLASSES], [BTN_AI, BTN_OWN], [BTN_SETS, BTN_KEY], [BTN_GAMES, BTN_LIB], [BTN_FEEDBACK, BTN_HELP]])
 
 
 def classes_kb() -> ReplyKeyboardMarkup:
@@ -161,10 +165,10 @@ def topic_games_kb(g: str, t: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
-def set_games_kb(sid: str) -> InlineKeyboardMarkup:
+def set_games_kb(sid: str, mc: bool = False) -> InlineKeyboardMarkup:
     extra = f"&set={sid}"
     buttons = [InlineKeyboardButton(text=title, web_app=WebAppInfo(url=game_url(slug, gk, extra)))
-               for slug, gk, title, _ in GRADE_GAMES if gk not in ("zanjir", "mental")]
+               for slug, gk, title, _ in GRADE_GAMES if gk not in ("zanjir", "mental") and not (mc and gk == "bomba")]
     rows = [buttons[i:i + 2] for i in range(0, len(buttons), 2)]
     rows.append([InlineKeyboardButton(text="🗑 Oʻchirish", callback_data=f"sd:{sid}"),
                  InlineKeyboardButton(text="📦 Toʻplamlarim", callback_data="sl")])
@@ -370,12 +374,15 @@ async def add_set(uid: int, name: str, items: list[dict], src: str) -> tuple[dic
 def set_preview(s: dict, limit: int = 12) -> str:
     lines = [f"📦 «{s['name']}» — {len(s['items'])} ta savol\n"]
     for i, it in enumerate(s["items"][:limit], 1):
-        lines.append(f"{i}. {it['q']}  →  {it['a']}")
+        ans = it["o"][it.get("c", 0)] if "o" in it else it["a"]
+        lines.append(f"{i}. {it['q']}  →  {ans}")
     if len(s["items"]) > limit:
         lines.append(f"… yana {len(s['items']) - limit} ta")
-    small = sum(1 for it in s["items"] if 1 <= it["a"] <= 9)
+    small = sum(1 for it in s["items"] if "a" in it and 1 <= it["a"] <= 9)
     lines.append("\nOʻyinni tanlang 👇")
-    if small < len(s["items"]):
+    if any("o" in it for it in s["items"]):
+        lines.append("(Test savollari: oʻquvchi toʻgʻri variant raqamini bosadi. 💣 Bomba son-javobli savollar uchun.)")
+    elif small < len(s["items"]):
         lines.append("(💣 Bomba va bir xonali rejimda faqat javobi 1–9 boʻlgan savollar chiqadi.)")
     return "\n".join(lines)[:4000]
 
@@ -394,6 +401,12 @@ def parse_own(text: str) -> tuple[str, list[dict], list[int]]:
             else:
                 bad.append(n)
             continue
+        parts = [x.strip() for x in line.split("|")]
+        if len(parts) >= 3 and parts[0] and all(parts[1:5]):
+            opts = list(dict.fromkeys(x[:120] for x in parts[1:5]))
+            if len(opts) >= 2:
+                items.append({"q": parts[0][:300], "o": opts, "c": 0})
+                continue
         q, _, a = line.rpartition("|")
         q, a = q.strip(), a.strip().replace(" ", "")
         if q and re.fullmatch(r"\d{1,4}", a):
@@ -415,7 +428,9 @@ async def ask_own(message: Message) -> None:
         "1/2 + 1/2 = ? | 1\n"
         "36 ning 1/4 qismi | 9\n"
         "Kvadratning tomoni 7 sm. Perimetri? | 28\n\n"
-        "Javob — butun son (0–9999). Bekor qilish: «🏠 Bosh menyu».",
+        "Test savoli (istalgan fan): savol | toʻgʻri javob | xato | xato | xato\n"
+        "Fransiyaning poytaxti? | Parij | Lion | Marsel | Nitstsa\n\n"
+        "Son-javob — butun son (0–9999). Bekor qilish: «🏠 Bosh menyu».",
         reply_markup=kb([[BTN_HOME]]),
     )
 
@@ -434,7 +449,7 @@ async def got_own(message: Message) -> None:
     if dropped:
         note += f"\nℹ️ Eng koʻpi {MAX_SETS} ta toʻplam saqlanadi, eng eskisi oʻchirildi."
     await message.answer("✅ Saqlandi." + note, reply_markup=menu_kb())
-    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"]))
+    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"], any("o" in it for it in s["items"])))
 
 
 # ===================== AI (Gemini) =====================
@@ -633,7 +648,7 @@ async def got_ai(message: Message) -> None:
     await message.answer(
         f"✅ Tayyor! Har bir javob avtomatik tekshirildi.{note}\n"
         "Baribir oʻyindan oldin koʻz yugurtirib chiqing.")
-    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"]))
+    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"], any("o" in it for it in s["items"])))
 
 
 # ===================== Toʻplamlarim =====================
@@ -661,6 +676,22 @@ async def send_sets_list(uid: int, edit: Message | None = None) -> None:
         await bot.send_message(uid, text, reply_markup=sets_list_kb(sets))
 
 
+@dp.message(F.text == BTN_LIB)
+async def show_lib(message: Message) -> None:
+    clear_wait(message.from_user.id)
+    kbd = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="📚 Kutubxonani ochish", url=SITE_URL + "#/kutubxona")],
+                                                [InlineKeyboardButton(text="🌐 Saytni ochish", url=SITE_URL)]])
+    await message.answer("📚 Kutubxonada oʻqituvchilar ulashgan toʻplamlar bor: fan, sinf va mavzu boʻyicha qidiring, "
+                         "bir bosishda oʻynang. Oʻz toʻplamingizni ham saytdagi «📦 Toʻplamlarim» boʻlimidan ulashing.",
+                         reply_markup=kbd)
+
+
+@dp.channel_post(Command("ulash"))
+async def lib_connect(post: Message) -> None:
+    await bot.send_message(post.chat.id, f"✅ Kanal ID: {post.chat.id}\n\nRender → Environment → LIBRARY_CHAT_ID = {post.chat.id}\n"
+                                         "Shuni qoʻshgach, kutubxona shu kanalda saqlanadi.")
+
+
 @dp.message(F.text == BTN_SETS)
 async def show_sets(message: Message) -> None:
     clear_wait(message.from_user.id)
@@ -680,7 +711,7 @@ async def cb_set_open(call: CallbackQuery) -> None:
     if not s:
         await call.answer("Toʻplam topilmadi", show_alert=True)
         return
-    await call.message.edit_text(set_preview(s), reply_markup=set_games_kb(sid))
+    await call.message.edit_text(set_preview(s), reply_markup=set_games_kb(sid, any("o" in it for it in s["items"])))
     await call.answer()
 
 
@@ -702,6 +733,272 @@ async def cb_set_delete_yes(call: CallbackQuery) -> None:
         await save_sets(uid, sets)
     await call.answer("Oʻchirildi")
     await send_sets_list(uid, edit=call.message)
+
+
+# ===================== KUTUBXONA (Telegram kanalida saqlanadi) =====================
+LIB_INDEX_FILE = "bilim-kaliti-kutubxona.json"
+LIB: dict | None = None
+LIB_ITEMS: dict[str, list] = {}
+LIB_LOCK = asyncio.Lock()
+LIB_DIRTY = False
+
+
+def norm_items(raw) -> list[dict]:
+    out = []
+    for it in raw if isinstance(raw, list) else []:
+        if not isinstance(it, dict):
+            continue
+        q = str(it.get("q", "")).strip()[:300]
+        if not q:
+            continue
+        if isinstance(it.get("o"), list):
+            o = [str(x).strip()[:120] for x in it["o"] if str(x).strip()][:4]
+            try:
+                c = int(it.get("c", 0))
+            except (TypeError, ValueError):
+                continue
+            if len(o) >= 2 and len(set(o)) == len(o) and 0 <= c < len(o):
+                out.append({"q": q, "o": o, "c": c})
+        else:
+            try:
+                a = int(it.get("a"))
+            except (TypeError, ValueError):
+                continue
+            if 0 <= a <= 9999:
+                out.append({"q": q, "a": a})
+    return out[:MAX_ITEMS]
+
+
+async def lib_load() -> dict:
+    global LIB
+    if LIB is not None:
+        return LIB
+    async with LIB_LOCK:
+        if LIB is not None:
+            return LIB
+        data = {"sets": []}
+        if LIB_CHAT:
+            try:
+                pm = (await bot.get_chat(LIB_CHAT)).pinned_message
+                if pm and pm.document and pm.document.file_name == LIB_INDEX_FILE:
+                    d = json.loads((await bot.download(pm.document.file_id)).read().decode("utf-8"))
+                    if isinstance(d, dict) and isinstance(d.get("sets"), list):
+                        data = d
+            except Exception as e:
+                log.warning("lib_load: %s", e)
+        LIB = data
+    return LIB
+
+
+async def lib_save_index() -> None:
+    """LIB_LOCK ichida chaqiriladi."""
+    global LIB_DIRTY
+    old = None
+    try:
+        old = (await bot.get_chat(LIB_CHAT)).pinned_message
+    except Exception:
+        pass
+    msg = await bot.send_document(LIB_CHAT, BufferedInputFile(json.dumps(LIB, ensure_ascii=False).encode("utf-8"), filename=LIB_INDEX_FILE),
+                                  caption="📚 Kutubxona roʻyxati. Bu xabarni oʻchirmang.", disable_notification=True)
+    try:
+        await bot.pin_chat_message(LIB_CHAT, msg.message_id, disable_notification=True)
+        try:
+            await bot.delete_message(LIB_CHAT, msg.message_id + 1)  # «pinned» xizmat xabari
+        except Exception:
+            pass
+    except Exception as e:
+        log.warning("lib pin: %s", e)
+    if old and old.document and old.document.file_name == LIB_INDEX_FILE:
+        try:
+            await bot.delete_message(LIB_CHAT, old.message_id)
+        except Exception:
+            pass
+    LIB_DIRTY = False
+
+
+async def lib_flush_loop(app: web.Application) -> None:
+    async def loop():
+        while True:
+            await asyncio.sleep(1800)
+            if LIB_DIRTY and LIB_CHAT and LIB is not None:
+                try:
+                    async with LIB_LOCK:
+                        await lib_save_index()
+                except Exception as e:
+                    log.warning("lib flush: %s", e)
+    app["lib_task"] = asyncio.create_task(loop())
+
+
+def lib_meta(m: dict) -> dict:
+    return {k: m.get(k) for k in ("id", "name", "fan", "sinf", "mavzu", "author", "n", "mc", "t", "plays")}
+
+
+async def api_lib_list(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    lib = await lib_load()
+    fan, sinf, qq = clip(data.get("fan"), 60), clip(data.get("sinf"), 10), clip(data.get("q"), 60).lower()
+    u = site_user(data) if data.get("token") else None
+    res = []
+    for m in lib["sets"]:
+        if fan and m.get("fan") != fan:
+            continue
+        if sinf and str(m.get("sinf")) != sinf:
+            continue
+        if qq and qq not in f"{m.get('name','')} {m.get('mavzu','')} {m.get('author','')}".lower():
+            continue
+        x = lib_meta(m)
+        x["mine"] = bool(u and (u["u"] == m.get("uid") or u["u"] == ADMIN_ID))
+        res.append(x)
+    order = str(data.get("sort", "new"))
+    if order == "top":
+        res.sort(key=lambda m: -(m.get("plays") or 0))
+    return web.json_response({"ok": True, "on": bool(LIB_CHAT), "sets": res[:300]})
+
+
+async def lib_items(meta: dict) -> list:
+    lid = meta["id"]
+    if lid not in LIB_ITEMS:
+        d = json.loads((await bot.download(meta["fid"])).read().decode("utf-8"))
+        LIB_ITEMS[lid] = norm_items(d.get("items") if isinstance(d, dict) else d)
+    return LIB_ITEMS[lid]
+
+
+async def api_lib_get(request: web.Request) -> web.Response:
+    lid = clip((await read_json(request)).get("id"), 20)
+    lib = await lib_load()
+    m = next((x for x in lib["sets"] if x.get("id") == lid), None)
+    if not m:
+        return jerr("Topilmadi", 404)
+    try:
+        items = await lib_items(m)
+    except Exception as e:
+        log.warning("lib_get: %s", e)
+        return jerr("Yuklab boʻlmadi", 502)
+    return web.json_response({"ok": True, "set": {**lib_meta(m), "items": items}})
+
+
+async def api_lib_play(request: web.Request) -> web.Response:
+    global LIB_DIRTY
+    lid = clip((await read_json(request)).get("id"), 20)
+    lib = await lib_load()
+    m = next((x for x in lib["sets"] if x.get("id") == lid), None)
+    if m:
+        m["plays"] = int(m.get("plays") or 0) + 1
+        LIB_DIRTY = True
+    return web.json_response({"ok": True})
+
+
+async def api_lib_publish(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    if not LIB_CHAT:
+        return jerr("Kutubxona hali ulanmagan (administrator LIBRARY_CHAT_ID ni qoʻshishi kerak).", 503)
+    uid = u["u"]
+    s = next((x for x in await load_sets(uid) if x["id"] == str(data.get("set_id"))), None)
+    if not s:
+        return jerr("Toʻplam topilmadi")
+    items = norm_items(s["items"])
+    if len(items) < 4:
+        return jerr("Kutubxonaga kamida 4 ta savolli toʻplam qoʻshiladi.")
+    name = clip(data.get("name") or s["name"], 60)
+    fan, sinf, mavzu = clip(data.get("fan"), 60) or "Matematika", clip(data.get("sinf"), 10), clip(data.get("mavzu"), 100)
+    lib = await lib_load()
+    if sum(1 for m in lib["sets"] if m.get("uid") == uid) >= 60:
+        return jerr("Bitta oʻqituvchi koʻpi bilan 60 ta toʻplam ulasha oladi.")
+    if any(m.get("uid") == uid and m.get("src") == s["id"] for m in lib["sets"]):
+        return jerr("Bu toʻplam kutubxonada allaqachon bor.")
+    lid = secrets.token_hex(4)
+    payload = {"name": name, "fan": fan, "sinf": sinf, "mavzu": mavzu, "author": u["n"], "items": items}
+    async with LIB_LOCK:
+        try:
+            doc = await bot.send_document(
+                LIB_CHAT, BufferedInputFile(json.dumps(payload, ensure_ascii=False).encode("utf-8"), filename=f"{lid}.json"),
+                caption=f"📚 {name}\n{fan}{' · ' + sinf + '-sinf' if sinf else ''} · {len(items)} ta savol\n✍️ {u['n']}"[:1000],
+                disable_notification=True)
+        except Exception as e:
+            log.warning("publish: %s", e)
+            return jerr("Kanalga yozib boʻlmadi. Bot kanalda administrator ekanini tekshiring.", 502)
+        lib["sets"].insert(0, {"id": lid, "name": name, "fan": fan, "sinf": sinf, "mavzu": mavzu, "author": u["n"], "uid": uid,
+                               "src": s["id"], "n": len(items), "mc": any("o" in it for it in items), "t": int(time.time()),
+                               "plays": 0, "fid": doc.document.file_id, "mid": doc.message_id})
+        LIB_ITEMS[lid] = items
+        await lib_save_index()
+    return web.json_response({"ok": True, "id": lid})
+
+
+async def api_lib_delete(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    lib = await lib_load()
+    lid = clip(data.get("id"), 20)
+    m = next((x for x in lib["sets"] if x.get("id") == lid), None)
+    if not m or (m.get("uid") != u["u"] and u["u"] != ADMIN_ID):
+        return jerr("Ruxsat yoʻq", 403)
+    async with LIB_LOCK:
+        lib["sets"] = [x for x in lib["sets"] if x.get("id") != lid]
+        LIB_ITEMS.pop(lid, None)
+        try:
+            await bot.delete_message(LIB_CHAT, m["mid"])
+        except Exception:
+            pass
+        await lib_save_index()
+    return web.json_response({"ok": True})
+
+
+async def api_sets_save(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    items = norm_items(data.get("items"))
+    if not items:
+        return jerr("Birorta ham toʻgʻri savol topilmadi.")
+    s, dropped = await add_set(u["u"], clip(data.get("name"), 60) or "Oʻz savollarim", items, "own")
+    return web.json_response({"ok": True, "set": {"id": s["id"], "name": s["name"], "items": s["items"]}, "dropped": dropped})
+
+
+async def api_sets_delete(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    sid = str(data.get("id", ""))
+    async with lock_for(u["u"]):
+        sets = await load_sets(u["u"])
+        if not any(s["id"] == sid for s in sets):
+            return jerr("Topilmadi", 404)
+        await save_sets(u["u"], [s for s in sets if s["id"] != sid])
+    return web.json_response({"ok": True})
+
+
+MC_PROMPT = """Sen «{fan}» fani oʻqituvchisining yordamchisisan. Sinf: {sinf}. Mavzu: «{topic}».
+Shu mavzuda {n} ta QISQA test savoli tuz:
+- savol bitta qisqa gap, oʻquvchi 10–20 soniyada javob beradi; diqqat, mantiq va qiziqishni oshirsin;
+- har savolda 4 ta qisqa variant (1–4 soʻz), faqat bittasi toʻgʻri, qolganlari ishonarli xato;
+- faktlar aniq va xatosiz boʻlsin, sinf darajasiga mos boʻlsin;
+- til: {lang}.
+Faqat JSON qaytar, har doim BIRINCHI variant — toʻgʻri javob:
+{{"name": "toʻplam uchun qisqa nom", "items": [{{"q": "savol", "o": ["toʻgʻri", "xato", "xato", "xato"]}}]}}"""
+
+
+async def gemini_mc(fan: str, sinf: str, topic: str, lang: str, n: int = 12, extra: str = "", file: dict | None = None) -> tuple[str, list]:
+    text = MC_PROMPT.format(fan=fan, sinf=sinf or "koʻrsatilmagan", topic=topic, n=n, lang=lang)
+    if extra:
+        text += f"\nOʻqituvchining qoʻshimcha istagi: {extra}"
+    parts = []
+    if file:
+        parts.append({"inline_data": file})
+        text += "\nIlova qilingan manbaga (rasm yoki PDF) tayanib tuz."
+    parts.append({"text": text})
+    obj = parse_json_text(await gemini_call([{"role": "user", "parts": parts}], temperature=0.8))
+    raw = obj.get("items") if isinstance(obj, dict) else obj
+    items = norm_items([{**it, "c": 0} for it in raw if isinstance(it, dict)] if isinstance(raw, list) else [])
+    items = [it for it in items if "o" in it and len(it["o"]) == 4]
+    return str((obj.get("name") if isinstance(obj, dict) else "") or topic)[:60], items
 
 
 # ===================== SAYT: kirish, AI vositalari, chat =====================
@@ -908,6 +1205,14 @@ async def api_ai(request: web.Request) -> web.Response:
     sinf, fan = clip(p.get("sinf"), 30), clip(p.get("fan"), 60) or "Matematika"
     ai_use(uid)
     try:
+        if tool == "savollar" and fan.lower() not in MATH_FANS:
+            f = data.get("file")
+            fobj = {"mime_type": str(f["mime"]), "data": str(f["data"])} if isinstance(f, dict) and f.get("data") else None
+            name, items = await gemini_mc(fan, sinf, mavzu, LANGS.get(str(p.get("til")), LANGS["uz"]), 12, clip(p.get("extra"), 600), fobj)
+            if len(items) < 4:
+                return jerr("AI yetarlicha toʻgʻri savol tuza olmadi. Mavzuni boshqacharoq yozing.")
+            s, _ = await add_set(uid, name, items, "ai")
+            return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
         if tool == "savollar":
             name, items = await gemini_questions(f"{sinf}-sinf, {mavzu}" if sinf else mavzu)
             if len(items) < 4:
@@ -1102,12 +1407,16 @@ def build_app() -> web.Application:
     app.router.add_post("/api/key", api_key)
     app.router.add_post("/api/sets", api_sets)
     for path, fn in (("/api/ping", api_ping), ("/api/login/start", api_login_start), ("/api/login/check", api_login_check),
-                     ("/api/me", api_me), ("/api/ai", api_ai), ("/api/chat", api_chat), ("/api/send", api_send)):
+                     ("/api/me", api_me), ("/api/ai", api_ai), ("/api/chat", api_chat), ("/api/send", api_send),
+                     ("/api/lib/list", api_lib_list), ("/api/lib/get", api_lib_get), ("/api/lib/play", api_lib_play),
+                     ("/api/lib/publish", api_lib_publish), ("/api/lib/delete", api_lib_delete),
+                     ("/api/sets/save", api_sets_save), ("/api/sets/delete", api_sets_delete)):
         app.router.add_post(path, fn)
     app.router.add_static("/games/", GAMES_DIR)
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
     setup_application(app, dp, bot=bot)
     app.on_startup.append(on_startup)
+    app.on_startup.append(lib_flush_loop)
     return app
 
 

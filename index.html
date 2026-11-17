@@ -306,6 +306,22 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
 .toolstage:fullscreen .dwrap{height:calc(100vh - 90px)}
 .dwrap canvas{position:absolute;inset:0;width:100%;height:100%}#dInk{touch-action:none;cursor:crosshair}
 .tool.tlink{transition:transform .15s,box-shadow .15s,border-color .15s}.tool.tlink:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--gold)}
+.subj{transition:transform .15s,border-color .15s}.subj:hover{transform:translateY(-2px);border-color:var(--gold)}
+.lfilter{display:grid;grid-template-columns:1fr 160px 2fr 170px;gap:10px;margin-bottom:16px}
+.lfilter select,.lfilter input{font:inherit;font-weight:700;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;min-width:0}
+@media (max-width:760px){.lfilter{grid-template-columns:1fr 1fr}}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.scard{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.sct{display:flex;gap:12px;align-items:center}.sct .ic{width:46px;height:46px;border-radius:14px;background:var(--bg2);display:grid;place-items:center;font-size:24px;flex:none}
+.sct b{display:block;font-size:17px;line-height:1.25}.sct small{color:var(--muted);font-weight:700}
+.scm{display:flex;gap:12px;flex-wrap:wrap;color:var(--ink2);font-weight:700;font-size:13.5px}
+.sca{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.mbox.wide{max-width:760px;max-height:88vh;overflow:auto}
+.pmgames{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pmg{border-radius:16px;padding:14px;color:#fff;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;flex-direction:column;gap:4px;font-weight:800;transition:transform .15s}
+.pmg:hover{transform:translateY(-2px)}.pmg span{font-size:30px}
+.pvlist{padding-left:22px}.pvlist li{margin:8px 0}.pvlist small{color:var(--muted)}
+.fgrid.one{grid-template-columns:1fr 1fr}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -320,6 +336,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
       <a href="#/oyinlar" data-r="oyinlar">Oʻyinlar</a>
       <a href="#/sinflar" data-r="sinflar">Sinflar</a>
       <a href="#/ai" data-r="ai">✨ AI yordamchi</a>
+      <a href="#/kutubxona" data-r="kutubxona">📚 Kutubxona</a>
       <a href="#/vositalar" data-r="vositalar">Vositalar</a>
     </nav>
     <span class="sp"></span>
@@ -337,7 +354,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
   <a href="#/oyinlar" data-r="oyinlar"><span>🎮</span>Oʻyinlar</a>
   <a href="#/ai" data-r="ai"><span>✨</span>AI</a>
   <a href="#/sinflar" data-r="sinflar"><span>📚</span>Sinflar</a>
-  <a href="#/vositalar" data-r="vositalar"><span>🧰</span>Vositalar</a>
+  <a href="#/kutubxona" data-r="kutubxona"><span>📚</span>Kutubxona</a>
 </nav>
 
 <script>
@@ -363,7 +380,7 @@ const SOON=[
  {e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi.',c:'#ff6b4a',href:'#/vosita/tanlash'},
  {e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer.',c:'#f5b301',href:'#/vosita/taymer'},
  {e:'✏️',n:'Chizish doskasi',d:'Shakllar va katakli fon bilan chizish.',c:'#2f8cff',href:'#/vosita/doska'},
- {e:'📚',n:'Kutubxona',d:'Oʻqituvchilar tuzgan toʻplamlarni sinf va mavzu boʻyicha topib oʻynash.',c:'#0b7285'},
+ {e:'📚',n:'Kutubxona',d:'Oʻqituvchilar ulashgan va tayyor toʻplamlar: fan va sinf boʻyicha.',c:'#0b7285',href:'#/kutubxona'},
 ];
 const TOOLS=[
  {e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi, sinfni guruhlarga boʻladi.',c:'#ff6b4a',href:'#/vosita/tanlash'},
@@ -416,6 +433,10 @@ const PAGES={
    ${gradesGrid()}
   </div></section>
   <section><div class="wrap">
+   <div class="sh"><div><h2>Boshqa fanlar</h2><p class="sub">Ona tili, ingliz tili, tarix, biologiya… — xuddi shu oʻyinlarda, test savollari bilan.</p></div><a class="btn ghost" href="#/kutubxona">📚 Kutubxona →</a></div>
+   <div class="subjects">${FANLAR.filter(f=>f!=='Matematika').slice(0,12).map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}</div></a>`).join('')}</div>
+  </div></section>
+  <section><div class="wrap">
    <div class="sh"><div><h2>Mashhur oʻyinlar</h2><p class="sub">Har biri 2–4 guruh uchun, bitta kompyuter va doskada.</p></div><a class="btn ghost" href="#/oyinlar">Hammasi →</a></div>
    <div class="grid">${GAMES.slice(0,8).map(g=>gameCard(g)).join('')}</div>
   </div></section>
@@ -443,10 +464,10 @@ const PAGES={
 
  sinflar:()=>`
   <section><div class="wrap fade">
-   <div class="sh"><div><h2>Sinflar</h2><p class="sub">Hozircha matematika. Boshqa fanlar ham qoʻshiladi.</p></div></div>
+   <div class="sh"><div><h2>Sinflar</h2><p class="sub">Matematika: sinf va mavzuni tanlang, savollar har gal yangidan tuziladi.</p></div></div>
    ${gradesGrid()}
-   <div class="sh" style="margin-top:40px"><div><h2>Fanlar</h2></div></div>
-   <div class="subjects">${SUBJECTS.map(([i,n,on])=>`<div class="subj ${on?'':'off'}"><span class="ic">${i}</span><div>${n}<small>${on?'1–7-sinf':'tez orada'}</small></div></div>`).join('')}</div>
+   <div class="sh" style="margin-top:40px"><div><h2>Fanlar</h2><p class="sub">Har bir fanda barcha guruh oʻyinlari ishlaydi: tayyor toʻplamlar, kutubxona va AI.</p></div></div>
+   <div class="subjects">${FANLAR.map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}<small>${f==='Matematika'?'har gal yangi savollar':'testlar va oʻyinlar'}</small></div></a>`).join('')}</div>
   </div></section>`,
 
  sinf:(n)=>{
@@ -497,14 +518,15 @@ function route(){
   if(r==='sinf'&&!GRADES[parts[1]])r='sinflar';
   if(CLEANUP){try{CLEANUP()}catch(e){}CLEANUP=null}
   try{document.fullscreenElement&&document.exitFullscreen()}catch(e){}
-  const html=r==='vosita'?toolPage(parts[1]):r==='sinf'?PAGES.sinf(parts[1]):r==='ai'?aiPage(parts[1]):r==='doc'?docPage(parts[1]):r==='fayllar'?filesPage():(PAGES[r]||PAGES[''])();
+  const html=r==='kutubxona'?libPage(''):r==='fan'?libPage(decodeURIComponent(parts[1]||'')):r==='toplamlar'?mySetsPage():r==='vosita'?toolPage(parts[1]):r==='sinf'?PAGES.sinf(parts[1]):r==='ai'?aiPage(parts[1]):r==='doc'?docPage(parts[1]):r==='fayllar'?filesPage():(PAGES[r]||PAGES[''])();
   $('#app').innerHTML=html;
-  const nav={sinf:'sinflar',doc:'ai',fayllar:'ai',vosita:'vositalar'}[r]||r;
+  const nav={sinf:'sinflar',doc:'ai',fayllar:'ai',vosita:'vositalar',fan:'kutubxona',toplamlar:'kutubxona'}[r]||r;
   document.querySelectorAll('[data-r]').forEach(a=>a.classList.toggle('on',a.dataset.r===nav));
   if(r==='sinf')bindGrade(parts[1]);
   if(r==='ai')bindAi(parts[1]);
   if(r==='doc')bindDoc(parts[1]);
   if(r==='fayllar')bindFiles();
+  if(r==='kutubxona')bindLib('');if(r==='fan')bindLib(decodeURIComponent(parts[1]||''));if(r==='toplamlar')bindMySets();
   if(r==='vosita'&&TOOLDEFS[parts[1]])bindTool(parts[1]);
   if(r==='oyinlar')bindGames();
   const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.textContent=all.size}
@@ -517,7 +539,7 @@ const AUTH={get tok(){return store.get('token',null)},get name(){return store.ge
   set(t,n){store.set('token',t);store.set('uname',n)},out(){store.set('token',null);store.set('uname','');drawAuth()}};
 const FANLAR=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
 const AI_TOOLS=[
- {id:'savollar',e:'🎮',n:'Oʻyin uchun savollar',d:'Qisqa matematik savollar — darhol guruh oʻyinlarida oʻynaladi.',c:'#f5b301',f:['mavzu','sinf'],ph:'Masalan: kasrlarni qoʻshish, mantiqiy savollar'},
+ {id:'savollar',e:'🎮',n:'Oʻyin uchun savollar',d:'Istalgan fandan qisqa savollar — darhol guruh oʻyinlarida oʻynaladi va kutubxonaga ulashiladi.',c:'#f5b301',f:['mavzu','fan','sinf','til','extra','file'],ph:'Masalan: kasrlarni qoʻshish / soʻz turkumlari / hayvonlar (ingliz tili)'},
  {id:'test',e:'📝',n:'Testlar',d:'Javob variantli test, javoblar kaliti va doskada test-shou.',c:'#7b5cff',f:['mavzu','fan','sinf','n','qiyinlik','til','extra','file'],nl:'Savollar soni'},
  {id:'taqdimot',e:'🖥️',n:'Taqdimot',d:'Slaydlar: doskada namoyish va PowerPoint (.pptx) yuklab olish.',c:'#2f8cff',f:['mavzu','fan','sinf','n','til','extra','file'],nl:'Slaydlar soni'},
  {id:'dars',e:'📒',n:'Dars ishlanma',d:'Maqsadlar, bosqichlar, metodlar va uyga vazifa bilan.',c:'#12a38f',f:['mavzu','fan','sinf','vaqt','til','extra','file']},
@@ -711,8 +733,8 @@ const R={
  krossvord(d,rec){const L=rec.layout||(rec.layout=crossLayout(arr(d.words)));return crossHtml(d,L)},
  taqdimot(d,rec){const th=THEMES[rec.theme||0];return `<div class="slides">${slideList(d).map((s,i)=>slideHtml(s,i,th)).join('')}</div>`},
  savollar(d){const s=d.set||{};return `<h1>${ex(s.name||d.title)}</h1><p class="sub noprint">Toʻplam saqlandi — oʻyinni tanlang. U botdagi «📦 Toʻplamlarim»da ham chiqadi.</p>
-   <div class="grid noprint" style="margin:14px 0 22px">${GAMES.filter(g=>g.f==='toplam'&&g.g!=='zanjir'&&g.g!=='mental').map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
-   <h2>Savollar</h2><ol>${arr(s.items).map(x=>`<li>${ex(x.q)} <b>→ ${ex(x.a)}</b></li>`).join('')}</ol>`},
+   <div class="grid noprint" style="margin:14px 0 22px">${gamesFor({mc:arr(s.items).some(x=>x.o)}).map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
+   <h2>Savollar</h2><ol>${arr(s.items).map(x=>`<li>${ex(x.q)} <b>→ ${x.o?ex(x.o[x.c||0]):ex(x.a)}</b></li>`).join('')}</ol>`},
 };
 
 function docPage(id){
@@ -1098,6 +1120,107 @@ function bindDraw(){
   const kd=e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();strokes.pop();redraw()}};document.addEventListener('keydown',kd);
   const ro=new ResizeObserver(()=>size_());ro.observe(wrap);
   CLEANUP=()=>{ro.disconnect();document.removeEventListener('keydown',kd)};
+}
+
+/* ================= FANLAR, KUTUBXONA, TOʻPLAMLARIM ================= */
+let STATIC_SETS=null;
+async function staticSets(){if(STATIC_SETS)return STATIC_SETS;try{const r=await fetch('games/sets.json?v='+Date.now());STATIC_SETS=r.ok?await r.json():[]}catch(e){STATIC_SETS=[]}
+  STATIC_SETS=STATIC_SETS.map(s=>({id:'k-'+s.id,name:s.name,fan:s.fan,sinf:s.sinf,mavzu:s.mavzu||'',author:s.author||'Bilim Kaliti',n:s.items.length,mc:s.items.some(i=>i.o),plays:null,items:s.items,fixed:1}));return STATIC_SETS}
+const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
+const fanSlug=f=>encodeURIComponent(f);
+function gamesFor(s){return GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(s.mc&&g.g==='bomba'))}
+function playModal(s,param){
+  const m=store.get('mode','g'),mx=()=>({g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[store.get('mode','g')]||'');
+  const md=modal(`<h3>▶️ ${esc(s.name)}</h3><p class="sub">${s.mc?'Test savollari: oʻquvchi toʻgʻri variant raqamini bosadi.':'Son-javobli savollar.'} Oʻyinni tanlang:</p>
+    <div class="tabs" id="pmMode" style="margin:6px 0 12px"><button data-m="g">👥 Guruhlar</button><button data-m="r">🤖 Robo bilan</button><button data-m="s">👤 Yakka</button></div>
+    <div class="pmgames" id="pmGames"></div>`);
+  md.querySelector('.mbox').classList.add('wide');
+  const draw=()=>{md.querySelectorAll('#pmMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===store.get('mode','g')));
+    md.querySelector('#pmGames').innerHTML=gamesFor(s).map(g=>`<a class="pmg" href="${gameUrl(g,param+mx())}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')};
+  md.querySelector('#pmMode').onclick=e=>{const b=e.target.closest('[data-m]');if(b){store.set('mode',b.dataset.m);draw()}};draw()}
+function viewModal(name,items){
+  const md=modal(`<h3>👁 ${esc(name)}</h3><ol class="pvlist">${items.map(it=>`<li>${ex(it.q)}<br><b>→ ${it.o?ex(it.o[it.c||0]):ex(it.a)}</b>${it.o?`<small> · ${it.o.filter((_,k)=>k!==(it.c||0)).map(ex).join(' · ')}</small>`:''}</li>`).join('')}</ol>`);
+  md.querySelector('.mbox').classList.add('wide')}
+function setCard(s){
+  return `<div class="scard"><div class="sct"><span class="ic">${FAN_IC[s.fan]||'📦'}</span><div><b>${esc(s.name)}</b><small>${esc(s.fan||'')}${s.sinf?` · ${esc(s.sinf)}-sinf`:''}${s.mavzu?` · ${esc(s.mavzu)}`:''}</small></div></div>
+   <div class="scm"><span>✍️ ${esc(s.author||'')}</span><span>📝 ${s.n} ta</span>${s.plays!=null?`<span>▶️ ${s.plays}</span>`:''}${s.mc?'<span class="tag">test</span>':''}</div>
+   <div class="sca"><button class="btn gold sm" data-play="${esc(s.id)}">▶️ Oʻynash</button><button class="btn ghost sm" data-view="${esc(s.id)}">👁 Koʻrish</button>${s.mine?`<button class="btn ghost sm" data-ldel="${esc(s.id)}">🗑</button>`:''}</div></div>`}
+
+/* ---------- kutubxona ---------- */
+function libPage(fan){
+  const fans=['',...FANLAR];
+  return `<section><div class="wrap fade">
+   <div class="sh"><div><h2>${fan?`${FAN_IC[fan]||'📚'} ${esc(fan)}`:'📚 Kutubxona'}</h2><p class="sub">${fan?'Shu fandan tayyor toʻplamlar — bitta bosishda guruh oʻyinlarida oʻynang.':'Oʻqituvchilar ulashgan va tayyor toʻplamlar. Fan va sinf boʻyicha qidiring.'}</p></div>
+    <div class="mrow"><a class="btn ghost" href="#/toplamlar">📦 Mening toʻplamlarim</a><a class="btn gold" href="#/ai/savollar" id="libAi">✨ AI bilan yaratish</a></div></div>
+   ${fan==='Matematika'?`<div class="note" style="margin:0 0 16px">🧮 Matematikada savollar har gal yangidan yaratiladi: <a href="#/sinflar" style="color:var(--teal)">sinf va mavzuni tanlang →</a></div>`:''}
+   <div class="lfilter"><select id="lFan">${fans.map(f=>`<option value="${esc(f)}" ${f===fan?'selected':''}>${f?esc(f):'Barcha fanlar'}</option>`).join('')}</select>
+    <select id="lSinf"><option value="">Barcha sinflar</option>${[...Array(11)].map((_,i)=>`<option value="${i+1}">${i+1}-sinf</option>`).join('')}</select>
+    <input id="lQ" placeholder="🔍 Mavzu yoki nom boʻyicha qidirish"><select id="lSort"><option value="new">Yangilari</option><option value="top">Koʻp oʻynalgan</option></select></div>
+   <div class="sgrid" id="lList"><p class="sub">Yuklanmoqda…</p></div>
+  </div></section>`}
+function bindLib(fan){
+  let all=[];const by={};
+  async function load(){
+    const st=await staticSets();let remote=[],on=true;
+    try{const j=await api('/api/lib/list',{token:AUTH.tok||'',fan:$('#lFan').value,sinf:$('#lSinf').value,q:$('#lQ').value,sort:$('#lSort').value},60000);remote=(j.sets||[]).map(s=>({...s,lib:1}));on=j.on}catch(e){}
+    const f=$('#lFan').value,sn=$('#lSinf').value,q=$('#lQ').value.toLowerCase();
+    const loc=st.filter(s=>(!f||s.fan===f)&&(!sn||String(s.sinf)===sn)&&(!q||`${s.name} ${s.mavzu} ${s.author}`.toLowerCase().includes(q)));
+    all=[...remote,...loc];all.forEach(s=>by[s.id]=s);
+    $('#lList').innerHTML=all.length?all.map(setCard).join(''):`<div class="empty"><div>📭</div><p>Hozircha bu yerda toʻplam yoʻq.${f?' Birinchi boʻlib siz yarating!':''}</p><a class="btn gold" href="#/ai/savollar">✨ AI bilan yaratish</a></div>`;
+  }
+  ['#lFan','#lSinf','#lSort'].forEach(s=>$(s).onchange=load);let tm;$('#lQ').oninput=()=>{clearTimeout(tm);tm=setTimeout(load,350)};
+  $('#libAi').onclick=()=>{PREFILL={tool:'savollar',p:{fan:$('#lFan').value||'Matematika',sinf:$('#lSinf').value||5}}};
+  $('#lList').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
+    const id=b.dataset.play||b.dataset.view||b.dataset.ldel,s=by[id];if(!s)return;
+    if(b.dataset.play)playModal(s,s.fixed?`&set=${encodeURIComponent(s.id)}`:`&lib=${encodeURIComponent(s.id)}`);
+    if(b.dataset.view){if(s.items)return viewModal(s.name,s.items);b.disabled=true;try{const j=await api('/api/lib/get',{id},60000);viewModal(s.name,j.set.items)}catch(err){toast(err.message)}b.disabled=false}
+    if(b.dataset.ldel){if(!b.dataset.c){b.dataset.c=1;b.textContent='✓?';setTimeout(()=>{b.dataset.c='';b.textContent='🗑'},2500);return}
+      try{await api('/api/lib/delete',{token:AUTH.tok,id});toast('Kutubxonadan olib tashlandi');load()}catch(err){toast(err.message)}}};
+  wake();load();
+}
+
+/* ---------- mening toʻplamlarim ---------- */
+function mySetsPage(){return `<section><div class="wrap fade">
+  <div class="sh"><div><h2>📦 Mening toʻplamlarim</h2><p class="sub">AI yoki oʻzingiz tuzgan savollar. Ular botdagi «📦 Toʻplamlarim»da ham bor.</p></div>
+   <div class="mrow"><button class="btn ghost" id="mNew">✍️ Yangi toʻplam</button><a class="btn gold" href="#/ai/savollar">✨ AI bilan</a></div></div>
+  <div id="mForm" class="formcard hidden" style="margin-bottom:18px">
+   <div class="fgrid"><label class="f"><span>Toʻplam nomi</span><input id="nfName" maxlength="60" placeholder="Masalan: Poytaxtlar"></label>
+    <label class="f wide"><span>Savollar — har qatorda bittadan</span><textarea id="nfText" rows="9" placeholder="Son-javobli: 7 × 8 = ? | 56&#10;Test: Fransiyaning poytaxti? | Parij | Lion | Marsel | Nitstsa&#10;(test savolida birinchi variant — toʻgʻri javob)"></textarea></label>
+    <div class="wide factions"><button class="btn gold" id="nfSave">💾 Saqlash</button><span class="small" id="nfMsg"></span></div></div></div>
+  <div class="sgrid" id="mList"><p class="sub">Yuklanmoqda…</p></div></div></section>`}
+function parseLines(t){const items=[],bad=[];t.split('\n').forEach((l,i)=>{l=l.trim();if(!l)return;const p=l.split('|').map(x=>x.trim());
+  if(p.length>=3&&p[0]&&p.slice(1).every(Boolean)){const o=[...new Set(p.slice(1,5))];if(o.length>=2){items.push({q:p[0],o,c:0});return}}
+  if(p.length===2&&p[0]&&/^\d{1,4}$/.test(p[1].replace(/\s/g,''))){items.push({q:p[0],a:+p[1].replace(/\s/g,'')});return}bad.push(i+1)});return{items,bad}}
+function bindMySets(){
+  const by={};
+  async function load(){
+    if(!AUTH.tok){$('#mList').innerHTML=`<div class="empty"><div>🔐</div><p>Toʻplamlaringizni koʻrish uchun kiring.</p><button class="btn gold" id="mIn">Telegram orqali kirish</button></div>`;$('#mIn').onclick=async()=>{if(await login())load()};return}
+    try{const j=await api('/api/sets',{token:AUTH.tok},90000);const l=(j.sets||[]).slice().reverse();
+      l.forEach(s=>{s.n=s.items.length;s.mc=s.items.some(i=>i.o);s.author='';by[s.id]=s});
+      $('#mList').innerHTML=l.length?l.map(s=>`<div class="scard"><div class="sct"><span class="ic">${s.mc?'📝':'🔢'}</span><div><b>${esc(s.name)}</b><small>${s.n} ta savol${s.mc?' · test':''}</small></div></div>
+        <div class="sca"><button class="btn gold sm" data-play="${s.id}">▶️ Oʻynash</button><button class="btn ghost sm" data-view="${s.id}">👁</button><button class="btn ghost sm" data-pub="${s.id}">📚 Ulashish</button><button class="btn ghost sm" data-del="${s.id}">🗑</button></div></div>`).join('')
+        :`<div class="empty"><div>📦</div><p>Hali toʻplam yoʻq. AI bilan yoki qoʻlda yarating.</p></div>`}
+    catch(e){$('#mList').innerHTML=`<p class="sub">⚠️ ${esc(e.message)}</p>`}}
+  $('#mNew').onclick=()=>$('#mForm').classList.toggle('hidden');
+  $('#nfSave').onclick=async()=>{if(!AUTH.tok&&!(await login()))return;const {items,bad}=parseLines($('#nfText').value);
+    if(!items.length){$('#nfMsg').textContent='⚠️ Birorta ham toʻgʻri qator topilmadi.';return}
+    $('#nfMsg').textContent='⏳ Saqlanmoqda…';try{await api('/api/sets/save',{token:AUTH.tok,name:$('#nfName').value.trim()||'Oʻz savollarim',items});
+      $('#nfMsg').textContent=`✅ ${items.length} ta savol saqlandi.${bad.length?` Tushunilmagan qatorlar: ${bad.slice(0,8).join(', ')}`:''}`;$('#nfText').value='';load()}catch(e){$('#nfMsg').textContent='⚠️ '+e.message}};
+  $('#mList').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.play||b.dataset.view||b.dataset.pub||b.dataset.del,s=by[id];if(!s)return;
+    if(b.dataset.play)playModal(s,`&set=${encodeURIComponent(s.id)}`);
+    if(b.dataset.view)viewModal(s.name,s.items);
+    if(b.dataset.del){if(!b.dataset.c){b.dataset.c=1;b.textContent='✓?';setTimeout(()=>{b.dataset.c='';b.textContent='🗑'},2500);return}
+      try{await api('/api/sets/delete',{token:AUTH.tok,id});toast('Oʻchirildi');load()}catch(err){toast(err.message)}}
+    if(b.dataset.pub){const md=modal(`<h3>📚 Kutubxonaga ulashish</h3><p class="sub">Boshqa oʻqituvchilar ham topib oʻynay oladi. Muallif sifatida ismingiz koʻrinadi.</p>
+      <div class="fgrid one"><label class="f"><span>Nomi</span><input id="pbName" value="${esc(s.name)}" maxlength="60"></label>
+      <label class="f"><span>Fan</span><select id="pbFan">${FANLAR.map(f=>`<option ${f==='Matematika'?'selected':''}>${esc(f)}</option>`).join('')}</select></label>
+      <label class="f"><span>Sinf</span><select id="pbSinf">${[...Array(11)].map((_,i)=>`<option value="${i+1}" ${i===4?'selected':''}>${i+1}-sinf</option>`).join('')}</select></label>
+      <label class="f"><span>Mavzu</span><input id="pbMav" maxlength="100" placeholder="Masalan: Oddiy kasrlar"></label></div>
+      <div class="mrow"><button class="btn gold" id="pbGo">📚 Ulashish</button><span class="small" id="pbMsg"></span></div>`);
+      md.querySelector('#pbGo').onclick=async()=>{const m=md.querySelector('#pbMsg');m.textContent='⏳…';
+        try{await api('/api/lib/publish',{token:AUTH.tok,set_id:s.id,name:md.querySelector('#pbName').value,fan:md.querySelector('#pbFan').value,sinf:md.querySelector('#pbSinf').value,mavzu:md.querySelector('#pbMav').value});
+          closeModal();toast('📚 Kutubxonaga qoʻshildi!')}catch(err){m.textContent='⚠️ '+err.message}}}};
+  wake();load();
 }
 
 /* rejim */
