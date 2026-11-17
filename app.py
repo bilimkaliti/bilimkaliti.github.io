@@ -212,7 +212,8 @@ async def start(message: Message) -> None:
         "Assalomu alaykum! Men «Bilim Kaliti» botiman 🔑\n"
         "Darsda guruhlar bilan oʻynaladigan oʻyinlarni ochib beraman.\n\n"
         "Boshlash uchun «📚 Sinflar» tugmasini bosing.\n\n"
-        f"🌐 Sayt (kompyuter va doska uchun): {SITE_URL}",
+        f"🌐 Sayt (kompyuter va doska uchun): {SITE_URL}\n"
+        "📢 Yangiliklar: @bilimkaliti_uz",
         reply_markup=menu_kb(),
     )
 
@@ -682,7 +683,8 @@ async def send_sets_list(uid: int, edit: Message | None = None) -> None:
 @dp.message(Command("sayt"))
 async def site_cmd(message: Message) -> None:
     kbd = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="🌐 Saytni ochish", url=SITE_URL)],
-                                                [InlineKeyboardButton(text="📲 Telegram ichida ochish", web_app=WebAppInfo(url=SITE_URL))]])
+                                                [InlineKeyboardButton(text="📲 Telegram ichida ochish", web_app=WebAppInfo(url=SITE_URL))],
+                                                [InlineKeyboardButton(text="📢 Yangiliklar kanali", url="https://t.me/bilimkaliti_uz")]])
     await message.answer(f"🌐 Bilim Kaliti sayti: {SITE_URL}\n\nKompyuter yoki elektron doskada shu manzilni oching — "
                          "oʻyinlar, AI yordamchi, kutubxona va sinf vositalari.", reply_markup=kbd)
 
@@ -1391,7 +1393,7 @@ BOT_DESC = ("🔑 Bilim Kaliti — oʻqituvchilar uchun bepul yordamchi:\n\n"
             "🤖 Robo bilan bellashuv va yakka mashq\n"
             "✨ AI: test, taqdimot, dars ishlanma, krossvord\n"
             "📚 Matematika va boshqa fanlar boʻyicha kutubxona\n\n"
-            f"🌐 Sayt: {SITE_URL}\n\nBoshlash uchun START ni bosing.")
+            f"🌐 Sayt: {SITE_URL}\n📢 Kanal: @bilimkaliti_uz\n\nBoshlash uchun START ni bosing.")
 
 
 async def bot_profile() -> None:
