@@ -261,6 +261,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
   body.pr-taqdimot .slides{grid-template-columns:1fr}
   body.printing .cw td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.08;font-size:.9em;margin:0 .14em;font-variant-numeric:lining-nums}
+.fr>span{padding:0 .12em}.fr>span:first-child{border-bottom:max(1.5px,.07em) solid currentColor}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -626,36 +628,39 @@ function bindFiles(){document.querySelectorAll('[data-del]').forEach(b=>b.onclic
 
 /* ---------- hujjat koʻrinishi ---------- */
 const LET='ABCDEFGH';
+/* kasrlarni surat/maxraj koʻrinishida chiqarish: 3/4 → ³⁄₄ (ustma-ust) */
+const frac=s=>String(s).replace(/(?<![\d/.,])(\d{1,6})\/(\d{1,6})(?![\d/])/g,'<span class="fr"><span>$1</span><span>$2</span></span>');
+const ex=s=>frac(esc(s));
 const arr=x=>Array.isArray(x)?x:[];
 const R={
- test(d){const it=arr(d.items);return `<h1>${esc(d.title)}</h1>
-   <ol class="tq">${it.map(q=>`<li><p>${esc(q.q)}</p><div class="opts">${arr(q.options).map((o,i)=>`<span>${LET[i]}) ${esc(o)}</span>`).join('')}</div></li>`).join('')}</ol>
-   <div class="keybox pb"><h2>Javoblar kaliti</h2><ol class="keys">${it.map(q=>`<li><b>${LET[+q.correct]||'?'}</b>${q.explain?` — ${esc(q.explain)}`:''}</li>`).join('')}</ol></div>`},
- glossariy(d){return `<h1>${esc(d.title)}</h1><table class="tb"><tr><th>#</th><th>Atama</th><th>Taʼrif</th><th>Misol</th></tr>${arr(d.items).map((x,i)=>`<tr><td>${i+1}</td><td><b>${esc(x.term)}</b></td><td>${esc(x.def)}</td><td>${esc(x.example||'')}</td></tr>`).join('')}</table>`},
- tarqatma(d){return `<h1>${esc(d.title)}</h1>${d.intro?`<p class="intro">${esc(d.intro)}</p>`:''}
-   ${arr(d.sections).map(s=>`<h2>${esc(s.h)}</h2><p>${esc(s.text)}</p>`).join('')}
-   ${arr(d.examples).length?`<h2>Yechilgan namunalar</h2><ol>${arr(d.examples).map(x=>`<li><p><b>${esc(x.q)}</b></p><p class="sol">${esc(x.a)}</p></li>`).join('')}</ol>`:''}
-   ${arr(d.exercises).length?`<h2>Mustaqil mashqlar</h2><ol>${arr(d.exercises).map(x=>`<li>${esc(x.q)}</li>`).join('')}</ol>
-   <div class="keybox pb"><h2>Javoblar</h2><ol class="keys">${arr(d.exercises).map(x=>`<li>${esc(x.a)}</li>`).join('')}</ol></div>`:''}`},
- dars(d,rec){const m=d.meta||{},g=d.goals||{},p=rec.p||{};return `<h1>${esc(d.title)}</h1>
-   <table class="tb meta"><tr><th>Fan</th><td>${esc(p.fan||'')}</td><th>Sinf</th><td>${esc(p.sinf||'')}</td></tr>
-   <tr><th>Dars turi</th><td>${esc(m.turi||'')}</td><th>Vaqt</th><td>${esc(p.vaqt||45)} daqiqa</td></tr>
-   <tr><th>Metodlar</th><td colspan="3">${esc(m.metodlar||'')}</td></tr><tr><th>Jihozlar</th><td colspan="3">${esc(m.jihozlar||'')}</td></tr></table>
-   <h2>Darsning maqsadlari</h2><ul><li><b>Taʼlimiy:</b> ${esc(g.talimiy||'')}</li><li><b>Tarbiyaviy:</b> ${esc(g.tarbiyaviy||'')}</li><li><b>Rivojlantiruvchi:</b> ${esc(g.rivojlantiruvchi||'')}</li></ul>
+ test(d){const it=arr(d.items);return `<h1>${ex(d.title)}</h1>
+   <ol class="tq">${it.map(q=>`<li><p>${ex(q.q)}</p><div class="opts">${arr(q.options).map((o,i)=>`<span>${LET[i]}) ${ex(o)}</span>`).join('')}</div></li>`).join('')}</ol>
+   <div class="keybox pb"><h2>Javoblar kaliti</h2><ol class="keys">${it.map(q=>`<li><b>${LET[+q.correct]||'?'}</b>${q.explain?` — ${ex(q.explain)}`:''}</li>`).join('')}</ol></div>`},
+ glossariy(d){return `<h1>${ex(d.title)}</h1><table class="tb"><tr><th>#</th><th>Atama</th><th>Taʼrif</th><th>Misol</th></tr>${arr(d.items).map((x,i)=>`<tr><td>${i+1}</td><td><b>${ex(x.term)}</b></td><td>${ex(x.def)}</td><td>${ex(x.example||'')}</td></tr>`).join('')}</table>`},
+ tarqatma(d){return `<h1>${ex(d.title)}</h1>${d.intro?`<p class="intro">${ex(d.intro)}</p>`:''}
+   ${arr(d.sections).map(s=>`<h2>${ex(s.h)}</h2><p>${ex(s.text)}</p>`).join('')}
+   ${arr(d.examples).length?`<h2>Yechilgan namunalar</h2><ol>${arr(d.examples).map(x=>`<li><p><b>${ex(x.q)}</b></p><p class="sol">${ex(x.a)}</p></li>`).join('')}</ol>`:''}
+   ${arr(d.exercises).length?`<h2>Mustaqil mashqlar</h2><ol>${arr(d.exercises).map(x=>`<li>${ex(x.q)}</li>`).join('')}</ol>
+   <div class="keybox pb"><h2>Javoblar</h2><ol class="keys">${arr(d.exercises).map(x=>`<li>${ex(x.a)}</li>`).join('')}</ol></div>`:''}`},
+ dars(d,rec){const m=d.meta||{},g=d.goals||{},p=rec.p||{};return `<h1>${ex(d.title)}</h1>
+   <table class="tb meta"><tr><th>Fan</th><td>${ex(p.fan||'')}</td><th>Sinf</th><td>${ex(p.sinf||'')}</td></tr>
+   <tr><th>Dars turi</th><td>${ex(m.turi||'')}</td><th>Vaqt</th><td>${ex(p.vaqt||45)} daqiqa</td></tr>
+   <tr><th>Metodlar</th><td colspan="3">${ex(m.metodlar||'')}</td></tr><tr><th>Jihozlar</th><td colspan="3">${ex(m.jihozlar||'')}</td></tr></table>
+   <h2>Darsning maqsadlari</h2><ul><li><b>Taʼlimiy:</b> ${ex(g.talimiy||'')}</li><li><b>Tarbiyaviy:</b> ${ex(g.tarbiyaviy||'')}</li><li><b>Rivojlantiruvchi:</b> ${ex(g.rivojlantiruvchi||'')}</li></ul>
    <h2>Darsning borishi</h2><table class="tb"><tr><th>Bosqich</th><th>Vaqt</th><th>Oʻqituvchi faoliyati</th><th>Oʻquvchi faoliyati</th></tr>
-   ${arr(d.stages).map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.time||'')}</td><td>${esc(s.teacher||'')}</td><td>${esc(s.students||'')}</td></tr>`).join('')}</table>
-   ${d.assessment?`<h2>Baholash</h2><p>${esc(d.assessment)}</p>`:''}${d.homework?`<h2>Uyga vazifa</h2><p>${esc(d.homework)}</p>`:''}`},
- ishreja(d,rec){const rows=arr(d.rows),tot=rows.reduce((a,r)=>a+(+r.hours||0),0);return `<h1>${esc(d.title)}</h1>
-   <p class="sub">${esc((rec.p||{}).fan||'')} · ${esc((rec.p||{}).sinf||'')}-sinf · ${esc((rec.p||{}).davr||'')} · haftasiga ${esc((rec.p||{}).soat||'')} soat · jami ${tot} soat</p>
-   <table class="tb"><tr><th>№</th><th>Mavzu</th><th>Soat</th><th>Dars turi</th><th>Sana</th><th>Izoh</th></tr>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.topic)}</td><td>${esc(r.hours||1)}</td><td>${esc(r.type||'')}</td><td></td><td></td></tr>`).join('')}</table>
-   ${d.notes?`<p class="intro">${esc(d.notes)}</p>`:''}<p class="small">⚠️ Rasmiy oʻquv dasturi va darslik bilan solishtirib chiqing.</p>`},
- metodik(d){return `<h1>${esc(d.title)}</h1>${arr(d.sections).map(s=>`<h2>${esc(s.h)}</h2>${arr(s.paras).map(x=>`<p>${esc(x)}</p>`).join('')}${arr(s.bullets).length?`<ul>${arr(s.bullets).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}`).join('')}`},
- fleshkarta(d){return `<h1>${esc(d.title)}</h1><p class="small noprint">Kartani bosing — aylanadi.</p><div class="cards">${arr(d.cards).map((c,i)=>`<div class="flip" tabindex="0"><div class="fi"><div class="ff"><small>${i+1}</small>${esc(c.front)}</div><div class="fb">${esc(c.back)}</div></div></div>`).join('')}</div>`},
+   ${arr(d.stages).map(s=>`<tr><td><b>${ex(s.name)}</b></td><td>${ex(s.time||'')}</td><td>${ex(s.teacher||'')}</td><td>${ex(s.students||'')}</td></tr>`).join('')}</table>
+   ${d.assessment?`<h2>Baholash</h2><p>${ex(d.assessment)}</p>`:''}${d.homework?`<h2>Uyga vazifa</h2><p>${ex(d.homework)}</p>`:''}`},
+ ishreja(d,rec){const rows=arr(d.rows),tot=rows.reduce((a,r)=>a+(+r.hours||0),0);return `<h1>${ex(d.title)}</h1>
+   <p class="sub">${ex((rec.p||{}).fan||'')} · ${ex((rec.p||{}).sinf||'')}-sinf · ${ex((rec.p||{}).davr||'')} · haftasiga ${ex((rec.p||{}).soat||'')} soat · jami ${tot} soat</p>
+   <table class="tb"><tr><th>№</th><th>Mavzu</th><th>Soat</th><th>Dars turi</th><th>Sana</th><th>Izoh</th></tr>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${ex(r.topic)}</td><td>${ex(r.hours||1)}</td><td>${ex(r.type||'')}</td><td></td><td></td></tr>`).join('')}</table>
+   ${d.notes?`<p class="intro">${ex(d.notes)}</p>`:''}<p class="small">⚠️ Rasmiy oʻquv dasturi va darslik bilan solishtirib chiqing.</p>`},
+ metodik(d){return `<h1>${ex(d.title)}</h1>${arr(d.sections).map(s=>`<h2>${ex(s.h)}</h2>${arr(s.paras).map(x=>`<p>${ex(x)}</p>`).join('')}${arr(s.bullets).length?`<ul>${arr(s.bullets).map(x=>`<li>${ex(x)}</li>`).join('')}</ul>`:''}`).join('')}`},
+ fleshkarta(d){return `<h1>${ex(d.title)}</h1><p class="small noprint">Kartani bosing — aylanadi.</p><div class="cards">${arr(d.cards).map((c,i)=>`<div class="flip" tabindex="0"><div class="fi"><div class="ff"><small>${i+1}</small>${ex(c.front)}</div><div class="fb">${ex(c.back)}</div></div></div>`).join('')}</div>`},
  krossvord(d,rec){const L=rec.layout||(rec.layout=crossLayout(arr(d.words)));return crossHtml(d,L)},
  taqdimot(d,rec){const th=THEMES[rec.theme||0];return `<div class="slides">${slideList(d).map((s,i)=>slideHtml(s,i,th)).join('')}</div>`},
- savollar(d){const s=d.set||{};return `<h1>${esc(s.name||d.title)}</h1><p class="sub noprint">Toʻplam saqlandi — oʻyinni tanlang. U botdagi «📦 Toʻplamlarim»da ham chiqadi.</p>
+ savollar(d){const s=d.set||{};return `<h1>${ex(s.name||d.title)}</h1><p class="sub noprint">Toʻplam saqlandi — oʻyinni tanlang. U botdagi «📦 Toʻplamlarim»da ham chiqadi.</p>
    <div class="grid noprint" style="margin:14px 0 22px">${GAMES.filter(g=>g.f==='toplam'&&g.g!=='zanjir').map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
-   <h2>Savollar</h2><ol>${arr(s.items).map(x=>`<li>${esc(x.q)} <b>→ ${esc(x.a)}</b></li>`).join('')}</ol>`},
+   <h2>Savollar</h2><ol>${arr(s.items).map(x=>`<li>${ex(x.q)} <b>→ ${ex(x.a)}</b></li>`).join('')}</ol>`},
 };
 
 function docPage(id){
@@ -694,12 +699,13 @@ async function docAction(a,rec,b){
   if(a==='pptx')exportPptx(rec,b);
   if(a==='show'){if(rec.tool==='taqdimot')present(slideList(rec.data).map((s,i)=>slideHtml(s,i,THEMES[rec.theme||0],true)),{cls:'p-slides'});
     if(rec.tool==='test')presentTest(rec.data);
-    if(rec.tool==='fleshkarta')present(arr(rec.data.cards).map((c,i)=>`<div class="flip big" tabindex="0"><div class="fi"><div class="ff"><small>${i+1} / ${rec.data.cards.length}</small>${esc(c.front)}</div><div class="fb">${esc(c.back)}</div></div></div>`),{cls:'p-cards',onShow:el=>{const f=el.querySelector('.flip');f.onclick=()=>f.classList.toggle('on')}})}
+    if(rec.tool==='fleshkarta')present(arr(rec.data.cards).map((c,i)=>`<div class="flip big" tabindex="0"><div class="fi"><div class="ff"><small>${i+1} / ${rec.data.cards.length}</small>${ex(c.front)}</div><div class="fb">${ex(c.back)}</div></div></div>`),{cls:'p-cards',onShow:el=>{const f=el.querySelector('.flip');f.onclick=()=>f.classList.toggle('on')}})}
   if(a==='check'||a==='reveal')crossCheck(a==='reveal');
 }
 function cleanClone(el){const c=el.cloneNode(true);c.querySelectorAll('.noprint,button').forEach(x=>x.remove());
   c.querySelectorAll('input').forEach(i=>{const s=document.createElement('span');s.textContent=i.value||'';i.replaceWith(s)});
-  c.querySelectorAll('.keybox,.ans-only').forEach(k=>k.style.display='block');return c.innerHTML}
+  c.querySelectorAll('.keybox,.ans-only').forEach(k=>k.style.display='block');
+  c.querySelectorAll('.fr').forEach(f=>{const s=f.querySelectorAll('span');f.replaceWith(document.createTextNode(s[0].textContent+'/'+s[1].textContent))});return c.innerHTML}
 function download(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+content],{type}));a.download=name.replace(/[\\/:*?"<>|]+/g,' ');document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
 function wordHtml(title,body){return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(title)}</title>
 <style>body{font-family:Calibri,Arial,sans-serif;font-size:12pt;line-height:1.4}h1{font-size:20pt;color:#16213e}h2{font-size:14pt;color:#16213e;margin-top:14pt}
@@ -720,7 +726,7 @@ function present(items,{cls='',onShow}={}){
   o.querySelector('.pc').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;b.dataset.p==='x'?close():go(+b.dataset.p)};
   draw();return{go,close}}
 function presentTest(d){const it=arr(d.items);
-  present(it.map((q,n)=>`<div class="tshow"><small>Savol ${n+1} / ${it.length}</small><h2>${esc(q.q)}</h2><div class="topts">${arr(q.options).map((o,i)=>`<button data-i="${i}"><b>${LET[i]}</b>${esc(o)}</button>`).join('')}</div><p class="texp hidden">${esc(q.explain||'')}</p></div>`),
+  present(it.map((q,n)=>`<div class="tshow"><small>Savol ${n+1} / ${it.length}</small><h2>${ex(q.q)}</h2><div class="topts">${arr(q.options).map((o,i)=>`<button data-i="${i}"><b>${LET[i]}</b>${ex(o)}</button>`).join('')}</div><p class="texp hidden">${ex(q.explain||'')}</p></div>`),
    {cls:'p-test',onShow:(el,n)=>{el.querySelectorAll('.topts button').forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===+it[n].correct;b.classList.add(ok?'ok':'no');
      el.querySelector(`.topts button[data-i="${+it[n].correct}"]`).classList.add('ok');el.querySelector('.texp').classList.remove('hidden');try{(ok?beep(880):beep(200))}catch(e){}})}})}
 function beep(f){const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const c=beep.c||(beep.c=new A()),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.type=f>500?'triangle':'square';
@@ -739,8 +745,8 @@ const THEMES=[
 function slideList(d){return [{cover:1,title:d.title,sub:d.subtitle,emoji:'🎓'},...arr(d.slides)]}
 function slideHtml(s,i,th,big){
   const st=`background:${th.bg};color:${th.fg};--acc:${th.acc}`;
-  if(s.cover)return `<div class="slide cover ${big?'big':''}" style="${st}"><span class="sem">${esc(s.emoji||'🎓')}</span><h3>${esc(s.title||'')}</h3>${s.sub?`<p>${esc(s.sub)}</p>`:''}<i class="sbar"></i></div>`;
-  return `<div class="slide ${big?'big':''}" style="${st}"><span class="snum">${i}</span><span class="sem">${esc(s.emoji||'')}</span><h3>${esc(s.title||'')}</h3><ul>${arr(s.bullets).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>${!big&&s.note?`<p class="snote noprint">🗒 ${esc(s.note)}</p>`:''}</div>`}
+  if(s.cover)return `<div class="slide cover ${big?'big':''}" style="${st}"><span class="sem">${ex(s.emoji||'🎓')}</span><h3>${ex(s.title||'')}</h3>${s.sub?`<p>${ex(s.sub)}</p>`:''}<i class="sbar"></i></div>`;
+  return `<div class="slide ${big?'big':''}" style="${st}"><span class="snum">${i}</span><span class="sem">${ex(s.emoji||'')}</span><h3>${ex(s.title||'')}</h3><ul>${arr(s.bullets).map(b=>`<li>${ex(b)}</li>`).join('')}</ul>${!big&&s.note?`<p class="snote noprint">🗒 ${ex(s.note)}</p>`:''}</div>`}
 function loadScript(srcs){return new Promise((res,rej)=>{const tryi=k=>{if(k>=srcs.length)return rej(new Error('Kutubxona yuklanmadi'));const s=document.createElement('script');s.src=srcs[k];s.onload=res;s.onerror=()=>{s.remove();tryi(k+1)};document.head.appendChild(s)};tryi(0)})}
 async function exportPptx(rec,b){
   b.disabled=true;const old=b.textContent;b.textContent='⏳ Tayyorlanmoqda…';
@@ -800,7 +806,7 @@ function crossHtml(d,L){
   L.words.forEach(w=>{const k=w.r+','+w.c;cell[k].n=w.n});
   const grid=(ans)=>`<table class="cw ${ans?'ans':''}">${[...Array(L.h)].map((_,r)=>`<tr>${[...Array(L.w)].map((_,c)=>{const x=cell[r+','+c];
     return x?`<td>${x.n?`<small>${x.n}</small>`:''}${ans?`<span>${esc(x.l)}</span>`:`<input maxlength="2" data-l="${esc(x.l)}" aria-label="katak">`}</td>`:'<td class="x"></td>'}).join('')}</tr>`).join('')}</table>`;
-  const list=dir=>L.words.filter(w=>w.dir===dir).sort((a,b)=>a.n-b.n).map(w=>`<li value="${w.n}">${esc(w.clue)} <em>(${w.a.split('|').length})</em></li>`).join('');
+  const list=dir=>L.words.filter(w=>w.dir===dir).sort((a,b)=>a.n-b.n).map(w=>`<li value="${w.n}">${ex(w.clue)} <em>(${w.a.split('|').length})</em></li>`).join('');
   return `<h1>${esc(d.title)}</h1><div class="cwrap"><div class="cgrid">${grid(false)}</div>
    <div class="clues"><h2>➡️ Gorizontal</h2><ol>${list(0)}</ol><h2>⬇️ Vertikal</h2><ol>${list(1)}</ol></div></div>
    <div class="ans-only pb"><h2>Javoblar</h2>${grid(true)}</div>`}
@@ -821,7 +827,7 @@ function chatPage(){return `<section class="chatsec"><div class="wrap fade narro
   </div></div></section>`}
 function md(s){
   const lines=esc(s).split('\n');let out='',list=null,code=false,buf=[];
-  const inl=t=>t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/(^|[^*])\*(?!\s)(.+?)\*/g,'$1<i>$2</i>').replace(/`([^`]+)`/g,'<code>$1</code>');
+  const inl=t=>frac(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/(^|[^*])\*(?!\s)(.+?)\*/g,'$1<i>$2</i>').replace(/`([^`]+)`/g,'<code>$1</code>');
   const flush=()=>{if(list){out+=`</${list}>`;list=null}};
   for(const ln of lines){
     if(ln.trim().startsWith('```')){if(code){out+=`<pre>${buf.join('\n')}</pre>`;buf=[];code=false}else{flush();code=true}continue}
