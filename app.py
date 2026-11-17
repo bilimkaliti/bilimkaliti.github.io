@@ -24,6 +24,8 @@ from aiohttp import web
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart
 from aiogram.types import (
+    BotCommand,
+    MenuButtonWebApp,
     BufferedInputFile,
     CallbackQuery,
     InlineKeyboardButton,
@@ -82,7 +84,7 @@ BTN_AI = "✨ AI bilan savollar"
 BTN_OWN = "✍️ Oʻz savollarim"
 BTN_SETS = "📦 Toʻplamlarim"
 BTN_LIB = "📚 Kutubxona"
-SITE_URL = os.environ.get("SITE_URL", "https://mashrapovbehruz805-crypto.github.io/Bilim-kaliti/").rstrip("/") + "/"
+SITE_URL = os.environ.get("SITE_URL", "https://bilimkaliti.github.io/").rstrip("/") + "/"
 LIB_CHAT = int(os.environ.get("LIBRARY_CHAT_ID", "0") or 0)
 MATH_FANS = {"matematika", "algebra", "geometriya", "boshlangʻich taʼlim", ""}
 
@@ -209,7 +211,8 @@ async def start(message: Message) -> None:
     await message.answer(
         "Assalomu alaykum! Men «Bilim Kaliti» botiman 🔑\n"
         "Darsda guruhlar bilan oʻynaladigan oʻyinlarni ochib beraman.\n\n"
-        "Boshlash uchun «📚 Sinflar» tugmasini bosing.",
+        "Boshlash uchun «📚 Sinflar» tugmasini bosing.\n\n"
+        f"🌐 Sayt (kompyuter va doska uchun): {SITE_URL}",
         reply_markup=menu_kb(),
     )
 
@@ -676,6 +679,14 @@ async def send_sets_list(uid: int, edit: Message | None = None) -> None:
         await bot.send_message(uid, text, reply_markup=sets_list_kb(sets))
 
 
+@dp.message(Command("sayt"))
+async def site_cmd(message: Message) -> None:
+    kbd = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="🌐 Saytni ochish", url=SITE_URL)],
+                                                [InlineKeyboardButton(text="📲 Telegram ichida ochish", web_app=WebAppInfo(url=SITE_URL))]])
+    await message.answer(f"🌐 Bilim Kaliti sayti: {SITE_URL}\n\nKompyuter yoki elektron doskada shu manzilni oching — "
+                         "oʻyinlar, AI yordamchi, kutubxona va sinf vositalari.", reply_markup=kbd)
+
+
 @dp.message(F.text == BTN_LIB)
 async def show_lib(message: Message) -> None:
     clear_wait(message.from_user.id)
@@ -1003,7 +1014,7 @@ async def gemini_mc(fan: str, sinf: str, topic: str, lang: str, n: int = 12, ext
 
 # ===================== SAYT: kirish, AI vositalari, chat =====================
 SITE_ORIGINS = {o.strip().rstrip("/") for o in os.environ.get(
-    "SITE_ORIGINS", "https://mashrapovbehruz805-crypto.github.io").split(",") if o.strip()}
+    "SITE_ORIGINS", "https://bilimkaliti.github.io,https://bilim-kaliti.github.io,https://mashrapovbehruz805-crypto.github.io").split(",") if o.strip()}
 SITE_SECRET = hashlib.sha256(b"bk-site:" + TOKEN.encode()).digest()
 LOGIN_CODES: dict[str, dict] = {}
 LOGIN_TTL = 600
@@ -1374,7 +1385,31 @@ async def index(request: web.Request) -> web.StreamResponse:
     return web.Response(text="Bilim Kaliti bot ishlayapti.")
 
 
+BOT_SHORT = "Sinf uchun guruh oʻyinlari, Robo raqib va AI yordamchi — bepul. Sayt: " + SITE_URL.replace("https://", "").rstrip("/")
+BOT_DESC = ("🔑 Bilim Kaliti — oʻqituvchilar uchun bepul yordamchi:\n\n"
+            "🎮 Elektron doskada 2–4 guruh bellashadigan 13 ta oʻyin\n"
+            "🤖 Robo bilan bellashuv va yakka mashq\n"
+            "✨ AI: test, taqdimot, dars ishlanma, krossvord\n"
+            "📚 Matematika va boshqa fanlar boʻyicha kutubxona\n\n"
+            f"🌐 Sayt: {SITE_URL}\n\nBoshlash uchun START ni bosing.")
+
+
+async def bot_profile() -> None:
+    """Bot tavsifi, buyruqlar va «🌐 Sayt» menyu tugmasi (har ishga tushganda yangilanadi)."""
+    for call in (lambda: bot.set_my_short_description(short_description=BOT_SHORT[:120]),
+                 lambda: bot.set_my_description(description=BOT_DESC[:512]),
+                 lambda: bot.set_my_commands([BotCommand(command="start", description="Bosh menyu"),
+                                              BotCommand(command="sayt", description="Saytni ochish"),
+                                              BotCommand(command="id", description="Telegram ID raqamim")]),
+                 lambda: bot.set_chat_menu_button(menu_button=MenuButtonWebApp(text="🌐 Sayt", web_app=WebAppInfo(url=SITE_URL)))):
+        try:
+            await call()
+        except Exception as e:
+            log.warning("bot_profile: %s", e)
+
+
 async def on_startup(app: web.Application) -> None:
+    asyncio.create_task(bot_profile())
     if not BASE_URL:
         log.error("BASE_URL topilmadi: webhook oʻrnatilmadi.")
         return
