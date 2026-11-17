@@ -4,6 +4,7 @@ Bot o'yinlarni Telegram ichida (Mini App) ochadi va o'yin boshlanganda
 javob kodlarini o'qituvchiga yuboradi.
 """
 import ast
+import base64
 import asyncio
 import datetime
 import hashlib
@@ -80,7 +81,7 @@ BTN_OWN = "✍️ Oʻz savollarim"
 BTN_SETS = "📦 Toʻplamlarim"
 
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-AI_DAILY = int(os.environ.get("AI_DAILY", "15") or 15)   # bir o'qituvchiga kuniga nechta AI so'rov
+AI_DAILY = int(os.environ.get("AI_DAILY", "20") or 20)   # bir o'qituvchiga kuniga nechta AI so'rov
 MAX_SETS = 30
 MAX_ITEMS = 60
 SETS_FILE = "bilim-kaliti-toplamlar.json"
@@ -93,7 +94,7 @@ KEYS: dict[int, tuple[str, float]] = {}
 WAIT_FEEDBACK: set[int] = set()
 WAIT_AI: set[int] = set()
 WAIT_OWN: set[int] = set()
-AI_USES: dict[int, tuple[str, int]] = {}
+AI_USES: dict[tuple[int, str], tuple[str, int]] = {}
 SETS_CACHE: dict[int, list[dict]] = {}
 SET_LOCKS: dict[int, asyncio.Lock] = {}
 
@@ -186,6 +187,19 @@ HELP_TEXT = (
 @dp.message(CommandStart())
 async def start(message: Message) -> None:
     clear_wait(message.from_user.id)
+    arg = (message.text or "").split(maxsplit=1)[1:] or [""]
+    if arg[0].startswith("login_"):
+        code = arg[0][6:]
+        rec = LOGIN_CODES.get(code)
+        if rec and time.time() - rec["t"] < LOGIN_TTL:
+            u = message.from_user
+            rec["uid"], rec["name"] = u.id, (u.full_name or u.username or "Oʻqituvchi")[:40]
+            await message.answer("✅ Saytga kirdingiz! Endi brauzerga qayting — sahifa oʻzi yangilanadi.",
+                                 reply_markup=menu_kb())
+        else:
+            await message.answer("⚠️ Kirish havolasi eskirgan. Saytda «Kirish» tugmasini qaytadan bosing.",
+                                 reply_markup=menu_kb())
+        return
     await message.answer(
         "Assalomu alaykum! Men «Bilim Kaliti» botiman 🔑\n"
         "Darsda guruhlar bilan oʻynaladigan oʻyinlarni ochib beraman.\n\n"
@@ -539,19 +553,23 @@ async def gemini_questions(topic: str, n: int = 12) -> tuple[str, list[dict]]:
     return str(obj.get("name") or topic)[:60], check_items(obj.get("items"))
 
 
-def ai_left(uid: int) -> int:
+CHAT_DAILY = int(os.environ.get("CHAT_DAILY", "40") or 40)
+
+
+def ai_left(uid: int, kind: str = "gen") -> int:
     today = datetime.date.today().isoformat()
-    day, used = AI_USES.get(uid, (today, 0))
+    day, used = AI_USES.get((uid, kind), (today, 0))
     if day != today:
         used = 0
-    limit = AI_DAILY * 4 if uid == ADMIN_ID else AI_DAILY
+    base = CHAT_DAILY if kind == "chat" else AI_DAILY
+    limit = base * 4 if uid == ADMIN_ID else base
     return limit - used
 
 
-def ai_use(uid: int) -> None:
+def ai_use(uid: int, kind: str = "gen") -> None:
     today = datetime.date.today().isoformat()
-    day, used = AI_USES.get(uid, (today, 0))
-    AI_USES[uid] = (today, (used if day == today else 0) + 1)
+    day, used = AI_USES.get((uid, kind), (today, 0))
+    AI_USES[(uid, kind)] = (today, (used if day == today else 0) + 1)
 
 
 @dp.message(F.text == BTN_AI)
@@ -684,6 +702,305 @@ async def cb_set_delete_yes(call: CallbackQuery) -> None:
     await send_sets_list(uid, edit=call.message)
 
 
+# ===================== SAYT: kirish, AI vositalari, chat =====================
+SITE_ORIGINS = {o.strip().rstrip("/") for o in os.environ.get(
+    "SITE_ORIGINS", "https://mashrapovbehruz805-crypto.github.io").split(",") if o.strip()}
+SITE_SECRET = hashlib.sha256(b"bk-site:" + TOKEN.encode()).digest()
+LOGIN_CODES: dict[str, dict] = {}
+LOGIN_TTL = 600
+BOT_USERNAME = os.environ.get("BOT_USERNAME", "bilimkaliti_bot")
+
+
+def _b64(b: bytes) -> str:
+    return base64.urlsafe_b64encode(b).decode().rstrip("=")
+
+
+def make_token(uid: int, name: str) -> str:
+    payload = _b64(json.dumps({"u": uid, "n": name, "e": int(time.time()) + 90 * 86400}).encode())
+    sig = hmac.new(SITE_SECRET, payload.encode(), hashlib.sha256).hexdigest()[:40]
+    return f"{payload}.{sig}"
+
+
+def read_token(tok: str) -> dict | None:
+    try:
+        payload, sig = tok.split(".", 1)
+        good = hmac.new(SITE_SECRET, payload.encode(), hashlib.sha256).hexdigest()[:40]
+        if not hmac.compare_digest(sig, good):
+            return None
+        data = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+        return data if data.get("e", 0) > time.time() else None
+    except Exception:
+        return None
+
+
+@web.middleware
+async def cors(request: web.Request, handler):
+    origin = request.headers.get("Origin", "").rstrip("/")
+    is_api = request.path.startswith("/api/")
+    if request.method == "OPTIONS" and is_api:
+        resp = web.Response(status=204)
+    else:
+        resp = await handler(request)
+    if is_api and origin in SITE_ORIGINS:
+        resp.headers["Access-Control-Allow-Origin"] = origin
+        resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        resp.headers["Access-Control-Max-Age"] = "86400"
+        resp.headers["Vary"] = "Origin"
+    return resp
+
+
+async def read_json(request: web.Request) -> dict:
+    try:
+        data = await request.json()
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def site_user(data: dict) -> dict | None:
+    return read_token(str(data.get("token", "")))
+
+
+def jerr(msg: str, status: int = 400, **kw) -> web.Response:
+    return web.json_response({"ok": False, "error": msg, **kw}, status=status)
+
+
+async def api_ping(request: web.Request) -> web.Response:
+    return web.json_response({"ok": True})
+
+
+async def api_login_start(request: web.Request) -> web.Response:
+    now = time.time()
+    for c in [c for c, r in LOGIN_CODES.items() if now - r["t"] > LOGIN_TTL]:
+        LOGIN_CODES.pop(c, None)
+    if len(LOGIN_CODES) > 5000:
+        return jerr("busy", 429)
+    code = secrets.token_urlsafe(12)
+    LOGIN_CODES[code] = {"t": now}
+    return web.json_response({"ok": True, "code": code, "url": f"https://t.me/{BOT_USERNAME}?start=login_{code}"})
+
+
+async def api_login_check(request: web.Request) -> web.Response:
+    code = str((await read_json(request)).get("code", ""))
+    rec = LOGIN_CODES.get(code)
+    if not rec or time.time() - rec["t"] > LOGIN_TTL:
+        LOGIN_CODES.pop(code, None)
+        return web.json_response({"ok": False, "expired": True})
+    if "uid" not in rec:
+        return web.json_response({"ok": False, "wait": True})
+    LOGIN_CODES.pop(code, None)
+    return web.json_response({"ok": True, "token": make_token(rec["uid"], rec["name"]), "name": rec["name"]})
+
+
+async def api_me(request: web.Request) -> web.Response:
+    u = site_user(await read_json(request))
+    if not u:
+        return jerr("auth", 401)
+    return web.json_response({"ok": True, "name": u["n"], "gen": ai_left(u["u"]), "chat": ai_left(u["u"], "chat")})
+
+
+async def gemini_call(contents: list, system: str | None = None, json_out: bool = True,
+                      max_tokens: int = 8192, temperature: float = 0.8) -> str:
+    timeout = aiohttp.ClientTimeout(total=150)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        model = await gemini_model(session)
+        cfg = {"temperature": temperature, "maxOutputTokens": max_tokens}
+        if json_out:
+            cfg["responseMimeType"] = "application/json"
+        body = {"contents": contents, "generationConfig": cfg}
+        if system:
+            body["systemInstruction"] = {"parts": [{"text": system}]}
+        async with session.post(f"{GEM_API}/{model}:generateContent", json=body,
+                                headers={"x-goog-api-key": GEMINI_KEY}) as r:
+            if r.status == 429:
+                raise RuntimeError("limit")
+            if r.status == 404:
+                global _MODEL
+                _MODEL = None
+            data = await r.json(content_type=None)
+            if r.status != 200:
+                raise RuntimeError(f"http {r.status}: {str(data)[:300]}")
+    cand = (data.get("candidates") or [{}])[0]
+    parts = (cand.get("content") or {}).get("parts") or []
+    text = "".join(p.get("text", "") for p in parts if not p.get("thought"))
+    if not text:
+        raise RuntimeError("empty: " + str(cand.get("finishReason")))
+    return text
+
+
+def parse_json_text(text: str):
+    text = text.strip()
+    if text.startswith("```"):
+        text = text.split("\n", 1)[1] if "\n" in text else text
+        text = text.rsplit("```", 1)[0]
+    try:
+        return json.loads(text)
+    except Exception:
+        a, b = text.find("{"), text.rfind("}")
+        return json.loads(text[a:b + 1])
+
+
+LANGS = {"uz": "oʻzbek tili, lotin yozuvi (oʻ, gʻ harflari bilan)", "ru": "rus tili", "en": "ingliz tili"}
+
+TOOL_PROMPTS = {
+    "test": ("{n} ta test savoli tuz. Qiyinligi: {qiyinlik}. Har savolda 4 ta javob varianti, faqat bittasi toʻgʻri; "
+             "toʻgʻri javob oʻrni har xil boʻlsin; har biriga qisqa izoh yoz.\n"
+             'JSON: {{"title": "...", "items": [{{"q": "savol", "options": ["A", "B", "C", "D"], "correct": 0, "explain": "..."}}]}}'),
+    "krossvord": ("Krossvord uchun {n} ta soʻz va topishmoq (savol) tuz. Har bir soʻz — BITTA soʻz, 3–12 harf, "
+                  "boʻsh joy, raqam va chiziqchasiz; asosiy atamalar boʻlsin; savollar qisqa va aniq.\n"
+                  'JSON: {{"title": "...", "words": [{{"word": "SOʻZ", "clue": "savol"}}]}}'),
+    "fleshkarta": ("{n} ta fleshkarta tuz: old tomonida savol yoki atama, orqa tomonida qisqa javob yoki taʼrif.\n"
+                   'JSON: {{"title": "...", "cards": [{{"front": "...", "back": "..."}}]}}'),
+    "glossariy": ("Mavzu boʻyicha {n} ta asosiy atamadan iborat glossariy tuz: atama, aniq taʼrif va qisqa misol.\n"
+                  'JSON: {{"title": "...", "items": [{{"term": "...", "def": "...", "example": "..."}}]}}'),
+    "tarqatma": ("Oʻquvchilar uchun tarqatma material tuz: qisqa kirish, 2–4 ta boʻlimda asosiy nazariya (sodda tilda), "
+                 "3 ta yechilgan namuna va {n} ta mustaqil mashq (javoblari bilan).\n"
+                 'JSON: {{"title": "...", "intro": "...", "sections": [{{"h": "...", "text": "..."}}], '
+                 '"examples": [{{"q": "...", "a": "yechim"}}], "exercises": [{{"q": "...", "a": "javob"}}]}}'),
+    "dars": ("{vaqt} daqiqalik dars ishlanma tuz (Oʻzbekiston maktablari uchun odatiy shaklda). Dars turi, metodlar, "
+             "jihozlar, uch maqsad (taʼlimiy, tarbiyaviy, rivojlantiruvchi), darsning borishi bosqichlari "
+             "(tashkiliy qism, uy vazifasini soʻrash, yangi mavzu bayoni, mustahkamlash, baholash, uyga vazifa) — "
+             "har bosqichda vaqt, oʻqituvchi faoliyati va oʻquvchi faoliyati; kamida bitta interaktiv metod yoki oʻyin.\n"
+             'JSON: {{"title": "...", "meta": {{"turi": "...", "metodlar": "...", "jihozlar": "..."}}, '
+             '"goals": {{"talimiy": "...", "tarbiyaviy": "...", "rivojlantiruvchi": "..."}}, '
+             '"stages": [{{"name": "...", "time": "5 daqiqa", "teacher": "...", "students": "..."}}], '
+             '"homework": "...", "assessment": "..."}}'),
+    "ishreja": ("Kalendar-tematik ish reja tuz: {davr}, haftasiga {soat} soat. Oʻzbekiston davlat taʼlim standarti va "
+                "oʻquv dasturiga imkon qadar mos boʻlsin; mavzular mantiqiy ketma-ketlikda, takrorlash va nazorat "
+                "ishlari bilan.\n"
+                'JSON: {{"title": "...", "rows": [{{"n": 1, "topic": "...", "hours": 1, "type": "yangi mavzu / mustahkamlash / nazorat"}}], '
+                '"notes": "..."}}'),
+    "metodik": ("Oʻqituvchilar uchun metodik qoʻllanma tuz: mavzuni oʻqitishning maqsadi, asosiy tushunchalar, "
+                "oʻqitish usullari va bosqichlari, oʻquvchilar koʻp qiladigan xatolar, interaktiv metodlar va oʻyinlar, "
+                "baholash. 5–8 ta boʻlim.\n"
+                'JSON: {{"title": "...", "sections": [{{"h": "...", "paras": ["..."], "bullets": ["..."]}}]}}'),
+    "taqdimot": ("{n} ta slayddan iborat dars taqdimoti tuz. Har slaydda qisqa sarlavha, 3–5 ta qisqa band "
+                 "(har biri 12 soʻzdan oshmasin), mos bitta emoji va oʻqituvchi uchun izoh. Birinchi slayd — kirish, "
+                 "oxirgisi — xulosa yoki savollar.\n"
+                 'JSON: {{"title": "...", "subtitle": "...", "slides": [{{"title": "...", "bullets": ["..."], "emoji": "📐", "note": "..."}}]}}'),
+}
+TOOL_LIMITS = {"test": (5, 30, 10), "krossvord": (6, 20, 12), "fleshkarta": (6, 30, 12), "glossariy": (6, 40, 15),
+               "tarqatma": (3, 15, 6), "taqdimot": (5, 20, 10)}
+
+
+def clip(v, n: int = 300) -> str:
+    return str(v or "").strip()[:n]
+
+
+async def api_ai(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    if not GEMINI_KEY:
+        return jerr("AI hali ulanmagan (GEMINI_API_KEY yoʻq).", 503)
+    uid, tool, p = u["u"], str(data.get("tool", "")), data.get("p") or {}
+    if tool != "savollar" and tool not in TOOL_PROMPTS:
+        return jerr("tool")
+    if ai_left(uid) <= 0:
+        return jerr("Bugungi AI limit tugadi. Ertaga yana urinib koʻring.", 429, limit=True)
+    mavzu = clip(p.get("mavzu"), 300)
+    if len(mavzu) < 2:
+        return jerr("Mavzuni yozing.")
+    sinf, fan = clip(p.get("sinf"), 30), clip(p.get("fan"), 60) or "Matematika"
+    ai_use(uid)
+    try:
+        if tool == "savollar":
+            name, items = await gemini_questions(f"{sinf}-sinf, {mavzu}" if sinf else mavzu)
+            if len(items) < 4:
+                return jerr("AI yetarlicha toʻgʻri savol tuza olmadi. Mavzuni boshqacharoq yozing.")
+            s, _ = await add_set(uid, name, items, "ai")
+            return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
+        lo, hi, df = TOOL_LIMITS.get(tool, (1, 50, 10))
+        try:
+            n = max(lo, min(hi, int(p.get("n") or df)))
+        except (TypeError, ValueError):
+            n = df
+        fmt = {"n": n, "qiyinlik": clip(p.get("qiyinlik"), 20) or "oʻrta", "vaqt": clip(p.get("vaqt"), 5) or "45",
+               "davr": clip(p.get("davr"), 40) or "bir yillik", "soat": clip(p.get("soat"), 3) or "5"}
+        lang = LANGS.get(str(p.get("til")), LANGS["uz"])
+        head = (f"Sen tajribali oʻqituvchi-metodistsan. Fan: {fan}. Sinf: {sinf or 'koʻrsatilmagan'}. "
+                f"Mavzu: «{mavzu}». Til: {lang}. Mazmun yoshga mos, aniq va xatosiz boʻlsin; "
+                "matematik ifodalarni oddiy matnda yoz (masalan 3/4, x², √9).\n")
+        extra = clip(p.get("extra"), 600)
+        if extra:
+            head += f"Oʻqituvchining qoʻshimcha istagi: {extra}\n"
+        parts = []
+        f = data.get("file")
+        if isinstance(f, dict) and f.get("data") and str(f.get("mime", "")).split("/")[0] in ("image", "application"):
+            parts.append({"inline_data": {"mime_type": str(f["mime"]), "data": str(f["data"])}})
+            head += "Ilova qilingan manbaga (rasm yoki PDF) tayanib tuz.\n"
+        parts.append({"text": head + TOOL_PROMPTS[tool].format(**fmt) + "\nFaqat JSON qaytar."})
+        text = await gemini_call([{"role": "user", "parts": parts}])
+        result = parse_json_text(text)
+        if not isinstance(result, dict):
+            raise ValueError("not object")
+        return web.json_response({"ok": True, "result": result, "left": ai_left(uid)})
+    except RuntimeError as e:
+        log.warning("api_ai %s: %s", tool, e)
+        if str(e) == "limit":
+            return jerr("AI hozir band (bepul limit). Bir daqiqadan keyin urinib koʻring.", 429)
+        return jerr("AI javob bermadi. Birozdan keyin yana urinib koʻring.", 502)
+    except Exception as e:
+        log.warning("api_ai parse %s: %s", tool, e)
+        return jerr("AI javobini oʻqib boʻlmadi. Yana bir bor urinib koʻring.", 502)
+
+
+CHAT_SYSTEM = ("Sen «Bilim Kaliti» saytidagi oʻqituvchilar yordamchisisan. Oʻqituvchiga dars rejalash, mavzuni "
+               "tushuntirish usullari, misol va masalalar, oʻyin va interaktiv metodlar, baholash, ota-onalar bilan "
+               "muloqot kabi ishlarda amaliy yordam berasan. Odatda oʻzbek tilida (lotin yozuvi) javob ber; "
+               "foydalanuvchi boshqa tilda yozsa, oʻsha tilda javob ber. Javoblar aniq, qisqa va tartibli boʻlsin "
+               "(markdown: sarlavha, roʻyxat, qalin). Bilmagan narsangni toʻqima.")
+
+
+async def api_chat(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    if not GEMINI_KEY:
+        return jerr("AI hali ulanmagan (GEMINI_API_KEY yoʻq).", 503)
+    if ai_left(u["u"], "chat") <= 0:
+        return jerr("Bugungi chat limiti tugadi. Ertaga yana urinib koʻring.", 429, limit=True)
+    msgs = [m for m in (data.get("messages") or []) if isinstance(m, dict)][-14:]
+    contents = []
+    for m in msgs:
+        role = "model" if m.get("role") == "model" else "user"
+        txt = clip(m.get("text"), 6000)
+        if txt:
+            contents.append({"role": role, "parts": [{"text": txt}]})
+    if not contents or contents[-1]["role"] != "user":
+        return jerr("empty")
+    f = data.get("file")
+    if isinstance(f, dict) and f.get("data"):
+        contents[-1]["parts"].insert(0, {"inline_data": {"mime_type": str(f.get("mime")), "data": str(f["data"])}})
+    ai_use(u["u"], "chat")
+    try:
+        text = await gemini_call(contents, system=CHAT_SYSTEM, json_out=False, max_tokens=4096, temperature=0.7)
+    except RuntimeError as e:
+        log.warning("chat: %s", e)
+        return jerr("AI hozir band. Bir daqiqadan keyin urinib koʻring." if str(e) == "limit"
+                    else "AI javob bermadi. Birozdan keyin urinib koʻring.", 502)
+    return web.json_response({"ok": True, "text": text, "left": ai_left(u["u"], "chat")})
+
+
+async def api_send(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    html = str(data.get("html", ""))[:3_000_000]
+    name = re.sub(r"[^\w\-. ]+", "", str(data.get("name", "hujjat")), flags=re.U).strip()[:60] or "hujjat"
+    try:
+        await bot.send_document(u["u"], BufferedInputFile(html.encode("utf-8"), filename=name + ".doc"),
+                                caption=f"📄 {name}\nWord yoki brauzerda ochiladi. (Bilim Kaliti sayti)")
+    except Exception as e:
+        log.warning("send: %s", e)
+        return jerr("Yuborib boʻlmadi. Botni bloklamaganingizni tekshiring.", 502)
+    return web.json_response({"ok": True})
+
+
 def check_init_data(init_data: str) -> dict | None:
     """Mini App'dan kelgan ma'lumot haqiqatan Telegram'dan ekanini tekshiradi."""
     try:
@@ -730,14 +1047,23 @@ async def api_sets(request: web.Request) -> web.Response:
         data = await request.json()
     except Exception:
         return web.json_response({"ok": False}, status=400)
-    user = check_init_data(str(data.get("initData", "")))
+    user = check_init_data(str(data.get("initData", ""))) if data.get("initData") else None
+    if not user and data.get("token"):
+        t = read_token(str(data["token"]))
+        user = {"id": t["u"]} if t else None
     if not user or "id" not in user:
         return web.json_response({"ok": False}, status=403)
     sets = await load_sets(int(user["id"]))
     return web.json_response({"ok": True, "sets": [{"id": s["id"], "name": s["name"], "items": s["items"]} for s in sets]})
 
 
-async def index(request: web.Request) -> web.Response:
+SITE_INDEX = Path(__file__).parent / "index.html"
+
+
+async def index(request: web.Request) -> web.StreamResponse:
+    # Sayt bosh sahifasi (GitHub Pages bilan bir xil fayl); bo'lmasa oddiy javob.
+    if SITE_INDEX.exists():
+        return web.FileResponse(SITE_INDEX, headers={"Cache-Control": "no-cache"})
     return web.Response(text="Bilim Kaliti bot ishlayapti.")
 
 
@@ -745,7 +1071,16 @@ async def on_startup(app: web.Application) -> None:
     if not BASE_URL:
         log.error("BASE_URL topilmadi: webhook oʻrnatilmadi.")
         return
-    await bot.set_webhook(BASE_URL + WEBHOOK_PATH, drop_pending_updates=True)
+    url = BASE_URL + WEBHOOK_PATH
+    # Uyqudan uyg'onganda kelgan xabarlar yo'qolmasin: navbatdagi xabarlar o'chirilmaydi.
+    try:
+        info = await bot.get_webhook_info()
+        if info.url == url:
+            log.info("Webhook joyida, kutilayotgan xabarlar: %s", info.pending_update_count)
+            return
+    except Exception as e:
+        log.warning("get_webhook_info: %s", e)
+    await bot.set_webhook(url)
     log.info("Webhook oʻrnatildi: %s", BASE_URL)
 
 
@@ -759,16 +1094,23 @@ async def no_cache(request: web.Request, handler):
     return response
 
 
-def main() -> None:
-    app = web.Application(middlewares=[no_cache])
+def build_app() -> web.Application:
+    app = web.Application(middlewares=[cors, no_cache], client_max_size=12 * 1024 * 1024)
     app.router.add_get("/", index)
     app.router.add_post("/api/key", api_key)
     app.router.add_post("/api/sets", api_sets)
+    for path, fn in (("/api/ping", api_ping), ("/api/login/start", api_login_start), ("/api/login/check", api_login_check),
+                     ("/api/me", api_me), ("/api/ai", api_ai), ("/api/chat", api_chat), ("/api/send", api_send)):
+        app.router.add_post(path, fn)
     app.router.add_static("/games/", GAMES_DIR)
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
     setup_application(app, dp, bot=bot)
     app.on_startup.append(on_startup)
-    web.run_app(app, host="0.0.0.0", port=PORT)
+    return app
+
+
+def main() -> None:
+    web.run_app(build_app(), host="0.0.0.0", port=PORT)
 
 
 if __name__ == "__main__":
