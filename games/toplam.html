@@ -347,6 +347,10 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
 .jc.done .jf{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 14%,#fff);animation:jok .5s}
 @keyframes jok{50%{transform:scale(1.06)}}
 .jside .board{margin-bottom:10px}
+.mco{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:8px;font-size:.82em;font-weight:700;text-align:left}
+.mco span{display:flex;gap:8px;align-items:baseline}.mco b{flex:none;display:inline-grid;place-items:center;min-width:1.6em;height:1.6em;border-radius:7px;background:var(--tc,#3e7bfa);color:#fff;font-size:.9em}
+.tops button.mct{font-size:clamp(.95rem,1.6vw,1.3rem);line-height:1.2;text-align:left}
+.jf.ans.txt{font-size:clamp(.95rem,1.8vw,1.4rem);color:#2f6fe0}
 </style>
 </head>
 <body>
@@ -961,8 +965,12 @@ const setById=id=>SETS.find(s=>s.id===id);
 const selSets=()=>(cfg.sets||[]).map(setById).filter(Boolean);
 const okAns=(a,wide)=>wide?a>=0&&a<=9999:a>=1&&a<=9;
 const setNeedsBig=()=>selSets().some(s=>s.items.some(it=>it.a>9));
-function setItem(s,wide){const ok=s.items.map((_,i)=>i).filter(i=>okAns(s.items[i].a,wide));if(!ok.length)return null;
-  const it=s.items[bag('s'+s.id+(wide?'w':'d'),()=>shuffle(ok)).pop()];return{html:esc(it.q),ans:it.a,topic:s.name}}
+const isMC=it=>Array.isArray(it.o);
+function setItem(s,wide){const ok=s.items.map((_,i)=>i).filter(i=>{const it=s.items[i];return isMC(it)?GK!=='bomba':okAns(it.a,wide)});if(!ok.length)return null;
+  const it=s.items[bag('s'+s.id+(wide?'w':'d')+GK,()=>shuffle(ok)).pop()];
+  if(isMC(it)){const perm=shuffle(it.o.map((_,k)=>k)),ans=perm.indexOf(it.c)+1,opts=perm.map(k=>it.o[k]);
+    return{html:`${esc(it.q)}<span class="mco">${opts.map((o,i)=>`<span><b>${i+1}</b>${esc(o)}</span>`).join('')}</span>`,ans,topic:s.name,mc:{q:it.q,opts}}}
+  return{html:esc(it.q),ans:it.a,topic:s.name}}
 /* mavzular va toʻplamlar navbat bilan: toʻplamlar umumiy hisobda yarmini egallaydi */
 function srcList(){const ss=selSets(),w=Math.max(1,Math.ceil(cfg.topics.length/Math.max(1,ss.length)));return shuffle([...cfg.topics,...ss.flatMap(s=>Array(w).fill('S'+s.id))])}
 function bag(key,make){let b=QB[key];if(!b||!b.length)b=QB[key]=make();return b}
@@ -1138,8 +1146,9 @@ function renderSettings(){
   const opened=document.querySelector('#otherTopics')?.open;
   $('#topics').innerHTML=`<div class="tg">${cfg.grade}-sinf mavzulari</div>`+mine.map(lab).join('')+`<details id="otherTopics" style="grid-column:1/-1;margin-top:6px"${opened?' open':''}><summary style="cursor:pointer;font-weight:800">Boshqa sinflar mavzulari</summary><div class="topics" style="margin-top:6px">${other}</div></details>`;
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
-  $('#setBox').classList.toggle('hidden',!g.topics||!SETS.length);
-  $('#setList').innerHTML=SETS.map(s=>`<label><input type="checkbox" data-s="${esc(s.id)}" ${(cfg.sets||[]).includes(s.id)?'checked':''}> ${esc(s.name)} <span class="small">(${s.items.length})</span></label>`).join('');
+  const shown=SETS.filter(s=>!s.fixed||(cfg.sets||[]).includes(s.id));
+  $('#setBox').classList.toggle('hidden',!g.topics||!shown.length);
+  $('#setList').innerHTML=shown.map(s=>`<label><input type="checkbox" data-s="${esc(s.id)}" ${(cfg.sets||[]).includes(s.id)?'checked':''}> ${esc(s.name)} <span class="small">(${s.items.length})</span></label>`).join('');
 }
 $('#setup').addEventListener('click',e=>{
   const qb=e.target.closest('[data-q]');
@@ -1165,7 +1174,7 @@ const q=(t,s)=>t.el.querySelector(s);
 function startGame(){
   const g=GAMES[GK];
   if(g.topics&&!cfg.topics.length&&!selSets().length){$('#startErr').textContent='Kamida bitta mavzu yoki toʻplamni belgilang.';return}
-  if(g.topics&&!cfg.topics.length&&new Set(selSets().flatMap(s=>s.items.filter(it=>okAns(it.a,BIG())).map(it=>it.a))).size<(GK==='bomba'?4:1)){$('#startErr').textContent=GK==='bomba'?'Bomba uchun javobi 1–9 boʻlgan kamida 4 xil savol kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.':'Bu oʻyin uchun javobi 1 dan 9 gacha boʻlgan savollar kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.';return}
+  if(g.topics&&!cfg.topics.length&&new Set(selSets().flatMap(s=>s.items.filter(it=>isMC(it)?GK!=='bomba':okAns(it.a,BIG())).map(it=>isMC(it)?'mc:'+it.q:it.a))).size<(GK==='bomba'?4:1)){$('#startErr').textContent=GK==='bomba'?'Bomba uchun javobi 1–9 boʻlgan kamida 4 xil son-javobli savol kerak (test savollari bombaga mos emas). Boshqa oʻyinni tanlang.':'Bu oʻyin uchun javobi 1 dan 9 gacha boʻlgan savollar kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.';return}
   $('#startErr').textContent='';save();L=cfg.L;
   S.over=false;S.ending=false;S.start=Date.now();S.finished=0;S.log=[];QB={};musLabel();MUSIC.start(GK);
   const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
@@ -1530,13 +1539,14 @@ IMPL.tez={
     if(S.over)return;
     if(this.r>=this.N){endGame();return}
     this.r++;this.done=false;this.left=this.QT;this.q=genQ(cfg.L,BIG());
-    const a=this.q.ans,rev=+String(a).split('').reverse().join('');
-    const cand=a>=10?[a+1,a-1,a+10,a-10,a+2,a-2,rev,a+11]:[a-2,a-1,a+1,a+2,a+3,a-3];
-    const pool=shuffle([...new Set(cand)].filter(x=>x>=0&&x!==a));
-    this.opts=shuffle([a,...pool.slice(0,3)]);
-    $('#qbadge').textContent=`${this.r}-savol / ${this.N} · ${this.q.topic}`;$('#qtxt').innerHTML=this.q.html;$('#tbar').style.transform='scaleX(1)';
+    const a=this.q.ans,mc=this.q.mc;
+    if(mc)this.opts=mc.opts.map((_,i)=>i+1);
+    else{const rev=+String(a).split('').reverse().join('');
+      const cand=a>=10?[a+1,a-1,a+10,a-10,a+2,a-2,rev,a+11]:[a-2,a-1,a+1,a+2,a+3,a-3];
+      const pool=shuffle([...new Set(cand)].filter(x=>x>=0&&x!==a));this.opts=shuffle([a,...pool.slice(0,3)])}
+    $('#qbadge').textContent=`${this.r}-savol / ${this.N} · ${this.q.topic}`;$('#qtxt').innerHTML=mc?esc(mc.q):this.q.html;$('#tbar').style.transform='scaleX(1)';
     S.teams.forEach(t=>{t.out=false;t.el.classList.remove('first');setMsg(t,'');
-      q(t,'.tops').innerHTML=this.opts.map((o,k)=>`<button type="button" data-o="${o}" style="--oc:${OPT[k].c}"><span class="sh">${OPT[k].s}</span>${o}</button>`).join('');
+      q(t,'.tops').innerHTML=this.opts.map((o,k)=>`<button type="button" data-o="${o}" style="--oc:${OPT[k].c}"${mc?' class="mct"':''}><span class="sh">${OPT[k].s}</span>${mc?esc(mc.opts[o-1]):o}</button>`).join('');
       q(t,'.sc').textContent=`⭐ ${t.score}`});
     keyUpd();
   },
@@ -1718,11 +1728,11 @@ IMPL.mental={
 IMPL.juft={
   start(st,P){
     const wide=BIG();if(!wide)P=Math.min(P,9);
-    const qs=[],seen=new Set();for(let k=0;k<400&&qs.length<P;k++){const x=genQ(cfg.L,wide);if(!seen.has(x.ans)){seen.add(x.ans);qs.push(x)}}
+    const qs=[],seen=new Set(),akey=x=>x.mc?x.mc.opts[x.ans-1]:x.ans;for(let k=0;k<400&&qs.length<P;k++){const x=genQ(cfg.L,wide);if(!seen.has(akey(x))){seen.add(akey(x));qs.push(x)}}
     this.P=qs.length;this.qs=qs;this.turn=0;this.open=[];this.busy=false;this.found=0;this.mem=new Map();
-    this.cards=shuffle(qs.flatMap((x,i)=>[{id:i,k:'q',h:qhtml(x).replace(/<span class="tn">.*?<\/span>/,'')},{id:i,k:'a',h:String(x.ans)}])).map((c,j)=>({...c,j,done:false}));
+    this.cards=shuffle(qs.flatMap((x,i)=>[{id:i,k:'q',h:x.mc?esc(x.mc.q):qhtml(x).replace(/<span class="tn">.*?<\/span>/,'')},{id:i,k:'a',h:x.mc?esc(x.mc.opts[x.ans-1]):String(x.ans),txt:!!x.mc}])).map((c,j)=>({...c,j,done:false}));
     const cols=this.cards.length<=12?4:this.cards.length<=16?4:5,rows=Math.ceil(this.cards.length/cols);
-    st.innerHTML=`<div class="jwrap"><div class="jboard" id="jboard" style="--jc:${cols};max-width:calc((100vh - 150px) / ${rows} * ${cols} * 1.3);margin:0 auto;width:100%">${this.cards.map(c=>`<button type="button" class="jc" data-j="${c.j}" aria-label="karta"><span class="jb">?</span><span class="jf ${c.k==='a'?'ans':''}">${c.h}</span></button>`).join('')}</div>
+    st.innerHTML=`<div class="jwrap"><div class="jboard" id="jboard" style="--jc:${cols};max-width:calc((100vh - 150px) / ${rows} * ${cols} * 1.3);margin:0 auto;width:100%">${this.cards.map(c=>`<button type="button" class="jc" data-j="${c.j}" aria-label="karta"><span class="jb">?</span><span class="jf ${c.k==='a'?(c.txt?'ans txt':'ans'):''}">${c.h}</span></button>`).join('')}</div>
       <div class="jside"><div class="board" id="jscore"></div><div class="turn" id="jturn"><h3 id="jname"></h3><div class="msg" id="jmsg"></div></div></div></div>`;
     S.teams.forEach(t=>{t.pairs=0;t.moves=0});
     $('#jboard').addEventListener('click',e=>{const b=e.target.closest('.jc');if(b&&!this.cur().robo)this.flip(+b.dataset.j)});
@@ -1740,7 +1750,7 @@ IMPL.juft={
     if(a.id===b.id&&a.k!==b.k){
       mark(t,this.qs[a.id],true);a.done=b.done=true;t.pairs++;this.found++;snd('ding');
       this.open.forEach(x=>{const e=this.el(x);e.classList.add('done');e.style.setProperty('--tc',t.color)});
-      $('#jmsg').textContent=`✅ Topdingiz! ${this.qs[a.id].ans} — yana yuring`;$('#jmsg').className='msg good';
+      $('#jmsg').textContent=`✅ Topdingiz! — yana yuring`;$('#jmsg').className='msg good';
       this.open=[];this.board();
       setTimeout(()=>{this.busy=false;if(this.found>=this.P){confetti($('#jboard'),80);snd('fan');finishSoon(1600);return}keyUpd()},700);
     }else{
@@ -1847,9 +1857,15 @@ async function loadSets(){
   const API=/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com';
   const body=TG&&TG.initData?{initData:TG.initData}:tok?{token:tok}:null;
   if(body){try{const r=await fetch((TG&&TG.initData?'':API)+'/api/sets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(r.ok){const j=await r.json();(j.sets||[]).forEach(s=>out.push(s))}}catch(e){}}
-  SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),
-    items:s.items.filter(it=>it&&typeof it.q==='string'&&Number.isInteger(+it.a)&&+it.a>=0&&+it.a<=9999).map(it=>({q:it.q.slice(0,300),a:+it.a}))})).filter(s=>s.items.length);
-  const sid=new URLSearchParams(location.search).get('set');
+  const P=new URLSearchParams(location.search),lib=P.get('lib');
+  if(lib){try{const r=await fetch((TG&&TG.initData?'':API)+'/api/lib/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})});
+    if(r.ok){const j=await r.json();if(j.set){out.push({...j.set,id:'L-'+lib});fetch((TG&&TG.initData?'':API)+'/api/lib/play',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})}).catch(()=>{})}}}catch(e){}}
+  const normIt=it=>{if(!it||typeof it.q!=='string')return null;
+    if(Array.isArray(it.o)){const o=it.o.map(x=>String(x).slice(0,120)).filter(Boolean).slice(0,4),c=+it.c;return o.length>=2&&c>=0&&c<o.length?{q:it.q.slice(0,300),o,c}:null}
+    return Number.isInteger(+it.a)&&+it.a>=0&&+it.a<=9999?{q:it.q.slice(0,300),a:+it.a}:null};
+  SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),fixed:/^k-/.test(String(s.id)),
+    items:s.items.map(normIt).filter(Boolean)})).filter(s=>s.items.length);
+  const sid=lib?'L-'+lib:P.get('set');
   if(sid&&setById(sid)){cfg.sets=[sid];cfg.topics=[]}
   if(GK&&!$('#setup').classList.contains('hidden'))renderSettings();
 }

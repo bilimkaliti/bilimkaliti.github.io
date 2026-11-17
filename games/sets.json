@@ -1,1 +1,1430 @@
-[]
+[
+{
+"id": "ona5-turkum",
+"name": "Soʻz turkumlari",
+"fan": "Ona tili va adabiyot",
+"sinf": "5",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "«Kitob» soʻzi qaysi soʻz turkumiga kiradi?",
+"o": [
+"Ot",
+"Sifat",
+"Feʼl",
+"Son"
+],
+"c": 0
+},
+{
+"q": "«Chiroyli» soʻzi qaysi soʻz turkumi?",
+"o": [
+"Sifat",
+"Ot",
+"Ravish",
+"Olmosh"
+],
+"c": 0
+},
+{
+"q": "«Yugurmoq» qaysi soʻz turkumi?",
+"o": [
+"Feʼl",
+"Ot",
+"Sifat",
+"Son"
+],
+"c": 0
+},
+{
+"q": "«Beshinchi» soʻzi qaysi soʻz turkumi?",
+"o": [
+"Son",
+"Sifat",
+"Ot",
+"Ravish"
+],
+"c": 0
+},
+{
+"q": "«Men», «sen», «u» qaysi soʻz turkumi?",
+"o": [
+"Olmosh",
+"Ot",
+"Son",
+"Undov"
+],
+"c": 0
+},
+{
+"q": "«Tez» (tez yurmoq) qaysi soʻz turkumi?",
+"o": [
+"Ravish",
+"Ot",
+"Son",
+"Olmosh"
+],
+"c": 0
+},
+{
+"q": "Ot qaysi soʻroqqa javob beradi?",
+"o": [
+"kim? nima?",
+"qanday?",
+"nima qildi?",
+"nechta?"
+],
+"c": 0
+},
+{
+"q": "Sifat qaysi soʻroqqa javob beradi?",
+"o": [
+"qanday? qanaqa?",
+"kim?",
+"nima qildi?",
+"qachon?"
+],
+"c": 0
+},
+{
+"q": "Feʼl qaysi soʻroqqa javob beradi?",
+"o": [
+"nima qildi?",
+"kim?",
+"qanday?",
+"nechanchi?"
+],
+"c": 0
+},
+{
+"q": "Qaysi soʻz turdosh ot?",
+"o": [
+"daraxt",
+"Toshkent",
+"Anvar",
+"Amudaryo"
+],
+"c": 0
+},
+{
+"q": "Qaysi soʻz atoqli ot?",
+"o": [
+"Samarqand",
+"shahar",
+"daryo",
+"maktab"
+],
+"c": 0
+},
+{
+"q": "«Uyimiz» soʻzidagi «-imiz» qanday qoʻshimcha?",
+"o": [
+"Egalik qoʻshimchasi",
+"Koʻplik qoʻshimchasi",
+"Kelishik qoʻshimchasi",
+"Soʻz yasovchi"
+],
+"c": 0
+}
+]
+},
+{
+"id": "ona3-unli",
+"name": "Tovushlar va harflar",
+"fan": "Ona tili va adabiyot",
+"sinf": "3",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Oʻzbek tilida nechta unli tovush bor?",
+"o": [
+"6 ta",
+"5 ta",
+"8 ta",
+"10 ta"
+],
+"c": 0
+},
+{
+"q": "Qaysi harf unli tovushni bildiradi?",
+"o": [
+"o",
+"b",
+"s",
+"t"
+],
+"c": 0
+},
+{
+"q": "Qaysi harf undosh tovushni bildiradi?",
+"o": [
+"m",
+"a",
+"e",
+"u"
+],
+"c": 0
+},
+{
+"q": "«Bola» soʻzida nechta boʻgʻin bor?",
+"o": [
+"2 ta",
+"1 ta",
+"3 ta",
+"4 ta"
+],
+"c": 0
+},
+{
+"q": "«Maktab» soʻzida nechta harf bor?",
+"o": [
+"6 ta",
+"5 ta",
+"7 ta",
+"4 ta"
+],
+"c": 0
+},
+{
+"q": "«Oʻquvchi» soʻzi qaysi harf bilan boshlanadi?",
+"o": [
+"Oʻ",
+"O",
+"U",
+"Q"
+],
+"c": 0
+},
+{
+"q": "«Kitoblar» soʻzida nechta boʻgʻin bor?",
+"o": [
+"3 ta",
+"2 ta",
+"4 ta",
+"5 ta"
+],
+"c": 0
+},
+{
+"q": "Qaysi soʻz bir boʻgʻinli?",
+"o": [
+"non",
+"olma",
+"daftar",
+"qalam"
+],
+"c": 0
+},
+{
+"q": "Gap oxirida qanday tinish belgisi qoʻyiladi (darak gap)?",
+"o": [
+"Nuqta",
+"Vergul",
+"Tire",
+"Qavs"
+],
+"c": 0
+},
+{
+"q": "Soʻroq gap oxirida qaysi belgi qoʻyiladi?",
+"o": [
+"Soʻroq belgisi (?)",
+"Nuqta (.)",
+"Vergul (,)",
+"Ikki nuqta (:)"
+],
+"c": 0
+}
+]
+},
+{
+"id": "eng3-words",
+"name": "Ingliz tili: birinchi soʻzlar",
+"fan": "Ingliz tili",
+"sinf": "3",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "«Olma» inglizcha qanday?",
+"o": [
+"apple",
+"orange",
+"banana",
+"pear"
+],
+"c": 0
+},
+{
+"q": "«Mushuk» inglizcha qanday?",
+"o": [
+"cat",
+"dog",
+"cow",
+"bird"
+],
+"c": 0
+},
+{
+"q": "«Red» qaysi rang?",
+"o": [
+"qizil",
+"koʻk",
+"yashil",
+"sariq"
+],
+"c": 0
+},
+{
+"q": "«Blue» qaysi rang?",
+"o": [
+"koʻk",
+"qizil",
+"oq",
+"qora"
+],
+"c": 0
+},
+{
+"q": "«Book» nima degani?",
+"o": [
+"kitob",
+"ruchka",
+"daftar",
+"stol"
+],
+"c": 0
+},
+{
+"q": "«Ten» qaysi son?",
+"o": [
+"10",
+"2",
+"12",
+"20"
+],
+"c": 0
+},
+{
+"q": "«Five» qaysi son?",
+"o": [
+"5",
+"4",
+"9",
+"15"
+],
+"c": 0
+},
+{
+"q": "«Ona» inglizcha qanday?",
+"o": [
+"mother",
+"father",
+"sister",
+"brother"
+],
+"c": 0
+},
+{
+"q": "«Good morning» qachon aytiladi?",
+"o": [
+"Ertalab",
+"Kechqurun",
+"Tunda",
+"Tushlikda"
+],
+"c": 0
+},
+{
+"q": "«Dog» nima degani?",
+"o": [
+"it",
+"mushuk",
+"ot",
+"qush"
+],
+"c": 0
+},
+{
+"q": "«Uy» inglizcha qanday?",
+"o": [
+"house",
+"school",
+"garden",
+"street"
+],
+"c": 0
+},
+{
+"q": "«Green» qaysi rang?",
+"o": [
+"yashil",
+"sariq",
+"jigarrang",
+"pushti"
+],
+"c": 0
+}
+]
+},
+{
+"id": "eng5-verbs",
+"name": "Ingliz tili: feʼllar va kunlar",
+"fan": "Ingliz tili",
+"sinf": "5",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "«Yugurmoq» inglizcha qanday?",
+"o": [
+"run",
+"read",
+"write",
+"swim"
+],
+"c": 0
+},
+{
+"q": "«Read» nima degani?",
+"o": [
+"oʻqimoq",
+"yozmoq",
+"chizmoq",
+"kuylamoq"
+],
+"c": 0
+},
+{
+"q": "«Swim» nima degani?",
+"o": [
+"suzmoq",
+"uchmoq",
+"sakramoq",
+"yugurmoq"
+],
+"c": 0
+},
+{
+"q": "Haftaning birinchi kuni (dushanba) inglizcha qanday?",
+"o": [
+"Monday",
+"Sunday",
+"Friday",
+"Tuesday"
+],
+"c": 0
+},
+{
+"q": "«Friday» qaysi kun?",
+"o": [
+"juma",
+"payshanba",
+"shanba",
+"seshanba"
+],
+"c": 0
+},
+{
+"q": "«I ___ a student.» — boʻsh joyga nima qoʻyiladi?",
+"o": [
+"am",
+"is",
+"are",
+"be"
+],
+"c": 0
+},
+{
+"q": "«She ___ my sister.» — boʻsh joyga nima qoʻyiladi?",
+"o": [
+"is",
+"am",
+"are",
+"be"
+],
+"c": 0
+},
+{
+"q": "«They ___ friends.» — boʻsh joyga nima qoʻyiladi?",
+"o": [
+"are",
+"is",
+"am",
+"be"
+],
+"c": 0
+},
+{
+"q": "«Winter» qaysi fasl?",
+"o": [
+"qish",
+"yoz",
+"bahor",
+"kuz"
+],
+"c": 0
+},
+{
+"q": "«Teacher» nima degani?",
+"o": [
+"oʻqituvchi",
+"oʻquvchi",
+"shifokor",
+"haydovchi"
+],
+"c": 0
+},
+{
+"q": "«Big» soʻzining teskarisi qaysi?",
+"o": [
+"small",
+"tall",
+"long",
+"old"
+],
+"c": 0
+},
+{
+"q": "«Write» nima degani?",
+"o": [
+"yozmoq",
+"oʻqimoq",
+"gapirmoq",
+"eshitmoq"
+],
+"c": 0
+}
+]
+},
+{
+"id": "tabiat3",
+"name": "Tabiat va atrof-olam",
+"fan": "Tabiiy fan",
+"sinf": "3",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Suv dengiz sathida necha gradusda qaynaydi?",
+"o": [
+"100 °C",
+"50 °C",
+"0 °C",
+"200 °C"
+],
+"c": 0
+},
+{
+"q": "Suv necha gradusda muzlaydi?",
+"o": [
+"0 °C",
+"10 °C",
+"100 °C",
+"−50 °C"
+],
+"c": 0
+},
+{
+"q": "Quyosh tizimidagi biz yashaydigan sayyora qaysi?",
+"o": [
+"Yer",
+"Mars",
+"Venera",
+"Yupiter"
+],
+"c": 0
+},
+{
+"q": "Oʻsimliklar qaysi gazni yutib, kislorod chiqaradi?",
+"o": [
+"Karbonat angidrid",
+"Azot",
+"Vodorod",
+"Geliy"
+],
+"c": 0
+},
+{
+"q": "Yilda nechta fasl bor?",
+"o": [
+"4 ta",
+"3 ta",
+"2 ta",
+"12 ta"
+],
+"c": 0
+},
+{
+"q": "Qaysi hayvon sutemizuvchi?",
+"o": [
+"Sigir",
+"Tovuq",
+"Baqa",
+"Ilon"
+],
+"c": 0
+},
+{
+"q": "Qaysi hayvon qishda uyquga ketadi?",
+"o": [
+"Ayiq",
+"Quyon",
+"Tulki",
+"Boʻri"
+],
+"c": 0
+},
+{
+"q": "Kamalakda nechta rang bor?",
+"o": [
+"7 ta",
+"5 ta",
+"6 ta",
+"9 ta"
+],
+"c": 0
+},
+{
+"q": "Oy Yer atrofida aylanadimi yoki Yer Oy atrofidami?",
+"o": [
+"Oy Yer atrofida aylanadi",
+"Yer Oy atrofida aylanadi",
+"Ikkalasi turadi",
+"Oy Quyosh atrofida yolgʻiz aylanadi"
+],
+"c": 0
+},
+{
+"q": "Qaysi organ orqali nafas olamiz?",
+"o": [
+"Oʻpka",
+"Yurak",
+"Oshqozon",
+"Jigar"
+],
+"c": 0
+},
+{
+"q": "Hasharotning nechta oyogʻi bor?",
+"o": [
+"6 ta",
+"8 ta",
+"4 ta",
+"10 ta"
+],
+"c": 0
+},
+{
+"q": "Oʻrgimchakning nechta oyogʻi bor?",
+"o": [
+"8 ta",
+"6 ta",
+"4 ta",
+"10 ta"
+],
+"c": 0
+}
+]
+},
+{
+"id": "bio6",
+"name": "Biologiya: hujayra va oʻsimliklar",
+"fan": "Biologiya",
+"sinf": "6",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Fotosintez hujayraning qaysi qismida boradi?",
+"o": [
+"Xloroplast",
+"Mitoxondriya",
+"Yadro",
+"Vakuola"
+],
+"c": 0
+},
+{
+"q": "Hujayraning «energiya stansiyasi» qaysi organoid?",
+"o": [
+"Mitoxondriya",
+"Xloroplast",
+"Ribosoma",
+"Lizosoma"
+],
+"c": 0
+},
+{
+"q": "Irsiy axborot hujayraning qayerida saqlanadi?",
+"o": [
+"Yadroda",
+"Sitoplazmada",
+"Hujayra qobigʻida",
+"Vakuolada"
+],
+"c": 0
+},
+{
+"q": "Oʻsimlik hujayrasini hayvon hujayrasidan farqlovchi qism qaysi?",
+"o": [
+"Hujayra devori (qobigʻi)",
+"Yadro",
+"Sitoplazma",
+"Mitoxondriya"
+],
+"c": 0
+},
+{
+"q": "Ildizning asosiy vazifasi nima?",
+"o": [
+"Suv va mineral moddalarni shimish",
+"Fotosintez",
+"Changlanish",
+"Urugʻ hosil qilish"
+],
+"c": 0
+},
+{
+"q": "Bargga yashil rang beradigan modda qaysi?",
+"o": [
+"Xlorofill",
+"Gemoglobin",
+"Kraxmal",
+"Melanin"
+],
+"c": 0
+},
+{
+"q": "Gulning qaysi qismidan meva hosil boʻladi?",
+"o": [
+"Tugunchadan",
+"Gultojibargdan",
+"Kosachabargdan",
+"Changchidan"
+],
+"c": 0
+},
+{
+"q": "Organizmlarni oʻrganadigan fan qaysi?",
+"o": [
+"Biologiya",
+"Geografiya",
+"Fizika",
+"Kimyo"
+],
+"c": 0
+},
+{
+"q": "Hujayrani birinchi boʻlib kim kuzatgan?",
+"o": [
+"Robert Guk",
+"Isaak Nyuton",
+"Charlz Darvin",
+"Dmitriy Mendeleyev"
+],
+"c": 0
+},
+{
+"q": "Zamburugʻlar oʻsimlikmi?",
+"o": [
+"Yoʻq, alohida dunyo",
+"Ha, oʻsimlik",
+"Ha, suvoʻt",
+"Yoʻq, hayvon"
+],
+"c": 0
+}
+]
+},
+{
+"id": "geo-poytaxt",
+"name": "Davlatlar va poytaxtlar",
+"fan": "Geografiya",
+"sinf": "6",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Oʻzbekistonning poytaxti qaysi shahar?",
+"o": [
+"Toshkent",
+"Samarqand",
+"Buxoro",
+"Namangan"
+],
+"c": 0
+},
+{
+"q": "Qozogʻistonning poytaxti qaysi?",
+"o": [
+"Astana",
+"Olmaota",
+"Shimkent",
+"Qaragʻandi"
+],
+"c": 0
+},
+{
+"q": "Fransiyaning poytaxti qaysi?",
+"o": [
+"Parij",
+"Lion",
+"Marsel",
+"Nitstsa"
+],
+"c": 0
+},
+{
+"q": "Yaponiyaning poytaxti qaysi?",
+"o": [
+"Tokio",
+"Osaka",
+"Kioto",
+"Seul"
+],
+"c": 0
+},
+{
+"q": "Turkiyaning poytaxti qaysi?",
+"o": [
+"Anqara",
+"Istanbul",
+"Izmir",
+"Antaliya"
+],
+"c": 0
+},
+{
+"q": "Rossiyaning poytaxti qaysi?",
+"o": [
+"Moskva",
+"Sankt-Peterburg",
+"Qozon",
+"Novosibirsk"
+],
+"c": 0
+},
+{
+"q": "Misrning poytaxti qaysi?",
+"o": [
+"Qohira",
+"Iskandariya",
+"Luksor",
+"Bagʻdod"
+],
+"c": 0
+},
+{
+"q": "Xitoyning poytaxti qaysi?",
+"o": [
+"Pekin",
+"Shanxay",
+"Gonkong",
+"Ulan-Bator"
+],
+"c": 0
+},
+{
+"q": "Tojikistonning poytaxti qaysi?",
+"o": [
+"Dushanbe",
+"Xoʻjand",
+"Bishkek",
+"Ashxobod"
+],
+"c": 0
+},
+{
+"q": "Qirgʻizistonning poytaxti qaysi?",
+"o": [
+"Bishkek",
+"Oʻsh",
+"Dushanbe",
+"Olmaota"
+],
+"c": 0
+},
+{
+"q": "Turkmanistonning poytaxti qaysi?",
+"o": [
+"Ashxobod",
+"Turkmanobod",
+"Mari",
+"Bishkek"
+],
+"c": 0
+},
+{
+"q": "Germaniyaning poytaxti qaysi?",
+"o": [
+"Berlin",
+"Myunxen",
+"Gamburg",
+"Vena"
+],
+"c": 0
+}
+]
+},
+{
+"id": "geo5-yer",
+"name": "Yer va xarita",
+"fan": "Geografiya",
+"sinf": "5",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Yer sharidagi eng katta okean qaysi?",
+"o": [
+"Tinch okeani",
+"Atlantika okeani",
+"Hind okeani",
+"Shimoliy Muz okeani"
+],
+"c": 0
+},
+{
+"q": "Eng katta materik qaysi?",
+"o": [
+"Yevrosiyo",
+"Afrika",
+"Avstraliya",
+"Antarktida"
+],
+"c": 0
+},
+{
+"q": "Yer oʻz oʻqi atrofida necha soatda bir marta aylanadi?",
+"o": [
+"24 soatda",
+"12 soatda",
+"365 kunda",
+"30 kunda"
+],
+"c": 0
+},
+{
+"q": "Yer Quyosh atrofini qancha vaqtda aylanib chiqadi?",
+"o": [
+"1 yilda",
+"1 oyda",
+"1 kunda",
+"1 haftada"
+],
+"c": 0
+},
+{
+"q": "Xaritada shimol odatda qaysi tomonda?",
+"o": [
+"Tepada",
+"Pastda",
+"Chapda",
+"Oʻngda"
+],
+"c": 0
+},
+{
+"q": "Oʻzbekistondagi eng uzun daryo qaysi?",
+"o": [
+"Amudaryo",
+"Sirdaryo",
+"Zarafshon",
+"Chirchiq"
+],
+"c": 0
+},
+{
+"q": "Ekvator Yer sharini nechta yarimsharga boʻladi?",
+"o": [
+"Shimoliy va janubiy",
+"Gʻarbiy va sharqiy",
+"Uchta qismga",
+"Toʻrtta qismga"
+],
+"c": 0
+},
+{
+"q": "Kompas strelkasi qaysi tomonni koʻrsatadi?",
+"o": [
+"Shimolni",
+"Sharqni",
+"Gʻarbni",
+"Janubi-gʻarbni"
+],
+"c": 0
+},
+{
+"q": "Dunyodagi eng baland choʻqqi qaysi?",
+"o": [
+"Everest (Jomolungma)",
+"Elbrus",
+"Kilimanjaro",
+"Monblan"
+],
+"c": 0
+},
+{
+"q": "Materiklar nechta?",
+"o": [
+"6 ta",
+"5 ta",
+"7 ta",
+"4 ta"
+],
+"c": 0
+}
+]
+},
+{
+"id": "tarix-vatan",
+"name": "Oʻzbekiston: Vatanim",
+"fan": "Tarix",
+"sinf": "5",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Oʻzbekiston mustaqilligi qachon eʼlon qilingan?",
+"o": [
+"1991-yil 31-avgust",
+"1991-yil 8-dekabr",
+"1992-yil 1-sentabr",
+"1990-yil 20-iyun"
+],
+"c": 0
+},
+{
+"q": "Oʻzbekiston Mustaqillik kuni qachon nishonlanadi?",
+"o": [
+"1-sentabr",
+"8-dekabr",
+"21-mart",
+"9-may"
+],
+"c": 0
+},
+{
+"q": "Oʻzbekiston bayrogʻida nechta yulduz bor?",
+"o": [
+"12 ta",
+"10 ta",
+"7 ta",
+"15 ta"
+],
+"c": 0
+},
+{
+"q": "Oʻzbekistonda nechta viloyat bor?",
+"o": [
+"12 ta",
+"14 ta",
+"10 ta",
+"13 ta"
+],
+"c": 0
+},
+{
+"q": "Navroʻz bayrami qachon nishonlanadi?",
+"o": [
+"21-mart",
+"1-yanvar",
+"8-mart",
+"1-oktabr"
+],
+"c": 0
+},
+{
+"q": "Amir Temur qaysi shaharni oʻz davlatining poytaxti qilgan?",
+"o": [
+"Samarqand",
+"Buxoro",
+"Xiva",
+"Termiz"
+],
+"c": 0
+},
+{
+"q": "Mirzo Ulugʻbek qanday fan bilan mashhur?",
+"o": [
+"Astronomiya",
+"Tibbiyot",
+"Musiqa",
+"Me'morchilik"
+],
+"c": 0
+},
+{
+"q": "«Tib qonunlari» asarining muallifi kim?",
+"o": [
+"Abu Ali ibn Sino",
+"Al-Xorazmiy",
+"Alisher Navoiy",
+"Beruniy"
+],
+"c": 0
+},
+{
+"q": "«Algoritm» soʻzi qaysi olimning nomidan kelib chiqqan?",
+"o": [
+"Al-Xorazmiy",
+"Ibn Sino",
+"Ulugʻbek",
+"Farobiy"
+],
+"c": 0
+},
+{
+"q": "Alisher Navoiy qaysi shaharda tugʻilgan?",
+"o": [
+"Hirot",
+"Samarqand",
+"Buxoro",
+"Qoʻqon"
+],
+"c": 0
+},
+{
+"q": "Oʻzbekiston Respublikasi tarkibidagi respublika qaysi?",
+"o": [
+"Qoraqalpogʻiston",
+"Xorazm",
+"Navoiy",
+"Surxondaryo"
+],
+"c": 0
+},
+{
+"q": "Oʻzbekiston davlat madhiyasi soʻzlari muallifi kim?",
+"o": [
+"Abdulla Oripov",
+"Erkin Vohidov",
+"Gʻafur Gʻulom",
+"Zulfiya"
+],
+"c": 0
+}
+]
+},
+{
+"id": "inf5",
+"name": "Informatika asoslari",
+"fan": "Informatika",
+"sinf": "5",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "1 bayt necha bitga teng?",
+"o": [
+"8 bit",
+"2 bit",
+"10 bit",
+"16 bit"
+],
+"c": 0
+},
+{
+"q": "1 kilobayt taxminan necha baytga teng?",
+"o": [
+"1024 bayt",
+"100 bayt",
+"1000 kilobayt",
+"8 bayt"
+],
+"c": 0
+},
+{
+"q": "Qaysi qurilma axborot kiritish qurilmasi?",
+"o": [
+"Klaviatura",
+"Monitor",
+"Printer",
+"Karnay"
+],
+"c": 0
+},
+{
+"q": "Qaysi qurilma axborot chiqarish qurilmasi?",
+"o": [
+"Monitor",
+"Sichqoncha",
+"Klaviatura",
+"Mikrofon"
+],
+"c": 0
+},
+{
+"q": "Kompyuterning «miyasi» qaysi qism?",
+"o": [
+"Protsessor",
+"Monitor",
+"Klaviatura",
+"Kolonka"
+],
+"c": 0
+},
+{
+"q": "Ikkilik sanoq sistemasida qaysi raqamlar ishlatiladi?",
+"o": [
+"0 va 1",
+"1 va 2",
+"0 dan 9 gacha",
+"Faqat 1"
+],
+"c": 0
+},
+{
+"q": "Matn terish uchun qaysi dastur ishlatiladi?",
+"o": [
+"Microsoft Word",
+"Paint",
+"Kalkulyator",
+"Media pleyer"
+],
+"c": 0
+},
+{
+"q": "Rasm chizish uchun qaysi oddiy dastur bor?",
+"o": [
+"Paint",
+"Excel",
+"Word",
+"Notepad"
+],
+"c": 0
+},
+{
+"q": "Fayl nusxalash uchun qaysi tugmalar birikmasi ishlatiladi?",
+"o": [
+"Ctrl + C",
+"Ctrl + V",
+"Ctrl + Z",
+"Ctrl + P"
+],
+"c": 0
+},
+{
+"q": "Nusxalanganni joylashtirish uchun qaysi tugmalar?",
+"o": [
+"Ctrl + V",
+"Ctrl + C",
+"Ctrl + X",
+"Ctrl + S"
+],
+"c": 0
+}
+]
+},
+{
+"id": "kimyo7",
+"name": "Kimyo: birinchi qadamlar",
+"fan": "Kimyo",
+"sinf": "7",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Suvning kimyoviy formulasi qanday?",
+"o": [
+"H₂O",
+"CO₂",
+"O₂",
+"NaCl"
+],
+"c": 0
+},
+{
+"q": "Osh tuzining formulasi qanday?",
+"o": [
+"NaCl",
+"H₂O",
+"CaCO₃",
+"KCl"
+],
+"c": 0
+},
+{
+"q": "Kislorodning kimyoviy belgisi qaysi?",
+"o": [
+"O",
+"K",
+"Ok",
+"Ki"
+],
+"c": 0
+},
+{
+"q": "Vodorodning kimyoviy belgisi qaysi?",
+"o": [
+"H",
+"V",
+"Vo",
+"He"
+],
+"c": 0
+},
+{
+"q": "Temirning kimyoviy belgisi qaysi?",
+"o": [
+"Fe",
+"Te",
+"T",
+"Ir"
+],
+"c": 0
+},
+{
+"q": "Davriy jadvalni kim yaratgan?",
+"o": [
+"Dmitriy Mendeleyev",
+"Isaak Nyuton",
+"Albert Eynshteyn",
+"Mariya Kyuri"
+],
+"c": 0
+},
+{
+"q": "Nafas olishimiz uchun zarur gaz qaysi?",
+"o": [
+"Kislorod",
+"Azot",
+"Karbonat angidrid",
+"Argon"
+],
+"c": 0
+},
+{
+"q": "Havoning eng katta qismini qaysi gaz tashkil etadi?",
+"o": [
+"Azot",
+"Kislorod",
+"Vodorod",
+"Karbonat angidrid"
+],
+"c": 0
+},
+{
+"q": "Moddaning eng kichik zarrachasi (kimyoviy xossasini saqlovchi) nima?",
+"o": [
+"Molekula",
+"Hujayra",
+"Kristall",
+"Tomchi"
+],
+"c": 0
+},
+{
+"q": "Oltinning kimyoviy belgisi qaysi?",
+"o": [
+"Au",
+"Ag",
+"Al",
+"Ol"
+],
+"c": 0
+}
+]
+},
+{
+"id": "fizika7",
+"name": "Fizika: kattaliklar va birliklar",
+"fan": "Fizika",
+"sinf": "7",
+"author": "Bilim Kaliti",
+"items": [
+{
+"q": "Tezlikning XBS (SI) dagi birligi qaysi?",
+"o": [
+"m/s",
+"km",
+"kg",
+"N"
+],
+"c": 0
+},
+{
+"q": "Massaning asosiy birligi qaysi?",
+"o": [
+"kilogramm",
+"nyuton",
+"metr",
+"sekund"
+],
+"c": 0
+},
+{
+"q": "Kuch birligi qaysi?",
+"o": [
+"nyuton (N)",
+"joul (J)",
+"vatt (W)",
+"paskal (Pa)"
+],
+"c": 0
+},
+{
+"q": "Vaqtning asosiy birligi qaysi?",
+"o": [
+"sekund",
+"daqiqa",
+"soat",
+"sutka"
+],
+"c": 0
+},
+{
+"q": "Uzunlikning asosiy birligi qaysi?",
+"o": [
+"metr",
+"santimetr",
+"kilometr",
+"dyuym"
+],
+"c": 0
+},
+{
+"q": "Tezlik qanday topiladi?",
+"o": [
+"masofa : vaqt",
+"vaqt : masofa",
+"masofa × vaqt",
+"massa : hajm"
+],
+"c": 0
+},
+{
+"q": "Zichlik qanday topiladi?",
+"o": [
+"massa : hajm",
+"hajm : massa",
+"massa × hajm",
+"kuch : yuza"
+],
+"c": 0
+},
+{
+"q": "Butun olam tortishish qonunini kim kashf etgan?",
+"o": [
+"Isaak Nyuton",
+"Galileo Galiley",
+"Arximed",
+"Nikola Tesla"
+],
+"c": 0
+},
+{
+"q": "Jismning suyuqlikka botganda yengillashishini kim tushuntirgan?",
+"o": [
+"Arximed",
+"Nyuton",
+"Paskal",
+"Om"
+],
+"c": 0
+},
+{
+"q": "Bosim birligi qaysi?",
+"o": [
+"paskal (Pa)",
+"nyuton (N)",
+"joul (J)",
+"kilogramm (kg)"
+],
+"c": 0
+}
+]
+}
+]
