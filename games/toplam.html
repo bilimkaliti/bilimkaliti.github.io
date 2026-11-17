@@ -1655,7 +1655,10 @@ renderMenu();
 async function loadSets(){
   const out=[];
   try{const r=await fetch('sets.json?v='+Date.now());if(r.ok){const j=await r.json();if(Array.isArray(j))j.forEach(s=>out.push({...s,id:'k-'+s.id}))}}catch(e){}
-  if(TG&&TG.initData){try{const r=await fetch('/api/sets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData:TG.initData})});if(r.ok){const j=await r.json();(j.sets||[]).forEach(s=>out.push(s))}}catch(e){}}
+  let tok=null;try{tok=JSON.parse(localStorage.getItem('bk_token')||'null')}catch(e){}
+  const API=/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com';
+  const body=TG&&TG.initData?{initData:TG.initData}:tok?{token:tok}:null;
+  if(body){try{const r=await fetch((TG&&TG.initData?'':API)+'/api/sets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(r.ok){const j=await r.json();(j.sets||[]).forEach(s=>out.push(s))}}catch(e){}}
   SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),
     items:s.items.filter(it=>it&&typeof it.q==='string'&&Number.isInteger(+it.a)&&+it.a>=0&&+it.a<=9999).map(it=>({q:it.q.slice(0,300),a:+it.a}))})).filter(s=>s.items.length);
   const sid=new URLSearchParams(location.search).get('set');
