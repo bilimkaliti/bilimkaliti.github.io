@@ -338,12 +338,80 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
 .pmg:hover{transform:translateY(-2px)}.pmg span{font-size:30px}
 .pvlist{padding-left:22px}.pvlist li{margin:8px 0}.pvlist small{color:var(--muted)}
 .fgrid.one{grid-template-columns:1fr 1fr}
+/* ===== silliq hover va kirish animatsiyalari ===== */
+:root{--ease:cubic-bezier(.22,.8,.3,1)}
+.btn{transition:transform .25s var(--ease),box-shadow .25s var(--ease),background-color .2s,border-color .2s,filter .2s;will-change:transform}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(22,33,62,.14)}
+.btn.gold:hover{box-shadow:0 10px 26px rgba(245,179,1,.45);filter:brightness(1.04)}
+.btn.main:hover{box-shadow:0 10px 24px rgba(22,33,62,.28)}
+.btn.ghost:hover{border-color:var(--gold)}
+.btn:active{transform:translateY(0) scale(.97);transition-duration:.08s}
+.icon-btn{transition:transform .25s var(--ease),border-color .2s}.icon-btn:hover{transform:rotate(-12deg) scale(1.06);border-color:var(--gold)}
+nav.top a{position:relative;transition:background-color .2s,color .2s}
+nav.top a::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2.5px;border-radius:2px;background:var(--gold);transform:scaleX(0);transition:transform .3s var(--ease)}
+nav.top a:hover::after,nav.top a.on::after{transform:scaleX(1)}
+.logo .k{transition:transform .5s var(--ease)}.logo:hover .k{transform:rotate(-100deg) scale(1.08)}
+.game,.grade,.subj,.aitool,.tool.tlink,.scard,.pmg,.fitem{transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .25s}
+.game:hover,.aitool:hover,.tool.tlink:hover,.scard:hover{transform:translateY(-6px);box-shadow:0 16px 34px rgba(22,33,62,.14)}
+.grade:hover,.subj:hover,.pmg:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 12px 26px rgba(22,33,62,.12)}
+.game .art{transition:filter .35s}.game:hover .art{filter:saturate(1.15) brightness(1.04)}
+.game .art::after{transition:transform .6s var(--ease)}.game:hover .art::after{transform:scale(1.5) translate(-10px,-6px)}
+.game .art .em{transition:transform .45s var(--ease)}.game:hover .art .em{transform:scale(1.15) rotate(-8deg)}
+.game .art .shine{position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 48%,transparent 66%);transform:translateX(-120%);pointer-events:none}
+.game:hover .art .shine{transform:translateX(120%);transition:transform .9s var(--ease)}
+.aitool .ic,.tool .ic,.subj .ic,.sct .ic{transition:transform .45s var(--ease)}
+.aitool:hover .ic,.tool.tlink:hover .ic,.subj:hover .ic,.scard:hover .sct .ic{transform:scale(1.12) rotate(-8deg)}
+.grade b{transition:color .25s,transform .35s var(--ease)}.grade:hover b{color:var(--gold);transform:scale(1.08)}
+.chip{transition:border-color .2s,background-color .2s,transform .2s var(--ease)}.chip:hover{border-color:var(--teal);transform:translateY(-1px)}
+.tabs button{transition:background-color .2s,color .2s,box-shadow .25s}
+.tabs button:not(.on):hover{color:var(--ink);background:color-mix(in srgb,var(--card) 60%,transparent)}
+.mnav a{transition:background-color .2s,color .2s,transform .2s var(--ease)}.mnav a:active{transform:scale(.92)}
+/* kartalar sahifa ochilganda birin-ketin chiqadi */
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+html.ready .grid>*,html.ready .grades>*,html.ready .aigrid>*,html.ready .tools>*,html.ready .subjects>*,html.ready .sgrid>*{animation:rise .5s var(--ease) both}
+html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(2){animation-delay:.04s}
+html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(3){animation-delay:.08s}
+html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(4){animation-delay:.12s}
+html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(5){animation-delay:.16s}
+html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(6){animation-delay:.2s}
+html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(7){animation-delay:.24s}
+html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(n+8){animation-delay:.28s}
+.hero>div:first-child>*{animation:rise .6s var(--ease) both}.hero>div:first-child>*:nth-child(2){animation-delay:.06s}.hero>div:first-child>*:nth-child(3){animation-delay:.12s}.hero>div:first-child>*:nth-child(4){animation-delay:.18s}.hero>div:first-child>*:nth-child(5){animation-delay:.24s}
+.hero .board{animation:rise .7s .15s var(--ease) both}
+html:not(.ready) .hero>div:first-child>*,html:not(.ready) .hero .board{animation-play-state:paused}
+@media (hover:none){.game:hover,.aitool:hover,.tool.tlink:hover,.scard:hover,.grade:hover,.subj:hover,.pmg:hover,.btn:hover{transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
 </style>
+<style id="splashCss">
+#splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#fbf7ef;font-family:Nunito,system-ui,sans-serif;color:#16213e;transition:opacity .55s ease,visibility .55s,transform .55s ease}
+@media (prefers-color-scheme:dark){#splash{background:#11152a;color:#f1f2f8}}
+#splash.out{opacity:0;visibility:hidden;transform:scale(1.04)}
+#splash .sp-k{width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,#ffd25c,#f5b301);display:grid;place-items:center;font-size:52px;box-shadow:0 14px 34px rgba(245,179,1,.45);animation:spKey 1.6s cubic-bezier(.5,0,.3,1) infinite}
+#splash .sp-k span{display:block;animation:spTurn 1.6s cubic-bezier(.5,0,.3,1) infinite}
+@keyframes spKey{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-12px) rotate(4deg)}}
+@keyframes spTurn{0%,35%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
+#splash .sp-n{font-size:30px;font-weight:900;letter-spacing:-.4px;opacity:0;animation:spIn .6s .15s forwards}#splash .sp-n b{color:#f5b301}
+#splash .sp-bar{width:200px;height:8px;border-radius:99px;background:rgba(128,128,128,.18);overflow:hidden;opacity:0;animation:spIn .5s .3s forwards}
+#splash .sp-bar i{display:block;height:100%;width:40%;border-radius:99px;background:linear-gradient(90deg,#f5b301,#ff8a3d,#12a38f);animation:spLoad 1.1s ease-in-out infinite}
+@keyframes spLoad{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+#splash .sp-t{font-weight:700;font-size:15px;opacity:.7;min-height:1.4em;transition:opacity .3s}
+#splash .sp-dots{display:flex;gap:10px;font-size:22px;opacity:0;animation:spIn .5s .45s forwards}
+#splash .sp-dots span{animation:spHop 1.2s ease-in-out infinite}#splash .sp-dots span:nth-child(2){animation-delay:.15s}#splash .sp-dots span:nth-child(3){animation-delay:.3s}#splash .sp-dots span:nth-child(4){animation-delay:.45s}
+@keyframes spHop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-9px)}}
+@keyframes spIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#splash *{animation-duration:0s!important;animation-iteration-count:1!important}}
+</style>
 </head>
 <body>
+<div id="splash" role="status" aria-label="Yuklanmoqda"><div class="sp-k"><span>🔑</span></div><div class="sp-n">Bilim <b>Kaliti</b></div><div class="sp-bar"><i></i></div><div class="sp-dots"><span>🎮</span><span>🤖</span><span>✨</span><span>📚</span></div><div class="sp-t" id="spTip">Darsni oʻyinga aylantiramiz…</div></div>
+<script>(function(){var tips=['Darsni oʻyinga aylantiramiz…','Oʻyinlar tayyorlanmoqda…','Robo qizdirilmoqda…','Savollar aralashtirilmoqda…'],i=0,el=document.getElementById('spTip');
+ window.__spTipIv=setInterval(function(){i=(i+1)%tips.length;el.style.opacity=0;setTimeout(function(){el.textContent=tips[i];el.style.opacity=.7},250)},1100);
+ var t0=Date.now(),first=true;try{first=!sessionStorage.getItem('bk_seen');sessionStorage.setItem('bk_seen','1')}catch(e){}
+ var min=first?1300:450,done=false;window.__hideSplash=function(){if(done)return;done=true;var w=Math.max(0,min-(Date.now()-t0));setTimeout(function(){var s=document.getElementById('splash');if(!s)return;s.classList.add('out');clearInterval(window.__spTipIv);document.documentElement.classList.add('ready');setTimeout(function(){s.remove()},650)},w)};
+ setTimeout(window.__hideSplash,4500);})();</script>
 <header>
   <div class="wrap bar">
     <a class="logo" href="#/"><span class="k">🔑</span><span>Bilim <b>Kaliti</b></span></a>
@@ -416,7 +484,7 @@ function gameUrl(g,extra=''){return `games/${g.f}.html?${g.g?'g='+g.g:''}${extra
 function gameCard(g,extra=''){
   const href=gameUrl(g,g.f==='toplam'?extra:'');
   return `<a class="game" href="${href}">
-    <div class="art" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${g.e}</span></div>
+    <div class="art" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${g.e}</span><i class="shine"></i></div>
     <div class="gb"><h3>${esc(g.n)}</h3><p>${esc(g.d)}</p>
     <div class="tags"><span class="tag">👥 1–4 guruh</span>${g.f==='toplam'?'<span class="tag new">🤖 Robo</span>':''}${g.t.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div></a>`}
 function soonCard(s){const tg=s.href?'a':'div';return `<${tg} class="tool${s.href?' tlink':''}"${s.href?` href="${s.href}"`:''}><div class="ic" style="background:color-mix(in srgb,${s.c} 16%,transparent)">${s.e}</div><div><h3>${esc(s.n)}</h3><p>${esc(s.d)}</p>${s.href?`<span class="tag new">Ochish →</span>`:'<span class="tag soon">Tez orada</span>'}</div></${tg}>`}
@@ -1244,7 +1312,8 @@ function bindMySets(){
   const upd=()=>{const dark=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);$('#themeBtn').textContent=dark?'☀️':'🌙'};
   $('#themeBtn').onclick=()=>{const dark=$('#themeBtn').textContent==='☀️';document.documentElement.dataset.theme=dark?'light':'dark';store.set('theme',dark?'light':'dark');upd()};upd()})();
 drawAuth();
-fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).finally(()=>{window.addEventListener('hashchange',route);route()});
+fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).finally(()=>{window.addEventListener('hashchange',route);route();
+  const go=()=>window.__hideSplash&&window.__hideSplash();(document.fonts&&document.fonts.ready?Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))]):Promise.resolve()).then(go)});
 </script>
 </body>
 </html>
