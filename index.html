@@ -94,7 +94,7 @@ h2{font-size:30px;letter-spacing:-.6px;margin:0;font-weight:900}
 .game:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .art{height:128px;display:grid;place-items:center;position:relative;overflow:hidden}
 .art .em{font-size:62px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.18));transition:transform .25s}
-.game:hover .art .em{transform:scale(1.1) rotate(-6deg)}
+
 .art::before,.art::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.22)}
 .art::before{width:120px;height:120px;left:-30px;top:-40px}
 .art::after{width:70px;height:70px;right:18px;bottom:-24px}
@@ -356,7 +356,7 @@ nav.top a:hover::after,nav.top a.on::after{transform:scaleX(1)}
 .grade:hover,.subj:hover,.pmg:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 12px 26px rgba(22,33,62,.12)}
 .game .art{transition:filter .35s}.game:hover .art{filter:saturate(1.15) brightness(1.04)}
 .game .art::after{transition:transform .6s var(--ease)}.game:hover .art::after{transform:scale(1.5) translate(-10px,-6px)}
-.game .art .em{transition:transform .45s var(--ease)}.game:hover .art .em{transform:scale(1.15) rotate(-8deg)}
+.game .art .em{transition:transform .45s var(--ease)}
 .game .art .shine{position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 48%,transparent 66%);transform:translateX(-120%);pointer-events:none}
 .game:hover .art .shine{transform:translateX(120%);transition:transform .9s var(--ease)}
 .aitool .ic,.tool .ic,.subj .ic,.sct .ic{transition:transform .45s var(--ease)}
@@ -368,19 +368,175 @@ nav.top a:hover::after,nav.top a.on::after{transform:scaleX(1)}
 .mnav a{transition:background-color .2s,color .2s,transform .2s var(--ease)}.mnav a:active{transform:scale(.92)}
 /* kartalar sahifa ochilganda birin-ketin chiqadi */
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-html.ready .grid>*,html.ready .grades>*,html.ready .aigrid>*,html.ready .tools>*,html.ready .subjects>*,html.ready .sgrid>*{animation:rise .5s var(--ease) both}
-html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(2){animation-delay:.04s}
-html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(3){animation-delay:.08s}
-html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(4){animation-delay:.12s}
-html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(5){animation-delay:.16s}
-html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(6){animation-delay:.2s}
-html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(7){animation-delay:.24s}
-html.ready :is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(n+8){animation-delay:.28s}
-.hero>div:first-child>*{animation:rise .6s var(--ease) both}.hero>div:first-child>*:nth-child(2){animation-delay:.06s}.hero>div:first-child>*:nth-child(3){animation-delay:.12s}.hero>div:first-child>*:nth-child(4){animation-delay:.18s}.hero>div:first-child>*:nth-child(5){animation-delay:.24s}
+.hero>.hcopy>*{animation:rise .6s var(--ease) both}.hero>.hcopy>*:nth-child(2){animation-delay:.06s}.hero>.hcopy>*:nth-child(3){animation-delay:.12s}.hero>.hcopy>*:nth-child(4){animation-delay:.18s}.hero>.hcopy>*:nth-child(5){animation-delay:.24s}
 .hero .board{animation:rise .7s .15s var(--ease) both}
-html:not(.ready) .hero>div:first-child>*,html:not(.ready) .hero .board{animation-play-state:paused}
+html:not(.ready) .hero>.hcopy>*,html:not(.ready) .hero .board{animation-play-state:paused}
 @media (hover:none){.game:hover,.aitool:hover,.tool.tlink:hover,.scard:hover,.grade:hover,.subj:hover,.pmg:hover,.btn:hover{transform:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
+/* ===== MOTION: hero, maskot, oʻyin effektlari, reveal, skelet, oʻtishlar ===== */
+.hero{position:relative}body{overflow-x:clip}.hero>.hcopy,.hero>.board{position:relative;z-index:1}
+.mathbg{position:absolute;inset:-30px 0;z-index:0;overflow:hidden;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse at center,#000 45%,transparent 78%);mask-image:radial-gradient(ellipse at center,#000 45%,transparent 78%)}
+.mathbg span{position:absolute;font-weight:900;color:var(--ink);opacity:.07;animation:mfloat 16s ease-in-out infinite alternate;will-change:transform}
+@keyframes mfloat{from{transform:translateY(0) rotate(0)}to{transform:translateY(-34px) rotate(var(--r))}}
+.board.live .q span{display:inline-block;transition:color .3s,text-shadow .3s}
+.board.live .q span.in{animation:qin .5s var(--ease)}
+.board.live .q span.ok{color:#7dffb2;text-shadow:0 0 18px rgba(125,255,178,.55)}
+@keyframes qin{from{opacity:0;transform:translateY(10px) scale(.94)}}
+.board.live .floor{height:12%;flex:none}
+.board.live .floor.drop{animation:fdrop .6s cubic-bezier(.3,1.35,.5,1) both}
+@keyframes fdrop{from{transform:translateY(-150px) rotate(-5deg);opacity:0}65%{transform:translateY(5px) rotate(1deg);opacity:1}to{transform:none;opacity:1}}
+.team .hsc{position:absolute;top:9px;right:10px;background:rgba(255,255,255,.18);color:#fff;font-weight:900;border-radius:99px;min-width:26px;text-align:center;padding:1px 8px;font-size:14px}
+.team.win{animation:twin .8s var(--ease)}
+@keyframes twin{30%{box-shadow:inset 0 0 0 3px rgba(125,255,178,.9),0 0 26px rgba(125,255,178,.4)}}
+.team.champ::after{content:"🏆";position:absolute;top:36px;left:50%;font-size:42px;transform:translateX(-50%);animation:tpop .7s cubic-bezier(.3,1.6,.5,1) both;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+@keyframes tpop{from{transform:translateX(-50%) scale(0) rotate(-30deg)}}
+.board.live .robo{animation:rbob 3.6s ease-in-out infinite}
+@keyframes rbob{0%,100%{transform:rotate(3deg) translateY(0)}50%{transform:rotate(1deg) translateY(-6px)}}
+.mascot{position:absolute;left:-62px;bottom:-30px;width:108px;z-index:3;cursor:pointer;overflow:visible;filter:drop-shadow(0 10px 14px rgba(22,33,62,.25));animation:mbob 3.4s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
+.mascot .rb{transform-origin:60px 130px;transition:transform .3s var(--ease)}
+.mascot:hover .rb{transform:rotate(-4deg) scale(1.04)}
+@keyframes mbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.mascot .shadow{animation:msh 3.4s ease-in-out infinite;transform-origin:60px 134px}
+@keyframes msh{50%{transform:scaleX(.8);opacity:.6}}
+.mascot .eyes{transform-origin:60px 50px;animation:blink 4.6s infinite}
+@keyframes blink{0%,91%,97%,100%{transform:scaleY(1)}94%{transform:scaleY(.12)}}
+.mascot .ant{animation:antp 1.8s ease-in-out infinite}
+@keyframes antp{50%{fill:#ffe48a;filter:drop-shadow(0 0 6px #f5b301)}}
+.mascot .armR{transform-origin:96px 96px}
+.mascot.wave .armR,.mascot:hover .armR{animation:wave .42s ease-in-out infinite alternate}
+@keyframes wave{from{transform:rotate(-8deg)}to{transform:rotate(26deg)}}
+.mascot.jump{animation:mjump .65s cubic-bezier(.3,1.5,.5,1)}
+@keyframes mjump{40%{transform:translateY(-26px) rotate(-6deg)}}
+.rbub{position:absolute;left:-46px;bottom:100px;z-index:4;background:var(--card);color:var(--ink);border:1.5px solid var(--line);font-weight:800;font-size:14px;line-height:1.35;padding:10px 14px;border-radius:16px;box-shadow:0 10px 26px rgba(22,33,62,.16);max-width:230px;opacity:0;transform:translateY(10px) scale(.94);transform-origin:20% 100%;transition:opacity .35s var(--ease),transform .35s var(--ease);pointer-events:none}
+.rbub.show{opacity:1;transform:none}
+.rbub::after{content:"";position:absolute;left:44px;bottom:-8px;width:14px;height:14px;background:var(--card);border-right:1.5px solid var(--line);border-bottom:1.5px solid var(--line);transform:rotate(45deg)}
+@media (max-width:900px){.mascot{left:-6px;bottom:-40px;width:88px}.rbub{left:0;bottom:62px}}
+@media (max-width:520px){.mascot{width:72px;bottom:-34px}.rbub{font-size:12.5px;max-width:190px;bottom:50px}}
+/* oʻyin kartalaridagi effektlar */
+.fx{position:absolute;pointer-events:none;opacity:0}
+.game:is(:hover,:focus-visible) .fx{opacity:1}
+.art-minora .em{transform-origin:50% 90%}
+.game:is(:hover,:focus-visible) .art-minora .em{animation:crane 1s ease-in-out infinite alternate}
+@keyframes crane{from{transform:rotate(-5deg) scale(1.08)}to{transform:rotate(5deg) scale(1.08)}}
+.art-minora .blk{left:60%;top:-18px;width:20px;height:13px;border-radius:3px;background:#ffd25c;border:2px solid rgba(0,0,0,.18)}
+.art-minora .blk.b2{left:38%;background:#ff9f6b}
+.game:is(:hover,:focus-visible) .art-minora .blk{animation:bdrop 1.4s cubic-bezier(.5,0,.75,0) infinite}
+.game:is(:hover,:focus-visible) .art-minora .blk.b2{animation-delay:.7s}
+@keyframes bdrop{0%{transform:translateY(0) rotate(-10deg);opacity:0}15%{opacity:1}80%{transform:translateY(118px) rotate(8deg);opacity:1}100%{transform:translateY(118px);opacity:0}}
+.game:is(:hover,:focus-visible) .art-xazina .em{animation:mapw 2s ease-in-out infinite}
+@keyframes mapw{0%,100%{transform:rotate(-4deg) scale(1.08)}50%{transform:rotate(4deg) scale(1.12)}}
+.art-xazina .ship{bottom:6px;left:-34px;font-size:26px}
+.game:is(:hover,:focus-visible) .art-xazina .ship{animation:sail 2.6s linear infinite}
+@keyframes sail{0%{transform:translateX(0) rotate(-4deg)}25%{transform:translateX(90px) rotate(4deg)}50%{transform:translateX(180px) rotate(-4deg)}75%{transform:translateX(270px) rotate(4deg)}100%{transform:translateX(360px) rotate(-4deg)}}
+.art-xazina .wave{left:0;right:0;bottom:0;height:14px;background:radial-gradient(circle at 10px -2px,transparent 9px,rgba(255,255,255,.35) 10px) 0 0/20px 14px repeat-x}
+.game:is(:hover,:focus-visible) .art-xazina .wave{animation:wv 1.2s linear infinite}
+@keyframes wv{to{background-position:20px 0}}
+.game:is(:hover,:focus-visible) .art-raketa .em{animation:launch 1.6s cubic-bezier(.5,0,.6,1) infinite}
+@keyframes launch{0%{transform:translate(0,0)}35%{transform:translate(8px,-10px) rotate(-3deg)}55%{transform:translate(80px,-110px) scale(.8);opacity:0}56%{transform:translate(-80px,110px) scale(.8);opacity:0}75%{opacity:1}100%{transform:translate(0,0)}}
+.art-raketa .puff{left:44%;top:58%;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.8)}
+.game:is(:hover,:focus-visible) .art-raketa .puff{animation:puff 1.6s ease-out infinite}
+.art-raketa .p2{animation-delay:.15s!important;left:40%;top:62%}.art-raketa .p3{animation-delay:.3s!important;left:36%;top:66%}
+@keyframes puff{0%{transform:scale(.3);opacity:0}20%{opacity:.9}60%{transform:scale(2.2) translate(-8px,8px);opacity:0}100%{opacity:0}}
+.art-raketa .star{width:3px;height:22px;border-radius:2px;background:rgba(255,255,255,.75);left:72%;top:-30px}
+.art-raketa .s2{left:20%}
+.game:is(:hover,:focus-visible) .art-raketa .star{animation:streak .8s linear infinite}.game:is(:hover,:focus-visible) .art-raketa .s2{animation-delay:.4s}
+@keyframes streak{to{transform:translateY(190px)}}
+.game:is(:hover,:focus-visible) .art-mozaika .em{animation:snap 1.8s cubic-bezier(.3,1.5,.5,1) infinite}
+@keyframes snap{0%,100%{transform:scale(1.05) rotate(0)}30%{transform:scale(.9) rotate(-14deg)}55%{transform:scale(1.18) rotate(6deg)}}
+.art-mozaika .pz{font-size:24px;left:50%;top:50%}
+.game:is(:hover,:focus-visible) .art-mozaika .pz1{animation:pzin1 1.8s ease-in-out infinite}
+.game:is(:hover,:focus-visible) .art-mozaika .pz2{animation:pzin2 1.8s ease-in-out infinite}
+@keyframes pzin1{0%{transform:translate(-120px,-60px) rotate(-60deg);opacity:0}20%{opacity:1}45%{transform:translate(-30px,-24px) rotate(0);opacity:1}55%,100%{transform:translate(-20px,-18px);opacity:0}}
+@keyframes pzin2{0%{transform:translate(110px,50px) rotate(60deg);opacity:0}20%{opacity:1}45%{transform:translate(10px,4px) rotate(0);opacity:1}55%,100%{transform:translate(4px,0);opacity:0}}
+.game:is(:hover,:focus-visible) .art-bomba .em{animation:shake .32s linear infinite}
+@keyframes shake{0%,100%{transform:rotate(0) scale(1.08)}25%{transform:rotate(-7deg) scale(1.1)}75%{transform:rotate(7deg) scale(1.1)}}
+.art-bomba .spark{left:calc(50% + 16px);top:calc(50% - 30px);width:6px;height:6px;border-radius:50%;background:#ffe066;box-shadow:0 0 8px #ffb300}
+.game:is(:hover,:focus-visible) .art-bomba .spark{animation:spk .7s ease-out infinite}
+.art-bomba .k2{animation-delay:.23s!important}.art-bomba .k3{animation-delay:.46s!important}
+@keyframes spk{0%{transform:translate(0,0) scale(1.2);opacity:1}100%{transform:translate(var(--sx,14px),var(--sy,-22px)) scale(0);opacity:0}}
+.art-bomba .k2{--sx:-16px;--sy:-18px}.art-bomba .k3{--sx:4px;--sy:-30px}
+.game:is(:hover,:focus-visible) .art-tez .em{animation:zap .9s ease-in-out infinite}
+@keyframes zap{0%,100%{transform:scale(1.08);filter:drop-shadow(0 0 0 #fff)}45%{transform:scale(1.22) rotate(-6deg);filter:drop-shadow(0 0 16px #fff)}}
+.art-tez .ring{left:50%;top:50%;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;border:3px solid rgba(255,255,255,.85)}
+.game:is(:hover,:focus-visible) .art-tez .ring{animation:ring 1.2s ease-out infinite}.game:is(:hover,:focus-visible) .art-tez .r2{animation-delay:.6s}
+@keyframes ring{from{transform:scale(.4);opacity:.9}to{transform:scale(2.4);opacity:0}}
+.art-nishon .arrow{left:-70px;top:calc(50% - 2px);width:56px;height:4px;border-radius:2px;background:#fff}
+.art-nishon .arrow::after{content:"";position:absolute;right:-8px;top:-5px;border:7px solid transparent;border-left:10px solid #fff;border-right:0}
+.art-nishon .arrow::before{content:"";position:absolute;left:0;top:-5px;width:12px;height:14px;background:linear-gradient(90deg,#ffd25c,#ff8a3d);clip-path:polygon(0 0,100% 50%,0 100%,30% 50%)}
+.game:is(:hover,:focus-visible) .art-nishon .arrow{animation:shoot 1.5s cubic-bezier(.3,.1,.3,1) infinite}
+@keyframes shoot{0%{transform:translateX(0);opacity:0}10%{opacity:1}45%,80%{transform:translateX(calc(50vw*0 + 172px));opacity:1}100%{transform:translateX(172px);opacity:0}}
+.art-nishon .hit{left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;border:3px solid #fff}
+.game:is(:hover,:focus-visible) .art-nishon .hit{animation:hit 1.5s ease-out infinite}
+@keyframes hit{0%,44%{transform:scale(.3);opacity:0}46%{opacity:1}80%{transform:scale(1.8);opacity:0}100%{opacity:0}}
+.game:is(:hover,:focus-visible) .art-nishon .em{animation:tgt 1.5s ease-out infinite}
+@keyframes tgt{0%,44%{transform:scale(1.06)}50%{transform:scale(1.18) rotate(-6deg)}70%,100%{transform:scale(1.06)}}
+.art-mental .num{color:#fff;font-weight:900;font-size:20px;text-shadow:0 2px 6px rgba(0,0,0,.2);bottom:-24px}
+.art-mental .n1{left:22%}.art-mental .n2{left:70%}.art-mental .n3{left:46%}
+.game:is(:hover,:focus-visible) .art-mental .num{animation:nup 1.8s ease-out infinite}
+.game:is(:hover,:focus-visible) .art-mental .n2{animation-delay:.6s}.game:is(:hover,:focus-visible) .art-mental .n3{animation-delay:1.2s}
+@keyframes nup{0%{transform:translateY(0) scale(.8);opacity:0}25%{opacity:1}100%{transform:translateY(-150px) scale(1.15);opacity:0}}
+.game:is(:hover,:focus-visible) .art-mental .em{animation:abac 1s ease-in-out infinite alternate}
+@keyframes abac{from{transform:translateX(-6px) scale(1.08)}to{transform:translateX(6px) scale(1.08)}}
+.art-juft .em{transform-style:preserve-3d}
+.game:is(:hover,:focus-visible) .art-juft .em{animation:flipy 1.6s ease-in-out infinite}
+@keyframes flipy{0%,20%{transform:perspective(300px) rotateY(0) scale(1.08)}50%,70%{transform:perspective(300px) rotateY(180deg) scale(1.12)}100%{transform:perspective(300px) rotateY(360deg) scale(1.08)}}
+.art-juft .card2{left:calc(50% + 26px);top:calc(50% - 30px);font-size:34px;transform:rotate(14deg)}
+.game:is(:hover,:focus-visible) .art-juft .card2{animation:c2 1.6s ease-in-out infinite}
+@keyframes c2{0%,100%{transform:rotate(14deg) translateY(0)}50%{transform:rotate(24deg) translateY(-8px)}}
+.art-zanjir .em{transform-origin:50% 0}
+.game:is(:hover,:focus-visible) .art-zanjir .em{animation:swing 1.3s ease-in-out infinite}
+@keyframes swing{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+.art-zanjir .link{width:22px;height:12px;border:3px solid rgba(255,255,255,.85);border-radius:8px;left:calc(50% - 11px);top:4px}
+.art-zanjir .l2{top:18px;transform:rotate(90deg)}
+.game:is(:hover,:focus-visible) .art-kosmik .em{animation:ufo 1.6s ease-in-out infinite}
+@keyframes ufo{0%,100%{transform:translateY(-6px) rotate(-6deg)}50%{transform:translateY(-14px) rotate(6deg)}}
+.art-kosmik .beam{left:calc(50% - 30px);top:calc(50% + 4px);width:60px;height:70px;background:linear-gradient(rgba(180,255,240,.75),rgba(180,255,240,0));clip-path:polygon(35% 0,65% 0,100% 100%,0 100%)}
+.game:is(:hover,:focus-visible) .art-kosmik .beam{animation:beam 1.6s ease-in-out infinite}
+@keyframes beam{0%,100%{opacity:.2;transform:scaleY(.8)}50%{opacity:.9;transform:scaleY(1)}}
+.game:is(:hover,:focus-visible) .art-sirli .em{animation:kturn 1.8s cubic-bezier(.5,0,.3,1) infinite}
+@keyframes kturn{0%,15%{transform:rotate(0) scale(1.08)}45%,70%{transform:rotate(-90deg) scale(1.14)}100%{transform:rotate(0) scale(1.08)}}
+.art-sirli .glint{font-size:18px;left:calc(50% + 30px);top:22%}.art-sirli .g2{left:calc(50% - 46px);top:58%}
+.game:is(:hover,:focus-visible) .art-sirli .glint{animation:tw 1.8s ease-in-out infinite}.game:is(:hover,:focus-visible) .art-sirli .g2{animation-delay:.9s}
+@keyframes tw{0%,100%{transform:scale(0) rotate(0);opacity:0}50%{transform:scale(1.2) rotate(90deg);opacity:1}}
+.game:is(:hover,:focus-visible) .art-eshik .em{animation:hop .9s cubic-bezier(.3,1.5,.5,1) infinite}
+@keyframes hop{0%,100%{transform:translateY(0) scale(1.08)}40%{transform:translateY(-12px) scale(1.12)}}
+.art-eshik .flag{left:calc(50% + 6px);top:16%;font-size:22px}
+.game:is(:hover,:focus-visible) .art-eshik .flag{animation:flag 1.8s ease-out infinite}
+@keyframes flag{0%{transform:translateY(40px);opacity:0}40%,80%{transform:translateY(-6px) rotate(-6deg);opacity:1}100%{transform:translateY(-6px);opacity:0}}
+.game:is(:hover,:focus-visible) .art:not(.art-minora):not(.art-xazina) .em{}
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid){opacity:1;transform:none;transition:none}
+.rv:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid):not(.in)>*{opacity:0}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*{animation:rise .6s var(--ease) both}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(2){animation-delay:.05s}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(3){animation-delay:.1s}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(4){animation-delay:.15s}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(5){animation-delay:.2s}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(6){animation-delay:.25s}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(7){animation-delay:.3s}
+.rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(n+8){animation-delay:.35s}
+/* toʻlqin */
+:is(.btn,.chip,.tabs button,.pmg,.mnav a,.dgrp button,.icon-btn,.aitool,.grade,.subj){position:relative;overflow:hidden;isolation:isolate}
+.rip{position:absolute;border-radius:50%;background:currentColor;opacity:.2;transform:scale(0);animation:rip .65s cubic-bezier(.2,.7,.3,1) forwards;pointer-events:none;z-index:-1}
+.btn.gold .rip,.btn.main .rip{background:#fff;opacity:.35}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+/* konfetti */
+.cfl{position:fixed;inset:0;pointer-events:none;z-index:400;overflow:hidden}.cfl i{position:absolute;display:block;will-change:transform}
+/* skelet */
+.sk{pointer-events:none}
+.sk .skl,.sk .skb{display:block;border-radius:7px;background:linear-gradient(90deg,var(--bg2) 25%,color-mix(in srgb,var(--bg2) 40%,var(--card)) 50%,var(--bg2) 75%);background-size:220% 100%;animation:shim 1.25s linear infinite}
+.sk .skl{height:12px;margin:7px 0}.sk .btnl{width:92px;height:34px;border-radius:12px;margin:0}
+@keyframes shim{from{background-position:120% 0}to{background-position:-120% 0}}
+/* sahifalar orasida oʻtish */
+html:not(.vt-theme) header{view-transition-name:hdr}html:not(.vt-theme) .mnav{view-transition-name:mnav}
+::view-transition-old(root){animation:vtOut .2s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:vtIn .42s var(--ease) both}
+@keyframes vtOut{to{opacity:0;transform:translateY(-8px)}}
+@keyframes vtIn{from{opacity:0;transform:translateY(14px)}}
+html.vt-theme::view-transition-old(root),html.vt-theme::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.vt-theme::view-transition-old(root){z-index:1}html.vt-theme::view-transition-new(root){z-index:2}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -410,7 +566,7 @@ html:not(.ready) .hero>div:first-child>*,html:not(.ready) .hero .board{animation
 <script>(function(){var tips=['Darsni oʻyinga aylantiramiz…','Oʻyinlar tayyorlanmoqda…','Robo qizdirilmoqda…','Savollar aralashtirilmoqda…'],i=0,el=document.getElementById('spTip');
  window.__spTipIv=setInterval(function(){i=(i+1)%tips.length;el.style.opacity=0;setTimeout(function(){el.textContent=tips[i];el.style.opacity=.7},250)},1100);
  var t0=Date.now(),first=true;try{first=!sessionStorage.getItem('bk_seen');sessionStorage.setItem('bk_seen','1')}catch(e){}
- var min=first?1300:450,done=false;window.__hideSplash=function(){if(done)return;done=true;var w=Math.max(0,min-(Date.now()-t0));setTimeout(function(){var s=document.getElementById('splash');if(!s)return;s.classList.add('out');clearInterval(window.__spTipIv);document.documentElement.classList.add('ready');setTimeout(function(){s.remove()},650)},w)};
+ var min=first?1300:450,done=false;window.__hideSplash=function(){if(done)return;done=true;var w=Math.max(0,min-(Date.now()-t0));setTimeout(function(){var s=document.getElementById('splash');if(!s)return;s.classList.add('out');clearInterval(window.__spTipIv);document.documentElement.classList.add('ready');window.__afterReady&&window.__afterReady();setTimeout(function(){s.remove()},650)},w)};
  setTimeout(window.__hideSplash,4500);})();</script>
 <header>
   <div class="wrap bar">
@@ -484,7 +640,7 @@ function gameUrl(g,extra=''){return `games/${g.f}.html?${g.g?'g='+g.g:''}${extra
 function gameCard(g,extra=''){
   const href=gameUrl(g,g.f==='toplam'?extra:'');
   return `<a class="game" href="${href}">
-    <div class="art" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${g.e}</span><i class="shine"></i></div>
+    <div class="art art-${g.id}" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${g.e}</span>${FX[g.id]||''}<i class="shine"></i></div>
     <div class="gb"><h3>${esc(g.n)}</h3><p>${esc(g.d)}</p>
     <div class="tags"><span class="tag">👥 1–4 guruh</span>${g.f==='toplam'?'<span class="tag new">🤖 Robo</span>':''}${g.t.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div></a>`}
 function soonCard(s){const tg=s.href?'a':'div';return `<${tg} class="tool${s.href?' tlink':''}"${s.href?` href="${s.href}"`:''}><div class="ic" style="background:color-mix(in srgb,${s.c} 16%,transparent)">${s.e}</div><div><h3>${esc(s.n)}</h3><p>${esc(s.d)}</p>${s.href?`<span class="tag new">Ochish →</span>`:'<span class="tag soon">Tez orada</span>'}</div></${tg}>`}
@@ -494,22 +650,15 @@ function gradesGrid(on){return `<div class="grades">${[1,2,3,4,5,6,7].map(n=>`<a
 const PAGES={
  '':()=>`
   <div class="wrap">
-   <div class="hero">
-    <div>
+   <div class="hero">${mathBg()}
+    <div class="hcopy">
      <span class="pill"><i></i>Bepul · roʻyxatdan oʻtishsiz</span>
      <h1>Darsni <span class="hl">oʻyinga</span> aylantiring</h1>
      <p class="lead">Elektron doskada guruhlar bellashadigan matematik oʻyinlar. Savollar har gal yangidan tuziladi: qisqa, tez va mantiqiy — diqqat va qiziqish uchun.</p>
      <div class="cta"><a class="btn gold" href="#/sinflar">📚 Sinfni tanlash</a><a class="btn ghost" href="#/ai">✨ AI yordamchi</a><a class="btn ghost" href="#/oyinlar">🎮 Oʻyinlar</a></div>
-     <div class="stats"><div><b>${GAMES.length}</b><span>oʻyin</span></div><div><b>1–7</b><span>sinflar</span></div><div><b id="tc">50+</b><span>mavzu</span></div><div><b>∞</b><span>yangi savollar</span></div></div>
+     <div class="stats"><div><b data-count="${GAMES.length}">0</b><span>oʻyin</span></div><div><b>1–7</b><span>sinflar</span></div><div><b id="tc" data-count="51">0</b><span>mavzu</span></div><div><b data-count="21">0</b><span>fan</span></div></div>
     </div>
-    <div class="board" aria-hidden="true">
-     <div class="q">48 : 6 = ?</div>
-     <div class="teams">
-      <div class="team a"><span class="lab">1-guruh</span>${'<div class="floor"></div>'.repeat(4)}</div>
-      <div class="team b"><span class="lab">2-guruh</span>${'<div class="floor"></div>'.repeat(3)}</div>
-     </div>
-     <div class="robo"><span>🤖</span>Yangi: Robo bilan bellashing!</div>
-    </div>
+    ${heroBoardHtml()}
    </div>
   </div>
   <section><div class="wrap">
@@ -598,6 +747,11 @@ function bindGames(){
     const f=b.dataset.f;$('#ggrid').innerHTML=GAMES.filter(g=>f==='all'||(f==='top'?g.f==='toplam':g.f!=='toplam')).map(g=>gameCard(g)).join('')};
 }
 function route(){
+  if(!document.startViewTransition||REDUCED||!route.booted){route.booted=true;doRoute();return}
+  try{document.startViewTransition(doRoute)}catch(e){doRoute()}
+}
+function doRoute(){
+  heroStop();
   const parts=location.hash.replace(/^#\/?/,'').split('/');let r=parts[0]||'';
   if(r==='sinf'&&!GRADES[parts[1]])r='sinflar';
   if(CLEANUP){try{CLEANUP()}catch(e){}CLEANUP=null}
@@ -613,9 +767,12 @@ function route(){
   if(r==='kutubxona')bindLib('');if(r==='fan')bindLib(decodeURIComponent(parts[1]||''));if(r==='toplamlar')bindMySets();
   if(r==='vosita'&&TOOLDEFS[parts[1]])bindTool(parts[1]);
   if(r==='oyinlar')bindGames();
-  const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.textContent=all.size}
+  const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.dataset.count=all.size}
   window.scrollTo(0,0);
+  revealInit();
+  if(r===''){heroStart();if(document.documentElement.classList.contains('ready'))countUp()}
 }
+window.__afterReady=()=>{if(!location.hash.replace(/^#\/?/,''))countUp()};
 /* ================= AI YORDAMCHI ================= */
 const API=(()=>{try{const q=new URLSearchParams(location.search).get('api');if(q)return q.replace(/\/$/,'')}catch(e){}
   return /onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com'})();
@@ -689,7 +846,7 @@ function login(){
       while(Date.now()-t0<9*60000&&(modal.closed||0)===my){
         await new Promise(r=>setTimeout(r,2500));
         let r;try{r=await api('/api/login/check',{code:j.code},30000)}catch(e){continue}
-        if(r.ok){AUTH.set(r.token,r.name);closeModal();drawAuth();toast('Xush kelibsiz, '+r.name+'!');res(true);return}
+        if(r.ok){AUTH.set(r.token,r.name);closeModal();drawAuth();toast('Xush kelibsiz, '+r.name+'!');burstTop(90);res(true);return}
         if(r.expired){const mm=$('#lgMsg');if(mm)mm.textContent='Havola eskirdi. Oynani yopib, qaytadan «Kirish»ni bosing.';break}
       }
       res(false);
@@ -762,7 +919,7 @@ async function submitForm(t,form){
     const j=await api('/api/ai',{token:AUTH.tok,tool:t.id,p,file});
     const rec={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),tool:t.id,title:String(j.result.title||p.mavzu).slice(0,120),t:Date.now(),p,data:j.result,theme:Math.floor(Math.random()*THEMES.length)};
     if(t.id==='krossvord')rec.layout=crossLayout(rec.data.words||[]);
-    DOCS.add(rec);toast(`Tayyor! Bugun yana ${j.left} ta yaratish mumkin.`);location.hash='#/doc/'+rec.id;
+    DOCS.add(rec);toast(`Tayyor! Bugun yana ${j.left} ta yaratish mumkin.`);location.hash='#/doc/'+rec.id;setTimeout(()=>burstTop(130),450);
   }catch(e){msg.textContent='⚠️ '+e.message}
   finally{clearInterval(iv);btn.disabled=false}
 }
@@ -1080,7 +1237,7 @@ function bindWheel(){
       if(k<1)requestAnimationFrame(fr);else done(win)};requestAnimationFrame(fr)}
   function done(i){spinning=false;const who=pool[i];try{beep(660);setTimeout(()=>beep(990),150)}catch(e){}
     const m=modal(`<div class="lg"><div class="lgic">🎉</div><p class="sub">Doskaga chiqadi:</p><h3 class="wwin">${esc(who)}</h3><button class="btn gold" id="wOk">Davom etish</button></div>`);
-    m.querySelector('#wOk').onclick=closeModal;
+    m.querySelector('#wOk').onclick=closeModal;burstTop(150);
     if($('#wRemove').checked){pool.splice(i,1);$('#wCount').textContent=`${pool.length} ta qoldi`;draw()}}
   function split(){const l=shuffle([...names()]);if(l.length<nTeams){toast('Ismlar yetarli emas');return}
     const T=Array.from({length:nTeams},()=>[]);l.forEach((x,i)=>T[i%nTeams].push(x));
@@ -1240,7 +1397,7 @@ function libPage(fan){
    <div class="lfilter"><select id="lFan">${fans.map(f=>`<option value="${esc(f)}" ${f===fan?'selected':''}>${f?esc(f):'Barcha fanlar'}</option>`).join('')}</select>
     <select id="lSinf"><option value="">Barcha sinflar</option>${[...Array(11)].map((_,i)=>`<option value="${i+1}">${i+1}-sinf</option>`).join('')}</select>
     <input id="lQ" placeholder="🔍 Mavzu yoki nom boʻyicha qidirish"><select id="lSort"><option value="new">Yangilari</option><option value="top">Koʻp oʻynalgan</option></select></div>
-   <div class="sgrid" id="lList"><p class="sub">Yuklanmoqda…</p></div>
+   <div class="sgrid" id="lList">${skel(6)}</div>
   </div></section>`}
 function bindLib(fan){
   let all=[];const by={};
@@ -1271,7 +1428,7 @@ function mySetsPage(){return `<section><div class="wrap fade">
    <div class="fgrid"><label class="f"><span>Toʻplam nomi</span><input id="nfName" maxlength="60" placeholder="Masalan: Poytaxtlar"></label>
     <label class="f wide"><span>Savollar — har qatorda bittadan</span><textarea id="nfText" rows="9" placeholder="Son-javobli: 7 × 8 = ? | 56&#10;Test: Fransiyaning poytaxti? | Parij | Lion | Marsel | Nitstsa&#10;(test savolida birinchi variant — toʻgʻri javob)"></textarea></label>
     <div class="wide factions"><button class="btn gold" id="nfSave">💾 Saqlash</button><span class="small" id="nfMsg"></span></div></div></div>
-  <div class="sgrid" id="mList"><p class="sub">Yuklanmoqda…</p></div></div></section>`}
+  <div class="sgrid" id="mList">${skel(3)}</div></div></section>`}
 function parseLines(t){const items=[],bad=[];t.split('\n').forEach((l,i)=>{l=l.trim();if(!l)return;const p=l.split('|').map(x=>x.trim());
   if(p.length>=3&&p[0]&&p.slice(1).every(Boolean)){const o=[...new Set(p.slice(1,5))];if(o.length>=2){items.push({q:p[0],o,c:0});return}}
   if(p.length===2&&p[0]&&/^\d{1,4}$/.test(p[1].replace(/\s/g,''))){items.push({q:p[0],a:+p[1].replace(/\s/g,'')});return}bad.push(i+1)});return{items,bad}}
@@ -1289,7 +1446,7 @@ function bindMySets(){
   $('#nfSave').onclick=async()=>{if(!AUTH.tok&&!(await login()))return;const {items,bad}=parseLines($('#nfText').value);
     if(!items.length){$('#nfMsg').textContent='⚠️ Birorta ham toʻgʻri qator topilmadi.';return}
     $('#nfMsg').textContent='⏳ Saqlanmoqda…';try{await api('/api/sets/save',{token:AUTH.tok,name:$('#nfName').value.trim()||'Oʻz savollarim',items});
-      $('#nfMsg').textContent=`✅ ${items.length} ta savol saqlandi.${bad.length?` Tushunilmagan qatorlar: ${bad.slice(0,8).join(', ')}`:''}`;$('#nfText').value='';load()}catch(e){$('#nfMsg').textContent='⚠️ '+e.message}};
+      burstAt($('#nfSave'),60);$('#nfMsg').textContent=`✅ ${items.length} ta savol saqlandi.${bad.length?` Tushunilmagan qatorlar: ${bad.slice(0,8).join(', ')}`:''}`;$('#nfText').value='';load()}catch(e){$('#nfMsg').textContent='⚠️ '+e.message}};
   $('#mList').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.play||b.dataset.view||b.dataset.pub||b.dataset.del,s=by[id];if(!s)return;
     if(b.dataset.play)playModal(s,`&set=${encodeURIComponent(s.id)}`);
     if(b.dataset.view)viewModal(s.name,s.items);
@@ -1303,14 +1460,128 @@ function bindMySets(){
       <div class="mrow"><button class="btn gold" id="pbGo">📚 Ulashish</button><span class="small" id="pbMsg"></span></div>`);
       md.querySelector('#pbGo').onclick=async()=>{const m=md.querySelector('#pbMsg');m.textContent='⏳…';
         try{await api('/api/lib/publish',{token:AUTH.tok,set_id:s.id,name:md.querySelector('#pbName').value,fan:md.querySelector('#pbFan').value,sinf:md.querySelector('#pbSinf').value,mavzu:md.querySelector('#pbMav').value});
-          closeModal();toast('📚 Kutubxonaga qoʻshildi!')}catch(err){m.textContent='⚠️ '+err.message}}}};
+          closeModal();toast('📚 Kutubxonaga qoʻshildi!');burstTop(120)}catch(err){m.textContent='⚠️ '+err.message}}}};
   wake();load();
+}
+
+/* ================= HARAKAT VA ANIMATSIYALAR ================= */
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* --- har bir oʻyin kartasi uchun oʻziga xos effekt qatlamlari --- */
+const FX={
+ minora:'<i class="fx blk"></i><i class="fx blk b2"></i>',
+ xazina:'<span class="fx ship">⛵</span><i class="fx wave"></i>',
+ raketa:'<i class="fx puff p1"></i><i class="fx puff p2"></i><i class="fx puff p3"></i><i class="fx star s1"></i><i class="fx star s2"></i>',
+ mozaika:'<span class="fx pz pz1">🧩</span><span class="fx pz pz2">🧩</span>',
+ bomba:'<i class="fx spark k1"></i><i class="fx spark k2"></i><i class="fx spark k3"></i>',
+ tez:'<i class="fx ring"></i><i class="fx ring r2"></i>',
+ nishon:'<i class="fx arrow"></i><i class="fx hit"></i>',
+ mental:'<span class="fx num n1">+3</span><span class="fx num n2">−1</span><span class="fx num n3">+5</span>',
+ juft:'<span class="fx card2">🃏</span>',
+ zanjir:'<i class="fx link l1"></i><i class="fx link l2"></i>',
+ kosmik:'<i class="fx beam"></i>',
+ sirli:'<span class="fx glint">✨</span><span class="fx glint g2">✨</span>',
+ eshik:'<span class="fx flag">🚩</span>',
+};
+
+/* --- jonli doska (bosh sahifa) --- */
+const HB_Q=[['48 : 6',8],['7 × 8',56],['15 + 27',42],['81 : 9',9],['12 × 3',36],['100 − 37',63],['9 × 9',81],['64 : 8',8]];
+let HERO_T=[];
+function heroBoardHtml(){return `<div class="board live" aria-hidden="true">
+  <div class="q"><span id="hbQ">48 : 6 = ?</span></div>
+  <div class="teams"><div class="team a" id="hbA"><span class="lab">Lochinlar</span><span class="hsc">0</span></div><div class="team b" id="hbB"><span class="lab">Burgutlar</span><span class="hsc">0</span></div></div>
+  <div class="robo" id="hbRobo"><span>🤖</span><b>Robo bilan ham oʻynash mumkin!</b></div>
+  ${roboSvg()}<div class="rbub" id="rbub">Salom! Bugun qaysi oʻyinni oʻynaymiz? 👋</div></div>`}
+function heroStart(){
+  heroStop();const A=$('#hbA'),B=$('#hbB'),Q=$('#hbQ');if(!A)return;
+  const H={a:0,b:0},S={a:0,b:0};let k=0;
+  const at=(f,ms)=>HERO_T.push(setTimeout(f,ms));
+  const floors=(el,n)=>{el.querySelectorAll('.floor').forEach(x=>x.remove());for(let i=0;i<n;i++){const f=document.createElement('div');f.className='floor';el.appendChild(f)}};
+  floors(A,2);floors(B,1);H.a=2;H.b=1;
+  const step=()=>{
+    const [q,ans]=HB_Q[k++%HB_Q.length];Q.classList.remove('in');void Q.offsetWidth;Q.textContent=`${q} = ?`;Q.classList.add('in');
+    at(()=>{const w=Math.random()<.55?'a':'b',el=w==='a'?A:B;H[w]++;S[w]++;
+      const f=document.createElement('div');f.className='floor drop';el.appendChild(f);
+      el.classList.remove('win');void el.offsetWidth;el.classList.add('win');el.querySelector('.hsc').textContent=S[w];
+      Q.textContent=`${q} = ${ans} ✓`;Q.classList.add('ok');at(()=>Q.classList.remove('ok'),900);
+      if(H[w]>=6){at(()=>{el.classList.add('champ');burstAt(el,40)},500);at(()=>{A.classList.remove('champ');B.classList.remove('champ');floors(A,1);floors(B,1);H.a=H.b=1;S.a=S.b=0;A.querySelector('.hsc').textContent=0;B.querySelector('.hsc').textContent=0},2600)}
+    },1250);
+    at(step,H.a>=6||H.b>=6?3400:2700);
+  };
+  if(REDUCED)return;at(step,900);
+  // Robo maskoti
+  const tips=['Salom! Bugun qaysi oʻyinni oʻynaymiz? 👋','Meni raqib qilib koʻring — men moslashaman 😎','AI bir daqiqada test tuzib beradi ✨','Gʻildirak doskaga kim chiqishini hal qiladi 🎡','Kutubxonada boshqa fanlar ham bor 📚'];
+  let ti=0;const bub=$('#rbub'),bot=$('#roboSvg');
+  const say=i=>{bub.classList.remove('show');at(()=>{bub.textContent=tips[i];bub.classList.add('show')},250)};
+  at(()=>{bub.classList.add('show');bot.classList.add('wave');at(()=>bot.classList.remove('wave'),1800)},1600);
+  const cyc=()=>{ti=(ti+1)%tips.length;say(ti);at(cyc,5200)};at(cyc,6800);
+  bot.onclick=()=>{ti=(ti+1)%tips.length;say(ti);bot.classList.remove('jump');void bot.getBoundingClientRect();bot.classList.add('jump');try{beep(880)}catch(e){}};
+}
+function heroStop(){HERO_T.forEach(clearTimeout);HERO_T=[]}
+function roboSvg(){return `<svg id="roboSvg" class="mascot" viewBox="0 0 120 140" role="img" aria-label="Robo">
+ <defs><linearGradient id="rbH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6fb"/><stop offset="1" stop-color="#cfd6e6"/></linearGradient>
+ <linearGradient id="rbB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7b8cff"/><stop offset="1" stop-color="#5a5fd6"/></linearGradient></defs>
+ <ellipse cx="60" cy="134" rx="30" ry="4" fill="rgba(0,0,0,.18)" class="shadow"/>
+ <g class="rb">
+  <line x1="60" y1="10" x2="60" y2="24" stroke="#9aa3b8" stroke-width="3" stroke-linecap="round"/><circle class="ant" cx="60" cy="9" r="5.5" fill="#f5b301"/>
+  <rect x="22" y="22" width="76" height="56" rx="20" fill="url(#rbH)" stroke="#aeb7cc" stroke-width="2"/>
+  <rect x="31" y="33" width="58" height="34" rx="14" fill="#16213e"/>
+  <g class="eyes"><ellipse cx="49" cy="50" rx="6" ry="7" fill="#7df9ff"/><ellipse cx="71" cy="50" rx="6" ry="7" fill="#7df9ff"/></g>
+  <path d="M52 60q8 5 16 0" stroke="#7df9ff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <circle cx="22" cy="50" r="5" fill="#cfd6e6"/><circle cx="98" cy="50" r="5" fill="#cfd6e6"/>
+  <rect x="34" y="82" width="52" height="38" rx="14" fill="url(#rbB)"/>
+  <circle cx="60" cy="100" r="7" fill="#f5b301"/><text x="60" y="104" font-size="9" text-anchor="middle">🔑</text>
+  <g class="armL"><rect x="18" y="86" width="12" height="28" rx="6" fill="#6c74e6"/></g>
+  <g class="armR"><rect x="90" y="70" width="12" height="28" rx="6" fill="#6c74e6"/><circle cx="96" cy="68" r="7" fill="#cfd6e6"/></g>
+  <rect x="42" y="120" width="12" height="10" rx="4" fill="#4b50b8"/><rect x="66" y="120" width="12" height="10" rx="4" fill="#4b50b8"/>
+ </g></svg>`}
+
+/* --- fondagi suzuvchi matematik belgilar --- */
+function mathBg(){const sy=['+','−','×','÷','π','√','=','%','∑','∞','½','x²','△','7','3'];let s='';
+  for(let i=0;i<16;i++){const l=(i*61)%97,t=(i*37)%88,sz=18+(i*7)%26,d=14+(i*5)%12,dl=-(i*1.7).toFixed(1),r=(i%2?1:-1)*(8+i%12);
+    s+=`<span style="left:${l}%;top:${t}%;font-size:${sz}px;animation-duration:${d}s;animation-delay:${dl}s;--r:${r}deg">${sy[i%sy.length]}</span>`}
+  return `<div class="mathbg" aria-hidden="true">${s}</div>`}
+
+/* --- skelet kartalar --- */
+const skel=(n=6)=>`${Array.from({length:n},()=>`<div class="scard sk"><div class="sct"><span class="ic skb"></span><div style="flex:1"><i class="skl" style="width:70%"></i><i class="skl" style="width:45%"></i></div></div><i class="skl" style="width:60%"></i><div class="sca"><i class="skl btnl"></i><i class="skl btnl"></i></div></div>`).join('')}`;
+
+/* --- konfetti --- */
+function burst(x,y,n=110,spread=1){
+  if(REDUCED)return;const C=['#f5b301','#ff6b4a','#12a38f','#2f8cff','#7b5cff','#ff8fb1','#ffd25c'];
+  const layer=document.createElement('div');layer.className='cfl';document.body.appendChild(layer);
+  for(let i=0;i<n;i++){const p=document.createElement('i'),w=6+Math.random()*7,h=w*(.4+Math.random()*.9);p.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:${C[i%C.length]};border-radius:${Math.random()<.3?'50%':'2px'}`;layer.appendChild(p);
+    const a=-Math.PI/2+(Math.random()-.5)*Math.PI*1.1*spread,v=280+Math.random()*420,dx=Math.cos(a)*v,dy=Math.sin(a)*v;
+    p.animate([{transform:'translate(-50%,-50%) rotate(0)',opacity:1},{transform:`translate(${dx*.6}px,${dy*.6}px) rotate(${Math.random()*360}deg)`,opacity:1,offset:.45},{transform:`translate(${dx}px,${dy+520}px) rotate(${Math.random()*900}deg)`,opacity:0}],{duration:1500+Math.random()*900,easing:'cubic-bezier(.2,.7,.4,1)',fill:'forwards'})}
+  setTimeout(()=>layer.remove(),2700)}
+function burstAt(el,n=90){const r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/3,n)}
+const burstTop=(n=140)=>burst(innerWidth/2,innerHeight*.28,n,1.3);
+
+/* --- tugma bosilganda toʻlqin --- */
+document.addEventListener('pointerdown',e=>{
+  const el=e.target.closest('.btn,.chip,.tabs button,.pmg,.mnav a,.dgrp button,.icon-btn,.aitool,.grade,.subj');if(!el||REDUCED)return;
+  const r=el.getBoundingClientRect(),s=Math.max(r.width,r.height)*2.2,d=document.createElement('span');d.className='rip';
+  d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;el.appendChild(d);setTimeout(()=>d.remove(),650)},{passive:true});
+
+/* --- koʻrinishga kirganda chiqish + raqamlar sanalishi --- */
+const RV_SEL='.sh,.grid,.grades,.aigrid,.tools,.subjects,.sgrid,.banner,.formcard,.lfilter';
+const RV_IO='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');RV_IO.unobserve(en.target)}}),{rootMargin:'0px 0px -8% 0px',threshold:.06}):null;
+function revealInit(){document.querySelectorAll('#app '+RV_SEL.split(',').join(',#app ')).forEach(el=>{if(el.classList.contains('rv'))return;el.classList.add('rv');if(RV_IO&&!REDUCED)RV_IO.observe(el);else el.classList.add('in')})}
+function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{const n=+el.dataset.count;if(!n||REDUCED){el.textContent=n||el.textContent;return}
+  const t0=performance.now(),D=1300;const f=now=>{const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3);el.textContent=Math.round(n*e);if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
+
+/* --- kun/tun: tugmadan doira boʻlib tarqaladi --- */
+function themeSwitch(apply,btn){
+  if(!document.startViewTransition||REDUCED){apply();return}
+  const r=btn.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+  document.documentElement.classList.add('vt-theme');
+  const t=document.startViewTransition(apply);
+  t.ready.then(()=>document.documentElement.animate({clipPath:[`circle(0px at ${x}px ${y}px)`,`circle(${R}px at ${x}px ${y}px)`]},{duration:650,easing:'cubic-bezier(.65,0,.35,1)',pseudoElement:'::view-transition-new(root)'})).catch(()=>{});
+  t.finished.finally(()=>document.documentElement.classList.remove('vt-theme'));
 }
 
 /* rejim */
 (function(){const t=store.get('theme',null);if(t)document.documentElement.dataset.theme=t;
   const upd=()=>{const dark=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);$('#themeBtn').textContent=dark?'☀️':'🌙'};
-  $('#themeBtn').onclick=()=>{const dark=$('#themeBtn').textContent==='☀️';document.documentElement.dataset.theme=dark?'light':'dark';store.set('theme',dark?'light':'dark');upd()};upd()})();
+  $('#themeBtn').onclick=e=>{const dark=$('#themeBtn').textContent==='☀️';themeSwitch(()=>{document.documentElement.dataset.theme=dark?'light':'dark';store.set('theme',dark?'light':'dark');upd()},e.currentTarget)};upd()})();
 drawAuth();
 fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).finally(()=>{window.addEventListener('hashchange',route);route();
   const go=()=>window.__hideSplash&&window.__hideSplash();(document.fonts&&document.fonts.ready?Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))]):Promise.resolve()).then(go)});
