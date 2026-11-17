@@ -322,6 +322,11 @@ h1,h2,h3{margin:0}
 body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px))}
 @media (prefers-reduced-motion:reduce){.shake,.blk.new,.tower.wob{animation:none}.ship,.track .rk{transition:none}}
 .qf{display:flex;align-items:center;gap:16px;text-align:left}.qf>svg{flex:none;margin:0!important;width:auto;height:clamp(70px,12vh,140px)}.rv-q .qf>svg,.rv-list .qf>svg{height:60px}
+.tp.robo{border-style:dashed;background-image:repeating-linear-gradient(135deg,transparent 0 14px,rgba(107,122,153,.06) 14px 28px)}
+.tp.robo .pad,.tp.robo .wires,.tp.robo .tops,.tp.robo .choice,.tp.robo .gbtn,.tp.robo .opts{pointer-events:none}
+.rthink{font-weight:700;font-size:.8em;opacity:.75;margin-left:6px}.rthink i{font-style:normal;animation:rth 1.2s infinite}.rthink i:nth-child(2){animation-delay:.2s}.rthink i:nth-child(3){animation-delay:.4s}
+@keyframes rth{0%,100%{opacity:.2}50%{opacity:1}}
+.pad button.rpress{transform:scale(.88);filter:brightness(1.25);box-shadow:0 0 0 3px var(--tc,#6b7a99)}
 </style>
 </head>
 <body>
@@ -342,6 +347,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <h3>Guruhlar soni</h3>
       <div class="seg" data-key="n"></div>
       <div class="names" id="names"></div>
+      <div id="roboBox"><h3>🤖 Robo raqib</h3><div class="seg" data-key="robo"></div><p class="small" id="roboHint">Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!</p></div>
       <div id="lenBox"><h3 id="lenTitle"></h3><div class="seg" data-key="len"></div></div>
       <div id="lvlBox"><h3>Qiyinlik</h3><div class="seg" data-key="L"></div></div>
       <div id="bigBox"><h3>Javoblar</h3><div class="seg" data-key="big"></div><p class="small">Koʻp xonali javoblarni taxmin qilib topish qiyin.</p></div>
@@ -948,7 +954,8 @@ function genQ(level,wide){
       const ti=bag('t',srcList).pop();
       if(typeof ti==='string'){const s=setById(ti.slice(1)),r=s&&setItem(s,!!wide);if(r)return r;continue}
       const T=TOPICS[ti];
-      const useW=!!wide&&T.wid.length>0&&(T.wid.length>=3||Math.random()<.5),list=useW?T.wid:T.dig;
+      const useW=!!wide&&T.wid.length>0&&(T.wid.length>=3||!T.dig.length||Math.random()<.5),list=useW?T.wid:T.dig;
+      if(!list.length)continue;
       const g=list[bag((useW?'w':'d')+ti,()=>shuffle(list.map((_,i)=>i))).pop()];
       for(let k=0;k<25;k++){
         const d=useW?R(10,Math.min(g.max||999,[30,60,99][L])):R(1,9),x=g(d);
@@ -956,7 +963,8 @@ function genQ(level,wide){
       }
     }
     if(!cfg.topics.length){const s=pick(selSets()),it=pick(s.items);return{html:esc(it.q),ans:it.a,topic:s.name}}
-    for(;;){const T=TOPICS[pick(cfg.topics)],g=pick(T.dig),d=R(1,9),x=g(d);if(x)return{html:x,ans:d,topic:T.name}}
+    const tp=cfg.topics.filter(i=>TOPICS[i].dig.length);const pool=tp.length?tp:TOPICS.map((_,i)=>i).filter(i=>TOPICS[i].dig.length);
+    for(;;){const T=TOPICS[pick(pool)],g=pick(T.dig),d=R(1,9),x=g(d);if(x)return{html:x,ans:d,topic:T.name}}
   }finally{L=save}
 }
 const BIG=()=>!!(GAMES[GK]&&GAMES[GK].big&&(cfg.big||setNeedsBig()));
@@ -1074,11 +1082,11 @@ const GAMES={
  nishon:{big:1,icon:'🎯',name:'Nishon',desc:'Guruhlar navbat bilan nishonga oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
  zanjir:{icon:'🔗',name:'Son zanjiri',desc:'Bitta sondan boshlab ketma-ket amallar bajariladi. Har bir halqa tekshiriladi, xato qayerda ekani darhol koʻrinadi.',len:{t:'Zanjirlar soni',o:[2,3,5],d:3},lvl:1,topics:0,cool:1}
 };
-const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
+const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'1 (yakka)'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
 let cfg={grade:6,big:1,music:1,n:2,L:1,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
 try{const s=JSON.parse(localStorage.getItem('bk8-cfg')||'null');if(s)cfg={...cfg,...s}}catch(e){}
 cfg.names=(cfg.names||[]).slice(0,4);while(cfg.names.length<4)cfg.names.push(`${cfg.names.length+1}-guruh`);
-cfg.topics=(cfg.topics||[]).filter(i=>TOPICS[i]);if(!GRADES[cfg.grade])cfg.grade=6;cfg.len=cfg.len||{};
+cfg.topics=(cfg.topics||[]).filter(i=>TOPICS[i]);cfg.robo=[0,1,2,3].includes(cfg.robo)?cfg.robo:0;if(![1,2,3,4].includes(cfg.n))cfg.n=2;if(!GRADES[cfg.grade])cfg.grade=6;cfg.len=cfg.len||{};
 const save=()=>{try{localStorage.setItem('bk8-cfg',JSON.stringify(cfg))}catch(e){}};
 let GK=null;
 const lenOf=k=>{const v=cfg.len[k];return GAMES[k].len.o.includes(v)?v:GAMES[k].len.d};
@@ -1095,7 +1103,9 @@ function renderSettings(){
   document.querySelectorAll('#setup .seg').forEach(el=>{const k=el.dataset.key,cur=k==='len'?lenOf(GK):cfg[k];el.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')});
   $('#lenTitle').textContent=g.len.t;
   $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
-  $('#names').innerHTML=Array.from({length:cfg.n},(_,i)=>`<input data-i="${i}" style="--tc:${TC[i]}" value="${esc(cfg.names[i]||'')}" maxlength="18" aria-label="${i+1}-guruh nomi">`).join('');
+  const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
+  $('#roboHint').textContent=cfg.robo&&cfg.n===4?'Robo bilan birga eng koʻpi 3 ta guruh oʻynaydi (jami 4 ta panel).':'Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!';
+  $('#names').innerHTML=Array.from({length:hum},(_,i)=>`<input data-i="${i}" style="--tc:${TC[i]}" value="${esc(cfg.names[i]||'')}" maxlength="18" aria-label="${i+1}-guruh nomi">`).join('');
   $('#soundChk').checked=!!cfg.sound;$('#musicChk').checked=MUSIC.on;
   const lab=i=>`<label><input type="checkbox" data-t="${i}" ${cfg.topics.includes(i)?'checked':''}> ${TOPICS[i].name}</label>`;
   const mine=GRADES[cfg.grade]||[],seen=new Set(mine);
@@ -1134,21 +1144,23 @@ function startGame(){
   if(g.topics&&!cfg.topics.length&&new Set(selSets().flatMap(s=>s.items.filter(it=>okAns(it.a,BIG())).map(it=>it.a))).size<(GK==='bomba'?4:1)){$('#startErr').textContent=GK==='bomba'?'Bomba uchun javobi 1–9 boʻlgan kamida 4 xil savol kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.':'Bu oʻyin uchun javobi 1 dan 9 gacha boʻlgan savollar kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.';return}
   $('#startErr').textContent='';save();L=cfg.L;
   S.over=false;S.ending=false;S.start=Date.now();S.finished=0;S.log=[];QB={};musLabel();MUSIC.start(GK);
-  S.teams=Array.from({length:cfg.n},(_,i)=>({i,name:(cfg.names[i]||'').trim()||`${i+1}-guruh`,color:TC[i],score:0,lockUntil:0}));
+  const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
+  S.teams=Array.from({length:hum},(_,i)=>({i,name:(hum===1&&(!cfg.names[0]||cfg.names[0].trim()==='1-guruh'))?'Oʻquvchi':(cfg.names[i]||'').trim()||`${i+1}-guruh`,color:TC[i],score:0,lockUntil:0}));
+  if(cfg.robo)S.teams.push({i:hum,name:'🤖 Robo',color:'#6b7a99',score:0,lockUntil:0,robo:true,rw:0});
   $('#ttl').textContent=`${g.icon} ${g.name}`;
   $('#soundBtn').textContent=cfg.sound?'🔊':'🔇';
   ['final','keyOv','ask','review'].forEach(id=>$('#'+id).classList.add('hidden'));
-  const st=$('#stage');st.innerHTML='';st.style.setProperty('--cols',cfg.n<=3?cfg.n:2);
+  const st=$('#stage');st.innerHTML='';st.style.setProperty('--cols',S.teams.length<=3?S.teams.length:2);
   S.game=IMPL[GK];S.starting=true;S.game.start(st,lenOf(GK));S.starting=false;
   clearInterval(S.tickId);let last=Date.now();
-  S.tickId=setInterval(()=>{const now=Date.now(),dt=(now-last)/1000;last=now;if(S.over)return;$('#timer').textContent=fmt(now-S.start);locks();if(S.game.tick)S.game.tick(dt)},250);
+  S.tickId=setInterval(()=>{const now=Date.now(),dt=(now-last)/1000;last=now;if(S.over)return;$('#timer').textContent=fmt(now-S.start);locks();if(S.game.tick)S.game.tick(dt);roboTick()},250);
   $('#timer').textContent='00:00';
   show('play');
   reportKey(keyText(),true);
 }
 function teamPanels(stage,inner){
   const w=document.createElement('div');w.className='teams';
-  w.innerHTML=S.teams.map(t=>`<div class="tp" id="tp${t.i}" style="--tc:${t.color}"><div class="th"><b>${esc(t.name)}</b><span class="sc"></span></div>${inner(t)}</div>`).join('');
+  w.innerHTML=S.teams.map(t=>`<div class="tp${t.robo?' robo':''}" id="tp${t.i}" style="--tc:${t.color}"><div class="th"><b>${esc(t.name)}${t.robo?'<span class="rthink hidden"> oʻylayapti<i>.</i><i>.</i><i>.</i></span>':''}</b><span class="sc"></span></div>${inner(t)}</div>`).join('');
   stage.appendChild(w);S.teams.forEach(t=>t.el=$('#tp'+t.i));return w;
 }
 function setMsg(t,txt,cls=''){const m=q(t,'.msg');if(m){m.textContent=txt;m.className='msg '+cls}}
@@ -1165,10 +1177,10 @@ function locks(){
 const locked=t=>t.lockUntil&&Date.now()<t.lockUntil;
 function keyText(){try{return S.game&&S.game.key?`🔑 ${GAMES[GK].name}\n\n`+S.game.key():''}catch(e){return ''}}
 function keyUpd(){if(!S.over&&!S.starting)reportKey(keyText())}
-function mark(t,q,ok){try{S.log.push({team:t.name,color:t.color,qh:q.html,topic:q.topic,ans:q.ans,ok:!!ok})}catch(e){}return ok}
-function topicStats(){const m=new Map();S.log.forEach(r=>{if(!r.team)return;const s=m.get(r.topic)||{ok:0,n:0};s.n++;if(r.ok)s.ok++;m.set(r.topic,s)});return [...m.entries()].map(([k,s])=>({k,...s,p:Math.round(100*s.ok/s.n)})).sort((a,b)=>a.p-b.p)}
+function mark(t,q,ok){try{S.log.push({team:t.name,color:t.color,qh:q.html,topic:q.topic,ans:q.ans,ok:!!ok,robo:!!t.robo})}catch(e){}return ok}
+function topicStats(){const m=new Map();S.log.forEach(r=>{if(!r.team||r.robo)return;const s=m.get(r.topic)||{ok:0,n:0};s.n++;if(r.ok)s.ok++;m.set(r.topic,s)});return [...m.entries()].map(([k,s])=>({k,...s,p:Math.round(100*s.ok/s.n)})).sort((a,b)=>a.p-b.p)}
 function showReview(){
-  const qs=new Map();S.log.forEach(r=>{let e=qs.get(r.qh);if(!e){e={qh:r.qh,ans:r.ans,topic:r.topic,res:new Map()};qs.set(r.qh,e)}if(r.team){const x=e.res.get(r.team)||{c:r.color,ok:0,bad:0};r.ok?x.ok++:x.bad++;e.res.set(r.team,x)}});
+  const qs=new Map();S.log.forEach(r=>{let e=qs.get(r.qh);if(!e){e={qh:r.qh,ans:r.ans,topic:r.topic,res:new Map()};qs.set(r.qh,e)}if(r.team&&!r.robo){const x=e.res.get(r.team)||{c:r.color,ok:0,bad:0};r.ok?x.ok++:x.bad++;e.res.set(r.team,x)}});
   const st=topicStats();
   $('#reviewBody').innerHTML=(st.length?`<div class="rv-st">${st.map(s=>`<div><b>${esc(s.k)}</b><span class="bar"><i style="width:${s.p}%;background:${s.p>=70?'var(--good)':s.p>=40?'var(--gold)':'var(--bad)'}"></i></span><span>${s.ok}/${s.n} · ${s.p}%</span></div>`).join('')}</div>`:'')+
     `<ol class="rv-list">${[...qs.values()].map(e=>`<li><div class="rv-q"><span class="tn">${esc(e.topic||'')}</span>${e.qh} <b class="rv-a">= ${e.ans}</b></div><div class="rv-r">${[...e.res.entries()].map(([n,x])=>`<span style="--tc:${x.c}">${x.ok?'✅':'❌'} ${esc(n)}${x.bad?` <small>(${x.bad} xato)</small>`:''}</span>`).join('')||'<span>— hech kim javob bermadi</span>'}</div></li>`).join('')}</ol>`;
@@ -1187,7 +1199,13 @@ function endGame(){
   S.over=true;clearInterval(S.tickId);MUSIC.stop();
   const rows=S.game.result().sort((a,b)=>b.score-a.score);
   const best=rows[0].score,win=rows.filter(r=>r.score===best);
-  $('#winTitle').textContent=win.length>1?'Durang: '+win.map(r=>r.t.name).join(' va '):`Gʻolib: ${win[0].t.name}`;
+  const hasRobo=rows.some(r=>r.t.robo);
+  if(rows.length===1){const r=rows[0],k='bk8-rec-'+GK;let rec=0;try{rec=+localStorage.getItem(k)||0}catch(e){}
+    const nr=r.score>rec;if(nr)try{localStorage.setItem(k,r.score)}catch(e){}
+    $('#winTitle').textContent=nr&&rec?`🏅 Yangi rekord: ${r.score}!`:`Natija: ${r.score}`+(rec&&!nr?` · rekord: ${rec}`:'');}
+  else if(hasRobo&&win.length===1&&win[0].t.robo)$('#winTitle').textContent='🤖 Robo yutdi! Keyingi safar albatta yutasiz 💪';
+  else if(hasRobo&&!win.some(r=>r.t.robo))$('#winTitle').textContent=(win.length>1?'Durang: '+win.map(r=>r.t.name).join(' va '):`Gʻolib: ${win[0].t.name}`)+' — Robo yengildi! 🎉';
+  else $('#winTitle').textContent=win.length>1?'Durang: '+win.map(r=>r.t.name).join(' va '):`Gʻolib: ${win[0].t.name}`;
   let place=0,prev=null;
   $('#rank').innerHTML=rows.map((r,i)=>{if(r.score!==prev){place=i+1;prev=r.score}return `<div style="--tc:${r.t.color}"><span class="pl">${['🥇','🥈','🥉'][place-1]||place}</span><span><b>${esc(r.t.name)}</b><small>${r.detail}</small></span><span class="pts">${r.score}</span></div>`}).join('');
   $('#final').classList.remove('hidden');snd('win');
@@ -1626,6 +1644,56 @@ IMPL.zanjir={
   result(){return S.teams.map(t=>{const st=t.stars.reduce((a,b)=>a+b,0);return{t,score:st+(t.place===1?2:0),detail:`${t.stars.length} / ${this.C} zanjir${t.place===1?' · +2 bonus':''}`}})}
 };
 
+
+/* ===== 🤖 ROBO raqib ===== */
+const ROBO={lv:[null,{t:[8,15],p:.66},{t:[5.5,10],p:.8},{t:[3.5,6.5],p:.9}],speed:1};
+function roboAdj(){/* odamlar ortda qolsa — sekinlashadi, oldinda boʻlsa — tezlashadi */
+  try{const res=S.game.result(),rs=res.find(r=>r.t.robo),hs=res.filter(r=>!r.t.robo);if(!rs||!hs.length)return 1;
+    const d=rs.score-Math.max(...hs.map(r=>r.score));return d>=3?1.6:d>=2?1.35:d>=1?1.15:d<=-3?.7:d<=-2?.8:d<=-1?.9:1}catch(e){return 1}}
+function roboDelay(){const L=ROBO.lv[cfg.robo];return (L.t[0]+Math.random()*(L.t[1]-L.t[0]))*1000*roboAdj()*ROBO.speed}
+function roboOk(){const L=ROBO.lv[cfg.robo],f=roboAdj();return Math.random()<Math.min(.97,Math.max(.4,L.p+(f>1.1?-.1:f<.95?.05:0)))}
+function wrongOf(a){const big=BIG()||a>9,c=[a+1,a-1,a+2,a-2,a+10,a-10,a*2].filter(x=>x!==a&&(big?x>=0:x>=1&&x<=9));return c.length?pick(c):(a%9)+1}
+function roboThink(t,on){const e=t.el&&t.el.querySelector('.rthink');if(e)e.classList.toggle('hidden',!on)}
+function roboType(t,pad,v){
+  const s=String(v),multi=!!pad.el.querySelector('.pad.multi'),seq=multi?[...s,'✓']:[s.slice(-1)];let i=0;
+  const step=()=>{if(S.over||S.ending)return;const b=pad.el.querySelector(`[data-k="${seq[i]}"]`);
+    if(b){b.classList.add('rpress');setTimeout(()=>b.classList.remove('rpress'),200);b.click()}if(++i<seq.length)setTimeout(step,280)};
+  step();
+}
+function roboTick(){
+  if(S.over||S.ending||!cfg.robo)return;
+  const t=S.teams.find(x=>x.robo);if(!t||t.finished)return;
+  const G=S.game,g=GK,now=Date.now();let sit=null;
+  if(g==='nishon'){if(G.cur()!==t)return;sit=G.phase==='choose'?'aim:'+t.shots:G.phase==='answer'?'ans:'+t.shots:null}
+  else if(g==='tez'){if(G.done||t.out)return;sit='tez:'+G.r}
+  else if(g==='bomba'){if(!t.active||locked(t))return;sit='b:'+t.bi+':'+t.step}
+  else if(g==='zanjir'){if(locked(t)||!t.ch||(t.pad&&t.el.querySelector('.pad button:disabled')))return;sit='z:'+t.ci+':'+t.step}
+  else{if(locked(t)||t.busy)return;
+    if(t.el.querySelector('.qc .choice'))sit='ch:'+(t.pos??0)+':'+(t.w??0);
+    else if(t.q&&typeof t.q.ans==='number'&&!t.el.querySelector('.pad button:disabled'))sit='q:'+(t.h??t.pos??t.open??0)+':'+t.q.html;
+    else return}
+  if(!sit)return;sit+=':'+t.rw;
+  if(t.rSit!==sit){t.rSit=sit;t.rDone=false;t.rAt=now+(/^(ch|aim)/.test(sit)?(900+Math.random()*1400)*ROBO.speed:roboDelay());roboThink(t,true);return}
+  if(t.rDone||now<t.rAt)return;
+  t.rDone=true;roboThink(t,false);
+  const choice=/^(ch|aim)/.test(sit),ok=choice||roboOk();if(!ok)t.rw++;
+  if(g==='nishon'){if(G.phase==='choose'){G.aim(cfg.robo===3?pick([2,3,3]):cfg.robo===2?pick([1,2,3]):pick([1,1,2]));return}
+    roboType(t,G.pad,ok?G.q.ans:wrongOf(G.q.ans));return}
+  if(g==='tez'){const a=G.q.ans,bs=[...t.el.querySelectorAll('.tops button')],b=ok?bs.find(x=>+x.dataset.o===a):pick(bs.filter(x=>+x.dataset.o!==a));if(b)b.click();return}
+  if(g==='bomba'){const a=t.qs[t.step].ans;let i=t.wires.findIndex((w,k)=>w===a&&!t.cutSet.has(k));
+    if(!ok){const o=t.wires.map((_,k)=>k).filter(k=>k!==i&&!t.cutSet.has(k));if(o.length)i=pick(o)}
+    const b=t.el.querySelector(`.wire[data-w="${i}"]`);if(b)b.click();return}
+  if(g==='zanjir'){const a=t.ch.ops[t.step].v;roboType(t,t.pad,ok?a:wrongOf(a));return}
+  if(choice){const bs=[...t.el.querySelectorAll('.qc .choice button')];let b;
+    if(g==='raketa'){const k=cfg.robo===3?pick([2,3]):cfg.robo===2?pick([1,2,3]):pick([1,1,2]);b=bs.find(x=>+x.dataset.k===k)}
+    else b=Math.random()<(cfg.robo===3?.6:cfg.robo===2?.4:.2)?bs.find(x=>x.dataset.c==='1'):bs.find(x=>x.dataset.c==='0');
+    (b||bs[0]).click();return}
+  if(g==='mozaika'&&G.closed.length<=G.c*G.r*.45&&Math.random()<.2*cfg.robo&&Date.now()>=t.glock){
+    q(t,'.gbtn').click();setTimeout(()=>{if(S.over||S.ending)return;const n=Math.random()<.45+.15*cfg.robo?G.pic.n:pick(G.opts);
+      const b=[...t.el.querySelectorAll('.opts button')].find(x=>x.dataset.o===n);if(b)b.click()},1100);return}
+  roboType(t,t.pad,ok?t.q.ans:wrongOf(t.q.ans));
+}
+
 /* ===== teacher key ===== */
 let clicks=0,clickT=null;
 $('#ttl').addEventListener('click',()=>{clicks++;clearTimeout(clickT);clickT=setTimeout(()=>clicks=0,700);if(clicks>=3){clicks=0;showKey()}});
@@ -1668,6 +1736,7 @@ async function loadSets(){
 (function(){const P=new URLSearchParams(location.search),g=P.get('g'),s=+P.get('sinf'),t=P.get('t');
   if(GRADES[s]){cfg.grade=s;cfg.topics=GRADES[s].slice();cfg.sets=[]}
   if(P.get('set'))cfg.topics=[];
+  if(P.has('robo'))cfg.robo=Math.max(0,Math.min(3,+P.get('robo')||0));if(P.has('n'))cfg.n=Math.max(1,Math.min(4,+P.get('n')||2));
   if(t&&t!=='all'){const l=t.split(',').map(Number).filter(i=>TOPICS[i]);if(l.length)cfg.topics=l}
   if(g&&GAMES[g])openSetup(g);else show('menu');loadSets()})();
 </script>
