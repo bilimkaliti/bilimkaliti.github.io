@@ -309,6 +309,8 @@ const GAMES=[
  {id:'bomba',f:'toplam',g:'bomba',e:'💣',n:'Bombani zararsizlantirish',d:'Misol javobi qaysi simni kesishni koʻrsatadi. Notoʻgʻri sim — taymer tezlashadi.',c:['#e5484d','#ff8589'],t:['Tezlik','1–9 javob']},
  {id:'tez',f:'toplam',g:'tez',e:'⚡',n:'Kim tezroq',d:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob ball oladi.',c:['#f5b301','#ffd25c'],t:['Tezlik','Isinish']},
  {id:'nishon',f:'toplam',g:'nishon',e:'🎯',n:'Nishon',d:'Guruhlar navbat bilan oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',c:['#d6336c','#ff7aa8'],t:['Navbat','Tavakkal']},
+ {id:'mental',f:'toplam',g:'mental',e:'🧮',n:'Mental arifmetika',d:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. Birinchi toʻgʻri javob +2 ball.',c:['#0ca678','#63e6be'],t:['Diqqat','Ogʻzaki hisob']},
+ {id:'juft',f:'toplam',g:'juft',e:'🃏',n:'Juftini top',d:'Kartalarni ochib, misolni javobi bilan juftlang. Juftni topgan guruh yana yuradi.',c:['#6d5dfc','#a69bff'],t:['Xotira','Mavzular']},
  {id:'zanjir',f:'toplam',g:'zanjir',e:'🔗',n:'Son zanjiri',d:'Sondan boshlab ketma-ket amallarni bajarib, zanjir oxiriga yeting.',c:['#0b7285','#3bb3c9'],t:['Ogʻzaki hisob']},
  {id:'kosmik',f:'kosmik-baza',g:'',e:'🛸',n:'Kosmik baza',d:'Har bir guruh oʻz eshiklarini kod bilan ochib, bazani qutqaradi.',c:['#283c86','#5a6fd0'],t:['Kod topish','Mavzular']},
  {id:'sirli',f:'sirli-xonalar',g:'',e:'🗝️',n:'Sirli xonalar',d:'Qulflangan xonalardan chiqish: har bir xona — yangi jumboq.',c:['#5f3dc4','#9775fa'],t:['Escape-room','Mantiq']},
@@ -316,8 +318,8 @@ const GAMES=[
 ];
 const TOPICAL=new Set(['toplam']);
 const SOON=[
- {e:'🧮',n:'Mental arifmetika',d:'Sonlar ketma-ket chiqadi, ongda qoʻshib boring. Diqqat va tezlik mashqi.',c:'#12a38f'},
- {e:'🃏',n:'Juftini top',d:'Misol va javob kartalarini juftlang. Boshlangʻich sinflar uchun xotira oʻyini.',c:'#ff8a3d'},
+ {e:'🎡',n:'Tasodifiy tanlash',d:'Sinf roʻyxatidan doskaga chiqadigan oʻquvchini gʻildirak tanlaydi.',c:'#ff6b4a'},
+ {e:'🤫',n:'Sukunat oʻlchagich',d:'Sinf jim boʻlsa sharlar tinch, shovqin oshsa — yoriladi.',c:'#12a38f'},
  {e:'📚',n:'Kutubxona',d:'Oʻqituvchilar tuzgan toʻplamlarni sinf va mavzu boʻyicha topib oʻynash.',c:'#0b7285'},
 ];
 const TOOLS=[
@@ -663,7 +665,7 @@ const R={
  krossvord(d,rec){const L=rec.layout||(rec.layout=crossLayout(arr(d.words)));return crossHtml(d,L)},
  taqdimot(d,rec){const th=THEMES[rec.theme||0];return `<div class="slides">${slideList(d).map((s,i)=>slideHtml(s,i,th)).join('')}</div>`},
  savollar(d){const s=d.set||{};return `<h1>${ex(s.name||d.title)}</h1><p class="sub noprint">Toʻplam saqlandi — oʻyinni tanlang. U botdagi «📦 Toʻplamlarim»da ham chiqadi.</p>
-   <div class="grid noprint" style="margin:14px 0 22px">${GAMES.filter(g=>g.f==='toplam'&&g.g!=='zanjir').map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
+   <div class="grid noprint" style="margin:14px 0 22px">${GAMES.filter(g=>g.f==='toplam'&&g.g!=='zanjir'&&g.g!=='mental').map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
    <h2>Savollar</h2><ol>${arr(s.items).map(x=>`<li>${ex(x.q)} <b>→ ${ex(x.a)}</b></li>`).join('')}</ol>`},
 };
 

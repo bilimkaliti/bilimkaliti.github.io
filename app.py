@@ -57,6 +57,8 @@ GAMES = [
     ("toplam", "bomba", "💣 Bomba", "toʻgʻri simni kes"),
     ("toplam", "tez", "⚡ Kim tezroq", "dars boshidagi isinish"),
     ("toplam", "nishon", "🎯 Nishon", "navbat bilan oʻq otish"),
+    ("toplam", "mental", "🧮 Mental arifmetika", "ongda hisoblash"),
+    ("toplam", "juft", "🃏 Juftini top", "xotira va diqqat"),
     ("toplam", "zanjir", "🔗 Son zanjiri", "ketma-ket amallar"),
 ]
 
@@ -162,7 +164,7 @@ def topic_games_kb(g: str, t: str) -> InlineKeyboardMarkup:
 def set_games_kb(sid: str) -> InlineKeyboardMarkup:
     extra = f"&set={sid}"
     buttons = [InlineKeyboardButton(text=title, web_app=WebAppInfo(url=game_url(slug, gk, extra)))
-               for slug, gk, title, _ in GRADE_GAMES if gk != "zanjir"]
+               for slug, gk, title, _ in GRADE_GAMES if gk not in ("zanjir", "mental")]
     rows = [buttons[i:i + 2] for i in range(0, len(buttons), 2)]
     rows.append([InlineKeyboardButton(text="🗑 Oʻchirish", callback_data=f"sd:{sid}"),
                  InlineKeyboardButton(text="📦 Toʻplamlarim", callback_data="sl")])
