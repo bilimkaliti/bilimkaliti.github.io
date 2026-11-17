@@ -263,6 +263,7 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
 }
 .fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.08;font-size:.9em;margin:0 .14em;font-variant-numeric:lining-nums}
 .fr>span{padding:0 .12em}.fr>span:first-child{border-bottom:max(1.5px,.07em) solid currentColor}
+.modes{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:-6px 0 18px;font-weight:800;color:var(--muted)}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -315,7 +316,6 @@ const GAMES=[
 ];
 const TOPICAL=new Set(['toplam']);
 const SOON=[
- {e:'🤖',n:'Robo bilan bellashuv',d:'Bitta oʻquvchi kompyuter bilan bellashadi. Robo oʻquvchining kuchiga moslashadi.',c:'#7b5cff'},
  {e:'🧮',n:'Mental arifmetika',d:'Sonlar ketma-ket chiqadi, ongda qoʻshib boring. Diqqat va tezlik mashqi.',c:'#12a38f'},
  {e:'🃏',n:'Juftini top',d:'Misol va javob kartalarini juftlang. Boshlangʻich sinflar uchun xotira oʻyini.',c:'#ff8a3d'},
  {e:'📚',n:'Kutubxona',d:'Oʻqituvchilar tuzgan toʻplamlarni sinf va mavzu boʻyicha topib oʻynash.',c:'#0b7285'},
@@ -340,7 +340,7 @@ function gameCard(g,extra=''){
   return `<a class="game" href="${href}">
     <div class="art" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${g.e}</span></div>
     <div class="gb"><h3>${esc(g.n)}</h3><p>${esc(g.d)}</p>
-    <div class="tags"><span class="tag">👥 1–4 guruh</span>${g.t.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div></a>`}
+    <div class="tags"><span class="tag">👥 1–4 guruh</span>${g.f==='toplam'?'<span class="tag new">🤖 Robo</span>':''}${g.t.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div></a>`}
 function soonCard(s){return `<div class="tool"><div class="ic" style="background:color-mix(in srgb,${s.c} 16%,transparent)">${s.e}</div><div><h3>${esc(s.n)}</h3><p>${esc(s.d)}</p>${s.href?`<a class="tag new" href="${s.href}">Ochish →</a>`:'<span class="tag soon">Tez orada</span>'}</div></div>`}
 function gradesGrid(on){return `<div class="grades">${[1,2,3,4,5,6,7].map(n=>`<a class="grade ${on==n?'on':''}" href="#/sinf/${n}"><b>${n}</b><span>${n}-SINF</span><small>${(GRADES[n]||[]).length} mavzu</small></a>`).join('')}</div>`}
 
@@ -362,7 +362,7 @@ const PAGES={
       <div class="team a"><span class="lab">1-guruh</span>${'<div class="floor"></div>'.repeat(4)}</div>
       <div class="team b"><span class="lab">2-guruh</span>${'<div class="floor"></div>'.repeat(3)}</div>
      </div>
-     <div class="robo"><span>🤖</span>Robo bilan ham oʻynash — tez orada</div>
+     <div class="robo"><span>🤖</span>Yangi: Robo bilan bellashing!</div>
     </div>
    </div>
   </div>
@@ -413,6 +413,7 @@ const PAGES={
    <div class="sh"><div><h2>${n}-sinf · Matematika</h2><p class="sub">Mavzularni belgilang, keyin oʻyinni tanlang.</p></div></div>
    <div class="topics" id="tps">${list.map(t=>`<button class="chip ${sel.includes(t.i)?'on':''}" data-i="${t.i}"><i></i>${esc(t.n)}</button>`).join('')}</div>
    <div class="selbar"><span id="selc"></span><button class="link" id="selAll">Hammasini belgilash</button><button class="link" id="selNone">Tozalash</button></div>
+   <div class="modes"><span>Kim oʻynaydi?</span><div class="tabs" id="modes"><button data-m="g">👥 Guruhlar</button><button data-m="r">🤖 Robo bilan</button><button data-m="s">👤 Yakka mashq</button></div></div>
    <div class="grid" id="sgrid"></div>
    <div style="margin-top:30px">${gradesGrid(n)}</div>
   </div>`},
@@ -430,9 +431,12 @@ function bindGrade(n){
   const draw=()=>{
     const s=sel();store.set(key,s);
     $('#selc').textContent=`Tanlangan: ${s.length} ta mavzu`;
-    const t=s.length===list.length?'all':s.join(',');
-    $('#sgrid').innerHTML=s.length?GAMES.filter(g=>g.f==='toplam').map(g=>gameCard(g,`&sinf=${n}&t=${t}`)).join(''):'<p class="sub">Kamida bitta mavzuni belgilang.</p>';
+    const t=s.length===list.length?'all':s.join(','),m=store.get('mode','g'),mx={g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[m]||'';
+    document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+    $('#sgrid').innerHTML=s.length?GAMES.filter(g=>g.f==='toplam'&&!(m==='r'&&g.g==='zanjir'&&0)).map(g=>gameCard(g,`&sinf=${n}&t=${t}${mx}`)).join(''):'<p class="sub">Kamida bitta mavzuni belgilang.</p>';
   };
+  $('#modes').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;store.set('mode',b.dataset.m);draw();
+    toast({g:'Guruhlar bellashadi (2–4 guruh)',r:'Bitta oʻquvchi Robo bilan bellashadi (guruhlar sonini sozlamalarda oʻzgartirsa boʻladi)',s:'Bitta oʻquvchi: rekord saqlanadi'}[b.dataset.m])};
   $('#tps').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;b.classList.toggle('on');draw()};
   $('#selAll').onclick=()=>{document.querySelectorAll('#tps .chip').forEach(b=>b.classList.add('on'));draw()};
   $('#selNone').onclick=()=>{document.querySelectorAll('#tps .chip').forEach(b=>b.classList.remove('on'));draw()};
