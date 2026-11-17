@@ -327,6 +327,26 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
 .rthink{font-weight:700;font-size:.8em;opacity:.75;margin-left:6px}.rthink i{font-style:normal;animation:rth 1.2s infinite}.rthink i:nth-child(2){animation-delay:.2s}.rthink i:nth-child(3){animation-delay:.4s}
 @keyframes rth{0%,100%{opacity:.2}50%{opacity:1}}
 .pad button.rpress{transform:scale(.88);filter:brightness(1.25);box-shadow:0 0 0 3px var(--tc,#6b7a99)}
+.mstage{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mnum{height:150px;display:grid;place-items:center}
+.mn{font-size:clamp(4rem,12vw,8rem);font-weight:900;line-height:1;animation:mpop .25s ease-out;text-shadow:0 6px 24px rgba(0,0,0,.45)}
+.mn.neg{color:#ff9b9b}.mn.ans{color:#7dffb2}.mq{font-size:6rem;font-weight:900;opacity:.85;animation:mpop .3s}
+@keyframes mpop{from{transform:scale(.4);opacity:0}}
+.mseq{font-size:1.3rem;font-weight:700;min-height:1.6em;opacity:.9}
+.jwrap{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
+@media (max-width:900px){.jwrap{grid-template-columns:1fr}}
+.jboard{display:grid;grid-template-columns:repeat(var(--jc),1fr);gap:10px;perspective:900px}
+.jc{position:relative;aspect-ratio:4/3;border:0;padding:0;background:none;cursor:pointer;transform-style:preserve-3d;transition:transform .45s}
+.jc.up,.jc.done{transform:rotateY(180deg)}
+.jb,.jf{position:absolute;inset:0;border-radius:16px;display:grid;place-items:center;backface-visibility:hidden;font-weight:800;padding:6px;overflow:hidden}
+.jb{background:linear-gradient(135deg,#6d5dfc,#3e2fb8);color:rgba(255,255,255,.85);font-size:2.4rem;box-shadow:0 4px 0 #2c2190,0 8px 16px rgba(0,0,0,.18)}
+.jb::after{content:"";position:absolute;inset:8px;border:2px dashed rgba(255,255,255,.3);border-radius:10px}
+.jf{transform:rotateY(180deg);background:var(--card,#fff);border:3px solid #d8dcea;font-size:clamp(.85rem,1.5vw,1.25rem);line-height:1.25;text-align:center;color:#1d2433}
+.jf.ans{font-size:clamp(1.6rem,3.4vw,2.6rem);color:#2f6fe0}
+.jf .qf{flex-direction:column;gap:2px}.jf svg{max-height:70px;width:auto}
+.jc.done .jf{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 14%,#fff);animation:jok .5s}
+@keyframes jok{50%{transform:scale(1.06)}}
+.jside .board{margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -1014,6 +1034,8 @@ const MUSIC=(function(){
     bomba:{sn:'....x.......x...',bpm:112,root:52,sc:'har',prog:[0,0,5,4],mel:[null,null,null,null,4,null,null,3,null,null,null,null,4,null,3,null,null,null,null,null,4,null,null,3,null,null,2,null,1,null,null,null],bass:'xxxxxxxxxxxxxxxx',kick:'x..x..x.x..x..x.',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'sawtooth'},
     tez:{sn:'....x.......x...',ch:'..x...x...x...x.',bpm:140,root:67,sc:'maj',prog:[0,4,5,3],mel:[0,2,4,2,0,2,4,null,3,2,1,null,2,null,null,null,1,3,4,3,1,3,4,null,5,4,3,2,0,null,null,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'x.x.x.x.x.x.x.x.',mw:'square',bw:'triangle'},
     nishon:{sn:'....x.......x..x',ch:'x.......x.......',echo:1,bpm:96,root:62,sc:'min',prog:[0,5,6,4],mel:[0,null,0,1,2,null,null,null,1,null,0,null,2,null,null,null,3,null,3,2,1,null,null,null,2,null,1,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x.....x.x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'triangle'},
+    mental:{sn:'....x.......x...',ch:'....x.......x...',echo:1,bpm:104,root:62,sc:'pen',prog:[0,3,4,2],mel:[0,null,2,null,4,null,2,null,3,null,1,null,0,null,null,null,4,null,3,null,2,null,1,null,2,null,null,null,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'sine',pad:1},
+    juft:{sn:'....x.......x...',ch:'x...x...x...x...',bpm:118,root:65,sc:'maj',prog:[0,5,3,4],mel:[4,null,2,null,4,null,5,4,2,null,0,null,1,null,null,null,2,null,4,null,5,null,4,2,1,null,2,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x...x...x...x...',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'triangle'},
     zanjir:{sn:'........x.......',echo:1,bpm:84,root:60,sc:'pen',prog:[0,2,1,3],mel:[2,null,null,1,null,null,0,null,null,null,1,null,null,2,null,null,3,null,null,2,null,null,1,null,null,null,0,null,null,null,null,null],bass:'x.....x...x.....',kick:'x.......x.......',hat:'....x.......x..x',mw:'sine',bw:'sine',pad:1},
     sirli:{sn:'........x.......',echo:1,bpm:80,root:57,sc:'har',prog:[0,5,3,4],mel:[0,null,null,1,null,null,2,null,null,null,4,null,3,null,null,null,2,null,null,1,null,null,0,null,null,null,1,null,2,null,null,null],bass:'x.......x...x...',kick:'x.......x.......',hat:'..........x.....',mw:'triangle',bw:'sine',pad:1},
     kosmik:{sn:'........x.......',arp:'x.x.x.x.x.x.x.x.',echo:1,bpm:100,root:55,sc:'min',prog:[0,3,5,4],mel:[0,2,4,2,0,2,4,2,1,3,5,3,1,3,5,3,0,2,4,2,0,2,4,6,5,4,2,1,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'sawtooth',bw:'sine',pad:1},
@@ -1080,6 +1102,8 @@ const GAMES={
  bomba:{icon:'💣',name:'Bombani zararsizlantirish',desc:'Misollar javobi qaysi simni kesishni koʻrsatadi. Notoʻgʻri sim kesilsa, taymer tezlashadi.',len:{t:'Bombalar soni',o:[2,3,5],d:3},lvl:1,topics:1,cool:0},
  tez:{big:1,icon:'⚡',name:'Kim tezroq',desc:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob bergan guruh ball oladi.',len:{t:'Savollar soni',o:[8,10,15],d:10},lvl:1,topics:1,cool:0},
  nishon:{big:1,icon:'🎯',name:'Nishon',desc:'Guruhlar navbat bilan nishonga oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
+ mental:{icon:'🧮',name:'Mental arifmetika',desc:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. Birinchi toʻgʻri javob +2, keyingi toʻgʻri javoblar +1 ball.',len:{t:'Raundlar soni',o:[5,8,10],d:8},lvl:1,topics:0,cool:0},
+ juft:{big:1,icon:'🃏',name:'Juftini top',desc:'Kartalarni ochib, misolni uning javobi bilan juftlang. Juftni topgan guruh yana yuradi. Xotira va diqqat oʻyini.',len:{t:'Juftlar soni',o:[6,8,10],d:8},lvl:1,topics:1,cool:0},
  zanjir:{icon:'🔗',name:'Son zanjiri',desc:'Bitta sondan boshlab ketma-ket amallar bajariladi. Har bir halqa tekshiriladi, xato qayerda ekani darhol koʻrinadi.',len:{t:'Zanjirlar soni',o:[2,3,5],d:3},lvl:1,topics:0,cool:1}
 };
 const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'1 (yakka)'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
@@ -1645,6 +1669,98 @@ IMPL.zanjir={
 };
 
 
+
+/* ---------- 9. Mental arifmetika ---------- */
+IMPL.mental={
+  LV:[{n:4,ms:1700,d:[1,9],neg:.2},{n:5,ms:1300,d:[1,9],neg:.4},{n:6,ms:1000,d:[2,25],neg:.45}],
+  AT:20,
+  start(st,N){
+    this.N=N;this.r=0;this.lv=this.LV[cfg.L]||this.LV[1];
+    const sg=document.createElement('div');sg.className='stage mstage';sg.innerHTML=`<div class="badge" id="mbadge"></div><div class="mnum" id="mnum"></div><div class="mseq" id="mseq"></div><div class="tbar"><i id="mbar"></i></div>`;st.appendChild(sg);
+    teamPanels(st,t=>`<div class="msg"></div><div class="padw"></div>`);
+    S.teams.forEach(t=>{t.score=0;t.right=0;t.pad=makePad(q(t,'.padw'),{max:4,onSubmit:v=>this.ans(t,v)})});
+    setTimeout(()=>this.round(),700);
+  },
+  gen(){const L=this.lv;let v=R(L.d[0],L.d[1]);const seq=[v];
+    for(let i=1;i<L.n;i++){let x=R(L.d[0],L.d[1]);if(Math.random()<L.neg&&v-x>=0){seq.push(-x);v-=x}else{seq.push(x);v+=x}}
+    return{seq,sum:v}},
+  round(){
+    if(S.over)return;if(this.r>=this.N){endGame();return}
+    this.r++;this.phase='show';this.first=null;const g=this.gen();this.seq=g.seq;this.sum=g.sum;
+    this.q={html:this.seq.map((x,i)=>i?(x<0?` − ${-x}`:` + ${x}`):String(x)).join(''),ans:this.sum,topic:'Mental arifmetika'};
+    $('#mbadge').textContent=`${this.r}-raund / ${this.N} · diqqat bilan qarang!`;$('#mseq').textContent='';$('#mbar').style.transform='scaleX(1)';
+    S.teams.forEach(t=>{t.done=false;t.pad.disable(true);t.pad.reset();setMsg(t,'👀 Ekranga qarang…');q(t,'.sc').textContent=`⭐ ${t.score}`});
+    keyUpd();let i=0;const el=$('#mnum');
+    const show=()=>{if(S.over)return;
+      if(i>=this.seq.length){el.innerHTML='<span class="mq">?</span>';this.phase='answer';this.left=this.AT;
+        $('#mbadge').textContent=`${this.r}-raund · natijani kiriting!`;S.teams.forEach(t=>{t.pad.disable(false);setMsg(t,'Natija nechchi?')});snd('ding');return}
+      const x=this.seq[i];el.innerHTML=`<span class="mn ${x<0?'neg':''}">${i===0?x:(x<0?'−'+(-x):'+'+x)}</span>`;snd('tk');i++;
+      setTimeout(()=>{if(!S.over){el.innerHTML='';setTimeout(show,180)}},this.lv.ms-180)};
+    show();
+  },
+  tick(dt){if(this.phase!=='answer')return;this.left-=dt;$('#mbar').style.transform=`scaleX(${Math.max(0,this.left/this.AT)})`;
+    if(this.left<=0){S.teams.forEach(t=>{if(!t.done){t.done=true;t.pad.disable(true);mark(t,this.q,false);setMsg(t,'⏰ Vaqt tugadi','bad')}});this.reveal()}},
+  ans(t,v){
+    if(S.over||this.phase!=='answer'||t.done)return;t.done=true;t.pad.disable(true);
+    if(mark(t,this.q,+v===this.sum)){const k=this.first?1:2;if(!this.first)this.first=t;t.score+=k;t.right++;snd('ok');setMsg(t,k===2?'⚡ Birinchi toʻgʻri! +2':'Toʻgʻri! +1','good');if(k===2)confetti(t.el,26)}
+    else{snd('bad');t.pad.shake();setMsg(t,`Notoʻgʻri (${v})`,'bad')}
+    q(t,'.sc').textContent=`⭐ ${t.score}`;
+    if(S.teams.every(x=>x.done))this.reveal();
+  },
+  reveal(){if(this.phase!=='answer')return;this.phase='reveal';
+    $('#mnum').innerHTML=`<span class="mn ans">${this.sum}</span>`;$('#mseq').innerHTML=this.q.html+' = <b>'+this.sum+'</b>';
+    S.teams.forEach(t=>q(t,'.sc').textContent=`⭐ ${t.score}`);setTimeout(()=>this.round(),3200)},
+  key(){return `${this.r}-raund: ${this.q?this.q.html+' = '+this.sum:''}`},
+  result(){return S.teams.map(t=>({t,score:t.score,detail:`${t.right} / ${this.r} toʻgʻri`}))}
+};
+
+/* ---------- 10. Juftini top ---------- */
+IMPL.juft={
+  start(st,P){
+    const wide=BIG();if(!wide)P=Math.min(P,9);
+    const qs=[],seen=new Set();for(let k=0;k<400&&qs.length<P;k++){const x=genQ(cfg.L,wide);if(!seen.has(x.ans)){seen.add(x.ans);qs.push(x)}}
+    this.P=qs.length;this.qs=qs;this.turn=0;this.open=[];this.busy=false;this.found=0;this.mem=new Map();
+    this.cards=shuffle(qs.flatMap((x,i)=>[{id:i,k:'q',h:qhtml(x).replace(/<span class="tn">.*?<\/span>/,'')},{id:i,k:'a',h:String(x.ans)}])).map((c,j)=>({...c,j,done:false}));
+    const cols=this.cards.length<=12?4:this.cards.length<=16?4:5,rows=Math.ceil(this.cards.length/cols);
+    st.innerHTML=`<div class="jwrap"><div class="jboard" id="jboard" style="--jc:${cols};max-width:calc((100vh - 150px) / ${rows} * ${cols} * 1.3);margin:0 auto;width:100%">${this.cards.map(c=>`<button type="button" class="jc" data-j="${c.j}" aria-label="karta"><span class="jb">?</span><span class="jf ${c.k==='a'?'ans':''}">${c.h}</span></button>`).join('')}</div>
+      <div class="jside"><div class="board" id="jscore"></div><div class="turn" id="jturn"><h3 id="jname"></h3><div class="msg" id="jmsg"></div></div></div></div>`;
+    S.teams.forEach(t=>{t.pairs=0;t.moves=0});
+    $('#jboard').addEventListener('click',e=>{const b=e.target.closest('.jc');if(b&&!this.cur().robo)this.flip(+b.dataset.j)});
+    this.setTurn();
+  },
+  cur(){return S.teams[this.turn]},
+  setTurn(){const t=this.cur();$('#jturn').style.setProperty('--tc',t.color);$('#jname').textContent=`🃏 Navbat: ${t.name}`;$('#jmsg').textContent='Ikkita kartani oching: misol va uning javobi.';$('#jmsg').className='msg';this.board();keyUpd()},
+  board(){$('#jscore').innerHTML=S.teams.map((t,i)=>`<div style="--tc:${t.color}" class="${i===this.turn?'on':''}"><span>${esc(t.name)}</span><span>${t.moves} yurish · <b>${t.pairs}</b></span></div>`).join('')},
+  el(j){return $(`#jboard .jc[data-j="${j}"]`)},
+  flip(j){
+    if(S.over||this.busy)return;const c=this.cards[j];if(c.done||this.open.includes(j))return;
+    this.open.push(j);this.el(j).classList.add('up');snd('tk');this.remember(c);
+    if(this.open.length<2)return;
+    const t=this.cur(),[a,b]=this.open.map(x=>this.cards[x]);t.moves++;this.busy=true;
+    if(a.id===b.id&&a.k!==b.k){
+      mark(t,this.qs[a.id],true);a.done=b.done=true;t.pairs++;this.found++;snd('ding');
+      this.open.forEach(x=>{const e=this.el(x);e.classList.add('done');e.style.setProperty('--tc',t.color)});
+      $('#jmsg').textContent=`✅ Topdingiz! ${this.qs[a.id].ans} — yana yuring`;$('#jmsg').className='msg good';
+      this.open=[];this.board();
+      setTimeout(()=>{this.busy=false;if(this.found>=this.P){confetti($('#jboard'),80);snd('fan');finishSoon(1600);return}keyUpd()},700);
+    }else{
+      snd('bad');$('#jmsg').textContent='Juft emas…';$('#jmsg').className='msg bad';
+      setTimeout(()=>{if(S.over)return;this.open.forEach(x=>this.el(x).classList.remove('up'));this.open=[];this.busy=false;
+        this.turn=(this.turn+1)%S.teams.length;this.setTurn()},1500);
+    }
+  },
+  remember(c){if(!cfg.robo)return;const p=[0,.45,.7,.92][cfg.robo];if(Math.random()<p)this.mem.set(c.j,c)},
+  roboMove(){/* Robo navbati: bilganini ochadi, bilmasa tavakkal */
+    const live=this.cards.filter(c=>!c.done),known=[...this.mem.values()].filter(c=>!c.done);
+    const pairOf=c=>known.find(x=>x.id===c.id&&x.k!==c.k&&x.j!==c.j);
+    if(this.open.length===0){const k=known.find(c=>pairOf(c));if(k)return k.j;const unk=live.filter(c=>!this.mem.has(c.j));return (unk.length?pick(unk):pick(live)).j}
+    const first=this.cards[this.open[0]],p=pairOf(first);if(p)return p.j;
+    const unk=live.filter(c=>!this.mem.has(c.j)&&c.j!==first.j);return (unk.length?pick(unk):pick(live.filter(c=>c.j!==first.j))).j;
+  },
+  key(){return this.qs.map(x=>`${x.html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()} = ${x.ans}`).join('\n')},
+  result(){return S.teams.map(t=>({t,score:t.pairs,detail:`${t.pairs} juft · ${t.moves} yurish`}))}
+};
+
 /* ===== 🤖 ROBO raqib ===== */
 const ROBO={lv:[null,{t:[8,15],p:.66},{t:[5.5,10],p:.8},{t:[3.5,6.5],p:.9}],speed:1};
 function roboAdj(){/* odamlar ortda qolsa — sekinlashadi, oldinda boʻlsa — tezlashadi */
@@ -1665,6 +1781,8 @@ function roboTick(){
   const t=S.teams.find(x=>x.robo);if(!t||t.finished)return;
   const G=S.game,g=GK,now=Date.now();let sit=null;
   if(g==='nishon'){if(G.cur()!==t)return;sit=G.phase==='choose'?'aim:'+t.shots:G.phase==='answer'?'ans:'+t.shots:null}
+  else if(g==='mental'){if(G.phase!=='answer'||t.done)return;sit='m:'+G.r}
+  else if(g==='juft'){if(G.cur()!==t||G.busy)return;sit='j:'+t.moves+':'+G.open.length+':'+G.found}
   else if(g==='tez'){if(G.done||t.out)return;sit='tez:'+G.r}
   else if(g==='bomba'){if(!t.active||locked(t))return;sit='b:'+t.bi+':'+t.step}
   else if(g==='zanjir'){if(locked(t)||!t.ch||(t.pad&&t.el.querySelector('.pad button:disabled')))return;sit='z:'+t.ci+':'+t.step}
@@ -1673,10 +1791,12 @@ function roboTick(){
     else if(t.q&&typeof t.q.ans==='number'&&!t.el.querySelector('.pad button:disabled'))sit='q:'+(t.h??t.pos??t.open??0)+':'+t.q.html;
     else return}
   if(!sit)return;sit+=':'+t.rw;
-  if(t.rSit!==sit){t.rSit=sit;t.rDone=false;t.rAt=now+(/^(ch|aim)/.test(sit)?(900+Math.random()*1400)*ROBO.speed:roboDelay());roboThink(t,true);return}
+  if(t.rSit!==sit){t.rSit=sit;t.rDone=false;t.rAt=now+(/^(ch|aim|j:)/.test(sit)?(900+Math.random()*1400)*ROBO.speed:g==='mental'?roboDelay()*.6:roboDelay());roboThink(t,true);return}
   if(t.rDone||now<t.rAt)return;
   t.rDone=true;roboThink(t,false);
-  const choice=/^(ch|aim)/.test(sit),ok=choice||roboOk();if(!ok)t.rw++;
+  const choice=/^(ch|aim|j:)/.test(sit),ok=choice||roboOk();if(!ok)t.rw++;
+  if(g==='juft'){G.flip(G.roboMove());return}
+  if(g==='mental'){roboType(t,t.pad,ok?G.sum:wrongOf(G.sum));return}
   if(g==='nishon'){if(G.phase==='choose'){G.aim(cfg.robo===3?pick([2,3,3]):cfg.robo===2?pick([1,2,3]):pick([1,1,2]));return}
     roboType(t,G.pad,ok?G.q.ans:wrongOf(G.q.ans));return}
   if(g==='tez'){const a=G.q.ans,bs=[...t.el.querySelectorAll('.tops button')],b=ok?bs.find(x=>+x.dataset.o===a):pick(bs.filter(x=>+x.dataset.o!==a));if(b)b.click();return}
