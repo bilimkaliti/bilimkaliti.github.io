@@ -364,10 +364,12 @@ async def save_sets(uid: int, sets: list[dict]) -> None:
             pass
 
 
-async def add_set(uid: int, name: str, items: list[dict], src: str) -> tuple[dict, bool]:
+async def add_set(uid: int, name: str, items: list[dict], src: str, fan: str = "") -> tuple[dict, bool]:
     async with lock_for(uid):
         sets = list(await load_sets(uid))
         s = {"id": secrets.token_hex(3), "name": name[:60], "src": src, "t": int(time.time()), "items": items[:MAX_ITEMS]}
+        if fan:
+            s["fan"] = fan[:60]
         sets.append(s)
         dropped = len(sets) > MAX_SETS
         sets = sets[-MAX_SETS:]
@@ -1245,8 +1247,8 @@ async def api_sets_save(request: web.Request) -> web.Response:
     items = norm_items(data.get("items"))
     if not items:
         return jerr("Birorta ham toʻgʻri savol topilmadi.")
-    s, dropped = await add_set(u["u"], clip(data.get("name"), 60) or "Oʻz savollarim", items, "own")
-    return web.json_response({"ok": True, "set": {"id": s["id"], "name": s["name"], "items": s["items"]}, "dropped": dropped})
+    s, dropped = await add_set(u["u"], clip(data.get("name"), 60) or "Oʻz savollarim", items, "own", clip(data.get("fan"), 60))
+    return web.json_response({"ok": True, "set": {"id": s["id"], "name": s["name"], "fan": s.get("fan", ""), "items": s["items"]}, "dropped": dropped})
 
 
 async def api_sets_delete(request: web.Request) -> web.Response:
@@ -1504,13 +1506,13 @@ async def api_ai(request: web.Request) -> web.Response:
             name, items = await gemini_mc(fan, sinf, mavzu, LANGS.get(str(p.get("til")), LANGS["uz"]), 12, clip(p.get("extra"), 600), fobj)
             if len(items) < 4:
                 return jerr("AI yetarlicha toʻgʻri savol tuza olmadi. Mavzuni boshqacharoq yozing.")
-            s, _ = await add_set(uid, name, items, "ai")
+            s, _ = await add_set(uid, name, items, "ai", fan)
             return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
         if tool == "savollar":
             name, items = await gemini_questions(f"{sinf}-sinf, {mavzu}" if sinf else mavzu)
             if len(items) < 4:
                 return jerr("AI yetarlicha toʻgʻri savol tuza olmadi. Mavzuni boshqacharoq yozing.")
-            s, _ = await add_set(uid, name, items, "ai")
+            s, _ = await add_set(uid, name, items, "ai", fan)
             return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
         lo, hi, df = TOOL_LIMITS.get(tool, (1, 50, 10))
         try:
@@ -1746,7 +1748,7 @@ async def api_sets(request: web.Request) -> web.Response:
     if not user or "id" not in user:
         return web.json_response({"ok": False}, status=403)
     sets = await load_sets(int(user["id"]))
-    return web.json_response({"ok": True, "sets": [{"id": s["id"], "name": s["name"], "items": s["items"]} for s in sets]})
+    return web.json_response({"ok": True, "sets": [{"id": s["id"], "name": s["name"], "fan": s.get("fan", ""), "items": s["items"]} for s in sets]})
 
 
 SITE_INDEX = Path(__file__).parent / "index.html"

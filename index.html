@@ -1634,7 +1634,7 @@ function mySetsPage(){return `<section><div class="wrap fade">
   <div class="sh"><div><h2>📦 Mening toʻplamlarim</h2><p class="sub">AI yoki oʻzingiz tuzgan savollar. Ular botdagi «📦 Toʻplamlarim»da ham bor.</p></div>
    <div class="mrow"><button class="btn ghost" id="mNew">✍️ Yangi toʻplam</button><a class="btn ghost" href="#/ai/darslik">📸 Darslikdan</a><a class="btn gold" href="#/ai/savollar">✨ AI bilan</a></div></div>
   <div id="mForm" class="formcard hidden" style="margin-bottom:18px">
-   <div class="fgrid"><label class="f"><span>Toʻplam nomi</span><input id="nfName" maxlength="60" placeholder="Masalan: Poytaxtlar"></label>
+   <div class="fgrid"><label class="f"><span>Toʻplam nomi</span><input id="nfName" maxlength="60" placeholder="Masalan: Poytaxtlar"></label><label class="f"><span>Fan</span><select id="nfFan">${FANLAR.map(f=>`<option>${esc(f)}</option>`).join('')}</select></label>
     <label class="f wide"><span>Savollar — har qatorda bittadan</span><textarea id="nfText" rows="9" placeholder="Son-javobli: 7 × 8 = ? | 56&#10;Test: Fransiyaning poytaxti? | Parij | Lion | Marsel | Nitstsa&#10;(test savolida birinchi variant — toʻgʻri javob)"></textarea></label>
     <div class="wide factions"><button class="btn gold" id="nfSave">💾 Saqlash</button><span class="small" id="nfMsg"></span></div></div></div>
   <div class="sgrid" id="mList">${skel(3)}</div></div></section>`}
@@ -1647,14 +1647,14 @@ function bindMySets(){
     if(!AUTH.tok){$('#mList').innerHTML=`<div class="empty"><div>🔐</div><p>Toʻplamlaringizni koʻrish uchun kiring.</p><button class="btn gold" id="mIn">Telegram orqali kirish</button></div>`;$('#mIn').onclick=async()=>{if(await login())load()};return}
     try{const j=await api('/api/sets',{token:AUTH.tok},90000);const l=(j.sets||[]).slice().reverse();
       l.forEach(s=>{s.n=s.items.length;s.mc=s.items.some(i=>i.o);s.author='';by[s.id]=s});
-      $('#mList').innerHTML=l.length?l.map(s=>`<div class="scard"><div class="sct"><span class="ic">${s.mc?'📝':'🔢'}</span><div><b>${esc(s.name)}</b><small>${s.n} ta savol${s.mc?' · test':''}</small></div></div>
+      $('#mList').innerHTML=l.length?l.map(s=>`<div class="scard"><div class="sct"><span class="ic">${FAN_IC[s.fan]||(s.mc?'📝':'🔢')}</span><div><b>${esc(s.name)}</b><small>${s.fan?esc(s.fan)+' · ':''}${s.n} ta savol${s.mc?' · test':''}</small></div></div>
         <div class="sca"><button class="btn gold sm" data-play="${s.id}">▶️ Oʻynash</button><button class="btn ghost sm" data-view="${s.id}">👁</button><button class="btn ghost sm" data-pub="${s.id}">📚 Ulashish</button><button class="btn ghost sm" data-del="${s.id}">🗑</button></div></div>`).join('')
         :`<div class="empty"><div>📦</div><p>Hali toʻplam yoʻq. AI bilan yoki qoʻlda yarating.</p></div>`}
     catch(e){$('#mList').innerHTML=`<p class="sub">⚠️ ${esc(e.message)}</p>`}}
   $('#mNew').onclick=()=>$('#mForm').classList.toggle('hidden');
   $('#nfSave').onclick=async()=>{if(!AUTH.tok&&!(await login()))return;const {items,bad}=parseLines($('#nfText').value);
     if(!items.length){$('#nfMsg').textContent='⚠️ Birorta ham toʻgʻri qator topilmadi.';return}
-    $('#nfMsg').textContent='⏳ Saqlanmoqda…';try{await api('/api/sets/save',{token:AUTH.tok,name:$('#nfName').value.trim()||'Oʻz savollarim',items});
+    $('#nfMsg').textContent='⏳ Saqlanmoqda…';try{await api('/api/sets/save',{token:AUTH.tok,name:$('#nfName').value.trim()||'Oʻz savollarim',items,fan:$('#nfFan').value});
       burstAt($('#nfSave'),60);$('#nfMsg').textContent=`✅ ${items.length} ta savol saqlandi.${bad.length?` Tushunilmagan qatorlar: ${bad.slice(0,8).join(', ')}`:''}`;$('#nfText').value='';load()}catch(e){$('#nfMsg').textContent='⚠️ '+e.message}};
   $('#mList').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.play||b.dataset.view||b.dataset.pub||b.dataset.del,s=by[id];if(!s)return;
     if(b.dataset.play)playModal(s,`&set=${encodeURIComponent(s.id)}`);
@@ -1961,7 +1961,7 @@ async function dlSave(){
   if(items.length<3){toast('Kamida 3 ta toʻliq savol kerak');return}
   if(items.length<r.items.length)toast(`${r.items.length-items.length} ta chala savol tashlab ketildi`);
   btn.disabled=true;btn.textContent='⏳ Saqlanmoqda…';
-  try{const j=await api('/api/sets/save',{token:AUTH.tok,name:$('#dlName').value.trim()||r.name,items});
+  try{const j=await api('/api/sets/save',{token:AUTH.tok,name:$('#dlName').value.trim()||r.name,items,fan:DL.opt.fan});
     const s={...j.set,mc:j.set.items.some(x=>x.o),n:j.set.items.length};
     $('#dlBody').innerHTML=`<div class="dl-done"><div class="big">🎉</div><h2 style="margin:6px 0 4px">${esc(s.name)}</h2><p class="sub">${s.n} ta savol saqlandi. Oʻyinni tanlang — darhol doskada ochiladi.</p></div>
       <div class="grid" style="margin:16px 0">${gamesFor(s).map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
