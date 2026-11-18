@@ -234,6 +234,21 @@ html.bk .go:hover::after,html.bk .big:hover::after{left:120%}
 html.bk #start .go{position:sticky;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:20;display:block;margin:20px auto 70px;min-width:min(340px,100%);padding:16px 34px!important;font-size:1.25rem!important}
 html.bk .err{font-weight:800}
 
+/* ---- boshqa fanlar ---- */
+.bkfan{background:var(--panel);border:1.5px solid var(--line);border-radius:24px;padding:16px 20px;box-shadow:var(--bk-sh);margin:0 0 16px}
+.bkfan-h{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.bkfan-h b{font-size:1.05rem;display:block}.bkfan-h small{color:var(--muted);font-weight:700}
+#bkFan{font:inherit;font-weight:800;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;min-width:240px;max-width:100%}
+.bklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-top:12px}
+.bklist label{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--bg);cursor:pointer;font-weight:800}
+.bklist label.on{border-color:var(--bk-gold);background:color-mix(in srgb,var(--bk-gold) 12%,var(--panel))}
+.bklist small{display:block;color:var(--muted);font-weight:700;font-size:.82rem}
+.bkmuted{color:var(--muted);font-weight:700;margin:10px 0 0}.bkmuted a{color:var(--ink)}
+.bkon{margin-top:12px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,#12a38f 14%,var(--panel));font-weight:800}
+.bkoff{opacity:.35;pointer-events:none;filter:grayscale(1)}
+.bkq{display:block;font-weight:800}
+.bko{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,92px),1fr));gap:4px 12px;margin-top:6px;font-size:.88em;font-weight:700}
+.bko span{display:flex;gap:6px;align-items:baseline;word-break:normal;overflow-wrap:break-word;hyphens:none;min-width:0}.bko b{flex:none;display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;border-radius:6px;background:var(--ink);color:var(--bg);font-size:.85em}
 /* ---- oʻyin paneli ---- */
 html.bk :is(.bar,.top){background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid var(--line);border-radius:18px;padding:8px 10px 8px 14px;box-shadow:var(--bk-sh)}
 html.bk .ttl{font-weight:900;font-size:1.25rem}
@@ -326,6 +341,78 @@ html.bk #start .go{animation:none}
       if(el.classList.contains('good')&&(el.classList.contains('fb')||el.id==='feedback')&&!(m.oldValue||'').match(/\bgood\b/))burstAt(el,46);
       if((el.id==='end'||el.id==='final')&&!el.classList.contains('hidden')&&/\bhidden\b/.test(m.oldValue||''))bigWin();
     })}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],attributeOldValue:true});
+  });
+})();
+/* ===== Boshqa fanlar: test toʻplamlari bilan oʻynash (BKQ) ===== */
+(function(){
+  var MATHF=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
+  var FANS=['Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
+  var IC={'Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
+  var A=/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com';
+  var TG=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData?Telegram.WebApp.initData:'';
+  var E=function(s){var d=document.createElement('div');d.textContent=String(s);return d.innerHTML};
+  var SH=function(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a};
+  var post=function(p,b){return fetch((TG?'':A)+p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json()})};
+  /* «juft» toʻplamlari (soʻz ↔ tarjima) test savoliga aylanadi */
+  var conv=function(items){items=items||[];var pr=items.filter(function(it){return it&&it.a!=null&&it.b!=null&&!it.o});if(pr.length<4)return items;
+    var bs=[];pr.forEach(function(x){if(bs.indexOf(String(x.b))<0)bs.push(String(x.b))});
+    return items.map(function(it){if(!(it&&it.a!=null&&it.b!=null&&!it.o))return it;var w=SH(bs.filter(function(b){return b!==String(it.b)})).slice(0,3);return w.length===3?{q:'«'+it.a+'» — ?',o:[String(it.b)].concat(w),c:0}:null}).filter(Boolean)};
+  var okMC=function(it){return it&&typeof it.q==='string'&&Array.isArray(it.o)&&it.o.length===4&&it.c>=0&&it.c<4};
+  var B=window.BKQ={on:false,fan:'',sets:[],sel:[],
+    mk:function(it){var p=SH([0,1,2,3]),o=p.map(function(k){return it.o[k]});
+      return{d:p.indexOf(it.c)+1,t:'<span class="bkq">'+E(it.q)+'</span><span class="bko">'+o.map(function(x,i){return '<span><b>'+(i+1)+'</b>'+E(x)+'</span>'}).join('')+'</span>'}},
+    chunks:function(max){var out=[],rest=[];B.sel.forEach(function(id){var s=B.sets.filter(function(x){return x.id===id})[0];if(!s||!s.items)return;
+        var it=SH(s.items.filter(okMC)),k=0;for(;k+4<=it.length;k+=4)out.push({name:s.name+(it.length>=8?' · '+(k/4+1):''),items:it.slice(k,k+4)});rest=rest.concat(it.slice(k))});
+      rest=SH(rest);for(var k=0;k+4<=rest.length;k+=4)out.push({name:'Aralash savollar',items:rest.slice(k,k+4)});
+      return SH(out).slice(0,max)}};
+  var id=window.__BK_GAME||'';
+  function ready(f){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',f):f()}
+  ready(function(){
+    var st=document.getElementById('start');if(!st)return;
+    var P=new URLSearchParams(location.search);
+    var box=document.createElement('div');box.className='bkfan';
+    var anchor=st.querySelector('.bk-hero')||st.querySelector('.hero');
+    (anchor||st.firstChild).after(box);
+    var mathBox=id==='eshik'?null:(st.querySelectorAll('.setgrid .box')[1]||null);
+    var loading=false;
+    function sets(){return B.sets.filter(function(s){return s.fan===B.fan})}
+    function draw(){
+      var n=B.sel.reduce(function(a,id){var s=B.sets.filter(function(x){return x.id===id})[0];return a+(s&&s.items?s.items.filter(okMC).length:0)},0);
+      B.on=!!(B.fan&&B.sel.length);
+      if(mathBox)mathBox.classList.toggle('bkoff',B.on);
+      var opts='<option value="">🧮 Matematika (oddiy rejim)</option>'+FANS.map(function(f){return '<option value="'+E(f)+'"'+(f===B.fan?' selected':'')+'>'+(IC[f]||'📘')+' '+E(f)+'</option>'}).join('');
+      var l=sets();
+      box.innerHTML='<div class="bkfan-h"><div><b>📚 Boshqa fan savollari bilan oʻynash</b><small>Har bir test savolining toʻgʻri javob raqami (1–4) kodning bitta raqami boʻladi.</small></div><select id="bkFan" aria-label="Fan">'+opts+'</select></div>'+
+        (B.fan?(loading?'<p class="bkmuted">⏳ Toʻplamlar yuklanmoqda…</p>':l.length?'<div class="bklist">'+l.map(function(s){return '<label class="'+(B.sel.indexOf(s.id)>=0?'on':'')+'"><input type="checkbox" data-bk="'+E(s.id)+'"'+(B.sel.indexOf(s.id)>=0?' checked':'')+'><span>'+E(s.name)+'<small>'+E(s.tag)+(s.sinf?' · '+E(s.sinf)+'-sinf':'')+' · '+(s.items?s.items.filter(okMC).length:s.n||'…')+' ta savol</small></span></label>'}).join('')+'</div>'
+          :'<p class="bkmuted">Bu fan boʻyicha hali toʻplam yoʻq. <a href="'+location.pathname.replace(/games\/[^\/]*$/,'')+'#/ai/darslik">📸 Darslikdan yaratish →</a></p>'):'')+
+        (B.on?'<div class="bkon">✅ '+(IC[B.fan]||'')+' '+E(B.fan)+': '+n+' ta savol · '+Math.floor(n/4)+' ta eshik/xona tayyor. Matematika mavzulari ishlatilmaydi.</div>':'');
+    }
+    function load(f){loading=true;draw();var jobs=[];
+      if(!B.static)jobs.push(fetch('sets.json').then(function(r){return r.json()}).then(function(j){B.static=1;(j||[]).forEach(function(s){var it=conv(s.items);if(it.some(okMC))B.sets.push({id:'k-'+s.id,name:s.name,fan:s.fan,sinf:String(s.sinf||''),items:it,tag:'⭐ Tayyor'})})}).catch(function(){}));
+      if(!B.own){B.own=1;var tok=null;try{tok=JSON.parse(localStorage.getItem('bk_token'))}catch(e){}
+        if(TG||tok)jobs.push(post('/api/sets',TG?{initData:TG}:{token:tok}).then(function(j){(j.sets||[]).forEach(function(s){var it=conv(s.items);if(it.some(okMC))B.sets.push({id:s.id,name:s.name,fan:s.fan||'',items:it,tag:'📦 Meniki'})})}).catch(function(){}))}
+      if(f&&!B['lib'+f])jobs.push(post('/api/lib/list',{fan:f,sort:'top'}).then(function(j){B['lib'+f]=1;(j.sets||[]).forEach(function(m){if(m.mc||m.kind==='pair')B.sets.push({id:'L-'+m.id,lib:m.id,name:m.name,fan:f,sinf:String(m.sinf||''),n:m.n,tag:'📚 '+(m.author||'Kutubxona')})})}).catch(function(){}));
+      return Promise.all(jobs).then(function(){loading=false;draw()})}
+    function pick(sid,on){var s=B.sets.filter(function(x){return x.id===sid})[0];if(!s)return;
+      if(on&&B.sel.indexOf(sid)<0)B.sel.push(sid);if(!on)B.sel=B.sel.filter(function(x){return x!==sid});
+      if(on&&s.lib&&!s.items){post('/api/lib/get',{id:s.lib}).then(function(j){s.items=conv((j.set&&j.set.items)||[]);post('/api/lib/play',{id:s.lib}).catch(function(){});draw()}).catch(function(){})}
+      draw()}
+    box.addEventListener('change',function(e){var t=e.target;
+      if(t.id==='bkFan'){B.fan=t.value;B.sel=[];if(B.fan)load(B.fan);draw()}
+      if(t.dataset&&t.dataset.bk)pick(t.dataset.bk,t.checked)});
+    draw();
+    /* saytdan kelgan havola: ?fan=…&set=… yoki &lib=… */
+    var pf=P.get('fan'),ps=P.get('set'),pl=P.get('lib');
+    if(pf&&FANS.indexOf(pf)>=0||ps||pl){
+      load(pf&&FANS.indexOf(pf)>=0?pf:'').then(function(){
+        var sid=pl?'L-'+pl:ps;
+        if(pl&&!B.sets.some(function(s){return s.id===sid}))B.sets.push({id:sid,lib:pl,name:'Kutubxona toʻplami',fan:pf||'',tag:'📚 Kutubxona'});
+        var s=B.sets.filter(function(x){return x.id===sid})[0];
+        B.fan=(s&&s.fan)||pf||'';if(B.fan&&MATHF.indexOf(B.fan)>=0)B.fan='';
+        if(s&&B.fan){if(s.fan!==B.fan)s.fan=B.fan;pick(sid,true)}
+        if(B.fan)load(B.fan);draw();
+      });
+    }
   });
 })();
 </script><!--/bkSkin--></head>
@@ -1033,6 +1120,17 @@ const __THEME='sirli',__musPlay=()=>!document.getElementById('game').classList.c
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* ===== scenes ===== */
 
 const D={
@@ -1113,6 +1211,11 @@ const LOGIC=[
      clues:cats.map(c=>({sym:c.ic,html:`${c.m}${c.z}`})),
      draw:f=>scene('#f0dfc4','#9b7a58',[D.shelf(18,40,b),D.painting(160,32,SP),D.clock(262,30,h),D.rug(30,206),D.plant(170,118,fl)],f)}}}
 ];
+function buildSetRoom(room,k){
+  const puz=room.items.map((it,s)=>({...BKQ.mk(it),s}));
+  return{hint:'Har bir savolning toʻgʻri javob raqamini toping. Raqamlarni belgilar tartibida tering: ● ▲ ■ ★',code:puz.map(p=>p.d),slots:[0,1,2,3].map(sym),
+    clues:shuffle(puz).map(p=>({sym:sym(p.s),html:p.t,d:p.d,cc:SYMS[p.s].v,wide:true})),draw:DECOR[k%DECOR.length]};
+}
 function buildTopicRoom(room,k){
   const puz=room.qs.map((q,s)=>{const T=TOPICS[q.ti];for(;;){const d=R(1,9),x=T.gens[q.gi](d);if(x)return{d,t:(room.mixed?`<span class="tn">${T.name}</span>`:'')+x,s}}});
   return{hint:'Misollarni yeching. Javoblarni belgilar tartibida tering: ● ▲ ■ ★',code:puz.map(p=>p.d),slots:[0,1,2,3].map(sym),
@@ -1168,7 +1271,8 @@ const q=(t,s)=>t.el.querySelector(s);
 function startGame(){
   const sorted=[...G6.filter(i=>cfg.topics.includes(i)),...TOPICS.map((_,i)=>i).filter(i=>!G6.includes(i)&&cfg.topics.includes(i))];
   const lsel=LOGIC.filter(r=>cfg.logic.includes(r.key));
-  if(!sorted.length&&!lsel.length){$('#startErr').textContent='Kamida bitta mavzuni belgilang.';return}
+  if(!(window.BKQ&&BKQ.on)&&!sorted.length&&!lsel.length){$('#startErr').textContent='Kamida bitta mavzuni belgilang.';return}
+  if((window.BKQ&&BKQ.on)&&!BKQ.chunks(1).length){$('#startErr').textContent='Tanlangan toʻplamlarda kamida 4 ta test savoli boʻlishi kerak.';return}
   $('#startErr').textContent='';save();L=cfg.L;
   const N=cfg.nr;
   const nl=!lsel.length?0:!sorted.length?N:Math.min(N-1,Math.max(1,Math.round(N*lsel.length/(sorted.length+lsel.length))));
@@ -1180,13 +1284,14 @@ function startGame(){
     const nm2=[...new Set(qs.map(x=>TOPICS[x.ti].name))];
     return{type:'t',qs,mixed:nm2.length>1,name:nm2.length===1?nm2[0]:nm2.length===2?nm2.join(' + '):'Aralash misollar'}});
   const rooms=[];let li=0;
-  for(let i=0;i<N;i++){if(nl&&Math.floor((i+1)*nl/N)>li){rooms.push({type:'l',r:lrooms[li],name:lrooms[li].name});li++}else rooms.push(mrooms.shift())}
+  if((window.BKQ&&BKQ.on))BKQ.chunks(N).forEach(c=>rooms.push({type:'q',name:c.name,items:c.items}));
+  else for(let i=0;i<N;i++){if(nl&&Math.floor((i+1)*nl/N)>li){rooms.push({type:'l',r:lrooms[li],name:lrooms[li].name});li++}else rooms.push(mrooms.shift())}
   Object.assign(st,{rooms,start:Date.now(),order:0,over:false,sound:cfg.sound});
   const n=cfg.n,ar=$('#arena');ar.className='arena'+(n>=3?' compact':'');
   ar.innerHTML=Array.from({length:n},(_,i)=>`<div class="team" id="t${i}" style="--tc:${TC[i]}"></div>`).join('');
   st.teams=Array.from({length:n},(_,i)=>{
     const t={i,name:(cfg.names[i]||'').trim()||`${i+1}-guruh`,ri:0,stars:[],el:$('#t'+i),finished:null,place:0};
-    t.built=rooms.map((r,k)=>r.type==='t'?buildTopicRoom(r,k):r.r.build());
+    t.built=rooms.map((r,k)=>r.type==='q'?buildSetRoom(r,k):r.type==='t'?buildTopicRoom(r,k):r.r.build());
     return t;
   });
   st.teams.forEach(t=>{buildPanel(t);enterRoom(t)});

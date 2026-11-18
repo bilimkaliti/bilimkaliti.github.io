@@ -364,7 +364,14 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
 .jc.done .jf{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 14%,#fff);animation:jok .5s}
 @keyframes jok{50%{transform:scale(1.06)}}
 .jside .board{margin-bottom:10px}
-.mco{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:8px;font-size:.82em;font-weight:700;text-align:left}
+.mco{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px;font-size:.8em;font-weight:700;text-align:left}
+.mcb{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;font-weight:800;color:var(--ink);background:var(--panel,#fff);border:2.5px solid var(--line);border-radius:14px;padding:10px 12px;min-height:56px;cursor:pointer;box-shadow:0 4px 0 var(--line);transition:transform .08s,box-shadow .08s,border-color .15s;line-height:1.2;word-break:normal;overflow-wrap:break-word;hyphens:none}
+.mcb b{flex:none;display:grid;place-items:center;width:1.9em;height:1.9em;border-radius:9px;color:#fff;font-size:.85em}
+.mcb:nth-child(1) b{background:#e5484d}.mcb:nth-child(2) b{background:#2f8cff}.mcb:nth-child(3) b{background:#f5a300}.mcb:nth-child(4) b{background:#12a38f}
+.mcb:hover{border-color:var(--tc,#3e7bfa)}.mcb:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.tp:has(.qc .mcb) .padw .pad,.tp:has(.qc .mcb) .padw .disp{display:none}
+#play:has(#nq .mcb) #npad .pad,#play:has(#nq .mcb) #npad .disp{display:none}
+@media (max-width:700px){.mco{grid-template-columns:1fr}}
 .mco span{display:flex;gap:8px;align-items:baseline}.mco b{flex:none;display:inline-grid;place-items:center;min-width:1.6em;height:1.6em;border-radius:7px;background:var(--tc,#3e7bfa);color:#fff;font-size:.9em}
 .tops button.mct{font-size:clamp(.95rem,1.6vw,1.3rem);line-height:1.2;text-align:left}
 .jf.ans.txt{font-size:clamp(.95rem,1.8vw,1.4rem);color:#2f6fe0}
@@ -992,7 +999,7 @@ const isMC=it=>Array.isArray(it.o);
 function setItem(s,wide){const ok=s.items.map((_,i)=>i).filter(i=>{const it=s.items[i];return isMC(it)?GK!=='bomba':okAns(it.a,wide)});if(!ok.length)return null;
   const it=s.items[bag('s'+s.id+(wide?'w':'d')+GK,()=>shuffle(ok)).pop()];
   if(isMC(it)){const perm=shuffle(it.o.map((_,k)=>k)),ans=perm.indexOf(it.c)+1,opts=perm.map(k=>it.o[k]);
-    return{html:`${esc(it.q)}<span class="mco">${opts.map((o,i)=>`<span><b>${i+1}</b>${esc(o)}</span>`).join('')}</span>`,ans,topic:s.name,mc:{q:it.q,opts}}}
+    return{html:`${esc(it.q)}<span class="mco">${opts.map((o,i)=>`<button type="button" class="mcb" data-mcv="${i+1}"><b>${'ABCD'[i]}</b>${esc(o)}</button>`).join('')}</span>`,ans,topic:s.name,mc:{q:it.q,opts}}}
   return{html:esc(it.q),ans:it.a,topic:s.name}}
 /* mavzular va toʻplamlar navbat bilan: toʻplamlar umumiy hisobda yarmini egallaydi */
 function srcList(){const T=TOPS(),ss=selSets(),w=Math.max(1,Math.ceil(T.length/Math.max(1,ss.length)));return shuffle([...T,...ss.flatMap(s=>Array(w).fill('S'+s.id))])}
@@ -1109,6 +1116,7 @@ const MUSIC=(function(){
 
 
 /* ===== keypad ===== */
+const PADS=new WeakMap();
 function makePad(el,{max=1,onSubmit}){
   const multi=max>1;
   el.innerHTML=(multi?'<div class="disp"></div>':'')+`<div class="pad${multi?' multi':''}">${(multi?['1','2','3','4','5','⌫','6','7','8','9','0','✓']:['1','2','3','4','5','6','7','8','9','0']).map(k=>`<button type="button" data-k="${k}"${k==='✓'?' class="ok"':''} aria-label="${k==='⌫'?'Oʻchirish':k==='✓'?'Tekshirish':k}">${k}</button>`).join('')}</div>`;
@@ -1120,8 +1128,8 @@ function makePad(el,{max=1,onSubmit}){
     if(k==='⌫')val=val.slice(0,-1);else if(k==='✓'){if(val){const v=val;val='';show();onSubmit(v)}}else if(val.length<max)val+=k;
     show();if(api.onType)api.onType(val);
   });
-  const api={el,reset(){val='';show();if(api.onType)api.onType(val)},disable(v){off=v;el.querySelectorAll('button').forEach(b=>b.disabled=v)},shake(){const t=disp||el;t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake')},onType:null};
-  return api;
+  const api={el,submit(v){if(off||S.over||S.ending)return;onSubmit(String(v))},reset(){val='';show();if(api.onType)api.onType(val)},disable(v){off=v;el.querySelectorAll('button').forEach(b=>b.disabled=v)},shake(){const t=disp||el;t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake')},onType:null};
+  PADS.set(el,api);return api;
 }
 
 /* ===== settings ===== */
@@ -1145,6 +1153,7 @@ const FANS=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona til
 const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
 const MATHF=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
 const isMathFan=()=>MATHF.includes(cfg.fan);
+const WM=s=>isMathFan()?s:String(s).replace(/misollar/g,'savollar').replace(/Misollar/g,'Savollar').replace(/misol/g,'savol').replace(/Misol/g,'Savol');
 const TOPS=()=>isMathFan()?cfg.topics:[];
 const LIBF={};let FSINF=0;
 async function libForFan(f){if(LIBF[f])return;LIBF[f]='loading';
@@ -1171,7 +1180,7 @@ function renderSettings(){
   const g=GAMES[GK];
   SEGS.len=g.len.o.map(v=>[v,String(v)]);
   document.querySelectorAll('#setup .seg[data-key]').forEach(el=>{const k=el.dataset.key,cur=k==='len'?lenOf(GK):cfg[k];el.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')});
-  $('#lenTitle').textContent=g.len.t;
+  $('#lenTitle').textContent=g.len.t;$('#sDesc').textContent=WM(g.desc);
   const lbl=(k,v)=>((SEGS[k]||[]).find(x=>x[0]===v)||[,''])[1];
   $('#advSum').textContent=[`Robo: ${cfg.robo?lbl('robo',cfg.robo).replace(/^\S+\s/,''):'yoʻq'}`,g.lvl?`qiyinlik: ${lbl('L',cfg.L).toLowerCase()}`:'',`${g.len.t.toLowerCase()}: ${lenOf(GK)}`,cfg.sound?'tovush bor':'tovushsiz'].filter(Boolean).join(' · ');
   $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
@@ -1446,6 +1455,7 @@ IMPL.raketa={
     if(boost){rk.classList.add('boost');setTimeout(()=>rk.classList.remove('boost'),1000);
       const tr=$('#tr'+t.i),r0=rk.getBoundingClientRect(),b=tr.getBoundingClientRect();let k=0;const iv=setInterval(()=>{const r=rk.getBoundingClientRect();burst(tr,r.left-b.left,r.top-b.top+r.height/2-7,2,'puff',14,14);if(++k>8)clearInterval(iv)},100)}},
   choose(t){
+    if(!TOPS().length){t.k=1;t.q=genQ(cfg.L,BIG());q(t,'.qc').innerHTML=`<span class="tn">${t.st>=2?'🔥 Yana bitta toʻgʻri javob — bonus qadam!':'Har bir toʻgʻri javob — 1 qadam. Ketma-ket 3 ta — bonus!'}</span>${qhtml(t.q)}`;if(!locked(t))t.pad.disable(false);keyUpd();return}
     t.k=0;t.pad.disable(true);t.q={ans:'(qiyinlik tanlanmoqda)'};
     q(t,'.qc').innerHTML=`<div class="choice"><div style="font-size:.85em">Qanday misol olamiz?</div><button data-k="1">🟢 Oson — 1 qadam</button><button data-k="2">🟡 Oʻrta — 2 qadam</button><button data-k="3">🔴 Qiyin — 3 qadam</button></div>`;
     q(t,'.qc').onclick=e=>{const b=e.target.closest('[data-k]');if(!b||S.over)return;t.k=+b.dataset.k;q(t,'.qc').onclick=null;
@@ -1454,9 +1464,10 @@ IMPL.raketa={
   },
   ans(t,v){
     if(S.over||locked(t)||!t.k)return;
-    if(mark(t,t.q,+v===t.q.ans)){t.pos=Math.min(this.G,t.pos+t.k);snd('whoosh');setMsg(t,`Toʻgʻri! +${t.k} qadam 🔥`,'good');this.draw(t,true);
+    if(mark(t,t.q,+v===t.q.ans)){let add=t.k,txt=`Toʻgʻri! +${t.k} qadam 🔥`;if(!TOPS().length){t.st=(t.st||0)+1;if(t.st%3===0){add++;txt='🔥 3 ta ketma-ket! +2 qadam'}}
+      t.pos=Math.min(this.G,t.pos+add);snd('whoosh');setMsg(t,txt,'good');this.draw(t,true);
       if(t.pos>=this.G){setTimeout(()=>{const tr=$('#tr'+t.i);tr.insertAdjacentHTML('beforeend','<span class="mflag">🚩</span>');confetti(tr.closest('.race'),80);snd('fan')},1000);finishSoon(2800);return}this.choose(t)}
-    else{t.w++;snd('bad');t.pad.shake();let txt='Notoʻgʻri.';
+    else{t.w++;t.st=0;snd('bad');t.pad.shake();let txt='Notoʻgʻri.';
       if(t.pos>=this.zone){t.pos=Math.max(0,t.pos-1);const rk=$('#rk'+t.i);rk.classList.remove('hit');void rk.offsetWidth;rk.classList.add('hit');snd('crash');this.draw(t);txt='☄️ Meteor urildi! 1 qadam orqaga.'}
       this.choose(t);lock(t,cfg.cool,txt);if(!cfg.cool)setMsg(t,txt,'bad')}
   },
@@ -1909,11 +1920,17 @@ $('#musicBtn').onclick=()=>{const on=MUSIC.toggle(S.over?null:GK);musLabel()};
 function musLabel(){$('#musicBtn').textContent=MUSIC.on?'🎵':'🔕';$('#musicBtn').style.opacity=MUSIC.on?1:.6}
 $('#soundBtn').onclick=()=>{cfg.sound=cfg.sound?0:1;save();$('#soundBtn').textContent=cfg.sound?'🔊':'🔇'};
 
+document.addEventListener('click',e=>{const b=e.target.closest('.mcb');if(!b)return;
+  for(let a=b.parentElement;a&&a!==document.body;a=a.parentElement){const pw=[...a.querySelectorAll('.padw,#npad')].find(x=>PADS.has(x));if(pw){PADS.get(pw).submit(b.dataset.mcv);return}}});
 renderMenu();
 const APIB=()=>(TG&&TG.initData)?'':(/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com');
 const normIt=it=>{if(!it||typeof it.q!=='string')return null;
   if(Array.isArray(it.o)){const o=it.o.map(x=>String(x).slice(0,120)).filter(Boolean).slice(0,4),c=+it.c;return o.length>=2&&c>=0&&c<o.length?{q:it.q.slice(0,300),o,c}:null}
   return Number.isInteger(+it.a)&&+it.a>=0&&+it.a<=9999?{q:it.q.slice(0,300),a:+it.a}:null};
+/* «juft» toʻplamlari (soʻz ↔ tarjima) test savoliga aylanadi: xato variantlar boshqa juftlardan */
+function convPairs(items){const pr=(items||[]).filter(it=>it&&it.a!=null&&it.b!=null&&!Array.isArray(it.o));if(pr.length<4)return items||[];
+  const bs=[...new Set(pr.map(x=>String(x.b)))];
+  return (items||[]).map(it=>{if(!(it&&it.a!=null&&it.b!=null))return it;const w=shuffle(bs.filter(b=>b!==String(it.b))).slice(0,3);return w.length===3?{q:`«${it.a}» — ?`,o:[String(it.b),...w],c:0}:null}).filter(Boolean)}
 async function loadSets(){
   const out=[];
   try{const r=await fetch('sets.json?v='+Date.now());if(r.ok){const j=await r.json();if(Array.isArray(j))j.forEach(s=>out.push({...s,id:'k-'+s.id}))}}catch(e){}
@@ -1925,7 +1942,7 @@ async function loadSets(){
   if(lib){try{const r=await fetch((TG&&TG.initData?'':API)+'/api/lib/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})});
     if(r.ok){const j=await r.json();if(j.set){out.push({...j.set,id:'L-'+lib});fetch((TG&&TG.initData?'':API)+'/api/lib/play',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})}).catch(()=>{})}}}catch(e){}}
   SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),fixed:/^k-/.test(String(s.id)),
-    fan:FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items:s.items.map(normIt).filter(Boolean)})).filter(s=>s.items.length);
+    fan:FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items:convPairs(s.items).map(normIt).filter(Boolean)})).filter(s=>s.items.length);
   const sid=lib?'L-'+lib:P.get('set');
   if(sid&&setById(sid)){cfg.sets=[sid];cfg.topics=[];const s=setById(sid);
     if(s.fan)cfg.fan=s.fan;else if(s.items.some(isMC)&&isMathFan()&&!P.get('fan'))cfg.fan='';}

@@ -3824,5 +3824,668 @@
     "c": 0
    }
   ]
+ },
+ {
+  "id": "tarix6-tartib",
+  "name": "Tarix: voqealar ketma-ketligi",
+  "fan": "Tarix",
+  "sinf": "6",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Hukmdor va allomalarni tugʻilgan yili boʻyicha tartiblang",
+    "s": [
+     "Amir Temur (1336)",
+     "Mirzo Ulugʻbek (1394)",
+     "Alisher Navoiy (1441)",
+     "Zahiriddin Muhammad Bobur (1483)"
+    ]
+   },
+   {
+    "q": "Allomalarni yashagan davri boʻyicha tartiblang (eng qadimgisidan)",
+    "s": [
+     "Al-Xorazmiy",
+     "Abu Nasr Forobiy",
+     "Abu Rayhon Beruniy",
+     "Mirzo Ulugʻbek"
+    ]
+   },
+   {
+    "q": "Mustaqil Oʻzbekiston tarixidagi voqealarni tartiblang",
+    "s": [
+     "Mustaqillik eʼlon qilindi (1991)",
+     "Konstitutsiya qabul qilindi (1992)",
+     "Toshkent — Islom madaniyati poytaxti (2007)",
+     "Yangi tahrirdagi Konstitutsiya (2023)"
+    ]
+   },
+   {
+    "q": "Jahon tarixidagi voqealarni tartiblang",
+    "s": [
+     "Misr piramidalari qurilishi",
+     "Rim imperiyasining tashkil topishi",
+     "Amerikaning kashf etilishi (1492)",
+     "Birinchi jahon urushi (1914)"
+    ]
+   },
+   {
+    "q": "Insoniyat yutuqlarini paydo boʻlish tartibida joylang",
+    "s": [
+     "Olovdan foydalanish",
+     "Dehqonchilikning boshlanishi",
+     "Yozuvning ixtiro qilinishi",
+     "Kitob bosib chiqarish (XV asr)"
+    ]
+   },
+   {
+    "q": "Amir Temur hayotidagi voqealarni tartiblang",
+    "s": [
+     "Keshda tugʻildi",
+     "Movarounnahr hukmdori boʻldi (1370)",
+     "Anqara jangi (1402)",
+     "Oʻtror shahrida vafot etdi (1405)"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "bio7-tartib",
+  "name": "Biologiya: rivojlanish bosqichlari",
+  "fan": "Biologiya",
+  "sinf": "7",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Kapalakning rivojlanish bosqichlarini tartiblang",
+    "s": [
+     "Tuxum",
+     "Qurt (lichinka)",
+     "Gʻumbak",
+     "Kapalak"
+    ]
+   },
+   {
+    "q": "Qurbaqaning rivojlanishini tartiblang",
+    "s": [
+     "Uvildiriq (tuxum)",
+     "Itbaliq",
+     "Dumli kichik qurbaqa",
+     "Voyaga yetgan qurbaqa"
+    ]
+   },
+   {
+    "q": "Oʻsimlikning hayot bosqichlarini tartiblang",
+    "s": [
+     "Urugʻ",
+     "Maysa (nihol)",
+     "Gullash",
+     "Meva berish"
+    ]
+   },
+   {
+    "q": "Ovqat hazm qilish yoʻlini tartiblang",
+    "s": [
+     "Ogʻiz boʻshligʻi",
+     "Qiziloʻngach",
+     "Oshqozon",
+     "Ingichka ichak"
+    ]
+   },
+   {
+    "q": "Tirik organizmning tuzilish darajalarini tartiblang (kichigidan)",
+    "s": [
+     "Hujayra",
+     "Toʻqima",
+     "Organ",
+     "Organizm"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "ona5-guruh",
+  "name": "Ona tili: soʻz turkumlari",
+  "fan": "Ona tili va adabiyot",
+  "sinf": "5",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Soʻzlarni turkumiga qarab ajrating",
+    "g": [
+     {
+      "n": "Ot",
+      "w": [
+       "kitob",
+       "daraxt",
+       "maktab",
+       "daryo"
+      ]
+     },
+     {
+      "n": "Sifat",
+      "w": [
+       "chiroyli",
+       "katta",
+       "qizil",
+       "shirin"
+      ]
+     },
+     {
+      "n": "Feʼl",
+      "w": [
+       "yugurdi",
+       "oʻqiyapti",
+       "yozadi",
+       "kuldi"
+      ]
+     }
+    ]
+   },
+   {
+    "q": "Harflarni ajrating",
+    "g": [
+     {
+      "n": "Unli",
+      "w": [
+       "a",
+       "o",
+       "u",
+       "e",
+       "i"
+      ]
+     },
+     {
+      "n": "Undosh",
+      "w": [
+       "b",
+       "d",
+       "k",
+       "m",
+       "s"
+      ]
+     }
+    ]
+   },
+   {
+    "q": "Soʻzlarni turkumiga qarab ajrating",
+    "g": [
+     {
+      "n": "Son",
+      "w": [
+       "besh",
+       "yigirma",
+       "oʻninchi"
+      ]
+     },
+     {
+      "n": "Olmosh",
+      "w": [
+       "men",
+       "sen",
+       "ular"
+      ]
+     },
+     {
+      "n": "Ot",
+      "w": [
+       "ona",
+       "shahar",
+       "olma"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "bio6-guruh",
+  "name": "Biologiya: hayvonlarni guruhlash",
+  "fan": "Biologiya",
+  "sinf": "6",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Hayvonlarni sinfiga qarab ajrating",
+    "g": [
+     {
+      "n": "Sutemizuvchilar",
+      "w": [
+       "it",
+       "kit",
+       "fil",
+       "koʻrshapalak"
+      ]
+     },
+     {
+      "n": "Qushlar",
+      "w": [
+       "burgut",
+       "tovuq",
+       "pingvin",
+       "tuyaqush"
+      ]
+     },
+     {
+      "n": "Baliqlar",
+      "w": [
+       "laqqa",
+       "akula",
+       "zogʻora",
+       "sazan"
+      ]
+     }
+    ]
+   },
+   {
+    "q": "Ovqatlanishiga qarab ajrating",
+    "g": [
+     {
+      "n": "Oʻtxoʻr",
+      "w": [
+       "sigir",
+       "quyon",
+       "zebra",
+       "jirafa"
+      ]
+     },
+     {
+      "n": "Yirtqich",
+      "w": [
+       "boʻri",
+       "sher",
+       "yoʻlbars",
+       "tulki"
+      ]
+     }
+    ]
+   },
+   {
+    "q": "Boʻgʻimoyoqlilarni ajrating",
+    "g": [
+     {
+      "n": "Hasharotlar",
+      "w": [
+       "chumoli",
+       "asalari",
+       "kapalak",
+       "chigirtka"
+      ]
+     },
+     {
+      "n": "Oʻrgimchaksimonlar",
+      "w": [
+       "oʻrgimchak",
+       "chayon",
+       "kana"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "kimyo8-guruh",
+  "name": "Kimyo: moddalarni guruhlash",
+  "fan": "Kimyo",
+  "sinf": "8",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Elementlarni ajrating",
+    "g": [
+     {
+      "n": "Metallar",
+      "w": [
+       "temir",
+       "mis",
+       "alyuminiy",
+       "oltin",
+       "natriy"
+      ]
+     },
+     {
+      "n": "Nometallar",
+      "w": [
+       "kislorod",
+       "azot",
+       "oltingugurt",
+       "uglerod",
+       "xlor"
+      ]
+     }
+    ]
+   },
+   {
+    "q": "Moddalarni ajrating",
+    "g": [
+     {
+      "n": "Oddiy modda",
+      "w": [
+       "kislorod (O₂)",
+       "temir (Fe)",
+       "vodorod (H₂)"
+      ]
+     },
+     {
+      "n": "Murakkab modda",
+      "w": [
+       "suv (H₂O)",
+       "osh tuzi (NaCl)",
+       "karbonat angidrid (CO₂)"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "geo6-guruh",
+  "name": "Geografiya: materik va okeanlar",
+  "fan": "Geografiya",
+  "sinf": "6",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Ajrating: materik yoki okean?",
+    "g": [
+     {
+      "n": "Materiklar",
+      "w": [
+       "Afrika",
+       "Avstraliya",
+       "Yevroosiyo",
+       "Antarktida"
+      ]
+     },
+     {
+      "n": "Okeanlar",
+      "w": [
+       "Tinch",
+       "Atlantika",
+       "Hind",
+       "Shimoliy Muz"
+      ]
+     }
+    ]
+   },
+   {
+    "q": "Davlatlarni qaysi qitʼada joylashganiga qarab ajrating",
+    "g": [
+     {
+      "n": "Osiyo",
+      "w": [
+       "Xitoy",
+       "Hindiston",
+       "Yaponiya"
+      ]
+     },
+     {
+      "n": "Yevropa",
+      "w": [
+       "Fransiya",
+       "Germaniya",
+       "Italiya"
+      ]
+     },
+     {
+      "n": "Afrika",
+      "w": [
+       "Misr",
+       "Nigeriya",
+       "Keniya"
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "eng3-juft",
+  "name": "Ingliz tili: soʻz va tarjima",
+  "fan": "Ingliz tili",
+  "sinf": "3",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "a": "cat",
+    "b": "mushuk"
+   },
+   {
+    "a": "dog",
+    "b": "it"
+   },
+   {
+    "a": "horse",
+    "b": "ot"
+   },
+   {
+    "a": "cow",
+    "b": "sigir"
+   },
+   {
+    "a": "bird",
+    "b": "qush"
+   },
+   {
+    "a": "fish",
+    "b": "baliq"
+   },
+   {
+    "a": "apple",
+    "b": "olma"
+   },
+   {
+    "a": "book",
+    "b": "kitob"
+   },
+   {
+    "a": "school",
+    "b": "maktab"
+   },
+   {
+    "a": "sun",
+    "b": "quyosh"
+   },
+   {
+    "a": "water",
+    "b": "suv"
+   },
+   {
+    "a": "friend",
+    "b": "doʻst"
+   }
+  ]
+ },
+ {
+  "id": "eng5-juft",
+  "name": "Ingliz tili: feʼllar tarjimasi",
+  "fan": "Ingliz tili",
+  "sinf": "5",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "a": "run",
+    "b": "yugurmoq"
+   },
+   {
+    "a": "read",
+    "b": "oʻqimoq"
+   },
+   {
+    "a": "write",
+    "b": "yozmoq"
+   },
+   {
+    "a": "swim",
+    "b": "suzmoq"
+   },
+   {
+    "a": "eat",
+    "b": "yemoq"
+   },
+   {
+    "a": "sleep",
+    "b": "uxlamoq"
+   },
+   {
+    "a": "sing",
+    "b": "kuylamoq"
+   },
+   {
+    "a": "go",
+    "b": "bormoq"
+   },
+   {
+    "a": "see",
+    "b": "koʻrmoq"
+   },
+   {
+    "a": "speak",
+    "b": "gapirmoq"
+   }
+  ]
+ },
+ {
+  "id": "tarix-juft",
+  "name": "Tarix: sana va voqea",
+  "fan": "Tarix",
+  "sinf": "7",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "a": "1991-yil",
+    "b": "Oʻzbekiston mustaqilligi"
+   },
+   {
+    "a": "1992-yil",
+    "b": "Konstitutsiya qabul qilindi"
+   },
+   {
+    "a": "1336-yil",
+    "b": "Amir Temur tugʻildi"
+   },
+   {
+    "a": "1441-yil",
+    "b": "Alisher Navoiy tugʻildi"
+   },
+   {
+    "a": "1483-yil",
+    "b": "Bobur tugʻildi"
+   },
+   {
+    "a": "2023-yil",
+    "b": "Yangi tahrirdagi Konstitutsiya"
+   },
+   {
+    "a": "1492-yil",
+    "b": "Amerikaning kashf etilishi"
+   }
+  ]
+ },
+ {
+  "id": "tabiat-togri",
+  "name": "Tabiiy fan: toʻgʻri yoki notoʻgʻri",
+  "fan": "Tabiiy fan",
+  "sinf": "4",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Quyosh — yulduz.",
+    "t": 1
+   },
+   {
+    "q": "Kit — baliq.",
+    "t": 0
+   },
+   {
+    "q": "Toza suv dengiz sathida 100 °C da qaynaydi.",
+    "t": 1
+   },
+   {
+    "q": "Oy oʻzidan nur sochadi.",
+    "t": 0
+   },
+   {
+    "q": "Yer Quyosh atrofida aylanadi.",
+    "t": 1
+   },
+   {
+    "q": "Pingvin ucha oladi.",
+    "t": 0
+   },
+   {
+    "q": "Yashil oʻsimliklar yorugʻlikda kislorod chiqaradi.",
+    "t": 1
+   },
+   {
+    "q": "Oʻrgimchak — hasharot.",
+    "t": 0
+   },
+   {
+    "q": "Muz suvda choʻkib ketadi.",
+    "t": 0
+   },
+   {
+    "q": "Kamalakda 7 ta rang bor.",
+    "t": 1
+   },
+   {
+    "q": "Asalari bol beradi.",
+    "t": 1
+   },
+   {
+    "q": "Ilon — sutemizuvchi.",
+    "t": 0
+   }
+  ]
+ },
+ {
+  "id": "geo-togri",
+  "name": "Geografiya: toʻgʻri yoki notoʻgʻri",
+  "fan": "Geografiya",
+  "sinf": "6",
+  "author": "Bilim Kaliti",
+  "items": [
+   {
+    "q": "Toshkent — Oʻzbekiston poytaxti.",
+    "t": 1
+   },
+   {
+    "q": "Everest — dunyodagi eng baland choʻqqi.",
+    "t": 1
+   },
+   {
+    "q": "Afrika — eng katta materik.",
+    "t": 0
+   },
+   {
+    "q": "Tinch okeani — eng katta okean.",
+    "t": 1
+   },
+   {
+    "q": "Nil daryosi Amerikada joylashgan.",
+    "t": 0
+   },
+   {
+    "q": "Oʻzbekistondan okeanga toʻgʻridan-toʻgʻri chiqish yoʻli yoʻq.",
+    "t": 1
+   },
+   {
+    "q": "Sahroi Kabir choʻli Osiyoda joylashgan.",
+    "t": 0
+   },
+   {
+    "q": "Antarktida — eng sovuq materik.",
+    "t": 1
+   },
+   {
+    "q": "Amudaryo va Sirdaryo Orol dengiziga quyiladi.",
+    "t": 1
+   },
+   {
+    "q": "Kompas strelkasi janubni koʻrsatadi.",
+    "t": 0
+   }
+  ]
  }
 ]
