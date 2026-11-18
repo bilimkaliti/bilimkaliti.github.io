@@ -372,6 +372,7 @@ async def add_set(uid: int, name: str, items: list[dict], src: str) -> tuple[dic
         dropped = len(sets) > MAX_SETS
         sets = sets[-MAX_SETS:]
         await save_sets(uid, sets)
+    stat_inc("sets")
     return s, dropped
 
 
@@ -591,6 +592,7 @@ def ai_use(uid: int, kind: str = "gen") -> None:
     today = datetime.date.today().isoformat()
     day, used = AI_USES.get((uid, kind), (today, 0))
     AI_USES[(uid, kind)] = (today, (used if day == today else 0) + 1)
+    stat_inc("ai" if kind == "gen" else "chat")
 
 
 @dp.message(F.text == BTN_AI)
@@ -842,6 +844,277 @@ async def lib_flush_loop(app: web.Application) -> None:
     app["lib_task"] = asyncio.create_task(loop())
 
 
+# ===================== STATISTIKA (faqat admin koʻradi) =====================
+# Saqlanadi: kutubxona kanalidagi alohida JSON fayl, fayl manzili kutubxona roʻyxatida (LIB["stat"]).
+STAT_FILE = "bilim-kaliti-statistika.json"
+STAT: dict | None = None
+STAT_DIRTY = False
+STAT_LOCK = asyncio.Lock()
+ONLINE: dict[str, tuple[float, str]] = {}   # tashrif id -> (oxirgi vaqt, sahifa)
+STAT_KEEP_DAYS = 120
+
+
+def _today() -> str:
+    return (datetime.datetime.utcnow() + datetime.timedelta(hours=5)).date().isoformat()   # Toshkent vaqti
+
+
+def _stat_blank() -> dict:
+    return {"v": 1, "since": _today(), "users": {}, "days": {}, "games": {}, "tools": {}, "pages": {},
+            "today": {"d": _today(), "vis": [], "act": []}}
+
+
+async def stat_load() -> dict:
+    global STAT
+    if STAT is not None:
+        return STAT
+    async with STAT_LOCK:
+        if STAT is not None:
+            return STAT
+        data = _stat_blank()
+        if LIB_CHAT:
+            try:
+                ref = (await lib_load()).get("stat") or {}
+                if ref.get("file"):
+                    d = json.loads((await bot.download(ref["file"])).read().decode("utf-8"))
+                    if isinstance(d, dict) and isinstance(d.get("users"), dict):
+                        for k, v in _stat_blank().items():
+                            d.setdefault(k, v)
+                        data = d
+            except Exception as e:
+                log.warning("stat_load: %s", e)
+        STAT = data
+    return STAT
+
+
+def _day(s: dict) -> dict:
+    """Bugungi kun yozuvi; kun almashsa, kechagi noyob roʻyxatlar songa aylanadi."""
+    t = s["today"]
+    d = _today()
+    if t.get("d") != d:
+        old = s["days"].setdefault(t.get("d") or d, {})
+        old["v"], old["au"] = len(t.get("vis") or []), len(t.get("act") or [])
+        s["today"] = t = {"d": d, "vis": [], "act": []}
+        for k in sorted(s["days"])[:-STAT_KEEP_DAYS]:
+            s["days"].pop(k, None)
+    return s["days"].setdefault(d, {})
+
+
+def stat_inc(key: str, n: int = 1, sub: str | None = None, name: str | None = None) -> None:
+    """Hisoblagichni oshiradi (STAT yuklangan boʻlsa)."""
+    global STAT_DIRTY
+    s = STAT
+    if s is None:
+        return
+    day = _day(s)
+    day[key] = day.get(key, 0) + n
+    if sub and name:
+        bucket = s.setdefault(sub, {})
+        name = str(name)[:40]
+        if name in bucket or len(bucket) < 300:
+            bucket[name] = bucket.get(name, 0) + n
+    STAT_DIRTY = True
+
+
+def stat_user(uid: int, name: str = "", username: str = "", src: str = "bot") -> None:
+    global STAT_DIRTY
+    s = STAT
+    if s is None or not uid:
+        return
+    _day(s)
+    now = int(time.time())
+    u = s["users"].get(str(uid))
+    if u is None:
+        u = s["users"][str(uid)] = {"n": "", "u": "", "f": now, "l": now, "src": [], "a": 0}
+        stat_inc("new")
+    if name:
+        u["n"] = str(name)[:60]
+    if username:
+        u["u"] = str(username)[:40]
+    u["l"] = now
+    u["a"] = u.get("a", 0) + 1
+    if src not in u["src"]:
+        u["src"].append(src)
+    act = s["today"]["act"]
+    if uid not in act:
+        act.append(uid)
+    STAT_DIRTY = True
+
+
+async def stat_save() -> None:
+    global STAT_DIRTY
+    if STAT is None or not LIB_CHAT:
+        return
+    async with STAT_LOCK:
+        _day(STAT)
+        body = json.dumps(STAT, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        STAT_DIRTY = False
+        msg = await bot.send_document(LIB_CHAT, BufferedInputFile(body, filename=STAT_FILE),
+                                      caption="📊 Statistika (avtomatik). Oʻchirmang.", disable_notification=True)
+    async with LIB_LOCK:
+        lib = LIB if LIB is not None else None
+        if lib is None:
+            return
+        old = lib.get("stat") or {}
+        lib["stat"] = {"file": msg.document.file_id, "mid": msg.message_id, "t": int(time.time())}
+        await lib_save_index()
+    if old.get("mid"):
+        try:
+            await bot.delete_message(LIB_CHAT, old["mid"])
+        except Exception:
+            pass
+
+
+async def stat_loop(app: web.Application) -> None:
+    async def loop():
+        try:
+            await lib_load()
+            await stat_load()
+        except Exception as e:
+            log.warning("stat init: %s", e)
+        while True:
+            await asyncio.sleep(600)
+            if STAT_DIRTY:
+                try:
+                    await stat_save()
+                except Exception as e:
+                    log.warning("stat save: %s", e)
+    app["stat_task"] = asyncio.create_task(loop())
+
+
+async def stat_shutdown(app: web.Application) -> None:
+    """Server uxlashidan oldin (Render) soʻnggi maʼlumotlarni saqlab qoʻyadi."""
+    if STAT_DIRTY:
+        try:
+            await asyncio.wait_for(stat_save(), 20)
+        except Exception as e:
+            log.warning("stat shutdown: %s", e)
+
+
+@dp.update.outer_middleware()
+async def stat_mw(handler, event, data):
+    try:
+        u = data.get("event_from_user")
+        if u and not u.is_bot:
+            stat_user(u.id, u.full_name, u.username or "", "bot")
+            if event.message is not None:
+                stat_inc("bot")
+    except Exception as e:
+        log.warning("stat_mw: %s", e)
+    return await handler(event, data)
+
+
+_VID = re.compile(r"^[A-Za-z0-9_-]{6,32}$")
+
+
+async def api_hit(request: web.Request) -> web.Response:
+    """Sayt va oʻyinlardan anonim tashrif belgisi (shaxsiy maʼlumotsiz)."""
+    data = await read_json(request)
+    await stat_load()
+    vid, kind = str(data.get("v", "")), str(data.get("k", "view"))
+    if not _VID.match(vid):
+        return web.json_response({"ok": False})
+    page = re.sub(r"[^\w/\-]", "", str(data.get("p", "")))[:40] or "home"
+    now = time.time()
+    ONLINE[vid] = (now, page)
+    if len(ONLINE) > 3000:
+        for k, (t, _) in list(ONLINE.items()):
+            if now - t > 300:
+                ONLINE.pop(k, None)
+    if kind == "beat":
+        return web.json_response({"ok": True})
+    day = _day(STAT)
+    vis = STAT["today"]["vis"]
+    if vid not in vis and len(vis) < 20000:
+        vis.append(vid)
+        dev = "m" if data.get("m") else "d"
+        stat_inc("dev_" + dev)
+    if kind == "game":
+        stat_inc("g", sub="games", name=re.sub(r"[^\w\-]", "", str(data.get("g", "")))[:30] or "?")
+    elif kind == "view":
+        stat_inc("pv", sub="pages", name=page.split("/")[0] or "home")
+    u = read_token(str(data.get("token", ""))) if data.get("token") else None
+    if u:
+        stat_user(u["u"], u.get("n", ""), "", "site")
+    return web.json_response({"ok": True})
+
+
+def _series(s: dict, n: int = 30) -> list[dict]:
+    base = datetime.date.fromisoformat(_today())
+    out = []
+    for i in range(n - 1, -1, -1):
+        d = (base - datetime.timedelta(days=i)).isoformat()
+        row = dict(s["days"].get(d, {}))
+        if d == s["today"]["d"]:
+            row["v"], row["au"] = len(s["today"]["vis"]), len(s["today"]["act"])
+        out.append({"d": d, **{k: row.get(k, 0) for k in ("v", "au", "pv", "g", "new", "ai", "chat", "bot", "lib", "pub", "sets")}})
+    return out
+
+
+async def stat_report() -> dict:
+    s = await stat_load()
+    _day(s)
+    now = time.time()
+    ser = _series(s, 30)
+    users = s["users"]
+    week = now - 7 * 86400
+    month = now - 30 * 86400
+    online = sum(1 for t, _ in ONLINE.values() if now - t < 150)
+    pages_now: dict[str, int] = {}
+    for t, p in ONLINE.values():
+        if now - t < 150:
+            pages_now[p.split("/")[0] or "home"] = pages_now.get(p.split("/")[0] or "home", 0) + 1
+    tot = lambda k: sum(r.get(k, 0) for r in s["days"].values())
+    lib = await lib_load()
+    ul = sorted(({"id": int(k), **v} for k, v in users.items()), key=lambda x: -x.get("l", 0))
+    return {
+        "since": s.get("since"), "now": int(now), "online": online, "pagesNow": pages_now,
+        "users": {"total": len(users), "today": len(s["today"]["act"]),
+                  "week": sum(1 for u in users.values() if u.get("l", 0) >= week),
+                  "month": sum(1 for u in users.values() if u.get("l", 0) >= month),
+                  "site": sum(1 for u in users.values() if "site" in u.get("src", [])),
+                  "bot": sum(1 for u in users.values() if "bot" in u.get("src", []))},
+        "visitors": {"today": len(s["today"]["vis"]), "week": sum(r["v"] for r in ser[-7:]), "month": sum(r["v"] for r in ser)},
+        "totals": {"games": tot("g"), "ai": tot("ai"), "chat": tot("chat"), "pv": tot("pv"), "bot": tot("bot"),
+                   "lib": tot("lib"), "pub": tot("pub"), "sets": tot("sets"), "pdf": tot("pdf"),
+                   "mob": tot("dev_m"), "desk": tot("dev_d")},
+        "library": {"sets": len(lib.get("sets", [])), "plays": sum(int(m.get("plays") or 0) for m in lib.get("sets", []))},
+        "series": ser,
+        "games": sorted(s.get("games", {}).items(), key=lambda x: -x[1])[:20],
+        "tools": sorted(s.get("tools", {}).items(), key=lambda x: -x[1])[:20],
+        "pages": sorted(s.get("pages", {}).items(), key=lambda x: -x[1])[:15],
+        "list": ul[:500],
+    }
+
+
+async def api_admin_stats(request: web.Request) -> web.Response:
+    u = site_user(await read_json(request))
+    if not u or not ADMIN_ID or u["u"] != ADMIN_ID:
+        return jerr("Bu sahifa faqat admin uchun.", 403)
+    return web.json_response({"ok": True, "stat": await stat_report()})
+
+
+@dp.message(Command("stat"))
+async def cmd_stat(message: Message) -> None:
+    if not ADMIN_ID or message.from_user.id != ADMIN_ID:
+        return
+    r = await stat_report()
+    U, V, T = r["users"], r["visitors"], r["totals"]
+    top = "\n".join(f"   {i}. {g} — {n}" for i, (g, n) in enumerate(r["games"][:5], 1)) or "   hali yoʻq"
+    last = "\n".join(f"   • {x.get('n') or '—'}{' @' + x['u'] if x.get('u') else ''}" for x in r["list"][:5]) or "   —"
+    text = (f"📊 Bilim Kaliti statistikasi ({r['since']} dan beri)\n\n"
+            f"🟢 Hozir saytda: {r['online']}\n\n"
+            f"👤 Foydalanuvchilar (bot/sayt orqali kirgan): {U['total']}\n"
+            f"   bugun faol: {U['today']} · 7 kun: {U['week']} · 30 kun: {U['month']}\n"
+            f"   botda: {U['bot']} · saytga kirgan: {U['site']}\n\n"
+            f"🌐 Sayt tashrifchilari: bugun {V['today']} · 7 kun {V['week']} · 30 kun {V['month']}\n"
+            f"🎮 Oʻyinlar boshlangan: {T['games']}\n"
+            f"✨ AI soʻrovlar: {T['ai']} · chat: {T['chat']}\n"
+            f"📚 Kutubxona: {r['library']['sets']} toʻplam, {r['library']['plays']} marta oʻynalgan\n\n"
+            f"🏆 Eng koʻp oʻynalgan:\n{top}\n\n🕒 Oxirgi faollar:\n{last}")
+    await message.answer(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text="📊 Batafsil (saytda)", url=SITE_URL + "#/admin")]]))
+
+
 def lib_meta(m: dict) -> dict:
     return {k: m.get(k) for k in ("id", "name", "fan", "sinf", "mavzu", "author", "n", "mc", "t", "plays")}
 
@@ -898,6 +1171,7 @@ async def api_lib_play(request: web.Request) -> web.Response:
     if m:
         m["plays"] = int(m.get("plays") or 0) + 1
         LIB_DIRTY = True
+        stat_inc("lib")
     return web.json_response({"ok": True})
 
 
@@ -938,6 +1212,7 @@ async def api_lib_publish(request: web.Request) -> web.Response:
                                "plays": 0, "fid": doc.document.file_id, "mid": doc.message_id})
         LIB_ITEMS[lid] = items
         await lib_save_index()
+    stat_inc("pub")
     return web.json_response({"ok": True, "id": lid})
 
 
@@ -1071,7 +1346,10 @@ async def read_json(request: web.Request) -> dict:
 
 
 def site_user(data: dict) -> dict | None:
-    return read_token(str(data.get("token", "")))
+    u = read_token(str(data.get("token", "")))
+    if u:
+        stat_user(u["u"], u.get("n", ""), "", "site")
+    return u
 
 
 def jerr(msg: str, status: int = 400, **kw) -> web.Response:
@@ -1109,7 +1387,8 @@ async def api_me(request: web.Request) -> web.Response:
     u = site_user(await read_json(request))
     if not u:
         return jerr("auth", 401)
-    return web.json_response({"ok": True, "name": u["n"], "gen": ai_left(u["u"]), "chat": ai_left(u["u"], "chat")})
+    return web.json_response({"ok": True, "name": u["n"], "gen": ai_left(u["u"]), "chat": ai_left(u["u"], "chat"),
+                              "admin": bool(ADMIN_ID and u["u"] == ADMIN_ID)})
 
 
 async def gemini_call(contents: list, system: str | None = None, json_out: bool = True,
@@ -1217,6 +1496,7 @@ async def api_ai(request: web.Request) -> web.Response:
         return jerr("Mavzuni yozing.")
     sinf, fan = clip(p.get("sinf"), 30), clip(p.get("fan"), 60) or "Matematika"
     ai_use(uid)
+    stat_inc("ai_t", sub="tools", name=tool)
     try:
         if tool == "savollar" and fan.lower() not in MATH_FANS:
             f = data.get("file")
@@ -1265,6 +1545,95 @@ async def api_ai(request: web.Request) -> web.Response:
     except Exception as e:
         log.warning("api_ai parse %s: %s", tool, e)
         return jerr("AI javobini oʻqib boʻlmadi. Yana bir bor urinib koʻring.", 502)
+
+
+DARSLIK_PROMPT = """Sen tajribali {fan} oʻqituvchisisan. Ilova qilingan darslik sahifalari / PDF asosida sinfda guruh oʻyini uchun savollar tuz.
+Sinf: {sinf}. {mavzu_line}{pages_line}
+Qoidalar:
+- FAQAT manbadagi maʼlumotga tayan: matn, qoidalar, misollar, jadval va rasmlardan foydalan; manbada yoʻq faktni qoʻshma;
+- avval manba nima haqida ekanini aniqla (mavzu nomi);
+- savollar QISQA (1–2 gap), oʻquvchi 10–30 soniyada javob beradi; diqqat, tushunish va mantiqni tekshirsin, qiyinligi asta-sekin oshsin;
+- savollar takrorlanmasin, manbaning turli qismlarini qamrasin;
+- qiyinlik: {qiyin};
+- til: {lang}.
+{fmt}
+Faqat JSON qaytar."""
+
+DARSLIK_MC = """{n} ta TEST savoli: har birida 4 ta qisqa variant (1–5 soʻz), faqat bittasi toʻgʻri, xatolari ishonarli. BIRINCHI variant har doim toʻgʻri javob.
+JSON: {{"name": "toʻplam uchun qisqa nom", "mavzu": "aniqlangan mavzu", "izoh": "manba haqida bitta gap", "items": [{{"q": "savol", "o": ["toʻgʻri", "xato", "xato", "xato"]}}]}}"""
+
+DARSLIK_NUM = """{n} ta SON-JAVOBLI savol: javob har doim BUTUN SON 0–999 (kasr, manfiy, birlik yoʻq). Manbadagi misol va masalalarga oʻxshash, lekin sonlari boshqa boʻlsin.
+Har bir savolga "expr" — javobni hisoblaydigan arifmetik ifoda yoz (faqat raqamlar, + - * / // % ** va qavslar).
+JSON: {{"name": "toʻplam uchun qisqa nom", "mavzu": "aniqlangan mavzu", "izoh": "manba haqida bitta gap", "items": [{{"q": "savol", "a": 18, "expr": "(36/4)*2"}}]}}"""
+
+DARSLIK_MAX_FILES = 6
+
+
+async def api_darslik(request: web.Request) -> web.Response:
+    """Darslik sahifasi rasmi yoki PDF -> AI savollar (saqlanmaydi: oʻqituvchi tahrirlab saqlaydi)."""
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    if not GEMINI_KEY:
+        return jerr("AI hali ulanmagan (GEMINI_API_KEY yoʻq).", 503)
+    uid, p = u["u"], data.get("p") or {}
+    files = [f for f in (data.get("files") or []) if isinstance(f, dict) and f.get("data")][:DARSLIK_MAX_FILES]
+    parts = []
+    for f in files:
+        mime = str(f.get("mime", ""))
+        if mime == "application/pdf" or mime.startswith("image/"):
+            parts.append({"inline_data": {"mime_type": mime, "data": str(f["data"])}})
+    if not parts:
+        return jerr("Darslik sahifasining rasmini yoki PDF faylni yuklang.")
+    if ai_left(uid) <= 0:
+        return jerr("Bugungi AI limit tugadi. Ertaga yana urinib koʻring.", 429, limit=True)
+    fan = clip(p.get("fan"), 60) or "Matematika"
+    sinf = clip(p.get("sinf"), 10)
+    tur = str(p.get("tur") or "auto")
+    if tur not in ("mc", "num"):
+        tur = "num" if fan.lower() in MATH_FANS else "mc"
+    try:
+        n = max(6, min(30, int(p.get("n") or 12)))
+    except (TypeError, ValueError):
+        n = 12
+    mavzu, pages, extra = clip(p.get("mavzu"), 200), clip(p.get("betlar"), 40), clip(p.get("extra"), 500)
+    text = DARSLIK_PROMPT.format(
+        fan=fan, sinf=sinf or "koʻrsatilmagan", qiyin={"1": "oson", "3": "qiyin"}.get(str(p.get("qiyin")), "oʻrta"),
+        mavzu_line=f"Oʻqituvchi koʻrsatgan mavzu: «{mavzu}». " if mavzu else "",
+        pages_line=f"PDFdan faqat shu betlardan foydalan: {pages}. " if pages else "",
+        lang=LANGS.get(str(p.get("til")), LANGS["uz"]),
+        fmt=(DARSLIK_MC if tur == "mc" else DARSLIK_NUM).format(n=n))
+    if extra:
+        text += f"\nOʻqituvchining qoʻshimcha istagi: {extra}"
+    parts.append({"text": text})
+    ai_use(uid)
+    stat_inc("pdf", sub="tools", name="darslik")
+    try:
+        obj = parse_json_text(await gemini_call([{"role": "user", "parts": parts}], temperature=0.6))
+    except RuntimeError as e:
+        log.warning("darslik: %s", e)
+        if str(e) == "limit":
+            return jerr("AI hozir band (bepul limit). Bir daqiqadan keyin urinib koʻring.", 429)
+        if "http 400" in str(e):
+            return jerr("AI faylni oʻqiy olmadi. Rasm aniqroq boʻlsin yoki PDF hajmini kamaytiring.", 400)
+        return jerr("AI javob bermadi. Birozdan keyin yana urinib koʻring.", 502)
+    except Exception as e:
+        log.warning("darslik parse: %s", e)
+        return jerr("AI javobini oʻqib boʻlmadi. Yana bir bor urinib koʻring.", 502)
+    if isinstance(obj, list):
+        obj = {"items": obj}
+    raw = obj.get("items") if isinstance(obj, dict) else None
+    if tur == "num":
+        items = check_items(raw)
+    else:
+        items = [it for it in norm_items([{**it, "c": 0} for it in raw if isinstance(it, dict)] if isinstance(raw, list) else [])
+                 if len(it.get("o", [])) == 4]
+    if len(items) < 3:
+        return jerr("Manbadan yetarlicha savol tuzib boʻlmadi. Sahifa aniqroq tushgan rasmni yuklang yoki boshqa savol turini tanlang.")
+    return web.json_response({"ok": True, "left": ai_left(uid), "tur": tur,
+                              "name": clip(obj.get("name"), 60) or clip(obj.get("mavzu"), 60) or "Darslikdan savollar",
+                              "mavzu": clip(obj.get("mavzu"), 120), "izoh": clip(obj.get("izoh"), 300), "items": items[:n]})
 
 
 CHAT_SYSTEM = ("Sen «Bilim Kaliti» saytidagi oʻqituvchilar yordamchisisan. Oʻqituvchiga dars rejalash, mavzuni "
@@ -1439,7 +1808,7 @@ async def no_cache(request: web.Request, handler):
 
 
 def build_app() -> web.Application:
-    app = web.Application(middlewares=[cors, no_cache], client_max_size=12 * 1024 * 1024)
+    app = web.Application(middlewares=[cors, no_cache], client_max_size=20 * 1024 * 1024)
     app.router.add_get("/", index)
     app.router.add_post("/api/key", api_key)
     app.router.add_post("/api/sets", api_sets)
@@ -1447,13 +1816,16 @@ def build_app() -> web.Application:
                      ("/api/me", api_me), ("/api/ai", api_ai), ("/api/chat", api_chat), ("/api/send", api_send),
                      ("/api/lib/list", api_lib_list), ("/api/lib/get", api_lib_get), ("/api/lib/play", api_lib_play),
                      ("/api/lib/publish", api_lib_publish), ("/api/lib/delete", api_lib_delete),
-                     ("/api/sets/save", api_sets_save), ("/api/sets/delete", api_sets_delete)):
+                     ("/api/sets/save", api_sets_save), ("/api/sets/delete", api_sets_delete),
+                     ("/api/hit", api_hit), ("/api/admin/stats", api_admin_stats), ("/api/darslik", api_darslik)):
         app.router.add_post(path, fn)
     app.router.add_static("/games/", GAMES_DIR)
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
     setup_application(app, dp, bot=bot)
     app.on_startup.append(on_startup)
     app.on_startup.append(lib_flush_loop)
+    app.on_startup.append(stat_loop)
+    app.on_shutdown.insert(0, stat_shutdown)
     return app
 
 
