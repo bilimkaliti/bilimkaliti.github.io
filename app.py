@@ -1547,7 +1547,7 @@ async def api_ai(request: web.Request) -> web.Response:
         return jerr("AI javobini oʻqib boʻlmadi. Yana bir bor urinib koʻring.", 502)
 
 
-DARSLIK_PROMPT = """Sen tajribali {fan} oʻqituvchisisan. Ilova qilingan darslik sahifalari / PDF asosida sinfda guruh oʻyini uchun savollar tuz.
+DARSLIK_PROMPT = """Sen tajribali {fan} oʻqituvchisisan. Ilova qilingan darslik sahifalari / PDF / Word matni asosida sinfda guruh oʻyini uchun savollar tuz.
 Sinf: {sinf}. {mavzu_line}{pages_line}
 Qoidalar:
 - FAQAT manbadagi maʼlumotga tayan: matn, qoidalar, misollar, jadval va rasmlardan foydalan; manbada yoʻq faktni qoʻshma;
@@ -1584,8 +1584,11 @@ async def api_darslik(request: web.Request) -> web.Response:
         mime = str(f.get("mime", ""))
         if mime == "application/pdf" or mime.startswith("image/"):
             parts.append({"inline_data": {"mime_type": mime, "data": str(f["data"])}})
+    matn = str(p.get("matn") or "").strip()[:60000]
+    if matn:
+        parts.append({"text": "Manba — Word hujjatidagi matn (rasmlar alohida ilova qilingan boʻlishi mumkin):\n<<<\n" + matn + "\n>>>"})
     if not parts:
-        return jerr("Darslik sahifasining rasmini yoki PDF faylni yuklang.")
+        return jerr("Darslik sahifasining rasmini, PDF yoki Word faylni yuklang.")
     if ai_left(uid) <= 0:
         return jerr("Bugungi AI limit tugadi. Ertaga yana urinib koʻring.", 429, limit=True)
     fan = clip(p.get("fan"), 60) or "Matematika"

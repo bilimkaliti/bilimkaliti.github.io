@@ -557,7 +557,7 @@ html.vt-theme::view-transition-old(root){z-index:1}html.vt-theme::view-transitio
 .dl-th{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;background:var(--bg2);border:1.5px solid var(--line);box-shadow:var(--shadow);animation:rise .45s var(--ease) both}
 .dl-th img{width:100%;height:100%;object-fit:cover;display:block}
 .dl-th .pdf{height:100%;display:grid;place-items:center;align-content:center;gap:6px;text-align:center;padding:10px;font-weight:800;font-size:13px;color:var(--ink2);word-break:break-word}
-.dl-th .pdf b{font-size:40px}
+.dl-th .pdf b{font-size:40px}.dl-th .pdf small{display:block;color:var(--muted);font-size:12px}
 .dl-th .no{position:absolute;left:8px;top:8px;background:rgba(22,33,62,.78);color:#fff;font-weight:900;font-size:12px;border-radius:99px;padding:2px 8px}
 .dl-th .x{position:absolute;right:6px;top:6px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(22,33,62,.78);color:#fff;font-weight:900;cursor:pointer;opacity:.85}
 .dl-th .x:hover{opacity:1;background:#e5484d}
@@ -862,7 +862,7 @@ const PAGES={
     </div>
     ${heroBoardHtml()}
    </div>
-   <a class="feat-new" href="#/ai/darslik"><span class="nw">YANGI</span><span class="fi">📸</span><span><b>Darslikdan oʻyin</b><small>Darslik sahifasini suratga oling yoki PDF yuklang — AI savollar tuzadi, bir daqiqada sinf bilan oʻynaysiz.</small></span><span class="go">Sinab koʻrish →</span></a>
+   <a class="feat-new" href="#/ai/darslik"><span class="nw">YANGI</span><span class="fi">📸</span><span><b>Darslikdan oʻyin</b><small>Darslik sahifasi rasmi, PDF yoki Word hujjat — AI savollar tuzadi, bir daqiqada sinf bilan oʻynaysiz.</small></span><span class="go">Sinab koʻrish →</span></a>
   </div>
   <section><div class="wrap">
    <div class="sh"><div><h2>Sinfingizni tanlang</h2><p class="sub">Mavzularni belgilang — oʻyin shu mavzulardan savol beradi.</p></div></div>
@@ -986,7 +986,7 @@ const AUTH={get tok(){return store.get('token',null)},get name(){return store.ge
   set(t,n){store.set('token',t);store.set('uname',n)},out(){store.set('token',null);store.set('uname','');store.set('admin',false);drawAuth();try{adminNav()}catch(e){}}};
 const FANLAR=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
 const AI_TOOLS=[
- {id:'darslik',e:'📸',n:'Darslikdan oʻyin',d:'Darslik sahifasi rasmi yoki PDF → AI savollar → darhol guruh oʻyini.',c:'#12a38f'},
+ {id:'darslik',e:'📸',n:'Darslikdan oʻyin',d:'Darslik rasmi, PDF yoki Word → AI savollar → darhol guruh oʻyini.',c:'#12a38f'},
  {id:'savollar',e:'🎮',n:'Oʻyin uchun savollar',d:'Istalgan fandan qisqa savollar — darhol guruh oʻyinlarida oʻynaladi va kutubxonaga ulashiladi.',c:'#f5b301',f:['mavzu','fan','sinf','til','extra','file'],ph:'Masalan: kasrlarni qoʻshish / soʻz turkumlari / hayvonlar (ingliz tili)'},
  {id:'test',e:'📝',n:'Testlar',d:'Javob variantli test, javoblar kaliti va doskada test-shou.',c:'#7b5cff',f:['mavzu','fan','sinf','n','qiyinlik','til','extra','file'],nl:'Savollar soni'},
  {id:'taqdimot',e:'🖥️',n:'Taqdimot',d:'Slaydlar: doskada namoyish va PowerPoint (.pptx) yuklab olish.',c:'#2f8cff',f:['mavzu','fan','sinf','n','til','extra','file'],nl:'Slaydlar soni'},
@@ -1786,22 +1786,22 @@ function darslikPage(){
   return `<section><div class="wrap fade narrow">
    <div class="crumbs"><a href="#/ai">AI yordamchi</a><span>›</span><span>Darslikdan oʻyin</span></div>
    <div class="formcard">
-    <div class="fhead"><span class="ic" style="background:color-mix(in srgb,#12a38f 16%,transparent)">📸</span><div><h2>Darslikdan oʻyin</h2><p class="sub">Darslik sahifasini suratga oling yoki PDF yuklang — AI aynan shu sahifa boʻyicha savollar tuzadi. Tekshirib, bir bosishda sinf bilan oʻynaysiz.</p></div></div>
+    <div class="fhead"><span class="ic" style="background:color-mix(in srgb,#12a38f 16%,transparent)">📸</span><div><h2>Darslikdan oʻyin</h2><p class="sub">Darslik sahifasini suratga oling, PDF yoki Word hujjat yuklang — AI aynan shu manba boʻyicha savollar tuzadi. Tekshirib, bir bosishda sinf bilan oʻynaysiz.</p></div></div>
     <div class="dl-steps" id="dlSteps"><span data-s="1" class="on"><b>1</b>Manba</span><i></i><span data-s="2"><b>2</b>Sozlash</span><i></i><span data-s="3"><b>3</b>Tekshirish va oʻyin</span></div>
     <div id="dlBody"></div>
    </div>
   </div></section>`}
 function dlStep(n){document.querySelectorAll('#dlSteps span').forEach(s=>{const k=+s.dataset.s;s.classList.toggle('on',k===n);s.classList.toggle('ok',k<n)})}
 function dlSrcHtml(){
-  const f=DL.files,hasPdf=f.some(x=>x.pdf);
-  const thumbs=f.map((x,i)=>`<div class="dl-th">${x.pdf?`<div class="pdf"><b>📄</b>${esc(x.name)}</div>`:`<img src="${x.url}" alt="${i+1}-sahifa">`}<span class="no">${x.pdf?'PDF':(i+1)+'-bet'}</span><button class="x" data-rm="${i}" aria-label="Olib tashlash">✕</button><span class="sz">${fmtSize(x.size)}</span></div>`).join('');
+  const f=DL.files,hasPdf=f.some(x=>x.pdf),single=f.some(x=>x.pdf||x.docx),pdf=f.find(x=>x.pdf);
+  const thumbs=f.map((x,i)=>`<div class="dl-th">${x.pdf?`<div class="pdf"><b>📄</b>${esc(x.name)}${x.pages?`<small>${x.pages} bet</small>`:''}</div>`:x.docx?`<div class="pdf"><b>📝</b>${esc(x.name)}<small>${nf(x.words)} soʻz${x.imgs.length?` · ${x.imgs.length} rasm`:''}</small></div>`:`<img src="${x.url}" alt="${i+1}-sahifa">`}<span class="no">${x.pdf?'PDF':x.docx?'Word':(i+1)+'-bet'}</span><button class="x" data-rm="${i}" aria-label="Olib tashlash">✕</button><span class="sz">${fmtSize(x.size)}</span></div>`).join('');
   const o=DL.opt,seg=(k,arr)=>`<div class="dl-seg" data-k="${k}">${arr.map(([v,l,s])=>`<button type="button" data-v="${v}" class="${String(o[k])===String(v)?'on':''}">${l}${s?`<small>${s}</small>`:''}</button>`).join('')}</div>`;
-  return `<input type="file" id="dlFile" accept="image/*,application/pdf" multiple hidden><input type="file" id="dlCam" accept="image/*" capture="environment" hidden>
-   ${f.length?`<div class="dl-thumbs">${thumbs}${!hasPdf&&f.length<6?`<button class="dl-add" id="dlMore" type="button"><b>＋</b>Yana sahifa</button>`:''}</div>`
+  return `<input type="file" id="dlFile" accept="image/*,application/pdf,.pdf,.docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple hidden><input type="file" id="dlCam" accept="image/*" capture="environment" hidden>
+   ${f.length?`<div class="dl-thumbs">${thumbs}${!single&&f.length<6?`<button class="dl-add" id="dlMore" type="button"><b>＋</b>Yana sahifa</button>`:''}</div>`
    :`<div class="dl-drop" id="dlDrop" tabindex="0" role="button" aria-label="Fayl tanlash">
-      <div class="dl-ic">📖</div><h3>Darslik sahifasini shu yerga tashlang</h3><p>yoki tanlang — rasm (6 tagacha sahifa) yoki bitta PDF</p>
+      <div class="dl-ic">📖</div><h3>Darslik sahifasini shu yerga tashlang</h3><p>yoki tanlang — rasm (6 tagacha sahifa), PDF yoki Word hujjat</p>
       <div class="dl-btns"><button class="btn gold" type="button" id="dlPick">📁 Fayl tanlash</button><button class="btn ghost" type="button" id="dlShot">📷 Suratga olish</button></div>
-      <div class="dl-hint"><span>🖼 JPG, PNG</span><span>📄 PDF · 15 MB gacha</span><span>⌨️ Ctrl+V — nusxadan qoʻyish</span></div></div>`}
+      <div class="dl-hint"><span>🖼 JPG, PNG</span><span>📄 PDF · 300 MB gacha</span><span>📝 Word (.docx)</span><span>⌨️ Ctrl+V — nusxadan qoʻyish</span></div></div>`}
    ${f.length?`<div class="fgrid" style="margin-top:20px">
      <label class="f"><span>Fan</span><select id="dlFan">${FANLAR.map(x=>`<option ${x===o.fan?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
      <label class="f"><span>Sinf</span><select id="dlSinf">${[...Array(11)].map((_,i)=>`<option value="${i+1}" ${+o.sinf===i+1?'selected':''}>${i+1}-sinf</option>`).join('')}</select></label>
@@ -1809,7 +1809,7 @@ function dlSrcHtml(){
      <div class="f"><span>Savollar soni</span>${seg('n',[[8,'8'],[12,'12'],[16,'16'],[20,'20']])}</div>
      <div class="f"><span>Qiyinlik</span>${seg('qiyin',[[1,'Oson'],[2,'Oʻrta'],[3,'Qiyin']])}</div>
      <label class="f wide"><span>Mavzu <em>(ixtiyoriy — AI oʻzi aniqlaydi)</em></span><input id="dlMav" maxlength="200" placeholder="Masalan: Oddiy kasrlarni taqqoslash" value="${esc(o.mavzu||'')}"></label>
-     ${hasPdf?`<label class="f"><span>PDF betlari <em>(ixtiyoriy)</em></span><input id="dlPages" maxlength="40" placeholder="Masalan: 24–26" value="${esc(o.betlar||'')}"></label>`:''}
+     ${hasPdf?`<label class="f"><span>PDF betlari ${pdf.must?'<em style="color:var(--coral)">(majburiy — fayl katta)</em>':'<em>(ixtiyoriy)</em>'}</span><input id="dlPages" maxlength="60" placeholder="Masalan: 24-26 yoki 12, 15-17" value="${esc(o.betlar||'')}"${pdf.must?' required':''}><small class="small">${pdf.pages?`Jami ${pdf.pages} bet. `:''}Faqat shu betlar AIʼga yuboriladi (${PDF_MAXP} tagacha).</small></label>`:''}
      <label class="f ${hasPdf?'':'wide'}"><span>Til</span><select id="dlTil"><option value="uz">Oʻzbekcha</option><option value="ru" ${o.til==='ru'?'selected':''}>Русский</option><option value="en" ${o.til==='en'?'selected':''}>English</option></select></label>
      <label class="f wide"><span>Qoʻshimcha istak <em>(ixtiyoriy)</em></span><input id="dlExtra" maxlength="500" placeholder="Masalan: faqat qoidalar boʻyicha, misollar koʻproq boʻlsin" value="${esc(o.extra||'')}"></label>
      <div class="wide factions"><button class="btn gold big" id="dlGo" type="button">✨ Savollarni yaratish</button><span class="small" id="dlMsg">AI sahifani oʻqib chiqadi — 20–60 soniya.</span></div></div>`:''}`}
@@ -1825,19 +1825,75 @@ async function dlImage(file){
     const d=c.toDataURL('image/jpeg',.84);URL.revokeObjectURL(url);
     return {name:file.name||'rasm.jpg',mime:'image/jpeg',data:d.split(',')[1],url:d,size:Math.round(d.length*.75)}
   }catch(e){URL.revokeObjectURL(url);throw new Error('Rasmni oʻqib boʻlmadi: '+(file.name||''))}}
+const PDF_MAX=300*1048576,PDF_SEND=14*1048576,PDF_MAXP=40;
+function loadLib(src,glob){return window[glob]?Promise.resolve(window[glob]):new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=()=>window[glob]?res(window[glob]):rej(new Error('lib'));s.onerror=()=>rej(new Error('Kutubxonani yuklab boʻlmadi. Internetni tekshiring.'));document.head.appendChild(s)})}
+const pdfLib=()=>loadLib('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js','PDFLib');
+const zipLib=()=>loadLib('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js','JSZip');
+const abToB64=ab=>{const u=new Uint8Array(ab);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
+function parsePages(str,max){const out=[];for(const part of String(str||'').replace(/[–—]/g,'-').split(/[,;\s]+/).filter(Boolean)){
+    const m=part.match(/^(\d+)(?:-(\d+))?$/);if(!m)throw new Error('Betlarni shunday yozing: 24-26 yoki 12, 15-17');
+    let a=+m[1],b=m[2]?+m[2]:a;if(a>b)[a,b]=[b,a];if(a<1||b>max)throw new Error(`Betlar 1 dan ${max} gacha boʻlishi kerak`);
+    for(let k=a;k<=b;k++)if(!out.includes(k))out.push(k)}
+  if(out.length>PDF_MAXP)throw new Error(`Bir martada eng koʻpi ${PDF_MAXP} bet tanlang`);return out}
+async function dlPdf(f){
+  if(f.size>PDF_MAX)throw new Error('PDF 300 MB dan katta. Kerakli boʻlimni alohida saqlang.');
+  const ab=await f.arrayBuffer();let pages=0;
+  try{const L=await pdfLib();const d=await L.PDFDocument.load(ab,{ignoreEncryption:true,updateMetadata:false});pages=d.getPageCount()}
+  catch(e){if(f.size>PDF_SEND)throw new Error('Bu PDFni ochib boʻlmadi (himoyalangan boʻlishi mumkin). Kerakli betlarni alohida PDF yoki rasm qilib saqlang.')}
+  return {name:f.name,mime:'application/pdf',ab,size:f.size,pages,pdf:true,must:f.size>PDF_SEND}}
+function xmlText(xml){
+  const doc=new DOMParser().parseFromString(xml,'application/xml'),W='http://schemas.openxmlformats.org/wordprocessingml/2006/main',Mm='http://schemas.openxmlformats.org/officeDocument/2006/math';
+  const lines=[];
+  for(const p of doc.getElementsByTagNameNS(W,'p')){let t='';
+    const walk=n=>{for(const c of n.childNodes){if(c.nodeType!==1)continue;
+      if((c.namespaceURI===W&&c.localName==='t')||(c.namespaceURI===Mm&&c.localName==='t'))t+=c.textContent;
+      else if(c.namespaceURI===W&&c.localName==='tab')t+='\t';else if(c.namespaceURI===W&&(c.localName==='br'||c.localName==='cr'))t+='\n';
+      else if(c.namespaceURI===W&&c.localName==='p')continue;else walk(c)}};
+    walk(p);if(t.trim())lines.push(t.trim())}
+  return lines.join('\n')}
+async function dlDocx(f){
+  if(f.size>60*1048576)throw new Error('Word fayl 60 MB dan katta.');
+  const Z=await zipLib();let z;try{z=await Z.loadAsync(await f.arrayBuffer())}catch(e){throw new Error('Word faylni ochib boʻlmadi. Uni .docx yoki PDF qilib qayta saqlang.')}
+  const main=z.file('word/document.xml');if(!main)throw new Error('Bu .docx fayl emas.');
+  let text=xmlText(await main.async('string'));
+  for(const n of Object.keys(z.files).filter(n=>/^word\/(footnotes|endnotes)\.xml$/.test(n)))text+='\n'+xmlText(await z.file(n).async('string'));
+  const imgs=[];
+  for(const n of Object.keys(z.files).filter(n=>/^word\/media\/.+\.(png|jpe?g|gif|bmp|webp)$/i.test(n)).slice(0,12)){
+    if(imgs.length>=4)break;const blob=await z.file(n).async('blob');if(blob.size<12000)continue;
+    try{imgs.push(await dlImage(new File([blob],n.split('/').pop(),{type:/png$/i.test(n)?'image/png':'image/jpeg'})))}catch(e){}}
+  text=text.replace(/\n{3,}/g,'\n\n').trim();
+  if(text.length<40&&!imgs.length)throw new Error('Word hujjatda matn topilmadi. Agar u skanerlangan boʻlsa, PDF yoki rasm qilib yuklang.');
+  return {name:f.name,size:f.size,docx:true,text:text.slice(0,60000),cut:text.length>60000,words:text.split(/\s+/).filter(Boolean).length,imgs}}
 async function dlAdd(list){
   dlReadOpts();
   for(const f of [...list]){
-    if(f.type==='application/pdf'){
-      if(f.size>15*1048576){toast('PDF 15 MB dan katta. Kerakli betlarni alohida saqlang.');continue}
-      DL.files=[{name:f.name,mime:'application/pdf',data:await fileToB64(f),size:f.size,pdf:true}];
-      toast('PDF qoʻshildi');break}
-    if(!/^image\//.test(f.type)){toast('Faqat rasm yoki PDF');continue}
-    if(DL.files.some(x=>x.pdf))DL.files=[];
-    if(DL.files.length>=6){toast('Eng koʻpi 6 ta sahifa');break}
-    try{DL.files.push(await dlImage(f))}catch(e){toast(e.message)}
+    const nm=(f.name||'').toLowerCase();
+    try{
+      if(f.type==='application/pdf'||nm.endsWith('.pdf')){toast('⏳ PDF ochilmoqda…');DL.files=[await dlPdf(f)];DL.opt.betlar='';toast(DL.files[0].must?'PDF katta — kerakli betlarni yozing':'PDF qoʻshildi');break}
+      if(nm.endsWith('.docx')||f.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){toast('⏳ Word oʻqilmoqda…');const d=await dlDocx(f);DL.files=[d];toast(d.cut?'Hujjat uzun — birinchi qismi olindi':'Word hujjat qoʻshildi');break}
+      if(nm.endsWith('.doc')){toast('Eski .doc format: Word’da «Saqlash» → .docx yoki PDF qilib qayta saqlang');continue}
+      if(!/^image\//.test(f.type)){toast('Faqat rasm, PDF yoki Word (.docx)');continue}
+      if(DL.files.some(x=>x.pdf||x.docx))DL.files=[];
+      if(DL.files.length>=6){toast('Eng koʻpi 6 ta sahifa');break}
+      DL.files.push(await dlImage(f))
+    }catch(e){toast(e.message)}
   }
   dlDraw()}
+async function dlPayload(){
+  const o=DL.opt,files=[];let matn='',betlar=o.betlar;
+  for(const f of DL.files){
+    if(f.docx){matn=f.text;files.push(...f.imgs.map(x=>({mime:x.mime,data:x.data})));continue}
+    if(f.pdf){let ab=f.ab;
+      if(f.pages&&(o.betlar||f.must)){
+        if(!o.betlar)throw new Error('PDF katta. Qaysi betlardan savol tuzilsin? Masalan: 24-26');
+        const pg=parsePages(o.betlar,f.pages),L=await pdfLib();
+        const src=await L.PDFDocument.load(f.ab,{ignoreEncryption:true,updateMetadata:false}),out=await L.PDFDocument.create();
+        (await out.copyPages(src,pg.map(k=>k-1))).forEach(pp=>out.addPage(pp));ab=await out.save();betlar='';
+      }
+      if(ab.byteLength>PDF_SEND)throw new Error(`Tanlangan betlar ${fmtSize(ab.byteLength)} — juda katta. Kamroq bet tanlang (14 MB gacha).`);
+      files.push({mime:'application/pdf',data:abToB64(ab)});continue}
+    files.push({mime:f.mime,data:f.data})}
+  return {files,matn,betlar}}
 function dlBindSrc(){
   const fi=$('#dlFile'),cam=$('#dlCam'),drop=$('#dlDrop');
   fi.onchange=()=>{dlAdd(fi.files);fi.value=''};cam.onchange=()=>{dlAdd(cam.files);cam.value=''};
@@ -1857,14 +1913,15 @@ async function dlGenerate(){
   dlReadOpts();
   if(!AUTH.tok){toast('Avval kiring');if(!(await login()))return}
   const o=DL.opt,first=DL.files[0],body=$('#dlBody');
+  let pay;try{$('#dlMsg').textContent='⏳ Fayl tayyorlanmoqda…';pay=await dlPayload()}catch(e){$('#dlMsg').textContent='⚠️ '+e.message;toast(e.message);return}
   const stages=['Sahifa oʻqilmoqda','Mavzu aniqlanmoqda','Savollar tuzilmoqda','Javoblar tekshirilmoqda'];
-  body.innerHTML=`<div class="dl-scan"><div class="pg">${first.pdf?'<div class="pdf">📄</div>':`<img src="${first.url}" alt="">`}</div>
+  body.innerHTML=`<div class="dl-scan"><div class="pg">${first.pdf?'<div class="pdf">📄</div>':first.docx?'<div class="pdf">📝</div>':`<img src="${first.url}" alt="">`}</div>
     <div><h3 style="margin:0 0 12px">AI darslikni oʻqiyapti…</h3><ul class="dl-stage">${stages.map((s,i)=>`<li data-i="${i}"><i></i>${s}</li>`).join('')}</ul><p class="small" style="margin-top:14px">Odatda 20–60 soniya. Sahifani yopmang.</p></div></div>`;
   let si=0;const mark=()=>body.querySelectorAll('.dl-stage li').forEach((l,i)=>{l.classList.toggle('ok',i<si);l.classList.toggle('on',i===si);l.querySelector('i').textContent=i<si?'✓':''});
   mark();const iv=setInterval(()=>{if(si<stages.length-1){si++;mark()}},8000);
   try{
-    const j=await api('/api/darslik',{token:AUTH.tok,files:DL.files.map(f=>({mime:f.mime,data:f.data})),
-      p:{fan:o.fan,sinf:o.sinf,tur:o.tur,n:o.n,qiyin:o.qiyin,mavzu:o.mavzu,betlar:o.betlar,til:o.til,extra:o.extra}},200000);
+    const j=await api('/api/darslik',{token:AUTH.tok,files:pay.files,
+      p:{fan:o.fan,sinf:o.sinf,tur:o.tur,n:o.n,qiyin:o.qiyin,mavzu:o.mavzu,betlar:pay.betlar,til:o.til,extra:o.extra,matn:pay.matn}},200000);
     si=stages.length;mark();
     DL.res={name:j.name,mavzu:j.mavzu,izoh:j.izoh,tur:j.tur,items:j.items.map(x=>({...x})),left:j.left};
     setTimeout(()=>{dlResult();burstTop(110)},350);
