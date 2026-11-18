@@ -669,6 +669,50 @@ nav.top a{white-space:nowrap}
 .adm-dev b{font-size:24px;display:block}
 @media (max-width:900px){.adm-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.adm-2{grid-template-columns:1fr}}
 @media (max-width:420px){.kpi b{font-size:26px}}
+/* ===== Darsni boshlash yordamchisi ===== */
+.wzbox{max-width:820px!important}
+.wzsteps{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 34px 14px 0}
+.wzsteps span{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:13.5px;color:var(--muted);padding:6px 12px 6px 6px;border-radius:99px;background:var(--bg2)}
+.wzsteps span b{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--card);font-size:12px}
+.wzsteps span.on{background:color-mix(in srgb,var(--gold) 20%,var(--card));color:var(--ink)}.wzsteps span.on b{background:var(--gold);color:#1b1400}
+.wzsteps span.ok b{background:var(--teal);color:#fff}.wzsteps i{width:16px;height:2px;background:var(--line)}
+.wzt{font-size:22px;margin:4px 0 6px}
+.wzfans{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.wzfan{display:flex;align-items:center;gap:10px;text-align:left;font:inherit;font-weight:800;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:12px;min-height:56px;cursor:pointer;transition:transform .2s var(--ease),border-color .2s,box-shadow .2s}
+.wzfan span{font-size:24px;flex:none}
+.wzfan:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:var(--shadow)}
+.wzfan.hl{grid-column:1/-1;justify-content:center;font-size:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 22%,var(--card)),var(--card));border-color:color-mix(in srgb,var(--gold) 60%,var(--line))}
+.wzgr{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 12px}
+.wzgr button{font:inherit;font-weight:800;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 16px;min-height:46px;cursor:pointer}
+.wzgr button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.wztop{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.wztop label{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;font-weight:700;background:var(--bg);cursor:pointer;min-height:48px}
+.wztop label.on{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--card))}
+.wztop input{width:20px;height:20px;accent-color:var(--gold);flex:none}
+.wzsets{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.wzset{text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer;min-height:64px;transition:border-color .2s,transform .2s var(--ease)}
+.wzset:hover{border-color:var(--gold);transform:translateY(-2px)}.wzset.on{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 10%,var(--card))}
+.wzset b{display:block;font-weight:800}.wzset small{color:var(--muted);font-weight:700}
+.wzfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding-top:14px;border-top:1.5px solid var(--line)}
+.wzfoot .btn[disabled]{opacity:.45;pointer-events:none}
+.pmg small{font-weight:700;opacity:.85;font-size:12px}
+.startbtn{white-space:nowrap}
+.startbtn{flex:none}
+header .bar{gap:12px}
+@media (max-width:1440px){.ubtn .hide-s{display:none!important}}
+@media (max-width:520px){header .bar{gap:8px}}.startbtn .sb-s{display:none}
+@media (max-width:1400px){.startbtn .sb-l{display:none}.startbtn .sb-s{display:inline}}
+@media (max-width:1220px){nav.top a{padding-left:6px!important;padding-right:6px!important;font-size:13.5px}.ubtn .hide-s{display:none!important}}
+@media (max-width:1080px){.startbtn .sb-s{display:none}nav.top a{font-size:13px}}
+.tour{text-align:center}.tour .tic{font-size:54px;animation:dlBob 2.4s ease-in-out infinite;display:inline-block}
+.tour h3{font-size:24px;margin:6px 0 2px}
+.tsteps{list-style:none;padding:0;margin:14px 0 18px;display:grid;gap:10px;text-align:left}
+.tsteps li{display:flex;gap:12px;align-items:center;background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px}
+.tsteps li>b{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#ffd25c,#f5b301);color:#1b1400;font-weight:900;flex:none}
+.tsteps small{display:block;color:var(--muted);font-weight:700}
+.fangames{margin:0 0 22px}
+.fangames .pmgames{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+@media (pointer:coarse){.btn{min-height:46px}.tabs button{min-height:44px}.chip{min-height:42px}}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -774,7 +818,6 @@ nav.top a{white-space:nowrap}
   <div class="wrap bar">
     <a class="logo" href="#/"><span class="k">🔑</span><span>Bilim <b>Kaliti</b></span></a>
     <nav class="top">
-      <a href="#/" data-r="">Bosh sahifa</a>
       <a href="#/oyinlar" data-r="oyinlar">Oʻyinlar</a>
       <a href="#/sinflar" data-r="sinflar">Sinflar</a>
       <a href="#/ai" data-r="ai">✨ AI yordamchi</a>
@@ -783,6 +826,7 @@ nav.top a{white-space:nowrap}
     </nav>
     <span class="sp"></span>
     <button class="icon-btn" id="themeBtn" aria-label="Rejimni almashtirish" title="Yorugʻ / qorongʻi">🌙</button>
+    <button class="btn gold startbtn" data-wiz="" title="Darsni boshlash">▶<span class="sb-l"> Darsni boshlash</span><span class="sb-s"> Boshlash</span></button>
     <span id="authBox"></span>
   </div>
 </header>
@@ -857,7 +901,7 @@ const PAGES={
      <span class="pill"><i></i>Bepul · roʻyxatdan oʻtishsiz</span>
      <h1>Darsni <span class="hl">oʻyinga</span> aylantiring</h1>
      <p class="lead">Elektron doskada guruhlar bellashadigan matematik oʻyinlar. Savollar har gal yangidan tuziladi: qisqa, tez va mantiqiy — diqqat va qiziqish uchun.</p>
-     <div class="cta"><a class="btn gold" href="#/sinflar">📚 Sinfni tanlash</a><a class="btn ghost" href="#/ai">✨ AI yordamchi</a><a class="btn ghost" href="#/oyinlar">🎮 Oʻyinlar</a></div>
+     <div class="cta"><button class="btn gold big" data-wiz="">▶️ Darsni boshlash</button><a class="btn ghost" href="#/sinflar">📚 Sinflar</a><a class="btn ghost" href="#/ai">✨ AI yordamchi</a></div>
      <div class="stats"><div><b data-count="${GAMES.length}">0</b><span>oʻyin</span></div><div><b>1–7</b><span>sinflar</span></div><div><b id="tc" data-count="51">0</b><span>mavzu</span></div><div><b data-count="21">0</b><span>fan</span></div></div>
     </div>
     ${heroBoardHtml()}
@@ -978,7 +1022,7 @@ function doRoute(){
   revealInit();
   if(r===''){heroStart();if(document.documentElement.classList.contains('ready'))countUp()}
 }
-window.__afterReady=()=>{if(!location.hash.replace(/^#\/?/,''))countUp()};
+window.__afterReady=()=>{if(!location.hash.replace(/^#\/?/,''))countUp();try{tourMaybe()}catch(e){}};
 /* ================= AI YORDAMCHI ================= */
 const API=(()=>{try{const q=new URLSearchParams(location.search).get('api');if(q)return q.replace(/\/$/,'')}catch(e){}
   return /onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com'})();
@@ -1582,7 +1626,7 @@ function gamesFor(s){return GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir']
 function playModal(s,param){
   const m=store.get('mode','g'),mx=()=>({g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[store.get('mode','g')]||'');
   const md=modal(`<h3>▶️ ${esc(s.name)}</h3><p class="sub">${s.mc?'Test savollari: oʻquvchi toʻgʻri variant raqamini bosadi.':'Son-javobli savollar.'} Oʻyinni tanlang:</p>
-    <div class="tabs" id="pmMode" style="margin:6px 0 12px"><button data-m="g">👥 Guruhlar</button><button data-m="r">🤖 Robo bilan</button><button data-m="s">👤 Yakka</button></div>
+    <div class="tabs" id="pmMode" style="margin:6px 0 12px"><button data-m="g">👥 Guruhlar</button><button data-m="r">🤖 Kompyuterga qarshi</button><button data-m="s">👤 Bitta oʻquvchi</button></div>
     <div class="pmgames" id="pmGames"></div>`);
   md.querySelector('.mbox').classList.add('wide');
   const draw=()=>{md.querySelectorAll('#pmMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===store.get('mode','g')));
@@ -1602,6 +1646,8 @@ function libPage(fan){
   return `<section><div class="wrap fade">
    <div class="sh"><div><h2>${fan?`${FAN_IC[fan]||'📚'} ${esc(fan)}`:'📚 Kutubxona'}</h2><p class="sub">${fan?'Shu fandan tayyor toʻplamlar — bitta bosishda guruh oʻyinlarida oʻynang.':'Oʻqituvchilar ulashgan va tayyor toʻplamlar. Fan va sinf boʻyicha qidiring.'}</p></div>
     <div class="mrow"><a class="btn ghost" href="#/toplamlar">📦 Mening toʻplamlarim</a><a class="btn ghost" href="#/ai/darslik">📸 Darslikdan</a><a class="btn gold" href="#/ai/savollar" id="libAi">✨ AI bilan yaratish</a></div></div>
+   ${fan&&!MATH_FANLAR.includes(fan)?`<div class="fangames"><div class="sh" style="margin:0 0 10px"><div><h3 style="margin:0">🎮 ${esc(fan)} bilan oʻynash</h3><p class="sub" style="margin:2px 0 0">Oʻyinni tanlang — u ${esc(fan)} savollari bilan ochiladi.</p></div><button class="btn gold" data-wiz="${esc(fan)}">▶️ Darsni boshlash</button></div>
+     <div class="pmgames">${gamesFor({mc:true}).map(g=>`<a class="pmg" href="${gameUrl(g,'&fan='+encodeURIComponent(fan))}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')}</div></div>`:''}
    ${fan==='Matematika'?`<div class="note" style="margin:0 0 16px">🧮 Matematikada savollar har gal yangidan yaratiladi: <a href="#/sinflar" style="color:var(--teal)">sinf va mavzuni tanlang →</a></div>`:''}
    <div class="lfilter"><select id="lFan">${fans.map(f=>`<option value="${esc(f)}" ${f===fan?'selected':''}>${f?esc(f):'Barcha fanlar'}</option>`).join('')}</select>
     <select id="lSinf"><option value="">Barcha sinflar</option>${[...Array(11)].map((_,i)=>`<option value="${i+1}">${i+1}-sinf</option>`).join('')}</select>
@@ -2085,6 +2131,73 @@ window.addEventListener('resize',()=>{clearTimeout(ADM.rt);ADM.rt=setTimeout(()=
 function bindAdmin(){if(!isAdmin())return;wake();if(ADM.data)admDraw();admLoad();$('#admRe').onclick=()=>{admLoad();toast('Yangilandi')};
   clearInterval(ADM.timer);ADM.timer=setInterval(()=>{if(!$('#admBody')){clearInterval(ADM.timer);return}if(document.visibilityState==='visible')admLoad()},30000)}
 
+/* ================= DARSNI BOSHLASH YORDAMCHISI ================= */
+const WZ={step:1,fan:'',sinf:5,topics:[],set:null,fs:0,sets:null};
+const MATH_FANLAR=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
+function wizard(fan){WZ.step=fan?2:1;WZ.fan=fan||'';WZ.set=null;WZ.fs=0;WZ.sets=null;
+  const md=modal('<div id="wz"></div>');md.querySelector('.mbox').classList.add('wide','wzbox');wzDraw()}
+function wzHead(t,sub){const st=['Fan','Sinf va mavzu','Oʻyin'];
+  return `<div class="wzsteps">${st.map((s,i)=>`<span class="${i+1===WZ.step?'on':i+1<WZ.step?'ok':''}"><b>${i+1<WZ.step?'✓':i+1}</b>${s}</span>`).join('<i></i>')}</div>
+   <h3 class="wzt">${t}</h3>${sub?`<p class="sub" style="margin:0 0 14px">${sub}</p>`:''}`}
+function wzFoot(next){if(WZ.step===1&&!next)return '';return `<div class="wzfoot">${WZ.step>1?'<button class="btn ghost" data-wz="back">← Orqaga</button>':'<span></span>'}${next||''}</div>`}
+async function wzLoadSets(){
+  const st=(await staticSets()).filter(s=>s.fan===WZ.fan).map(s=>({id:s.id,param:'&set='+encodeURIComponent(s.id),name:s.name,sinf:String(s.sinf||''),n:s.items.length,mc:true,tag:'⭐ Tayyor'}));
+  let lib=[],mine=[];
+  try{const j=await api('/api/lib/list',{fan:WZ.fan,sort:'top'},60000);lib=(j.sets||[]).map(m=>({id:'L-'+m.id,param:'&lib='+encodeURIComponent(m.id),name:m.name,sinf:String(m.sinf||''),n:m.n,mc:m.mc,tag:'📚 '+(m.author||'Kutubxona')}))}catch(e){}
+  if(AUTH.tok){try{const j=await api('/api/sets',{token:AUTH.tok},60000);mine=(j.sets||[]).filter(s=>s.fan===WZ.fan).map(s=>({id:s.id,param:'&set='+encodeURIComponent(s.id),name:s.name,sinf:'',n:s.items.length,mc:s.items.some(i=>i.o),tag:'📦 Meniki'}))}catch(e){}}
+  WZ.sets=[...mine,...st,...lib];if(WZ.step===2)wzDraw()}
+function wzDraw(){
+  const box=$('#wz');if(!box)return;const M=MATH_FANLAR.includes(WZ.fan);
+  if(WZ.step===1){
+    box.innerHTML=wzHead('Qaysi fandan dars oʻtasiz?')+`<div class="wzfans">${FANLAR.map(f=>`<button class="wzfan${f==='Matematika'?' hl':''}" data-fan="${esc(f)}"><span>${FAN_IC[f]||'📘'}</span>${esc(f)}</button>`).join('')}</div>`+wzFoot();
+  }else if(WZ.step===2&&M){
+    const tl=(GRADES[WZ.sinf]||[]);if(!WZ.topics.length||!WZ.topics.every(i=>tl.some(t=>t.i===i)))WZ.topics=tl.map(t=>t.i);
+    box.innerHTML=wzHead('Qaysi sinf va mavzular?','Misollar har gal yangidan tuziladi. Mavzular oldindan belgilangan — keraksizini olib tashlang.')+
+     `<div class="wzgr">${[1,2,3,4,5,6,7].map(n=>`<button data-sinf="${n}" class="${n===WZ.sinf?'on':''}">${n}-sinf</button>`).join('')}</div>
+      <div class="wztop">${tl.map(t=>`<label class="${WZ.topics.includes(t.i)?'on':''}"><input type="checkbox" data-top="${t.i}" ${WZ.topics.includes(t.i)?'checked':''}>${esc(t.n)}</label>`).join('')||'<p class="sub">Mavzular yuklanmoqda…</p>'}</div>`+
+     wzFoot(`<button class="btn gold" data-wz="next" ${WZ.topics.length?'':'disabled'}>Keyingisi: oʻyin →</button>`);
+  }else if(WZ.step===2){
+    if(!WZ.sets){box.innerHTML=wzHead(`${FAN_IC[WZ.fan]||'📘'} ${esc(WZ.fan)}: savollar toʻplamini tanlang`)+`<div class="sgrid">${skel(3)}</div>`+wzFoot();wzLoadSets();return}
+    const grs=[...new Set(WZ.sets.map(s=>s.sinf).filter(Boolean))].sort((a,b)=>a-b),l=WZ.sets.filter(s=>!WZ.fs||!s.sinf||s.sinf===String(WZ.fs));
+    box.innerHTML=wzHead(`${FAN_IC[WZ.fan]||'📘'} ${esc(WZ.fan)}: savollar toʻplamini tanlang`,'Oʻyin shu toʻplamdagi savollardan tuziladi.')+
+     (grs.length>1?`<div class="wzgr"><button data-fs="0" class="${!WZ.fs?'on':''}">Barcha sinflar</button>${grs.map(g=>`<button data-fs="${g}" class="${String(WZ.fs)===g?'on':''}">${g}-sinf</button>`).join('')}</div>`:'')+
+     (l.length?`<div class="wzsets">${l.map((s,i)=>`<button class="wzset${WZ.set&&WZ.set.id===s.id?' on':''}" data-si="${WZ.sets.indexOf(s)}"><b>${esc(s.name)}</b><small>${esc(s.tag)} · ${s.n} ta savol${s.sinf?` · ${esc(s.sinf)}-sinf`:''}</small></button>`).join('')}</div>`
+      :`<div class="empty" style="padding:22px 0"><div>📭</div><p>Bu fan boʻyicha hali toʻplam yoʻq. Bir daqiqada yarating:</p></div>`)+
+     `<div class="mrow" style="margin-top:12px"><a class="btn ghost sm" href="#/ai/darslik" data-close>📸 Darslikdan yaratish</a><a class="btn ghost sm" href="#/ai/savollar" data-close data-pre="1">✨ AI bilan yaratish</a></div>`+
+     wzFoot(`<button class="btn gold" data-wz="next" ${WZ.set?'':'disabled'}>Keyingisi: oʻyin →</button>`);
+  }else{
+    const mode=store.get('mode','g'),mx={g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[mode]||'';
+    const base=M?`&sinf=${WZ.sinf}&t=${WZ.topics.join(',')}`:WZ.set.param+'&fan='+encodeURIComponent(WZ.fan);
+    const games=M?GAMES.filter(g=>g.f==='toplam'):gamesFor({mc:WZ.set.mc});
+    box.innerHTML=wzHead('Qaysi oʻyinni oʻynaymiz?',M?`${WZ.sinf}-sinf · ${WZ.topics.length} ta mavzu`:`${esc(WZ.set.name)}`)+
+     `<div class="tabs" id="wzMode" style="margin:0 0 12px"><button data-m="g" class="${mode==='g'?'on':''}">👥 Guruhlar</button><button data-m="r" class="${mode==='r'?'on':''}">🤖 Kompyuterga qarshi</button><button data-m="s" class="${mode==='s'?'on':''}">👤 Bitta oʻquvchi</button></div>
+      <div class="pmgames">${games.map(g=>`<a class="pmg" href="${gameUrl(g,base+mx)}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b><small>${esc(g.t[0]||'')}</small></a>`).join('')}</div>
+      <p class="small" style="margin-top:12px">💡 Oʻyin ochilgach, guruhlar sonini tanlab, katta <b>«Oʻyinni boshlash»</b> tugmasini bosing.</p>`+wzFoot();
+  }
+}
+document.addEventListener('click',e=>{
+  const box=e.target.closest('#wz');if(!box)return;
+  const b=e.target.closest('[data-fan],[data-wz],[data-sinf],[data-fs],[data-si],[data-m],[data-close]');if(!b)return;
+  if(b.dataset.close!=null){if(b.dataset.pre)PREFILL={tool:'savollar',p:{fan:WZ.fan}};closeModal();return}
+  if(b.dataset.fan){WZ.fan=b.dataset.fan;WZ.set=null;WZ.sets=null;WZ.fs=0;WZ.step=2}
+  else if(b.dataset.wz==='back')WZ.step--;
+  else if(b.dataset.wz==='next')WZ.step++;
+  else if(b.dataset.sinf){WZ.sinf=+b.dataset.sinf;WZ.topics=[]}
+  else if(b.dataset.fs!=null)WZ.fs=+b.dataset.fs;
+  else if(b.dataset.si!=null){WZ.set=WZ.sets[+b.dataset.si];WZ.step=3}
+  else if(b.dataset.m){store.set('mode',b.dataset.m)}
+  wzDraw();const mb=box.closest('.mbox');if(mb&&(b.dataset.fan||b.dataset.wz||b.dataset.si))mb.scrollTop=0});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset.top==null)return;const i=+t.dataset.top;
+  WZ.topics=t.checked?[...new Set([...WZ.topics,i])]:WZ.topics.filter(x=>x!==i);t.closest('label').classList.toggle('on',t.checked);
+  const n=$('#wz [data-wz="next"]');if(n)n.disabled=!WZ.topics.length});
+/* birinchi kirish: qisqa koʻrsatma */
+function tourMaybe(){if(store.get('tour',0)||location.hash.replace(/^#\/?/,''))return;
+  setTimeout(()=>{if($('#modal'))return;const md=modal(`<div class="tour"><div class="tic">👋</div><h3>Xush kelibsiz!</h3><p class="sub">Bilim Kaliti bilan darsda oʻyin — 3 qadam:</p>
+    <ol class="tsteps"><li><b>1</b><span><b>Fanni tanlang</b><small>Matematika yoki boshqa fan</small></span></li><li><b>2</b><span><b>Sinf va mavzuni belgilang</b><small>yoki tayyor savollar toʻplamini</small></span></li><li><b>3</b><span><b>Oʻyinni tanlab, doskada boshlang</b><small>guruhlar bellashadi, ochkolar oʻzi hisoblanadi</small></span></li></ol>
+    <div class="mrow" style="justify-content:center"><button class="btn gold big" id="tGo">▶️ Hoziroq boshlash</button><button class="btn ghost" id="tLater">Keyinroq</button></div></div>`);
+    store.set('tour',1);md.querySelector('#tGo').onclick=()=>wizard();md.querySelector('#tLater').onclick=closeModal},900)}
+
+document.addEventListener('click',e=>{const w=e.target.closest('[data-wiz]');if(w){e.preventDefault();wizard(w.dataset.wiz||'')}});
 /* rejim */
 (function(){const t=store.get('theme',null);if(t)document.documentElement.dataset.theme=t;
   const upd=()=>{const dark=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);$('#themeBtn').textContent=dark?'☀️':'🌙'};
