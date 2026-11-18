@@ -167,10 +167,18 @@ def topic_games_kb(g: str, t: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
-def set_games_kb(sid: str, mc: bool = False) -> InlineKeyboardMarkup:
+BILIM_GAMES = {"tf": [("togri", "✅ Toʻgʻri yoki notoʻgʻri")], "pair": [("jlash", "🔗 Juftlash")],
+               "order": [("tartib", "📅 Tartibga sol")], "group": [("guruh", "🗂️ Guruhlarga ajrat")],
+               "mc": [("togri", "✅ Toʻgʻri yoki notoʻgʻri"), ("jlash", "🔗 Juftlash")]}
+
+
+def set_games_kb(sid: str, mc: bool = False, kind: str = "") -> InlineKeyboardMarkup:
     extra = f"&set={sid}"
-    buttons = [InlineKeyboardButton(text=title, web_app=WebAppInfo(url=game_url(slug, gk, extra)))
-               for slug, gk, title, _ in GRADE_GAMES if gk not in ("zanjir", "mental") and not (mc and gk == "bomba")]
+    buttons = [] if kind in ("tf", "order", "group") else [
+        InlineKeyboardButton(text=title, web_app=WebAppInfo(url=game_url(slug, gk, extra)))
+        for slug, gk, title, _ in GRADE_GAMES if gk not in ("zanjir", "mental") and not ((mc or kind == "pair") and gk == "bomba")]
+    buttons += [InlineKeyboardButton(text=title, web_app=WebAppInfo(url=game_url("bilim", gk, extra)))
+                for gk, title in BILIM_GAMES.get(kind or ("mc" if mc else ""), [])]
     rows = [buttons[i:i + 2] for i in range(0, len(buttons), 2)]
     rows.append([InlineKeyboardButton(text="🗑 Oʻchirish", callback_data=f"sd:{sid}"),
                  InlineKeyboardButton(text="📦 Toʻplamlarim", callback_data="sl")])
@@ -381,14 +389,27 @@ async def add_set(uid: int, name: str, items: list[dict], src: str, fan: str = "
 def set_preview(s: dict, limit: int = 12) -> str:
     lines = [f"📦 «{s['name']}» — {len(s['items'])} ta savol\n"]
     for i, it in enumerate(s["items"][:limit], 1):
-        ans = it["o"][it.get("c", 0)] if "o" in it else it["a"]
-        lines.append(f"{i}. {it['q']}  →  {ans}")
+        k = item_kind(it)
+        if k == "mc":
+            lines.append(f"{i}. {it['q']}  →  {it['o'][it.get('c', 0)]}")
+        elif k == "num":
+            lines.append(f"{i}. {it['q']}  →  {it['a']}")
+        elif k == "tf":
+            lines.append(f"{i}. {it['q']}  →  {'✅ toʻgʻri' if it['t'] else '❌ notoʻgʻri'}")
+        elif k == "pair":
+            lines.append(f"{i}. {it['a']}  ↔  {it['b']}")
+        elif k == "order":
+            lines.append(f"{i}. {it['q']}: " + " → ".join(it["s"]))
+        else:
+            lines.append(f"{i}. {it['q']}: " + "; ".join(f"{g['n']}: {', '.join(g['w'])}" for g in it["g"]))
     if len(s["items"]) > limit:
         lines.append(f"… yana {len(s['items']) - limit} ta")
-    small = sum(1 for it in s["items"] if "a" in it and 1 <= it["a"] <= 9)
+    small = sum(1 for it in s["items"] if item_kind(it) == "num" and 1 <= it["a"] <= 9)
     lines.append("\nOʻyinni tanlang 👇")
     if any("o" in it for it in s["items"]):
         lines.append("(Test savollari: oʻquvchi toʻgʻri variant raqamini bosadi. 💣 Bomba son-javobli savollar uchun.)")
+    elif set_kind(s["items"]) in ("tf", "pair", "order", "group"):
+        lines[-1] = "\nOʻyinni tanlang 👇"
     elif small < len(s["items"]):
         lines.append("(💣 Bomba va bir xonali rejimda faqat javobi 1–9 boʻlgan savollar chiqadi.)")
     return "\n".join(lines)[:4000]
@@ -456,7 +477,7 @@ async def got_own(message: Message) -> None:
     if dropped:
         note += f"\nℹ️ Eng koʻpi {MAX_SETS} ta toʻplam saqlanadi, eng eskisi oʻchirildi."
     await message.answer("✅ Saqlandi." + note, reply_markup=menu_kb())
-    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"], any("o" in it for it in s["items"])))
+    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"], any("o" in it for it in s["items"]), set_kind(s["items"])))
 
 
 # ===================== AI (Gemini) =====================
@@ -656,7 +677,7 @@ async def got_ai(message: Message) -> None:
     await message.answer(
         f"✅ Tayyor! Har bir javob avtomatik tekshirildi.{note}\n"
         "Baribir oʻyindan oldin koʻz yugurtirib chiqing.")
-    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"], any("o" in it for it in s["items"])))
+    await message.answer(set_preview(s), reply_markup=set_games_kb(s["id"], any("o" in it for it in s["items"]), set_kind(s["items"])))
 
 
 # ===================== Toʻplamlarim =====================
@@ -728,7 +749,7 @@ async def cb_set_open(call: CallbackQuery) -> None:
     if not s:
         await call.answer("Toʻplam topilmadi", show_alert=True)
         return
-    await call.message.edit_text(set_preview(s), reply_markup=set_games_kb(sid, any("o" in it for it in s["items"])))
+    await call.message.edit_text(set_preview(s), reply_markup=set_games_kb(sid, any("o" in it for it in s["items"]), set_kind(s["items"])))
     await call.answer()
 
 
@@ -760,13 +781,59 @@ LIB_LOCK = asyncio.Lock()
 LIB_DIRTY = False
 
 
+def _s(v, n: int) -> str:
+    return str(v if v is not None else "").strip()[:n]
+
+
+def item_kind(it: dict) -> str:
+    if "o" in it:
+        return "mc"
+    if "t" in it:
+        return "tf"
+    if "b" in it:
+        return "pair"
+    if "s" in it:
+        return "order"
+    if "g" in it:
+        return "group"
+    return "num"
+
+
+def set_kind(items: list) -> str:
+    ks = {item_kind(it) for it in items}
+    return ks.pop() if len(ks) == 1 else ("mc" if "mc" in ks else "mix")
+
+
 def norm_items(raw) -> list[dict]:
     out = []
     for it in raw if isinstance(raw, list) else []:
         if not isinstance(it, dict):
             continue
+        if "b" in it and "o" not in it:
+            a, b = _s(it.get("a"), 160), _s(it.get("b"), 160)
+            if a and b:
+                out.append({"a": a, "b": b})
+            continue
+        if isinstance(it.get("s"), list):
+            s = [_s(x, 120) for x in it["s"] if _s(x, 120)][:8]
+            if len(s) >= 3 and len(set(s)) == len(s):
+                out.append({"q": _s(it.get("q"), 200) or "Toʻgʻri tartibga soling", "s": s})
+            continue
+        if isinstance(it.get("g"), list):
+            g = []
+            for x in it["g"][:4]:
+                if isinstance(x, dict):
+                    w = [_s(y, 80) for y in (x.get("w") or []) if _s(y, 80)][:10] if isinstance(x.get("w"), list) else []
+                    if _s(x.get("n"), 60) and w:
+                        g.append({"n": _s(x.get("n"), 60), "w": w})
+            if len(g) >= 2:
+                out.append({"q": _s(it.get("q"), 200) or "Guruhlarga ajrating", "g": g})
+            continue
         q = str(it.get("q", "")).strip()[:300]
         if not q:
+            continue
+        if "t" in it and "o" not in it and "a" not in it:
+            out.append({"q": q, "t": 1 if it.get("t") in (1, True, "1", "true", "toʻgʻri") else 0})
             continue
         if isinstance(it.get("o"), list):
             o = [str(x).strip()[:120] for x in it["o"] if str(x).strip()][:4]
@@ -1118,7 +1185,7 @@ async def cmd_stat(message: Message) -> None:
 
 
 def lib_meta(m: dict) -> dict:
-    return {k: m.get(k) for k in ("id", "name", "fan", "sinf", "mavzu", "author", "n", "mc", "t", "plays")}
+    return {k: m.get(k) for k in ("id", "name", "fan", "sinf", "mavzu", "author", "n", "mc", "kind", "t", "plays")}
 
 
 async def api_lib_list(request: web.Request) -> web.Response:
@@ -1189,7 +1256,7 @@ async def api_lib_publish(request: web.Request) -> web.Response:
     if not s:
         return jerr("Toʻplam topilmadi")
     items = norm_items(s["items"])
-    if len(items) < 4:
+    if len(items) < (2 if set_kind(items) in ("order", "group") else 4):
         return jerr("Kutubxonaga kamida 4 ta savolli toʻplam qoʻshiladi.")
     name = clip(data.get("name") or s["name"], 60)
     fan, sinf, mavzu = clip(data.get("fan"), 60) or "Matematika", clip(data.get("sinf"), 10), clip(data.get("mavzu"), 100)
@@ -1210,7 +1277,7 @@ async def api_lib_publish(request: web.Request) -> web.Response:
             log.warning("publish: %s", e)
             return jerr("Kanalga yozib boʻlmadi. Bot kanalda administrator ekanini tekshiring.", 502)
         lib["sets"].insert(0, {"id": lid, "name": name, "fan": fan, "sinf": sinf, "mavzu": mavzu, "author": u["n"], "uid": uid,
-                               "src": s["id"], "n": len(items), "mc": any("o" in it for it in items), "t": int(time.time()),
+                               "src": s["id"], "n": len(items), "mc": any("o" in it for it in items), "kind": set_kind(items), "t": int(time.time()),
                                "plays": 0, "fid": doc.document.file_id, "mid": doc.message_id})
         LIB_ITEMS[lid] = items
         await lib_save_index()
@@ -1288,6 +1355,42 @@ async def gemini_mc(fan: str, sinf: str, topic: str, lang: str, n: int = 12, ext
     raw = obj.get("items") if isinstance(obj, dict) else obj
     items = norm_items([{**it, "c": 0} for it in raw if isinstance(it, dict)] if isinstance(raw, list) else [])
     items = [it for it in items if "o" in it and len(it["o"]) == 4]
+    return str((obj.get("name") if isinstance(obj, dict) else "") or topic)[:60], items
+
+
+# ---- yangi oʻyin turlari uchun AI formatlari ----
+KIND_FMT = {
+    "tf": ("{n} ta QISQA gap (har biri bitta aniq fakt) tuz: taxminan yarmi toʻgʻri, yarmi notoʻgʻri. Notoʻgʻri gaplar ishonarli, "
+           "lekin shubhasiz xato boʻlsin; «baʼzan», «koʻpincha» kabi noaniq soʻzlarni ishlatma.\n"
+           'JSON: {{"name": "toʻplam nomi", "items": [{{"q": "gap", "t": 1}}]}}  (t: 1 — toʻgʻri, 0 — notoʻgʻri)'),
+    "pair": ("{n} ta JUFT tuz: chapda atama, soʻz yoki sana; oʻngda unga mos qisqa javob (taʼrif, tarjima, voqea, belgi) — 1–6 soʻz. "
+             "Har bir juft yagona boʻlsin, oʻng tomonlar bir-biriga oʻxshab adashtirmasin.\n"
+             'JSON: {{"name": "toʻplam nomi", "items": [{{"a": "chap", "b": "oʻng"}}]}}'),
+    "order": ("{n} ta TARTIBGA SOLISH topshirigʻi tuz: har birida 4–6 ta qisqa element (1–6 soʻz) TOʻGʻRI ketma-ketlikda "
+              "(xronologiya, jarayon bosqichlari, kattalik tartibi). Tartib aniq va bahssiz boʻlsin; kerak boʻlsa sanani qavsda yoz.\n"
+              'JSON: {{"name": "toʻplam nomi", "items": [{{"q": "topshiriq matni", "s": ["birinchi", "ikkinchi", "uchinchi", "toʻrtinchi"]}}]}}'),
+    "group": ("{n} ta GURUHLARGA AJRATISH topshirigʻi tuz: har birida 2–3 ta guruh nomi va har guruhga 3–5 tadan qisqa soʻz yoki tushuncha. "
+              "Har bir soʻz faqat bitta guruhga shubhasiz tegishli boʻlsin.\n"
+              'JSON: {{"name": "toʻplam nomi", "items": [{{"q": "topshiriq", "g": [{{"n": "guruh nomi", "w": ["soʻz", "soʻz", "soʻz"]}}]}}]}}'),
+}
+KIND_N = {"tf": 14, "pair": 12, "order": 5, "group": 3}
+KIND_ALIAS = {"togri": "tf", "juft": "pair", "jlash": "pair", "tartib": "order", "guruh": "group"}
+
+
+async def gemini_kind(kind: str, fan: str, sinf: str, topic: str, lang: str, extra: str = "", file: dict | None = None) -> tuple[str, list]:
+    text = (f"Sen «{fan}» fani oʻqituvchisining yordamchisisan. Sinf: {sinf or 'koʻrsatilmagan'}. Mavzu: «{topic}». "
+            f"Sinfda guruh oʻyini uchun material tuz. Faktlar aniq va xatosiz, sinf darajasiga mos boʻlsin. Til: {lang}.\n"
+            + KIND_FMT[kind].format(n=KIND_N[kind]) + "\nFaqat JSON qaytar.")
+    if extra:
+        text += f"\nOʻqituvchining qoʻshimcha istagi: {extra}"
+    parts = []
+    if file:
+        parts.append({"inline_data": file})
+        text += "\nIlova qilingan manbaga (rasm yoki PDF) tayanib tuz."
+    parts.append({"text": text})
+    obj = parse_json_text(await gemini_call([{"role": "user", "parts": parts}], temperature=0.7))
+    raw = obj.get("items") if isinstance(obj, dict) else obj
+    items = [it for it in norm_items(raw) if item_kind(it) == kind]
     return str((obj.get("name") if isinstance(obj, dict) else "") or topic)[:60], items
 
 
@@ -1500,7 +1603,16 @@ async def api_ai(request: web.Request) -> web.Response:
     ai_use(uid)
     stat_inc("ai_t", sub="tools", name=tool)
     try:
-        if tool == "savollar" and fan.lower() not in MATH_FANS:
+        kind = KIND_ALIAS.get(str(p.get("tur") or ""), str(p.get("tur") or ""))
+        if tool == "savollar" and kind in KIND_FMT:
+            f = data.get("file")
+            fobj = {"mime_type": str(f["mime"]), "data": str(f["data"])} if isinstance(f, dict) and f.get("data") else None
+            name, items = await gemini_kind(kind, fan, sinf, mavzu, LANGS.get(str(p.get("til")), LANGS["uz"]), clip(p.get("extra"), 600), fobj)
+            if len(items) < (2 if kind in ("order", "group") else 4):
+                return jerr("AI yetarlicha material tuza olmadi. Mavzuni boshqacharoq yozing.")
+            s, _ = await add_set(uid, name, items, "ai", fan)
+            return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
+        if tool == "savollar" and (fan.lower() not in MATH_FANS or str(p.get("tur")) == "mc"):
             f = data.get("file")
             fobj = {"mime_type": str(f["mime"]), "data": str(f["data"])} if isinstance(f, dict) and f.get("data") else None
             name, items = await gemini_mc(fan, sinf, mavzu, LANGS.get(str(p.get("til")), LANGS["uz"]), 12, clip(p.get("extra"), 600), fobj)
@@ -1595,8 +1707,8 @@ async def api_darslik(request: web.Request) -> web.Response:
         return jerr("Bugungi AI limit tugadi. Ertaga yana urinib koʻring.", 429, limit=True)
     fan = clip(p.get("fan"), 60) or "Matematika"
     sinf = clip(p.get("sinf"), 10)
-    tur = str(p.get("tur") or "auto")
-    if tur not in ("mc", "num"):
+    tur = KIND_ALIAS.get(str(p.get("tur") or "auto"), str(p.get("tur") or "auto"))
+    if tur not in ("mc", "num") and tur not in KIND_FMT:
         tur = "num" if fan.lower() in MATH_FANS else "mc"
     try:
         n = max(6, min(30, int(p.get("n") or 12)))
@@ -1608,7 +1720,8 @@ async def api_darslik(request: web.Request) -> web.Response:
         mavzu_line=f"Oʻqituvchi koʻrsatgan mavzu: «{mavzu}». " if mavzu else "",
         pages_line=f"PDFdan faqat shu betlardan foydalan: {pages}. " if pages else "",
         lang=LANGS.get(str(p.get("til")), LANGS["uz"]),
-        fmt=(DARSLIK_MC if tur == "mc" else DARSLIK_NUM).format(n=n))
+        fmt=(DARSLIK_MC.format(n=n) if tur == "mc" else DARSLIK_NUM.format(n=n) if tur == "num"
+             else KIND_FMT[tur].format(n=max(2, min(KIND_N[tur] * 2, n if tur in ("tf", "pair") else KIND_N[tur])))))
     if extra:
         text += f"\nOʻqituvchining qoʻshimcha istagi: {extra}"
     parts.append({"text": text})
@@ -1631,10 +1744,12 @@ async def api_darslik(request: web.Request) -> web.Response:
     raw = obj.get("items") if isinstance(obj, dict) else None
     if tur == "num":
         items = check_items(raw)
+    elif tur in KIND_FMT:
+        items = [it for it in norm_items(raw) if item_kind(it) == tur]
     else:
         items = [it for it in norm_items([{**it, "c": 0} for it in raw if isinstance(it, dict)] if isinstance(raw, list) else [])
                  if len(it.get("o", [])) == 4]
-    if len(items) < 3:
+    if len(items) < (2 if tur in ("order", "group") else 3):
         return jerr("Manbadan yetarlicha savol tuzib boʻlmadi. Sahifa aniqroq tushgan rasmni yuklang yoki boshqa savol turini tanlang.")
     return web.json_response({"ok": True, "left": ai_left(uid), "tur": tur,
                               "name": clip(obj.get("name"), 60) or clip(obj.get("mavzu"), 60) or "Darslikdan savollar",

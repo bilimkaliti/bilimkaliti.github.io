@@ -507,8 +507,8 @@ html:not(.ready) .hero>.hcopy>*,html:not(.ready) .hero .board{animation-play-sta
 /* reveal */
 .rv{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
 .rv.in{opacity:1;transform:none}
-.rv:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid){opacity:1;transform:none;transition:none}
-.rv:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid):not(.in)>*{opacity:0}
+.rv:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid,.whys,.hows){opacity:1;transform:none;transition:none}
+.rv:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid,.whys,.hows):not(.in)>*{opacity:0}
 .rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*{animation:rise .6s var(--ease) both}
 .rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(2){animation-delay:.05s}
 .rv.in:is(.grid,.grades,.aigrid,.tools,.subjects,.sgrid)>*:nth-child(3){animation-delay:.1s}
@@ -597,6 +597,13 @@ html.vt-theme::view-transition-old(root){z-index:1}html.vt-theme::view-transitio
 .dl-opt label{display:grid;place-items:center;cursor:pointer;font-size:12px;font-weight:900;color:var(--muted);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);flex:none}
 .dl-opt.ok label{background:var(--teal);border-color:var(--teal);color:#fff}
 .dl-opt input[type=radio]{position:absolute;opacity:0;pointer-events:none}
+.dl-tf{display:flex;gap:8px;margin-top:8px}.dl-tf button{font:inherit;font-weight:800;border:1.5px solid var(--line);background:var(--bg);color:var(--ink2);border-radius:12px;padding:8px 14px;cursor:pointer}
+.dl-tf button.on.y{background:color-mix(in srgb,var(--teal) 16%,var(--card));border-color:var(--teal);color:var(--ink)}.dl-tf button.on.n{background:color-mix(in srgb,#e5484d 14%,var(--card));border-color:#e5484d;color:var(--ink)}
+.dl-pair{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}.dl-pair span{font-weight:900;color:var(--muted)}
+.dl-pair input,.dl-ord input,.dl-grp input{font:inherit;font-weight:700;color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:9px 11px;background:var(--bg);outline:none;min-width:0;width:100%}
+.dl-ord{display:grid;gap:6px}.dl-ord label{display:flex;gap:8px;align-items:center}.dl-ord b{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--bg2);font-size:13px}
+.dl-grp{display:grid;gap:8px;margin-top:8px}.dl-grp>div{display:grid;grid-template-columns:minmax(0,.5fr) minmax(0,1fr);gap:8px}
+@media (max-width:640px){.dl-pair{grid-template-columns:1fr}.dl-pair span{display:none}.dl-grp>div{grid-template-columns:1fr}}
 .dl-ans{display:inline-flex;align-items:center;gap:8px;margin-top:8px;font-weight:800;color:var(--muted)}
 .dl-ans input{width:110px;font:inherit;font-weight:900;color:var(--ink);border:1.5px solid var(--teal);border-radius:12px;padding:7px 10px;background:color-mix(in srgb,var(--teal) 8%,var(--card));outline:none}
 .dl-bar{position:sticky;bottom:12px;z-index:30;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px;padding:12px;border-radius:20px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid var(--line);box-shadow:0 14px 34px rgba(22,33,62,.14)}
@@ -698,10 +705,12 @@ nav.top a{white-space:nowrap}
 .pmg small{font-weight:700;opacity:.85;font-size:12px}
 .startbtn{white-space:nowrap}
 .startbtn{flex:none}
+nav.top .nl{display:none}
+@media (max-width:1180px){nav.top .nlh{display:none}}
 header .bar{gap:12px}
-@media (max-width:1440px){.ubtn .hide-s{display:none!important}}
+.ubtn .hide-s{display:none!important}
 @media (max-width:520px){header .bar{gap:8px}}.startbtn .sb-s{display:none}
-@media (max-width:1400px){.startbtn .sb-l{display:none}.startbtn .sb-s{display:inline}}
+.startbtn .sb-l{display:none}.startbtn .sb-s{display:inline}
 @media (max-width:1220px){nav.top a{padding-left:6px!important;padding-right:6px!important;font-size:13.5px}.ubtn .hide-s{display:none!important}}
 @media (max-width:1080px){.startbtn .sb-s{display:none}nav.top a{font-size:13px}}
 .tour{text-align:center}.tour .tic{font-size:54px;animation:dlBob 2.4s ease-in-out infinite;display:inline-block}
@@ -713,6 +722,31 @@ header .bar{gap:12px}
 .fangames{margin:0 0 22px}
 .fangames .pmgames{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 @media (pointer:coarse){.btn{min-height:46px}.tabs button{min-height:44px}.chip{min-height:42px}}
+
+/* ===== Bosh sahifa: foydalar, qanday ishlaydi, biz haqimizda ===== */
+.whys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.why{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow);transition:transform .3s var(--ease),box-shadow .3s}
+.why:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(22,33,62,.12)}
+.why span{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;font-size:26px;background:color-mix(in srgb,var(--gold) 16%,var(--card));margin-bottom:12px}
+.why b{display:block;font-size:18px;margin-bottom:4px}.why p{margin:0;color:var(--ink2);font-weight:600;font-size:15px;line-height:1.5}
+.hows{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;counter-reset:h}
+.how{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow);position:relative}
+.how>b{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:20px;font-weight:900;color:#1b1400;background:linear-gradient(135deg,#ffd25c,#f5b301);box-shadow:0 8px 18px rgba(245,179,1,.3)}
+.how h3{margin:0 0 4px;font-size:18px}.how p{margin:0;color:var(--ink2);font-weight:600;font-size:15px;line-height:1.5}
+.about{display:grid;grid-template-columns:1.25fr 1fr;gap:26px;align-items:center;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 12%,var(--card)),var(--card));border:1.5px solid var(--line);border-radius:28px;padding:30px;box-shadow:var(--shadow)}
+.ab-k{display:grid;place-items:center;width:58px;height:58px;border-radius:18px;font-size:30px;background:linear-gradient(135deg,#ffd25c,#f5b301);box-shadow:0 10px 22px rgba(245,179,1,.35);margin-bottom:10px}
+.about h2{margin:0 0 10px}.about p{color:var(--ink2);font-weight:600;line-height:1.6;margin:0 0 12px}
+.ab-r{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ab-n{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:14px 16px}
+.ab-n b{display:block;font-size:28px;font-weight:900;letter-spacing:-.5px}.ab-n span{color:var(--muted);font-weight:800;font-size:13.5px}
+.faq{display:grid;gap:10px;max-width:900px}
+.faq details{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:0 18px;box-shadow:var(--shadow)}
+.faq summary{cursor:pointer;list-style:none;padding:16px 0;font-weight:800;font-size:16.5px;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:"＋";color:var(--muted);transition:transform .25s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{margin:0 0 16px;color:var(--ink2);font-weight:600;line-height:1.6}
+@media (max-width:900px){.whys,.hows{grid-template-columns:1fr 1fr}.about{grid-template-columns:1fr;padding:22px}}
+@media (max-width:560px){.whys,.hows{grid-template-columns:1fr}}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -818,9 +852,10 @@ header .bar{gap:12px}
   <div class="wrap bar">
     <a class="logo" href="#/"><span class="k">🔑</span><span>Bilim <b>Kaliti</b></span></a>
     <nav class="top">
+      <a href="#/" data-r="">🏠<span class="nlh"> Bosh sahifa</span></a>
       <a href="#/oyinlar" data-r="oyinlar">Oʻyinlar</a>
       <a href="#/sinflar" data-r="sinflar">Sinflar</a>
-      <a href="#/ai" data-r="ai">✨ AI yordamchi</a>
+      <a href="#/ai" data-r="ai">✨ AI<span class="nl"> yordamchi</span></a>
       <a href="#/kutubxona" data-r="kutubxona">📚 Kutubxona</a>
       <a href="#/vositalar" data-r="vositalar">Vositalar</a>
     </nav>
@@ -833,7 +868,7 @@ header .bar{gap:12px}
 
 <main id="app"></main>
 
-<footer><div class="wrap"><span>© Bilim Kaliti · bepul taʼlimiy oʻyinlar</span><span>📢 Kanal: <a href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_uz</a> · Taklif va savollar: <a href="https://t.me/bilimkaliti_bot" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_bot</a></span></div></footer>
+<footer><div class="wrap"><span>© Bilim Kaliti · bepul taʼlimiy oʻyinlar · <a href="#/" onclick="setTimeout(()=>{const a=document.getElementById('about');a&&a.scrollIntoView({behavior:'smooth'})},400)" style="color:var(--teal)">Biz haqimizda</a></span><span>📢 Kanal: <a href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_uz</a> · Taklif va savollar: <a href="https://t.me/bilimkaliti_bot" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_bot</a></span></div></footer>
 
 <nav class="mnav">
   <a href="#/" data-r=""><span>🏠</span>Asosiy</a>
@@ -857,6 +892,10 @@ const GAMES=[
  {id:'mental',f:'toplam',g:'mental',e:'🧮',n:'Mental arifmetika',d:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. Birinchi toʻgʻri javob +2 ball.',c:['#0ca678','#63e6be'],t:['Diqqat','Ogʻzaki hisob']},
  {id:'juft',f:'toplam',g:'juft',e:'🃏',n:'Juftini top',d:'Kartalarni ochib, misolni javobi bilan juftlang. Juftni topgan guruh yana yuradi.',c:['#6d5dfc','#a69bff'],t:['Xotira','Mavzular']},
  {id:'zanjir',f:'toplam',g:'zanjir',e:'🔗',n:'Son zanjiri',d:'Sondan boshlab ketma-ket amallarni bajarib, zanjir oxiriga yeting.',c:['#0b7285','#3bb3c9'],t:['Ogʻzaki hisob']},
+ {id:'togri',f:'bilim',g:'togri',e:'✅',n:'Toʻgʻri yoki notoʻgʻri',d:'Ekranda gap chiqadi — guruh «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Istalgan fan uchun.',c:['#0f9d8a','#2fb9a3'],t:['Barcha fanlar','Yangi']},
+ {id:'jlash',f:'bilim',g:'jlash',e:'🔗',n:'Juftlash',d:'Soʻz ↔ tarjima, sana ↔ voqea, element ↔ belgi: chapdagini oʻngdagi jufti bilan ulang.',c:['#2f8cff','#6aa8ff'],t:['Tillar','Tarix','Yangi']},
+ {id:'tartib',f:'bilim',g:'tartib',e:'📅',n:'Tartibga sol',d:'Voqealar, bosqichlar va jarayonlarni toʻgʻri ketma-ketlikda joylang.',c:['#f08c00','#ffb347'],t:['Tarix','Biologiya','Yangi']},
+ {id:'guruh',f:'bilim',g:'guruh',e:'🗂️',n:'Guruhlarga ajrat',d:'Soʻz va tushunchalarni toʻgʻri savatga joylang: ot/sifat/feʼl, metall/nometall…',c:['#7048e8','#9775fa'],t:['Ona tili','Biologiya','Yangi']},
  {id:'kosmik',f:'kosmik-baza',g:'',e:'🛸',n:'Kosmik baza',d:'Har bir guruh oʻz eshiklarini kod bilan ochib, bazani qutqaradi.',c:['#283c86','#5a6fd0'],t:['Kod topish','Mavzular']},
  {id:'sirli',f:'sirli-xonalar',g:'',e:'🗝️',n:'Sirli xonalar',d:'Qulflangan xonalardan chiqish: har bir xona — yangi jumboq.',c:['#5f3dc4','#9775fa'],t:['Escape-room','Mantiq']},
  {id:'eshik',f:'eshik-kodi',g:'',e:'🏰',n:'Eshik kodi',d:'Besh eshikli qasr: misollarni yechib, har bir eshik kodini toping.',c:['#8d5b2d','#c98e55'],t:['Kod topish']},
@@ -884,7 +923,7 @@ const store={get(k,d){try{const v=localStorage.getItem('bk_'+k);return v==null?d
 function gameUrl(g,extra=''){return `games/${g.f}.html?${g.g?'g='+g.g:''}${extra}`}
 
 function gameCard(g,extra=''){
-  const href=gameUrl(g,g.f==='toplam'?extra:'');
+  const href=gameUrl(g,g.f==='toplam'||g.f==='bilim'||/[?&](set|lib)=/.test('?'+extra.slice(1))?extra:'');
   return `<a class="game" href="${href}">
     <div class="art art-${g.id}" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${g.e}</span>${FX[g.id]||''}<i class="shine"></i></div>
     <div class="gb"><h3>${esc(g.n)}</h3><p>${esc(g.d)}</p>
@@ -909,6 +948,25 @@ const PAGES={
    <a class="feat-new" href="#/ai/darslik"><span class="nw">YANGI</span><span class="fi">📸</span><span><b>Darslikdan oʻyin</b><small>Darslik sahifasi rasmi, PDF yoki Word hujjat — AI savollar tuzadi, bir daqiqada sinf bilan oʻynaysiz.</small></span><span class="go">Sinab koʻrish →</span></a>
   </div>
   <section><div class="wrap">
+   <div class="sh"><div><h2>Nega aynan Bilim Kaliti?</h2><p class="sub">Darsni oʻyinga aylantirish — oʻquvchi uchun qiziqarli, oʻqituvchi uchun oson.</p></div></div>
+   <div class="whys">
+    <div class="why"><span>🎯</span><b>Har bir oʻquvchi faol</b><p>Guruhlar bellashadi, hamma javob izlaydi. Diqqat va qiziqish dars oxirigacha saqlanadi.</p></div>
+    <div class="why"><span>⏱</span><b>Tayyorgarlik — 1 daqiqa</b><p>Savollar avtomatik tuziladi, ballar oʻzi hisoblanadi. Oʻqituvchi faqat darsga eʼtibor beradi.</p></div>
+    <div class="why"><span>💚</span><b>Butunlay bepul</b><p>Reklamasiz, toʻlovsiz. Oʻyinlar uchun roʻyxatdan oʻtish ham shart emas.</p></div>
+    <div class="why"><span>🖥</span><b>Bitta kompyuter yetarli</b><p>Elektron doska yoki proyektor, kompyuter, telefon — hammasida ishlaydi, Telegram ichida ham.</p></div>
+    <div class="why"><span>🇺🇿</span><b>Maktab dasturiga mos</b><p>1–7-sinf matematika mavzulari va 21 ta fan. Interfeys toʻliq oʻzbek tilida.</p></div>
+    <div class="why"><span>🤖</span><b>Sunʼiy intellekt yordamida</b><p>Test, krossvord, dars ishlanmasi, taqdimot — mavzuni yozing yoki darslik sahifasini suratga oling.</p></div>
+   </div>
+  </div></section>
+  <section><div class="wrap">
+   <div class="sh"><div><h2>Qanday ishlaydi?</h2><p class="sub">Uch qadam — va sinf bellashuvga tayyor.</p></div><button class="btn gold" data-wiz="">▶️ Darsni boshlash</button></div>
+   <div class="hows">
+    <div class="how"><b>1</b><div><h3>Fan va sinfni tanlang</h3><p>Matematikada mavzularni belgilaysiz, boshqa fanlarda — tayyor savollar toʻplamini.</p></div></div>
+    <div class="how"><b>2</b><div><h3>Oʻyinni tanlang</h3><p>Minora, raketa poygasi, juftlash, tartibga sol… — ${GAMES.length} xil oʻyin.</p></div></div>
+    <div class="how"><b>3</b><div><h3>Doskada bellashing</h3><p>Guruhlar navbat bilan javob beradi, ochkolar avtomatik. Natija Telegram’ga keladi.</p></div></div>
+   </div>
+  </div></section>
+  <section><div class="wrap">
    <div class="sh"><div><h2>Sinfingizni tanlang</h2><p class="sub">Mavzularni belgilang — oʻyin shu mavzulardan savol beradi.</p></div></div>
    ${gradesGrid()}
   </div></section>
@@ -928,6 +986,34 @@ const PAGES={
    <div class="sh"><div><h2>Sinf vositalari</h2><p class="sub">Darsni jonli va tartibli oʻtkazish uchun.</p></div><a class="btn ghost" href="#/vositalar">Hammasi →</a></div>
    <div class="tools">${SOON.map(soonCard).join('')}</div>
   </div></section>
+
+  <section id="about"><div class="wrap">
+   <div class="about">
+    <div class="ab-l"><span class="ab-k">🔑</span><h2>Biz haqimizda</h2>
+     <p><b>Bilim Kaliti</b> — Oʻzbekistondagi maktab oʻqituvchisi tomonidan yaratilgan bepul taʼlim loyihasi. Maqsadimiz — har bir sinfda darsni qiziqarli, faol va samarali qilish: oʻquvchi bilimni oʻyin orqali mustahkamlasin, oʻqituvchi esa tayyorgarlikka kam vaqt sarflasin.</p>
+     <p>Loyiha oʻqituvchilarning taklif va fikrlari asosida doimiy rivojlanmoqda. Har bir yangi oʻyin va vosita avval real darsda sinab koʻriladi.</p>
+     <div class="mrow"><a class="btn gold" href="${BOT}" target="_blank" rel="noopener">✈️ Taklif yuborish</a><a class="btn ghost" href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener">📢 Yangiliklar kanali</a></div></div>
+    <div class="ab-r">
+     <div class="ab-n"><b>${GAMES.length}</b><span>guruh oʻyini</span></div>
+     <div class="ab-n"><b>21</b><span>fan</span></div>
+     <div class="ab-n"><b>${AI_TOOLS.length}</b><span>AI vosita</span></div>
+     <div class="ab-n"><b>${TOOLS.length}</b><span>sinf vositasi</span></div>
+     <div class="ab-n"><b>40+</b><span>tayyor toʻplam</span></div>
+     <div class="ab-n"><b>0 soʻm</b><span>hammasi bepul</span></div>
+    </div>
+   </div>
+  </div></section>
+  <section><div class="wrap">
+   <div class="sh"><div><h2>Koʻp soʻraladigan savollar</h2></div></div>
+   <div class="faq">
+    <details><summary>Sayt pullikmi?</summary><p>Yoʻq. Barcha oʻyinlar, vositalar va AI yordamchi bepul. AI uchun kunlik limit bor: kuniga 20 ta material va 40 ta chat xabari.</p></details>
+    <details><summary>Roʻyxatdan oʻtish kerakmi?</summary><p>Oʻyinlar uchun — yoʻq. AI yordamchi, savollarni saqlash va kutubxonaga ulashish uchun Telegram orqali bir bosishda kirasiz: parol kerak emas.</p></details>
+    <details><summary>Qaysi qurilmalarda ishlaydi?</summary><p>Kompyuter + elektron doska yoki proyektor — asosiy usul. Telefon va planshetda ham ishlaydi, @bilimkaliti_bot orqali Telegram ichida ham ochiladi.</p></details>
+    <details><summary>Oʻz savollarimni qoʻsha olamanmi?</summary><p>Ha, uch xil yoʻl bilan: qoʻlda yozish, AI bilan mavzu boʻyicha yaratish yoki darslik sahifasini suratga olib (PDF, Word ham boʻladi) savollarga aylantirish. Tayyor toʻplamni kutubxonaga ulashib, hamkasblaringizga ham berasiz.</p></details>
+    <details><summary>Matematikadan boshqa fanlar ham bormi?</summary><p>Ha — 21 ta fan: ona tili, ingliz va rus tili, tarix, biologiya, kimyo, fizika, geografiya va boshqalar. «Toʻgʻri yoki notoʻgʻri», «Juftlash», «Tartibga sol», «Guruhlarga ajrat» oʻyinlari aynan shu fanlar uchun.</p></details>
+    <details><summary>Oʻquvchilarning maʼlumotlari soʻraladimi?</summary><p>Yoʻq. Oʻyinlarda faqat guruh nomlari yoziladi, oʻquvchilarning shaxsiy maʼlumotlari soʻralmaydi va saqlanmaydi.</p></details>
+   </div>
+  </div></section>
   <section><div class="wrap"><div class="banner">
    <div><h2>Telegram bot orqali ham</h2><p>Saytga bot orqali bir bosishda kirasiz. Oʻyinlarni Telegram'dan ham ochish mumkin, oʻyin tugagach natija va «takrorlash kerak» mavzular sizga keladi.</p></div>
    <div class="mrow"><a class="btn gold" href="${BOT}" target="_blank" rel="noopener">✈️ @bilimkaliti_bot</a><a class="btn ghost" href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener">📢 Kanal</a></div>
@@ -936,7 +1022,7 @@ const PAGES={
  oyinlar:()=>`
   <section><div class="wrap fade">
    <div class="sh"><div><h2>Oʻyinlar</h2><p class="sub">Oʻyinni oching, sozlamalarda sinf, mavzu va guruhlar sonini tanlang.</p></div>
-    <div class="tabs" id="gtabs"><button class="on" data-f="all">Hammasi</button><button data-f="top">Mavzuli</button><button data-f="kod">Kod topish</button></div></div>
+    <div class="tabs" id="gtabs"><button class="on" data-f="all">Hammasi</button><button data-f="top">Mavzuli</button><button data-f="fan">🌍 Barcha fanlar uchun</button><button data-f="kod">Kod topish</button></div></div>
    <div class="grid" id="ggrid">${GAMES.map(g=>gameCard(g)).join('')}</div>
    <div class="sh" style="margin-top:40px"><div><h2>Sinf vositalari</h2></div></div>
    <div class="tools">${SOON.map(soonCard).join('')}</div>
@@ -991,7 +1077,7 @@ function bindGrade(n){
 function bindGames(){
   const t=$('#gtabs');if(!t)return;
   t.onclick=e=>{const b=e.target.closest('button');if(!b)return;t.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
-    const f=b.dataset.f;$('#ggrid').innerHTML=GAMES.filter(g=>f==='all'||(f==='top'?g.f==='toplam':g.f!=='toplam')).map(g=>gameCard(g)).join('')};
+    const f=b.dataset.f;$('#ggrid').innerHTML=GAMES.filter(g=>f==='all'||(f==='top'?g.f==='toplam':f==='fan'?g.f==='bilim':g.f!=='toplam'&&g.f!=='bilim')).map(g=>gameCard(g)).join('')};
 }
 function route(){
   if(!document.startViewTransition||REDUCED||!route.booted){route.booted=true;doRoute();return}
@@ -1031,7 +1117,7 @@ const AUTH={get tok(){return store.get('token',null)},get name(){return store.ge
 const FANLAR=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
 const AI_TOOLS=[
  {id:'darslik',e:'📸',n:'Darslikdan oʻyin',d:'Darslik rasmi, PDF yoki Word → AI savollar → darhol guruh oʻyini.',c:'#12a38f'},
- {id:'savollar',e:'🎮',n:'Oʻyin uchun savollar',d:'Istalgan fandan qisqa savollar — darhol guruh oʻyinlarida oʻynaladi va kutubxonaga ulashiladi.',c:'#f5b301',f:['mavzu','fan','sinf','til','extra','file'],ph:'Masalan: kasrlarni qoʻshish / soʻz turkumlari / hayvonlar (ingliz tili)'},
+ {id:'savollar',e:'🎮',n:'Oʻyin uchun savollar',d:'Istalgan fandan qisqa savollar — darhol guruh oʻyinlarida oʻynaladi va kutubxonaga ulashiladi.',c:'#f5b301',f:['mavzu','fan','sinf','tur','til','extra','file'],ph:'Masalan: kasrlarni qoʻshish / soʻz turkumlari / hayvonlar (ingliz tili)'},
  {id:'test',e:'📝',n:'Testlar',d:'Javob variantli test, javoblar kaliti va doskada test-shou.',c:'#7b5cff',f:['mavzu','fan','sinf','n','qiyinlik','til','extra','file'],nl:'Savollar soni'},
  {id:'taqdimot',e:'🖥️',n:'Taqdimot',d:'Slaydlar: doskada namoyish va PowerPoint (.pptx) yuklab olish.',c:'#2f8cff',f:['mavzu','fan','sinf','n','til','extra','file'],nl:'Slaydlar soni'},
  {id:'dars',e:'📒',n:'Dars ishlanma',d:'Maqsadlar, bosqichlar, metodlar va uyga vazifa bilan.',c:'#12a38f',f:['mavzu','fan','sinf','vaqt','til','extra','file']},
@@ -1134,6 +1220,7 @@ function field(k,t,v){
    case 'sinf':return `<label class="f"><span>Sinf</span><select name="sinf">${opt([...Array(11)].map((_,i)=>[i+1,(i+1)+'-sinf']),v.sinf||5)}</select></label>`;
    case 'n':return `<label class="f"><span>${esc(t.nl||'Soni')}</span><input name="n" type="number" min="${nmin}" max="${nmax}" value="${v.n||nd}"></label>`;
    case 'qiyinlik':return `<label class="f"><span>Qiyinlik</span><select name="qiyinlik">${opt([['oson','Oson'],['oʻrta','Oʻrta'],['qiyin','Qiyin']],v.qiyinlik||'oʻrta')}</select></label>`;
+   case 'tur':return `<label class="f"><span>Oʻyin turi</span><select name="tur">${opt([['','✨ Avtomatik (fanga qarab)'],['mc','📝 Test (4 variant)'],['tf','✅ Toʻgʻri / notoʻgʻri'],['pair','🔗 Juftlash'],['order','📅 Tartibga sol'],['group','🗂️ Guruhlarga ajrat']],v.tur||'')}</select></label>`;
    case 'til':return `<label class="f"><span>Til</span><select name="til">${opt([['uz','Oʻzbekcha'],['ru','Русский'],['en','English']],v.til||'uz')}</select></label>`;
    case 'vaqt':return `<label class="f"><span>Dars vaqti</span><select name="vaqt">${opt([['45','45 daqiqa'],['80','80 daqiqa (juft dars)']],v.vaqt||'45')}</select></label>`;
    case 'davr':return `<label class="f"><span>Davr</span><select name="davr">${opt(['bir yillik','1-chorak','2-chorak','3-chorak','4-chorak','1-yarim yillik','2-yarim yillik'].map(x=>[x,x[0].toUpperCase()+x.slice(1)]),v.davr||'bir yillik')}</select></label>`;
@@ -1227,8 +1314,8 @@ const R={
  krossvord(d,rec){const L=rec.layout||(rec.layout=crossLayout(arr(d.words)));return crossHtml(d,L)},
  taqdimot(d,rec){const th=THEMES[rec.theme||0];return `<div class="slides">${slideList(d).map((s,i)=>slideHtml(s,i,th)).join('')}</div>`},
  savollar(d){const s=d.set||{};return `<h1>${ex(s.name||d.title)}</h1><p class="sub noprint">Toʻplam saqlandi — oʻyinni tanlang. U botdagi «📦 Toʻplamlarim»da ham chiqadi.</p>
-   <div class="grid noprint" style="margin:14px 0 22px">${gamesFor({mc:arr(s.items).some(x=>x.o)}).map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
-   <h2>Savollar</h2><ol>${arr(s.items).map(x=>`<li>${ex(x.q)} <b>→ ${x.o?ex(x.o[x.c||0]):ex(x.a)}</b></li>`).join('')}</ol>`},
+   <div class="grid noprint" style="margin:14px 0 22px">${gamesFor({kind:setKind(arr(s.items))}).map(g=>gameCard(g,'&set='+encodeURIComponent(s.id)+(s.fan?'&fan='+encodeURIComponent(s.fan):''))).join('')}</div>
+   <h2>Savollar</h2><ol>${arr(s.items).map(x=>`<li>${itemTxt(x)}</li>`).join('')}</ol>`},
 };
 
 function docPage(id){
@@ -1619,13 +1706,21 @@ function bindDraw(){
 /* ================= FANLAR, KUTUBXONA, TOʻPLAMLARIM ================= */
 let STATIC_SETS=null;
 async function staticSets(){if(STATIC_SETS)return STATIC_SETS;try{const r=await fetch('games/sets.json?v='+Date.now());STATIC_SETS=r.ok?await r.json():[]}catch(e){STATIC_SETS=[]}
-  STATIC_SETS=STATIC_SETS.map(s=>({id:'k-'+s.id,name:s.name,fan:s.fan,sinf:s.sinf,mavzu:s.mavzu||'',author:s.author||'Bilim Kaliti',n:s.items.length,mc:s.items.some(i=>i.o),plays:null,items:s.items,fixed:1}));return STATIC_SETS}
+  STATIC_SETS=STATIC_SETS.map(s=>({id:'k-'+s.id,name:s.name,fan:s.fan,sinf:s.sinf,mavzu:s.mavzu||'',author:s.author||'Bilim Kaliti',n:s.items.length,mc:s.items.some(i=>i.o),kind:setKind(s.items),plays:null,items:s.items,fixed:1}));return STATIC_SETS}
 const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
 const fanSlug=f=>encodeURIComponent(f);
-function gamesFor(s){return GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(s.mc&&g.g==='bomba'))}
+const itKind=it=>it.o?'mc':'t' in it?'tf':'b' in it?'pair':it.s?'order':it.g?'group':'num';
+const setKind=items=>{const k=new Set((items||[]).map(itKind));return k.size===1?[...k][0]:k.has('mc')?'mc':'mix'};
+const KIND_LBL={mc:'test',tf:'toʻgʻri/notoʻgʻri',pair:'juftlar',order:'tartibga sol',group:'guruhlash',num:'son javob',mix:'aralash'};
+function gamesFor(s){const k=s.kind||(s.mc?'mc':'num');
+  if(k==='tf')return GAMES.filter(g=>g.id==='togri');if(k==='order')return GAMES.filter(g=>g.id==='tartib');if(k==='group')return GAMES.filter(g=>g.id==='guruh');
+  const top=GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(k!=='num'&&g.g==='bomba'));
+  const old=GAMES.filter(g=>['kosmik','sirli','eshik'].includes(g.id));
+  return k==='pair'?[GAMES.find(g=>g.id==='jlash'),...top,...old]:k==='mc'?[...top,...GAMES.filter(g=>g.id==='togri'||g.id==='jlash'),...old]:top}
+const itemTxt=it=>{const k=itKind(it);return k==='mc'?`${ex(it.q)}<br><b>→ ${ex(it.o[it.c||0])}</b>`:k==='num'?`${ex(it.q)}<br><b>→ ${ex(it.a)}</b>`:k==='tf'?`${ex(it.q)} <b>→ ${it.t?'✅ toʻgʻri':'❌ notoʻgʻri'}</b>`:k==='pair'?`<b>${ex(it.a)}</b> ↔ ${ex(it.b)}`:k==='order'?`${ex(it.q)}<br><b>${it.s.map(ex).join(' → ')}</b>`:`${ex(it.q)}<br>${it.g.map(g=>`<b>${ex(g.n)}:</b> ${g.w.map(ex).join(', ')}`).join('<br>')}`};
 function playModal(s,param){
   const m=store.get('mode','g'),mx=()=>({g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[store.get('mode','g')]||'');
-  const md=modal(`<h3>▶️ ${esc(s.name)}</h3><p class="sub">${s.mc?'Test savollari: oʻquvchi toʻgʻri variant raqamini bosadi.':'Son-javobli savollar.'} Oʻyinni tanlang:</p>
+  const md=modal(`<h3>▶️ ${esc(s.name)}</h3><p class="sub">${{mc:'Test savollari: oʻquvchi toʻgʻri javob tugmasini bosadi.',num:'Son-javobli savollar.'}[s.kind||(s.mc?'mc':'num')]||('Turi: '+KIND_LBL[s.kind]+'.')} Oʻyinni tanlang:</p>
     <div class="tabs" id="pmMode" style="margin:6px 0 12px"><button data-m="g">👥 Guruhlar</button><button data-m="r">🤖 Kompyuterga qarshi</button><button data-m="s">👤 Bitta oʻquvchi</button></div>
     <div class="pmgames" id="pmGames"></div>`);
   md.querySelector('.mbox').classList.add('wide');
@@ -1633,11 +1728,11 @@ function playModal(s,param){
     md.querySelector('#pmGames').innerHTML=gamesFor(s).map(g=>`<a class="pmg" href="${gameUrl(g,param+mx())}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')};
   md.querySelector('#pmMode').onclick=e=>{const b=e.target.closest('[data-m]');if(b){store.set('mode',b.dataset.m);draw()}};draw()}
 function viewModal(name,items){
-  const md=modal(`<h3>👁 ${esc(name)}</h3><ol class="pvlist">${items.map(it=>`<li>${ex(it.q)}<br><b>→ ${it.o?ex(it.o[it.c||0]):ex(it.a)}</b>${it.o?`<small> · ${it.o.filter((_,k)=>k!==(it.c||0)).map(ex).join(' · ')}</small>`:''}</li>`).join('')}</ol>`);
+  const md=modal(`<h3>👁 ${esc(name)}</h3><ol class="pvlist">${items.map(it=>`<li>${itemTxt(it)}${it.o?`<small> · ${it.o.filter((_,k)=>k!==(it.c||0)).map(ex).join(' · ')}</small>`:''}</li>`).join('')}</ol>`);
   md.querySelector('.mbox').classList.add('wide')}
 function setCard(s){
   return `<div class="scard"><div class="sct"><span class="ic">${FAN_IC[s.fan]||'📦'}</span><div><b>${esc(s.name)}</b><small>${esc(s.fan||'')}${s.sinf?` · ${esc(s.sinf)}-sinf`:''}${s.mavzu?` · ${esc(s.mavzu)}`:''}</small></div></div>
-   <div class="scm"><span>✍️ ${esc(s.author||'')}</span><span>📝 ${s.n} ta</span>${s.plays!=null?`<span>▶️ ${s.plays}</span>`:''}${s.mc?'<span class="tag">test</span>':''}</div>
+   <div class="scm"><span>✍️ ${esc(s.author||'')}</span><span>📝 ${s.n} ta</span>${s.plays!=null?`<span>▶️ ${s.plays}</span>`:''}${s.kind&&s.kind!=='num'?`<span class="tag">${KIND_LBL[s.kind]||'test'}</span>`:s.mc?'<span class="tag">test</span>':''}</div>
    <div class="sca"><button class="btn gold sm" data-play="${esc(s.id)}">▶️ Oʻynash</button><button class="btn ghost sm" data-view="${esc(s.id)}">👁 Koʻrish</button>${s.mine?`<button class="btn ghost sm" data-ldel="${esc(s.id)}">🗑</button>`:''}</div></div>`}
 
 /* ---------- kutubxona ---------- */
@@ -1647,7 +1742,7 @@ function libPage(fan){
    <div class="sh"><div><h2>${fan?`${FAN_IC[fan]||'📚'} ${esc(fan)}`:'📚 Kutubxona'}</h2><p class="sub">${fan?'Shu fandan tayyor toʻplamlar — bitta bosishda guruh oʻyinlarida oʻynang.':'Oʻqituvchilar ulashgan va tayyor toʻplamlar. Fan va sinf boʻyicha qidiring.'}</p></div>
     <div class="mrow"><a class="btn ghost" href="#/toplamlar">📦 Mening toʻplamlarim</a><a class="btn ghost" href="#/ai/darslik">📸 Darslikdan</a><a class="btn gold" href="#/ai/savollar" id="libAi">✨ AI bilan yaratish</a></div></div>
    ${fan&&!MATH_FANLAR.includes(fan)?`<div class="fangames"><div class="sh" style="margin:0 0 10px"><div><h3 style="margin:0">🎮 ${esc(fan)} bilan oʻynash</h3><p class="sub" style="margin:2px 0 0">Oʻyinni tanlang — u ${esc(fan)} savollari bilan ochiladi.</p></div><button class="btn gold" data-wiz="${esc(fan)}">▶️ Darsni boshlash</button></div>
-     <div class="pmgames">${gamesFor({mc:true}).map(g=>`<a class="pmg" href="${gameUrl(g,'&fan='+encodeURIComponent(fan))}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')}</div></div>`:''}
+     <div class="pmgames">${[...gamesFor({kind:'mc'}),GAMES.find(g=>g.id==='tartib'),GAMES.find(g=>g.id==='guruh')].map(g=>`<a class="pmg" href="${gameUrl(g,'&fan='+encodeURIComponent(fan))}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')}</div></div>`:''}
    ${fan==='Matematika'?`<div class="note" style="margin:0 0 16px">🧮 Matematikada savollar har gal yangidan yaratiladi: <a href="#/sinflar" style="color:var(--teal)">sinf va mavzuni tanlang →</a></div>`:''}
    <div class="lfilter"><select id="lFan">${fans.map(f=>`<option value="${esc(f)}" ${f===fan?'selected':''}>${f?esc(f):'Barcha fanlar'}</option>`).join('')}</select>
     <select id="lSinf"><option value="">Barcha sinflar</option>${[...Array(11)].map((_,i)=>`<option value="${i+1}">${i+1}-sinf</option>`).join('')}</select>
@@ -1692,7 +1787,7 @@ function bindMySets(){
   async function load(){
     if(!AUTH.tok){$('#mList').innerHTML=`<div class="empty"><div>🔐</div><p>Toʻplamlaringizni koʻrish uchun kiring.</p><button class="btn gold" id="mIn">Telegram orqali kirish</button></div>`;$('#mIn').onclick=async()=>{if(await login())load()};return}
     try{const j=await api('/api/sets',{token:AUTH.tok},90000);const l=(j.sets||[]).slice().reverse();
-      l.forEach(s=>{s.n=s.items.length;s.mc=s.items.some(i=>i.o);s.author='';by[s.id]=s});
+      l.forEach(s=>{s.n=s.items.length;s.mc=s.items.some(i=>i.o);s.kind=setKind(s.items);s.author='';by[s.id]=s});
       $('#mList').innerHTML=l.length?l.map(s=>`<div class="scard"><div class="sct"><span class="ic">${FAN_IC[s.fan]||(s.mc?'📝':'🔢')}</span><div><b>${esc(s.name)}</b><small>${s.fan?esc(s.fan)+' · ':''}${s.n} ta savol${s.mc?' · test':''}</small></div></div>
         <div class="sca"><button class="btn gold sm" data-play="${s.id}">▶️ Oʻynash</button><button class="btn ghost sm" data-view="${s.id}">👁</button><button class="btn ghost sm" data-pub="${s.id}">📚 Ulashish</button><button class="btn ghost sm" data-del="${s.id}">🗑</button></div></div>`).join('')
         :`<div class="empty"><div>📦</div><p>Hali toʻplam yoʻq. AI bilan yoki qoʻlda yarating.</p></div>`}
@@ -1809,7 +1904,7 @@ document.addEventListener('pointerdown',e=>{
   d.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;el.appendChild(d);setTimeout(()=>d.remove(),650)},{passive:true});
 
 /* --- koʻrinishga kirganda chiqish + raqamlar sanalishi --- */
-const RV_SEL='.sh,.grid,.grades,.aigrid,.tools,.subjects,.sgrid,.banner,.formcard,.lfilter';
+const RV_SEL='.sh,.grid,.grades,.aigrid,.tools,.subjects,.sgrid,.banner,.formcard,.lfilter,.whys,.hows,.about,.faq';
 const RV_IO='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');RV_IO.unobserve(en.target)}}),{rootMargin:'0px 0px -8% 0px',threshold:.06}):null;
 function revealInit(){document.querySelectorAll('#app '+RV_SEL.split(',').join(',#app ')).forEach(el=>{if(el.classList.contains('rv'))return;el.classList.add('rv');if(RV_IO&&!REDUCED)RV_IO.observe(el);else el.classList.add('in')})}
 function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{const n=+el.dataset.count;if(!n||REDUCED){el.textContent=n||el.textContent;return}
@@ -1851,7 +1946,7 @@ function dlSrcHtml(){
    ${f.length?`<div class="fgrid" style="margin-top:20px">
      <label class="f"><span>Fan</span><select id="dlFan">${FANLAR.map(x=>`<option ${x===o.fan?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
      <label class="f"><span>Sinf</span><select id="dlSinf">${[...Array(11)].map((_,i)=>`<option value="${i+1}" ${+o.sinf===i+1?'selected':''}>${i+1}-sinf</option>`).join('')}</select></label>
-     <div class="f wide"><span>Savol turi</span>${seg('tur',[['auto','✨ Avtomatik','fanga qarab'],['mc','📝 Test','4 ta variant'],['num','🔢 Son javob','matematika uchun']])}</div>
+     <div class="f wide"><span>Savol turi</span>${seg('tur',[['auto','✨ Avtomatik','fanga qarab'],['mc','📝 Test','4 ta variant'],['num','🔢 Son javob','matematika uchun'],['tf','✅ Toʻgʻri/notoʻgʻri','har qanday fan'],['pair','🔗 Juftlash','soʻz ↔ maʼno'],['order','📅 Tartibga sol','voqea, bosqich'],['group','🗂️ Guruhlarga ajrat','turkumlash']])}</div>
      <div class="f"><span>Savollar soni</span>${seg('n',[[8,'8'],[12,'12'],[16,'16'],[20,'20']])}</div>
      <div class="f"><span>Qiyinlik</span>${seg('qiyin',[[1,'Oson'],[2,'Oʻrta'],[3,'Qiyin']])}</div>
      <label class="f wide"><span>Mavzu <em>(ixtiyoriy — AI oʻzi aniqlaydi)</em></span><input id="dlMav" maxlength="200" placeholder="Masalan: Oddiy kasrlarni taqqoslash" value="${esc(o.mavzu||'')}"></label>
@@ -1975,42 +2070,56 @@ async function dlGenerate(){
   finally{clearInterval(iv)}
 }
 function dlItemHtml(it,i){
-  return `<div class="dl-q" data-i="${i}" style="animation-delay:${Math.min(i,10)*40}ms"><button class="del" data-del="${i}" title="Oʻchirish" aria-label="Savolni oʻchirish">🗑</button>
-   <textarea class="qt" rows="1" data-f="q" maxlength="300">${esc(it.q)}</textarea>
-   ${it.o?`<div class="dl-opts">${it.o.map((x,k)=>`<div class="dl-opt ${k===(it.c||0)?'ok':''}"><label title="Toʻgʻri javob"><input type="radio" name="c${i}" value="${k}" ${k===(it.c||0)?'checked':''}>${k===(it.c||0)?'✓':'ABCD'[k]}</label><input type="text" data-o="${k}" maxlength="120" value="${esc(x)}"></div>`).join('')}</div>`
-   :`<div class="dl-ans">Javob: <input type="number" min="0" max="9999" data-f="a" value="${esc(it.a)}"></div>`}</div>`}
+  const k=itKind(it),del=`<button class="del" data-del="${i}" title="Oʻchirish" aria-label="Oʻchirish">🗑</button>`,qa=(ph)=>`<textarea class="qt" rows="1" data-f="q" maxlength="300" placeholder="${ph||''}">${esc(it.q||'')}</textarea>`;
+  let body='';
+  if(k==='mc')body=qa()+`<div class="dl-opts">${it.o.map((x,j)=>`<div class="dl-opt ${j===(it.c||0)?'ok':''}"><label title="Toʻgʻri javob"><input type="radio" name="c${i}" value="${j}" ${j===(it.c||0)?'checked':''}>${j===(it.c||0)?'✓':'ABCD'[j]}</label><input type="text" data-o="${j}" maxlength="120" value="${esc(x)}"></div>`).join('')}</div>`;
+  else if(k==='tf')body=qa('Gap')+`<div class="dl-tf"><button type="button" data-tf="1" class="${it.t?'on y':''}">✅ Toʻgʻri</button><button type="button" data-tf="0" class="${!it.t?'on n':''}">❌ Notoʻgʻri</button></div>`;
+  else if(k==='pair')body=`<div class="dl-pair"><input type="text" data-f="pa" maxlength="160" value="${esc(it.a)}" placeholder="Chap"><span>↔</span><input type="text" data-f="pb" maxlength="160" value="${esc(it.b)}" placeholder="Oʻng"></div>`;
+  else if(k==='order')body=qa('Topshiriq')+`<p class="small" style="margin:4px 0 6px">Toʻgʻri tartibda yozing (oʻyinda aralashtiriladi):</p><div class="dl-ord">${it.s.map((x,j)=>`<label><b>${j+1}</b><input type="text" data-s="${j}" maxlength="120" value="${esc(x)}"></label>`).join('')}</div>`;
+  else if(k==='group')body=qa('Topshiriq')+`<div class="dl-grp">${it.g.map((g,j)=>`<div><input type="text" data-gn="${j}" maxlength="60" value="${esc(g.n)}" placeholder="Guruh nomi"><input type="text" data-gw="${j}" maxlength="400" value="${esc(g.w.join(', '))}" placeholder="soʻzlar, vergul bilan"></div>`).join('')}</div>`;
+  else body=qa()+`<div class="dl-ans">Javob: <input type="number" min="0" max="9999" data-f="a" value="${esc(it.a)}"></div>`;
+  return `<div class="dl-q" data-i="${i}" style="animation-delay:${Math.min(i,10)*40}ms">${del}${body}</div>`}
+const dlBlank=k=>({mc:{q:'',o:['','','',''],c:0},tf:{q:'',t:1},pair:{a:'',b:''},order:{q:'',s:['','','','']},group:{q:'',g:[{n:'',w:[]},{n:'',w:[]}]},num:{q:'',a:''}}[k]);
+function dlClean(it){const S=x=>String(x==null?'':x).trim(),k=itKind(it);
+  if(k==='mc'){const o=it.o.map(S);return S(it.q)&&o.every(Boolean)&&new Set(o).size===4?{q:S(it.q),o,c:+it.c||0}:null}
+  if(k==='tf')return S(it.q)?{q:S(it.q),t:it.t?1:0}:null;
+  if(k==='pair')return S(it.a)&&S(it.b)?{a:S(it.a),b:S(it.b)}:null;
+  if(k==='order'){const s=it.s.map(S).filter(Boolean);return s.length>=3&&new Set(s).size===s.length?{q:S(it.q)||'Toʻgʻri tartibga soling',s}:null}
+  if(k==='group'){const g=it.g.map(x=>({n:S(x.n),w:(Array.isArray(x.w)?x.w:[]).map(S).filter(Boolean)})).filter(x=>x.n&&x.w.length);return g.length>=2?{q:S(it.q)||'Guruhlarga ajrating',g}:null}
+  const a=parseInt(it.a,10);return S(it.q)&&Number.isInteger(a)&&a>=0&&a<=9999?{q:S(it.q),a}:null}
 const dlFit=t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px'};
 const dlFitAll=()=>document.querySelectorAll('.dl-q .qt').forEach(dlFit);
 function dlResult(){
   const r=DL.res;dlStep(3);
   $('#dlBody').innerHTML=`<div class="dl-res-h"><div>${r.mavzu?`<span class="mz">🎯 ${esc(r.mavzu)}</span>`:''}${r.izoh?`<p class="sub" style="margin:8px 0 0">${esc(r.izoh)}</p>`:''}</div>
      <button class="btn ghost sm" id="dlAgain">🔁 Qayta yaratish</button></div>
-    <p class="small" style="margin:0 0 12px">✏️ Savol va javoblarni bosib tahrirlashingiz mumkin. ${r.tur==='mc'?'Toʻgʻri javobni doirachani bosib belgilang.':''}</p>
+    <p class="small" style="margin:0 0 12px">✏️ Bosib tahrirlashingiz mumkin. ${r.tur==='mc'?'Toʻgʻri javobni doirachani bosib belgilang.':r.tur==='tf'?'Har bir gap uchun toʻgʻri yoki notoʻgʻri ekanini belgilang.':''}</p>
     <div class="dl-list" id="dlList">${r.items.map(dlItemHtml).join('')}</div>
     <button class="btn ghost" id="dlAddQ" style="margin-top:12px">＋ Savol qoʻshish</button>
     <div class="dl-bar"><input id="dlName" maxlength="60" value="${esc(r.name)}" aria-label="Toʻplam nomi"><button class="btn gold" id="dlSave">💾 Saqlash va oʻynash</button></div>`;
   const L=$('#dlList');
   L.oninput=e=>{const q=e.target.closest('.dl-q');if(!q)return;const it=r.items[+q.dataset.i];
-    if(e.target.dataset.f==='q'){it.q=e.target.value;dlFit(e.target)}else if(e.target.dataset.f==='a')it.a=e.target.value;
-    else if(e.target.dataset.o!=null)it.o[+e.target.dataset.o]=e.target.value};
+    const d=e.target.dataset,v=e.target.value;
+    if(d.f==='q'){it.q=v;dlFit(e.target)}else if(d.f==='a')it.a=v;else if(d.f==='pa')it.a=v;else if(d.f==='pb')it.b=v;
+    else if(d.o!=null)it.o[+d.o]=v;else if(d.s!=null)it.s[+d.s]=v;else if(d.gn!=null)it.g[+d.gn].n=v;else if(d.gw!=null)it.g[+d.gw].w=v.split(',').map(x=>x.trim()).filter(Boolean)};
   L.onchange=e=>{if(e.target.type!=='radio')return;const q=e.target.closest('.dl-q'),i=+q.dataset.i;r.items[i].c=+e.target.value;q.outerHTML=dlItemHtml(r.items[i],i);dlFitAll()};
-  L.onclick=e=>{const b=e.target.closest('[data-del]');if(!b)return;r.items.splice(+b.dataset.del,1);L.innerHTML=r.items.map(dlItemHtml).join('');dlFitAll()};
-  $('#dlAddQ').onclick=()=>{r.items.push(r.tur==='mc'?{q:'',o:['','','',''],c:0}:{q:'',a:''});L.innerHTML=r.items.map(dlItemHtml).join('');const t=L.querySelector('.dl-q:last-child .qt');t&&t.focus()};
+  L.onclick=e=>{const tf=e.target.closest('[data-tf]');if(tf){const q=tf.closest('.dl-q'),i=+q.dataset.i;r.items[i].t=+tf.dataset.tf;q.outerHTML=dlItemHtml(r.items[i],i);dlFitAll();return}
+    const b=e.target.closest('[data-del]');if(!b)return;r.items.splice(+b.dataset.del,1);L.innerHTML=r.items.map(dlItemHtml).join('');dlFitAll()};
+  $('#dlAddQ').onclick=()=>{r.items.push(dlBlank(r.items.length?itKind(r.items[0]):r.tur==='mc'?'mc':'num'));L.innerHTML=r.items.map(dlItemHtml).join('');const t=L.querySelector('.dl-q:last-child .qt');t&&t.focus()};
   dlFitAll();
   $('#dlAgain').onclick=()=>{DL.res=null;dlDraw()};
   $('#dlSave').onclick=dlSave;
 }
 async function dlSave(){
   const r=DL.res,btn=$('#dlSave');
-  const items=r.items.map(it=>it.o?{q:String(it.q).trim(),o:it.o.map(x=>String(x).trim()),c:+it.c||0}:{q:String(it.q).trim(),a:parseInt(it.a,10)})
-    .filter(it=>it.q&&(it.o?it.o.filter(Boolean).length===4&&new Set(it.o).size===4:Number.isInteger(it.a)&&it.a>=0&&it.a<=9999));
-  if(items.length<3){toast('Kamida 3 ta toʻliq savol kerak');return}
+  const items=r.items.map(dlClean).filter(Boolean),need=['order','group'].includes(setKind(items))?1:3;
+  if(items.length<need){toast(need>1?'Kamida 3 ta toʻliq savol kerak':'Kamida 1 ta toʻliq topshiriq kerak');return}
   if(items.length<r.items.length)toast(`${r.items.length-items.length} ta chala savol tashlab ketildi`);
   btn.disabled=true;btn.textContent='⏳ Saqlanmoqda…';
   try{const j=await api('/api/sets/save',{token:AUTH.tok,name:$('#dlName').value.trim()||r.name,items,fan:DL.opt.fan});
-    const s={...j.set,mc:j.set.items.some(x=>x.o),n:j.set.items.length};
+    const s={...j.set,mc:j.set.items.some(x=>x.o),kind:setKind(j.set.items),n:j.set.items.length};
     $('#dlBody').innerHTML=`<div class="dl-done"><div class="big">🎉</div><h2 style="margin:6px 0 4px">${esc(s.name)}</h2><p class="sub">${s.n} ta savol saqlandi. Oʻyinni tanlang — darhol doskada ochiladi.</p></div>
-      <div class="grid" style="margin:16px 0">${gamesFor(s).map(g=>gameCard(g,'&set='+encodeURIComponent(s.id))).join('')}</div>
+      <div class="grid" style="margin:16px 0">${gamesFor(s).map(g=>gameCard(g,'&set='+encodeURIComponent(s.id)+'&fan='+encodeURIComponent(DL.opt.fan))).join('')}</div>
       <div class="mrow" style="justify-content:center"><button class="btn gold" id="dlPlay">▶️ Robo yoki yakka rejim</button><button class="btn ghost" id="dlPub">📚 Kutubxonaga ulashish</button><button class="btn ghost" id="dlNew">📸 Yangi sahifa</button></div>`;
     burstTop(150);
     $('#dlPlay').onclick=()=>playModal(s,'&set='+encodeURIComponent(s.id));
@@ -2141,10 +2250,10 @@ function wzHead(t,sub){const st=['Fan','Sinf va mavzu','Oʻyin'];
    <h3 class="wzt">${t}</h3>${sub?`<p class="sub" style="margin:0 0 14px">${sub}</p>`:''}`}
 function wzFoot(next){if(WZ.step===1&&!next)return '';return `<div class="wzfoot">${WZ.step>1?'<button class="btn ghost" data-wz="back">← Orqaga</button>':'<span></span>'}${next||''}</div>`}
 async function wzLoadSets(){
-  const st=(await staticSets()).filter(s=>s.fan===WZ.fan).map(s=>({id:s.id,param:'&set='+encodeURIComponent(s.id),name:s.name,sinf:String(s.sinf||''),n:s.items.length,mc:true,tag:'⭐ Tayyor'}));
+  const st=(await staticSets()).filter(s=>s.fan===WZ.fan).map(s=>({id:s.id,param:'&set='+encodeURIComponent(s.id),name:s.name,sinf:String(s.sinf||''),n:s.items.length,mc:s.mc,kind:s.kind,tag:'⭐ Tayyor'}));
   let lib=[],mine=[];
-  try{const j=await api('/api/lib/list',{fan:WZ.fan,sort:'top'},60000);lib=(j.sets||[]).map(m=>({id:'L-'+m.id,param:'&lib='+encodeURIComponent(m.id),name:m.name,sinf:String(m.sinf||''),n:m.n,mc:m.mc,tag:'📚 '+(m.author||'Kutubxona')}))}catch(e){}
-  if(AUTH.tok){try{const j=await api('/api/sets',{token:AUTH.tok},60000);mine=(j.sets||[]).filter(s=>s.fan===WZ.fan).map(s=>({id:s.id,param:'&set='+encodeURIComponent(s.id),name:s.name,sinf:'',n:s.items.length,mc:s.items.some(i=>i.o),tag:'📦 Meniki'}))}catch(e){}}
+  try{const j=await api('/api/lib/list',{fan:WZ.fan,sort:'top'},60000);lib=(j.sets||[]).map(m=>({id:'L-'+m.id,param:'&lib='+encodeURIComponent(m.id),name:m.name,sinf:String(m.sinf||''),n:m.n,mc:m.mc,kind:m.kind||(m.mc?'mc':'num'),tag:'📚 '+(m.author||'Kutubxona')}))}catch(e){}
+  if(AUTH.tok){try{const j=await api('/api/sets',{token:AUTH.tok},60000);mine=(j.sets||[]).filter(s=>s.fan===WZ.fan).map(s=>({id:s.id,param:'&set='+encodeURIComponent(s.id),name:s.name,sinf:'',n:s.items.length,mc:s.items.some(i=>i.o),kind:setKind(s.items),tag:'📦 Meniki'}))}catch(e){}}
   WZ.sets=[...mine,...st,...lib];if(WZ.step===2)wzDraw()}
 function wzDraw(){
   const box=$('#wz');if(!box)return;const M=MATH_FANLAR.includes(WZ.fan);
@@ -2161,14 +2270,14 @@ function wzDraw(){
     const grs=[...new Set(WZ.sets.map(s=>s.sinf).filter(Boolean))].sort((a,b)=>a-b),l=WZ.sets.filter(s=>!WZ.fs||!s.sinf||s.sinf===String(WZ.fs));
     box.innerHTML=wzHead(`${FAN_IC[WZ.fan]||'📘'} ${esc(WZ.fan)}: savollar toʻplamini tanlang`,'Oʻyin shu toʻplamdagi savollardan tuziladi.')+
      (grs.length>1?`<div class="wzgr"><button data-fs="0" class="${!WZ.fs?'on':''}">Barcha sinflar</button>${grs.map(g=>`<button data-fs="${g}" class="${String(WZ.fs)===g?'on':''}">${g}-sinf</button>`).join('')}</div>`:'')+
-     (l.length?`<div class="wzsets">${l.map((s,i)=>`<button class="wzset${WZ.set&&WZ.set.id===s.id?' on':''}" data-si="${WZ.sets.indexOf(s)}"><b>${esc(s.name)}</b><small>${esc(s.tag)} · ${s.n} ta savol${s.sinf?` · ${esc(s.sinf)}-sinf`:''}</small></button>`).join('')}</div>`
+     (l.length?`<div class="wzsets">${l.map((s,i)=>`<button class="wzset${WZ.set&&WZ.set.id===s.id?' on':''}" data-si="${WZ.sets.indexOf(s)}"><b>${esc(s.name)}</b><small>${esc(s.tag)} · ${s.n} ta · ${KIND_LBL[s.kind]||'test'}${s.sinf?` · ${esc(s.sinf)}-sinf`:''}</small></button>`).join('')}</div>`
       :`<div class="empty" style="padding:22px 0"><div>📭</div><p>Bu fan boʻyicha hali toʻplam yoʻq. Bir daqiqada yarating:</p></div>`)+
      `<div class="mrow" style="margin-top:12px"><a class="btn ghost sm" href="#/ai/darslik" data-close>📸 Darslikdan yaratish</a><a class="btn ghost sm" href="#/ai/savollar" data-close data-pre="1">✨ AI bilan yaratish</a></div>`+
      wzFoot(`<button class="btn gold" data-wz="next" ${WZ.set?'':'disabled'}>Keyingisi: oʻyin →</button>`);
   }else{
     const mode=store.get('mode','g'),mx={g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[mode]||'';
     const base=M?`&sinf=${WZ.sinf}&t=${WZ.topics.join(',')}`:WZ.set.param+'&fan='+encodeURIComponent(WZ.fan);
-    const games=M?GAMES.filter(g=>g.f==='toplam'):gamesFor({mc:WZ.set.mc});
+    const games=M?GAMES.filter(g=>g.f==='toplam'):gamesFor(WZ.set);
     box.innerHTML=wzHead('Qaysi oʻyinni oʻynaymiz?',M?`${WZ.sinf}-sinf · ${WZ.topics.length} ta mavzu`:`${esc(WZ.set.name)}`)+
      `<div class="tabs" id="wzMode" style="margin:0 0 12px"><button data-m="g" class="${mode==='g'?'on':''}">👥 Guruhlar</button><button data-m="r" class="${mode==='r'?'on':''}">🤖 Kompyuterga qarshi</button><button data-m="s" class="${mode==='s'?'on':''}">👤 Bitta oʻquvchi</button></div>
       <div class="pmgames">${games.map(g=>`<a class="pmg" href="${gameUrl(g,base+mx)}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b><small>${esc(g.t[0]||'')}</small></a>`).join('')}</div>
