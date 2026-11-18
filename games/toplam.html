@@ -1876,5 +1876,11 @@ async function loadSets(){
   if(t&&t!=='all'){const l=t.split(',').map(Number).filter(i=>TOPICS[i]);if(l.length)cfg.topics=l}
   if(g&&GAMES[g])openSetup(g);else show('menu');loadSets()})();
 </script>
-</body>
+<script id="bkHit">(function(){var A=/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com';
+function vid(){try{var v=JSON.parse(localStorage.getItem('bk_vid'));if(v&&/^[\w-]{6,32}$/.test(v))return v;v=(Date.now().toString(36)+Math.random().toString(36).slice(2,10)).slice(0,20);localStorage.setItem('bk_vid',JSON.stringify(v));return v}catch(e){return 'g'+Math.random().toString(36).slice(2,12)}}
+function send(k,g){try{var t=null;try{t=JSON.parse(localStorage.getItem('bk_token'))}catch(e){}
+ fetch(A+'/api/hit',{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({v:vid(),k:k,g:g,p:'game/'+g,m:matchMedia('(max-width:760px)').matches?1:0,token:t||undefined})}).catch(function(){})}catch(e){}}
+var q=new URLSearchParams(location.search),G=window.__BK_GAME||q.get('g')||'toplam';
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#startBtn');if(b)send('game',G)},true);
+setInterval(function(){if(document.visibilityState==='visible')send('beat',G)},60000);})();</script><!--/bkHit--></body>
 </html>

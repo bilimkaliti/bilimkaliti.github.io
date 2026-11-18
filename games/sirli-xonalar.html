@@ -154,7 +154,181 @@ table.mg td{width:44px;height:44px;border:2px solid var(--ink);text-align:center
 @media (prefers-reduced-motion:reduce){.shake{animation:none}}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
+<style id="bkSkin">/* ===== Bilim Kaliti: eski oʻyinlar uchun yangi koʻrinish (build.py qoʻshadi) ===== */
+html.bk{
+  --bg:#fbf7ef;--bg2:#f3ecdf;--panel:#fff;--surface:#fff;--ink:#16213e;--muted:#6f7690;--line:#e8e0d0;
+  --bk-gold:#f5b301;--bk-sh:0 1px 2px rgba(22,33,62,.06),0 10px 28px rgba(22,33,62,.08);
+  --bk-ease:cubic-bezier(.2,.8,.2,1);color-scheme:light}
+html.bk.bk-dark{
+  --bg:#11152a;--bg2:#171c36;--panel:#1c2240;--surface:#1c2240;--ink:#f1f2f8;--muted:#a3a9c4;--line:#2b3257;
+  --bk-sh:0 1px 2px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.38);color-scheme:dark}
+html.bk-eshik{--tc:var(--brass)}
+html.bk body{font-family:Nunito,system-ui,-apple-system,"Segoe UI",sans-serif!important;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(1100px 520px at 85% -10%,color-mix(in srgb,var(--gc1) 16%,transparent),transparent 70%),
+             radial-gradient(900px 480px at -10% 110%,color-mix(in srgb,var(--gc2) 14%,transparent),transparent 70%),var(--bg);
+  background-attachment:fixed}
+html.bk body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55;background-image:var(--bk-pat);background-size:var(--bk-pats,28px 28px)}
+html.bk-kosmik{--gc1:#283c86;--gc2:#5a6fd0;--bk-pat:radial-gradient(color-mix(in srgb,var(--ink) 16%,transparent) 1px,transparent 1.4px),radial-gradient(color-mix(in srgb,#5a6fd0 30%,transparent) 1.2px,transparent 1.6px);--bk-pats:34px 34px,71px 71px}
+html.bk-sirli{--gc1:#5f3dc4;--gc2:#9775fa;--bk-pat:linear-gradient(45deg,color-mix(in srgb,#5f3dc4 7%,transparent) 25%,transparent 25% 75%,color-mix(in srgb,#5f3dc4 7%,transparent) 75%);--bk-pats:26px 26px}
+html.bk-eshik{--gc1:#8d5b2d;--gc2:#c98e55;--bk-pat:linear-gradient(color-mix(in srgb,var(--ink) 5%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--ink) 5%,transparent) 1px,transparent 1px);--bk-pats:56px 28px}
+html.bk :is(h1,h2,h3,.disp,.ttl,.tname){font-family:Nunito,system-ui,sans-serif!important}
+html.bk h1{font-weight:900;letter-spacing:-.8px}
+
+/* ---- yuqori panel: orqaga + brend ---- */
+.bk-top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1100px;margin:6px auto 14px;padding:0 2px}
+.bk-back{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--muted);text-decoration:none;padding:8px 14px 8px 10px;border-radius:99px;border:1.5px solid var(--line);background:var(--panel);transition:transform .25s var(--bk-ease),color .2s,border-color .2s,box-shadow .25s}
+.bk-back:hover{color:var(--ink);border-color:var(--bk-gold);transform:translateX(-3px);box-shadow:var(--bk-sh)}
+.bk-back i{font-style:normal;transition:transform .25s var(--bk-ease)}.bk-back:hover i{transform:translateX(-3px)}
+.bk-brand{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:17px;color:var(--ink);text-decoration:none}
+.bk-brand span{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#ffd25c,#f5b301);box-shadow:0 4px 12px rgba(245,179,1,.35);font-size:17px}
+.bk-brand b{color:var(--bk-gold)}
+
+/* ---- sarlavha banneri ---- */
+.bk-hero{position:relative;overflow:hidden;border-radius:28px;padding:30px 34px;margin:0 0 18px;color:#fff;
+  background:linear-gradient(135deg,var(--gc1),var(--gc2));box-shadow:0 18px 40px color-mix(in srgb,var(--gc1) 30%,transparent);isolation:isolate;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.bk-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(420px 220px at 90% 10%,rgba(255,255,255,.22),transparent 70%),radial-gradient(260px 200px at 0% 100%,rgba(0,0,0,.18),transparent 70%)}
+.bk-hero h1{color:#fff!important;margin:0 0 8px!important;font-size:clamp(2rem,4.6vw,3.1rem)!important;line-height:1.02!important;text-shadow:0 3px 14px rgba(0,0,0,.18)}
+.bk-hero .lead{color:rgba(255,255,255,.9)!important;margin:0 0 14px!important;font-weight:600;max-width:64ch}
+.bk-tags{display:flex;flex-wrap:wrap;gap:8px}
+.bk-tags span{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px);padding:5px 12px;border-radius:99px;font-weight:800;font-size:14px}
+.bk-art{position:relative;width:170px;height:150px;display:grid;place-items:center}
+.bk-art .em{font-size:96px;line-height:1;filter:drop-shadow(0 12px 18px rgba(0,0,0,.28));animation:bkFloat 3.6s ease-in-out infinite}
+.bk-art i{position:absolute;font-style:normal;pointer-events:none}
+.bk-art .st{width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff;animation:bkTw 2.4s ease-in-out infinite}
+.bk-art .s1{left:12%;top:18%}.bk-art .s2{right:8%;top:30%;animation-delay:.8s}.bk-art .s3{left:26%;bottom:10%;animation-delay:1.6s}
+.bk-art .orb{inset:8px;border-radius:50%;border:2px dashed rgba(255,255,255,.35);animation:bkSpin 18s linear infinite}
+.bk-art .gl{font-size:22px;animation:bkTw 2.6s ease-in-out infinite}.bk-art .gl.a{right:6%;top:6%}.bk-art .gl.b{left:4%;bottom:14%;animation-delay:1.3s}
+@keyframes bkFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+@keyframes bkTw{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes bkSpin{to{transform:rotate(360deg)}}
+@media (max-width:720px){.bk-hero{grid-template-columns:1fr;padding:22px}.bk-art{display:none}}
+
+/* eshik: oʻz qasr sahnasi bor */
+html.bk-eshik .hero{background:var(--panel);border:1.5px solid var(--line);border-radius:28px;padding:26px 30px!important;box-shadow:var(--bk-sh);position:relative;overflow:hidden}
+html.bk-eshik .hero::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,var(--gc1),var(--gc2),var(--bk-gold))}
+html.bk-eshik .hero h1{font-size:clamp(2.2rem,5vw,3.4rem)}
+html.bk-eshik .hero .bk-tags span{background:color-mix(in srgb,var(--gc2) 14%,transparent);border-color:color-mix(in srgb,var(--gc2) 30%,transparent);color:var(--ink);backdrop-filter:none}
+html.bk-eshik .hero .bk-tags{margin:0 0 6px}
+html.bk-eshik .rules b{background:linear-gradient(135deg,#ffd25c,#f5b301)!important;color:#1b1400!important}
+
+/* ---- sozlamalar ---- */
+html.bk .box{background:var(--panel);border:1.5px solid var(--line);border-radius:24px;padding:20px 22px;box-shadow:var(--bk-sh)}
+html.bk .box h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:900;margin:18px 0 8px}
+html.bk .box h3:first-child{margin-top:0}
+html.bk .seg{gap:8px}
+html.bk .seg button{border:1.5px solid var(--line);background:var(--bg);padding:8px 16px;font-weight:800;color:var(--ink);transition:transform .2s var(--bk-ease),border-color .2s,background-color .2s,box-shadow .2s}
+html.bk .seg button:hover{border-color:var(--bk-gold);transform:translateY(-1px)}
+html.bk .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);box-shadow:0 6px 16px color-mix(in srgb,var(--ink) 25%,transparent)}
+html.bk .names input{border-radius:14px;border-width:2px;padding:10px 12px;font-weight:800;background:var(--bg)}
+html.bk .topics label{border:1.5px solid var(--line);border-radius:14px;background:var(--bg);padding:9px 12px;transition:border-color .2s,background-color .2s,transform .2s var(--bk-ease);cursor:pointer}
+html.bk .topics label:hover{border-color:color-mix(in srgb,var(--bk-gold) 70%,var(--line));transform:translateY(-1px)}
+html.bk .topics label:has(input:checked){border-color:var(--bk-gold);background:color-mix(in srgb,var(--bk-gold) 12%,var(--panel))}
+html.bk input[type=checkbox]{accent-color:var(--bk-gold);width:18px;height:18px}
+html.bk .mini,html.bk .quick button{border-radius:99px!important;font-weight:800}
+html.bk details{border-radius:16px}
+html.bk .go,html.bk .big{background:linear-gradient(135deg,#ffd25c,#f5b301)!important;color:#1b1400!important;border:0!important;border-radius:16px!important;font-weight:900!important;box-shadow:0 10px 24px rgba(245,179,1,.38)!important;transition:transform .2s var(--bk-ease),box-shadow .2s;position:relative;overflow:hidden}
+html.bk .go:hover,html.bk .big:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(245,179,1,.45)!important}
+html.bk .go:active,html.bk .big:active{transform:translateY(1px)}
+html.bk .go::after,html.bk .big::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);transition:left .7s var(--bk-ease)}
+html.bk .go:hover::after,html.bk .big:hover::after{left:120%}
+html.bk #start .go{position:sticky;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:20;display:block;margin:20px auto 70px;min-width:min(340px,100%);padding:16px 34px!important;font-size:1.25rem!important}
+html.bk .err{font-weight:800}
+
+/* ---- oʻyin paneli ---- */
+html.bk :is(.bar,.top){background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid var(--line);border-radius:18px;padding:8px 10px 8px 14px;box-shadow:var(--bk-sh)}
+html.bk .ttl{font-weight:900;font-size:1.25rem}
+html.bk :is(.chip,.pill,.ghost){border-radius:99px!important;border:1.5px solid var(--line)!important;background:var(--panel)!important;font-weight:800;transition:transform .2s var(--bk-ease),border-color .2s}
+html.bk .ghost:hover{transform:translateY(-1px);border-color:var(--bk-gold)!important}
+html.bk .team{border-width:2.5px;border-radius:24px;box-shadow:0 10px 30px color-mix(in srgb,var(--tc) 16%,transparent),var(--bk-sh);background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 9%,var(--panel)) 0,var(--panel) 120px)}
+html.bk .tname{font-weight:900;letter-spacing:-.2px}
+html.bk .dots i{transition:background-color .3s,transform .3s var(--bk-ease)}
+html.bk :is(.card,.clue){border-width:1.5px;border-radius:14px;box-shadow:0 2px 0 color-mix(in srgb,var(--line) 70%,transparent);background:var(--bg)}
+html.bk-eshik .card{border-left-width:8px;background:var(--panel)}
+html.bk .clue{border-left-width:7px}
+html.bk .vault{background:color-mix(in srgb,var(--gc2) 10%,var(--bg2));border:1.5px solid var(--line)}
+html.bk .slot{border-radius:14px;border-width:2.5px;background:var(--panel);transition:border-color .2s,transform .25s var(--bk-ease)}
+html.bk .slot.next{animation:bkSlot 1.3s ease-in-out infinite}
+@keyframes bkSlot{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--tc) 0%,transparent)}50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--tc) 22%,transparent)}}
+html.bk .slots.good .slot{animation:bkPop .45s var(--bk-ease) both}
+html.bk .slots.good .slot:nth-child(2){animation-delay:.06s}html.bk .slots.good .slot:nth-child(3){animation-delay:.12s}html.bk .slots.good .slot:nth-child(4){animation-delay:.18s}
+@keyframes bkPop{40%{transform:scale(1.15) translateY(-4px)}}
+html.bk .pad button{border-radius:14px;background:var(--panel);border:1.5px solid var(--line);box-shadow:0 4px 0 var(--line);font-weight:900;font-family:Nunito,system-ui,sans-serif!important;transition:transform .08s,box-shadow .08s,background-color .2s}
+html.bk .pad button:hover:not(:disabled){background:color-mix(in srgb,var(--tc) 7%,var(--panel))}
+html.bk .pad button:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+html.bk .pad .ok{background:linear-gradient(135deg,color-mix(in srgb,var(--tc) 80%,#fff),var(--tc));border-color:transparent;color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--tc) 55%,#000)}
+html.bk .pad .ok:active:not(:disabled){box-shadow:0 1px 0 color-mix(in srgb,var(--tc) 55%,#000)}
+html.bk :is(.fb,.feedback).good{font-weight:900}
+html.bk .progress span{transition:transform .3s var(--bk-ease)}html.bk .progress span.cur{transform:translateY(-2px)}
+
+/* ---- oynalar ---- */
+html.bk :is(.overlay,.askov){backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+html.bk :is(.modal,.askbox,.endcard){border-radius:28px;border:1.5px solid var(--line);box-shadow:0 30px 70px rgba(0,0,0,.3);animation:bkIn .45s var(--bk-ease) both;background:var(--panel)}
+@keyframes bkIn{from{opacity:0;transform:translateY(16px) scale(.96)}}
+html.bk :is(.donebox .cup,.endcard .crown){animation:bkCup 1.6s ease-in-out infinite;display:inline-block}
+@keyframes bkCup{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(6deg)}}
+
+/* ---- suzuvchi tugmalar ---- */
+html.bk :is(#musBtn,#fsBtn){background:color-mix(in srgb,#16213e 88%,transparent)!important;backdrop-filter:blur(8px);font-family:Nunito,system-ui,sans-serif!important;font-weight:900!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 8px 22px rgba(0,0,0,.28)!important;transition:transform .2s var(--bk-ease),opacity .2s}
+html.bk :is(#musBtn,#fsBtn):hover{transform:translateY(-2px);opacity:1!important}
+
+/* ---- kirish animatsiyasi ---- */
+html.bk #start>*{animation:bkRise .6s var(--bk-ease) both}
+html.bk #start>*:nth-child(2){animation-delay:.06s}html.bk #start>*:nth-child(3){animation-delay:.12s}html.bk #start>*:nth-child(4){animation-delay:.18s}
+@keyframes bkRise{from{opacity:0;transform:translateY(16px)}}
+html.bk #start .go{animation:none}
+.bk-cfl{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}.bk-cfl i{position:absolute;display:block}
+@media (prefers-reduced-motion:reduce){html.bk *,html.bk *::before,html.bk *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style><script>window.__BK_GAME="sirli";/* ===== Bilim Kaliti: eski oʻyinlar uchun yangi koʻrinish (build.py qoʻshadi) ===== */
+(function(){
+  var CFG={
+    kosmik:{e:'🛸',tags:['👥 2–4 guruh','🔐 Kod topish','🚀 Bir ekranda bellashuv'],art:'<i class="orb"></i><i class="st s1"></i><i class="st s2"></i><i class="st s3"></i>'},
+    sirli:{e:'🗝️',tags:['👥 2–4 guruh','🧩 Escape-room','🧠 Mantiq'],art:'<i class="orb"></i><i class="gl a">✨</i><i class="gl b">✨</i>'},
+    eshik:{e:'🏰',tags:['👥 Butun sinf','🔐 5 ta eshik','⭐ Yulduz toʻplash'],art:''}
+  };
+  var id=window.__BK_GAME||'',c=CFG[id]||{},R=document.documentElement;
+  R.classList.add('bk','bk-'+id);
+  /* saytdagi kunduzgi/tungi rejim bilan bir xil */
+  var t=null;try{t=JSON.parse(localStorage.getItem('bk_theme'))}catch(e){}
+  if(t!=='dark'&&t!=='light')t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+  R.dataset.theme=t;R.classList.toggle('bk-dark',t==='dark');
+  if(!document.querySelector('link[href*="family=Nunito"]')){var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap';document.head.appendChild(l)}
+  function ready(f){document.readyState==='loading'?document.addEventListener('DOMContentLoaded',f):f()}
+  ready(function(){
+    var st=document.getElementById('start');if(!st)return;
+    var home=location.pathname.replace(/games\/[^\/]*$/,'');
+    var top=document.createElement('div');top.className='bk-top';
+    top.innerHTML='<a class="bk-back" href="'+home+'#/oyinlar"><i>←</i> Barcha oʻyinlar</a><a class="bk-brand" href="'+home+'"><span>🔑</span><em style="font-style:normal">Bilim <b>Kaliti</b></em></a>';
+    st.insertBefore(top,st.firstChild);
+    var tags='<div class="bk-tags">'+(c.tags||[]).map(function(x){return '<span>'+x+'</span>'}).join('')+'</div>';
+    var h1=st.querySelector('h1');
+    if(id==='eshik'){
+      var p=st.querySelector('.hero p');if(p)p.insertAdjacentHTML('afterend',tags);
+    }else if(h1){
+      var lead=st.querySelector('.lead');
+      var hero=document.createElement('div');hero.className='bk-hero';
+      var txt=document.createElement('div');hero.appendChild(txt);
+      h1.textContent=h1.textContent.replace(/\s*2\.0$/,'');
+      txt.appendChild(h1);if(lead)txt.appendChild(lead);txt.insertAdjacentHTML('beforeend',tags);
+      hero.insertAdjacentHTML('beforeend','<div class="bk-art" aria-hidden="true">'+(c.art||'')+'<span class="em">'+(c.e||'🎮')+'</span></div>');
+      top.after(hero);
+    }
+    /* konfetti */
+    var COL=['#f5b301','#ffd25c','#ff6b4a','#12a38f','#2f8cff','#7b5cff','#ff8fb1'];
+    var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function burst(x,y,n,spread){if(RM||!document.body.animate)return;var L=document.createElement('div');L.className='bk-cfl';document.body.appendChild(L);
+      for(var i=0;i<n;i++){var e=document.createElement('i'),s=6+Math.random()*7;e.style.cssText='left:'+x+'px;top:'+y+'px;width:'+s+'px;height:'+(s*(Math.random()<.5?.45:1))+'px;background:'+COL[i%COL.length]+';border-radius:'+(Math.random()<.35?'50%':'2px');L.appendChild(e);
+        var a=-Math.PI/2+(Math.random()-.5)*spread,v=7+Math.random()*9,dx=Math.cos(a)*v*26,dy=Math.sin(a)*v*26;
+        e.animate([{transform:'translate(-50%,-50%) rotate(0)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) rotate('+(Math.random()*540)+'deg)',opacity:1,offset:.55},{transform:'translate('+dx*1.25+'px,'+(dy+340)+'px) rotate('+(Math.random()*900)+'deg)',opacity:0}],{duration:1500+Math.random()*700,easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'})}
+      setTimeout(function(){L.remove()},2500)}
+    function burstAt(el,n){var r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,n||40,1.9)}
+    function bigWin(){var w=innerWidth;burst(w*.25,innerHeight*.35,70,2.2);setTimeout(function(){burst(w*.75,innerHeight*.35,70,2.2)},250);setTimeout(function(){burst(w*.5,innerHeight*.25,90,2.6)},550)}
+    new MutationObserver(function(ms){ms.forEach(function(m){var el=m.target;if(!el.classList)return;
+      if(el.classList.contains('good')&&(el.classList.contains('fb')||el.id==='feedback')&&!(m.oldValue||'').match(/\bgood\b/))burstAt(el,46);
+      if((el.id==='end'||el.id==='final')&&!el.classList.contains('hidden')&&/\bhidden\b/.test(m.oldValue||''))bigWin();
+    })}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class'],attributeOldValue:true});
+  });
+})();
+</script><!--/bkSkin--></head>
 <body>
 <div class="wrap">
 
@@ -777,6 +951,8 @@ const MUSIC=(function(){
     bomba:{sn:'....x.......x...',bpm:112,root:52,sc:'har',prog:[0,0,5,4],mel:[null,null,null,null,4,null,null,3,null,null,null,null,4,null,3,null,null,null,null,null,4,null,null,3,null,null,2,null,1,null,null,null],bass:'xxxxxxxxxxxxxxxx',kick:'x..x..x.x..x..x.',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'sawtooth'},
     tez:{sn:'....x.......x...',ch:'..x...x...x...x.',bpm:140,root:67,sc:'maj',prog:[0,4,5,3],mel:[0,2,4,2,0,2,4,null,3,2,1,null,2,null,null,null,1,3,4,3,1,3,4,null,5,4,3,2,0,null,null,null],bass:'x.x.x.x.x.x.x.x.',kick:'x...x...x...x...',hat:'x.x.x.x.x.x.x.x.',mw:'square',bw:'triangle'},
     nishon:{sn:'....x.......x..x',ch:'x.......x.......',echo:1,bpm:96,root:62,sc:'min',prog:[0,5,6,4],mel:[0,null,0,1,2,null,null,null,1,null,0,null,2,null,null,null,3,null,3,2,1,null,null,null,2,null,1,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x.....x.x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'triangle'},
+    mental:{sn:'....x.......x...',ch:'....x.......x...',echo:1,bpm:104,root:62,sc:'pen',prog:[0,3,4,2],mel:[0,null,2,null,4,null,2,null,3,null,1,null,0,null,null,null,4,null,3,null,2,null,1,null,2,null,null,null,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'triangle',bw:'sine',pad:1},
+    juft:{sn:'....x.......x...',ch:'x...x...x...x...',bpm:118,root:65,sc:'maj',prog:[0,5,3,4],mel:[4,null,2,null,4,null,5,4,2,null,0,null,1,null,null,null,2,null,4,null,5,null,4,2,1,null,2,null,0,null,null,null],bass:'x...x.x.x...x.x.',kick:'x...x...x...x...',hat:'.x.x.x.x.x.x.x.x',mw:'square',bw:'triangle'},
     zanjir:{sn:'........x.......',echo:1,bpm:84,root:60,sc:'pen',prog:[0,2,1,3],mel:[2,null,null,1,null,null,0,null,null,null,1,null,null,2,null,null,3,null,null,2,null,null,1,null,null,null,0,null,null,null,null,null],bass:'x.....x...x.....',kick:'x.......x.......',hat:'....x.......x..x',mw:'sine',bw:'sine',pad:1},
     sirli:{sn:'........x.......',echo:1,bpm:80,root:57,sc:'har',prog:[0,5,3,4],mel:[0,null,null,1,null,null,2,null,null,null,4,null,3,null,null,null,2,null,null,1,null,null,0,null,null,null,1,null,2,null,null,null],bass:'x.......x...x...',kick:'x.......x.......',hat:'..........x.....',mw:'triangle',bw:'sine',pad:1},
     kosmik:{sn:'........x.......',arp:'x.x.x.x.x.x.x.x.',echo:1,bpm:100,root:55,sc:'min',prog:[0,3,5,4],mel:[0,2,4,2,0,2,4,2,1,3,5,3,1,3,5,3,0,2,4,2,0,2,4,6,5,4,2,1,0,null,null,null],bass:'x...x...x...x...',kick:'x.......x.......',hat:'..x...x...x...x.',mw:'sawtooth',bw:'sine',pad:1},
@@ -829,6 +1005,17 @@ const __THEME='sirli',__musPlay=()=>!document.getElementById('game').classList.c
   setInterval(()=>{if(__musPlay()){if(!MUSIC.playing&&MUSIC.on)MUSIC.start(__THEME)}else if(MUSIC.playing)MUSIC.stop()},500);
 })();
 /* BK-EXTRA-END */
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1137,5 +1324,11 @@ $('#finishBtn').onclick=()=>ask('Oʻyinni hozir yakunlab, natijani koʻrsataylik
 $('#soundBtn').onclick=()=>{st.sound=st.sound?0:1;cfg.sound=st.sound;save();$('#soundBtn').textContent=st.sound?'🔊':'🔇'};
 renderSettings();
 </script>
-</body>
+<script id="bkHit">(function(){var A=/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com';
+function vid(){try{var v=JSON.parse(localStorage.getItem('bk_vid'));if(v&&/^[\w-]{6,32}$/.test(v))return v;v=(Date.now().toString(36)+Math.random().toString(36).slice(2,10)).slice(0,20);localStorage.setItem('bk_vid',JSON.stringify(v));return v}catch(e){return 'g'+Math.random().toString(36).slice(2,12)}}
+function send(k,g){try{var t=null;try{t=JSON.parse(localStorage.getItem('bk_token'))}catch(e){}
+ fetch(A+'/api/hit',{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({v:vid(),k:k,g:g,p:'game/'+g,m:matchMedia('(max-width:760px)').matches?1:0,token:t||undefined})}).catch(function(){})}catch(e){}}
+var q=new URLSearchParams(location.search),G=window.__BK_GAME||q.get('g')||'toplam';
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#startBtn');if(b)send('game',G)},true);
+setInterval(function(){if(document.visibilityState==='visible')send('beat',G)},60000);})();</script><!--/bkHit--></body>
 </html>
