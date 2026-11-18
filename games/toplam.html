@@ -78,6 +78,17 @@ h1,h2,h3{margin:0}
 .err{color:var(--bad);font-weight:700;min-height:1.4em;margin:8px 0}
 .go{background:var(--ink);color:var(--bg);border:0;border-radius:14px;padding:12px 30px;font-size:1.2rem;font-weight:800}
 .go:active{transform:translateY(2px)}
+.gobar{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;justify-content:center;margin:6px 0 64px}
+.gobar .go{font-size:1.35rem;padding:16px 46px;min-width:min(340px,100%);box-shadow:0 12px 28px rgba(0,0,0,.22)}
+.seg.big button{padding:9px 18px;font-size:1.05rem}
+.adv{margin-top:16px;border:2px dashed var(--line);border-radius:14px;padding:4px 14px}
+.adv[open]{padding-bottom:14px}
+.adv summary{cursor:pointer;list-style:none;display:flex;flex-direction:column;gap:2px;padding:10px 0;font-weight:800}
+.adv summary::-webkit-details-marker{display:none}
+.adv summary span::after{content:" ▾";color:var(--muted)}.adv[open] summary span::after{content:" ▴"}
+.adv summary small{color:var(--muted);font-weight:700;font-size:.85rem}
+.fanbadge{display:inline-flex;align-items:center;gap:6px;margin-left:10px;font-size:.8em;font-weight:800;background:var(--soft);border:2px solid var(--line);border-radius:999px;padding:2px 10px;vertical-align:middle}
+@media (pointer:coarse),(min-width:1500px){.seg button,.mini,.ghost,.back{min-height:44px}.topics label{min-height:46px}}
 
 /* play bar */
 .bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -374,16 +385,18 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
   <p class="lead" id="sDesc" style="margin-bottom:0"></p>
   <div class="setgrid">
     <div class="box">
-      <h3>Guruhlar soni</h3>
-      <div class="seg" data-key="n"></div>
+      <h3>👥 Kim oʻynaydi?</h3>
+      <div class="seg big" data-key="n"></div>
       <div class="names" id="names"></div>
-      <div id="roboBox"><h3>🤖 Robo raqib</h3><div class="seg" data-key="robo"></div><p class="small" id="roboHint">Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!</p></div>
+      <details class="adv" id="adv"><summary><span>⚙️ Qoʻshimcha sozlamalar</span><small id="advSum"></small></summary>
+      <div id="roboBox"><h3>🤖 Kompyuter raqib (Robo)</h3><div class="seg" data-key="robo"></div><p class="small" id="roboHint">Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!</p></div>
       <div id="lenBox"><h3 id="lenTitle"></h3><div class="seg" data-key="len"></div></div>
       <div id="lvlBox"><h3>Qiyinlik</h3><div class="seg" data-key="L"></div></div>
       <div id="bigBox"><h3>Javoblar</h3><div class="seg" data-key="big"></div><p class="small">Koʻp xonali javoblarni taxmin qilib topish qiyin.</p></div>
       <div id="coolBox"><h3>Xato javobdan keyin kutish</h3><div class="seg" data-key="cool"></div><p class="small">Tavakkal javob berishning oldini oladi.</p></div>
       <label class="chk"><input type="checkbox" id="soundChk"> Tovushlar</label>
       <label class="chk"><input type="checkbox" id="musicChk"> Musiqa</label>
+      </details>
     </div>
     <div class="box" id="topicBox">
       <div class="fanrow"><h3 style="margin:0">Fan</h3><select id="fanSel" aria-label="Fan"></select></div>
@@ -397,13 +410,13 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <div id="fanSets" class="hidden"></div>
     </div>
     <div class="box hidden" id="setBox">
-      <h3>📦 Toʻplamlar</h3>
+      <h3>📦 Savollar toʻplamlari</h3>
       <p class="small">AI yordamida, oʻzingiz yoki kitobdan tuzilgan savollar. Mavzular bilan aralashtirib ham boʻladi.</p>
       <div class="topics" id="setList"></div>
     </div>
   </div>
   <div class="err" id="startErr"></div>
-  <button class="go" id="startBtn">Oʻyinni boshlash</button>
+  <div class="gobar"><button class="go" id="startBtn">▶ Oʻyinni boshlash</button></div>
 </section>
 
 <section id="play" class="hidden">
@@ -1124,7 +1137,7 @@ const GAMES={
  juft:{big:1,icon:'🃏',name:'Juftini top',desc:'Kartalarni ochib, misolni uning javobi bilan juftlang. Juftni topgan guruh yana yuradi. Xotira va diqqat oʻyini.',len:{t:'Juftlar soni',o:[6,8,10],d:8},lvl:1,topics:1,cool:0},
  zanjir:{icon:'🔗',name:'Son zanjiri',desc:'Bitta sondan boshlab ketma-ket amallar bajariladi. Har bir halqa tekshiriladi, xato qayerda ekani darhol koʻrinadi.',len:{t:'Zanjirlar soni',o:[2,3,5],d:3},lvl:1,topics:0,cool:1}
 };
-const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'1 (yakka)'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
+const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
 let cfg={grade:6,big:1,music:1,n:2,L:1,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
 try{const s=JSON.parse(localStorage.getItem('bk8-cfg')||'null');if(s)cfg={...cfg,...s}}catch(e){}
 cfg.names=(cfg.names||[]).slice(0,4);while(cfg.names.length<4)cfg.names.push(`${cfg.names.length+1}-guruh`);
@@ -1133,7 +1146,7 @@ const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlang
 const MATHF=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
 const isMathFan=()=>MATHF.includes(cfg.fan);
 const TOPS=()=>isMathFan()?cfg.topics:[];
-const LIBF={};
+const LIBF={};let FSINF=0;
 async function libForFan(f){if(LIBF[f])return;LIBF[f]='loading';
   try{const r=await fetch(APIB()+'/api/lib/list',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fan:f,sort:'top'})});const j=await r.json();
     (j.sets||[]).forEach(m=>{const id='L-'+m.id;if(!SETS.some(s=>s.id===id))SETS.push({id,name:String(m.name||'Toʻplam').slice(0,60),fan:f,sinf:String(m.sinf||''),lib:m.id,n:m.n||0,items:[],remote:true})});LIBF[f]='ok'}
@@ -1157,8 +1170,10 @@ function openSetup(k){GK=k;const g=GAMES[k];$('#sTitle').textContent=`${g.icon} 
 function renderSettings(){
   const g=GAMES[GK];
   SEGS.len=g.len.o.map(v=>[v,String(v)]);
-  document.querySelectorAll('#setup .seg').forEach(el=>{const k=el.dataset.key,cur=k==='len'?lenOf(GK):cfg[k];el.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')});
+  document.querySelectorAll('#setup .seg[data-key]').forEach(el=>{const k=el.dataset.key,cur=k==='len'?lenOf(GK):cfg[k];el.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')});
   $('#lenTitle').textContent=g.len.t;
+  const lbl=(k,v)=>((SEGS[k]||[]).find(x=>x[0]===v)||[,''])[1];
+  $('#advSum').textContent=[`Robo: ${cfg.robo?lbl('robo',cfg.robo).replace(/^\S+\s/,''):'yoʻq'}`,g.lvl?`qiyinlik: ${lbl('L',cfg.L).toLowerCase()}`:'',`${g.len.t.toLowerCase()}: ${lenOf(GK)}`,cfg.sound?'tovush bor':'tovushsiz'].filter(Boolean).join(' · ');
   $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
   const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
   $('#roboHint').textContent=cfg.robo&&cfg.n===4?'Robo bilan birga eng koʻpi 3 ta guruh oʻynaydi (jami 4 ta panel).':'Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!';
@@ -1177,9 +1192,12 @@ function renderSettings(){
   if(!M){
     if(cfg.fan&&!LIBF[cfg.fan])libForFan(cfg.fan);
     const sel=cfg.sets||[],lab=s=>`<label class="${s.loading?'lload':''}"><input type="checkbox" data-s="${esc(s.id)}" ${sel.includes(s.id)?'checked':''}> ${esc(s.name)} <span class="small">(${s.items.length||s.n||'…'}${s.sinf?` · ${esc(s.sinf)}-sinf`:''})</span></label>`;
-    const ready=SETS.filter(s=>s.fan===cfg.fan&&!s.remote),lib=SETS.filter(s=>s.fan===cfg.fan&&s.remote),loose=cfg.fan?SETS.filter(s=>!s.fan&&!s.fixed&&!s.remote&&s.items.some(isMC)):[];
+    const inF=s=>s.fan===cfg.fan,okS=s=>!FSINF||!s.sinf||s.sinf===String(FSINF)||sel.includes(s.id),allF=SETS.filter(inF);
+    const grs=[...new Set(allF.map(s=>s.sinf).filter(Boolean))].sort((a,b)=>a-b);
+    const ready=allF.filter(s=>!s.remote&&okS(s)),lib=allF.filter(s=>s.remote&&okS(s)),loose=cfg.fan?SETS.filter(s=>!s.fan&&!s.fixed&&!s.remote&&s.items.some(isMC)):[];
     const ic=FAN_IC[cfg.fan]||'📦';
     $('#fanSets').innerHTML=`<div class="fset"><h3>${ic} ${esc(cfg.fan||'Tanlangan toʻplam')}${cfg.fan?': savollar toʻplamlari':''}</h3><p class="small">Oʻyin faqat belgilangan toʻplamlardagi savollardan tuziladi. Bir nechtasini belgilasangiz, aralashib chiqadi.</p>
+      ${grs.length>1?`<div class="seg" id="fsinf" style="margin:8px 0 4px"><button type="button" data-fs="0" aria-pressed="${!FSINF}">Barcha sinflar</button>${grs.map(x=>`<button type="button" data-fs="${x}" aria-pressed="${String(FSINF)===x}">${x}-sinf</button>`).join('')}</div>`:''}
       ${ready.length?`<h4>⭐ Tayyor va mening toʻplamlarim</h4><div class="topics">${ready.map(lab).join('')}</div>`:''}
       ${lib.length?`<h4>📚 Kutubxonadan (boshqa oʻqituvchilar)</h4><div class="topics">${lib.map(lab).join('')}</div>`:LIBF[cfg.fan]==='loading'?'<p class="small">📚 Kutubxona yuklanmoqda…</p>':''}
       ${cfg.fan&&!ready.length&&!lib.length&&LIBF[cfg.fan]!=='loading'?`<div class="fempty">Bu fan boʻyicha hali toʻplam yoʻq.<br><a href="../#/ai/darslik" target="_top">📸 Darslikdan yaratish</a><a href="../#/ai/savollar" target="_top">✨ AI bilan yaratish</a></div>`:''}
@@ -1192,6 +1210,7 @@ function renderSettings(){
 $('#setup').addEventListener('click',e=>{
   const qb=e.target.closest('[data-q]');
   if(qb){const v=qb.dataset.q;cfg.topics=v==='gr'?(GRADES[cfg.grade]||[]).slice():v==='all'?TOPICS.map((_,i)=>i):[];renderSettings();return}
+  const fs=e.target.closest('[data-fs]');if(fs){FSINF=+fs.dataset.fs;renderSettings();return}
   const b=e.target.closest('.seg button');if(!b)return;
   const k=b.parentElement.dataset.key,raw=b.dataset.v,v=isNaN(+raw)?raw:+raw;
   if(k==='len')cfg.len[GK]=v;else if(k==='grade'){cfg.grade=v;cfg.topics=GRADES[v].slice()}else cfg[k]=v;renderSettings();
@@ -1221,7 +1240,7 @@ function startGame(){
   const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
   S.teams=Array.from({length:hum},(_,i)=>({i,name:(hum===1&&(!cfg.names[0]||cfg.names[0].trim()==='1-guruh'))?'Oʻquvchi':(cfg.names[i]||'').trim()||`${i+1}-guruh`,color:TC[i],score:0,lockUntil:0}));
   if(cfg.robo)S.teams.push({i:hum,name:'🤖 Robo',color:'#6b7a99',score:0,lockUntil:0,robo:true,rw:0});
-  $('#ttl').textContent=`${g.icon} ${g.name}`;
+  $('#ttl').innerHTML=`${g.icon} ${esc(g.name)}`+(g.topics&&!isMathFan()&&cfg.fan?`<span class="fanbadge">${FAN_IC[cfg.fan]||'📘'} ${esc(cfg.fan)}</span>`:g.topics&&isMathFan()&&cfg.fan&&TOPS().length?`<span class="fanbadge">${FAN_IC[cfg.fan]||'🧮'} ${esc(cfg.fan)}</span>`:'');
   $('#soundBtn').textContent=cfg.sound?'🔊':'🔇';
   ['final','keyOv','ask','review'].forEach(id=>$('#'+id).classList.add('hidden'));
   const st=$('#stage');st.innerHTML='';st.style.setProperty('--cols',S.teams.length<=3?S.teams.length:2);
@@ -1914,7 +1933,7 @@ async function loadSets(){
 }
 (function(){const P=new URLSearchParams(location.search),g=P.get('g'),s=+P.get('sinf'),t=P.get('t');
   if(GRADES[s]){cfg.grade=s;cfg.topics=GRADES[s].slice();cfg.sets=[];cfg.fan='Matematika'}
-  const fp=P.get('fan');if(fp&&FANS.includes(fp))cfg.fan=fp;
+  const fp=P.get('fan');if(fp&&FANS.includes(fp)){cfg.fan=fp;if(P.get('fsinf'))FSINF=+P.get('fsinf')||0}
   if(P.get('set'))cfg.topics=[];
   if(P.has('robo'))cfg.robo=Math.max(0,Math.min(3,+P.get('robo')||0));if(P.has('n'))cfg.n=Math.max(1,Math.min(4,+P.get('n')||2));
   if(t&&t!=='all'){const l=t.split(',').map(Number).filter(i=>TOPICS[i]);if(l.length)cfg.topics=l}
