@@ -297,6 +297,12 @@ h1,h2,h3{margin:0}
 .opts button{border:3px solid var(--line);border-radius:10px;background:var(--soft);padding:8px;font-weight:800;font-size:1.05rem}
 
 /* overlays */
+.fanrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:2px dashed var(--line)}
+#fanSel{font:inherit;font-weight:800;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:8px 12px;min-width:220px;max-width:100%}
+.fset h4{margin:14px 0 6px;font-size:.95rem;color:var(--muted)}.fset h4:first-child{margin-top:0}
+.fempty{padding:16px;border:2px dashed var(--line);border-radius:14px;text-align:center;font-weight:700;color:var(--muted)}
+.fempty a{display:inline-block;margin:8px 4px 0;background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 14px;text-decoration:none;font-weight:800}
+.lload{opacity:.6}
 .overlay{position:fixed;inset:0;background:rgba(10,14,34,.7);display:grid;place-items:center;padding:16px;z-index:60;overflow:auto}
 .modal{background:var(--panel);border-radius:22px;padding:24px;max-width:720px;width:100%;text-align:center}
 .modal h2{font-size:1.9rem;margin:4px 0 14px}
@@ -380,11 +386,15 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <label class="chk"><input type="checkbox" id="musicChk"> Musiqa</label>
     </div>
     <div class="box" id="topicBox">
+      <div class="fanrow"><h3 style="margin:0">Fan</h3><select id="fanSel" aria-label="Fan"></select></div>
+      <div id="mathTopics">
       <h3>Mavzular</h3>
       <p class="small">Misollar belgilangan mavzulardan aralashtirib olinadi.</p>
       <h3 style="margin-top:4px">Sinf</h3><div class="seg" data-key="grade" style="margin-bottom:10px"></div>
       <div class="quick"><button type="button" class="mini" data-q="gr">Shu sinf mavzulari</button><button type="button" class="mini" data-q="all">Hammasi</button><button type="button" class="ghost" data-q="none">Tozalash</button><b id="tcount"></b></div>
       <div class="topics" id="topics"></div>
+      </div>
+      <div id="fanSets" class="hidden"></div>
     </div>
     <div class="box hidden" id="setBox">
       <h3>📦 Toʻplamlar</h3>
@@ -972,7 +982,7 @@ function setItem(s,wide){const ok=s.items.map((_,i)=>i).filter(i=>{const it=s.it
     return{html:`${esc(it.q)}<span class="mco">${opts.map((o,i)=>`<span><b>${i+1}</b>${esc(o)}</span>`).join('')}</span>`,ans,topic:s.name,mc:{q:it.q,opts}}}
   return{html:esc(it.q),ans:it.a,topic:s.name}}
 /* mavzular va toʻplamlar navbat bilan: toʻplamlar umumiy hisobda yarmini egallaydi */
-function srcList(){const ss=selSets(),w=Math.max(1,Math.ceil(cfg.topics.length/Math.max(1,ss.length)));return shuffle([...cfg.topics,...ss.flatMap(s=>Array(w).fill('S'+s.id))])}
+function srcList(){const T=TOPS(),ss=selSets(),w=Math.max(1,Math.ceil(T.length/Math.max(1,ss.length)));return shuffle([...T,...ss.flatMap(s=>Array(w).fill('S'+s.id))])}
 function bag(key,make){let b=QB[key];if(!b||!b.length)b=QB[key]=make();return b}
 function genQ(level,wide){
   const save=L;L=Math.max(0,Math.min(2,level));
@@ -990,8 +1000,8 @@ function genQ(level,wide){
         if(x&&!QB.seen.has(x)){QB.seen.add(x);return{html:x,ans:d,topic:T.name}}
       }
     }
-    if(!cfg.topics.length){const s=pick(selSets()),it=pick(s.items);return{html:esc(it.q),ans:it.a,topic:s.name}}
-    const tp=cfg.topics.filter(i=>TOPICS[i].dig.length);const pool=tp.length?tp:TOPICS.map((_,i)=>i).filter(i=>TOPICS[i].dig.length);
+    if(!TOPS().length){const s=pick(selSets()),it=pick(s.items);return{html:esc(it.q),ans:it.a,topic:s.name}}
+    const tp=TOPS().filter(i=>TOPICS[i].dig.length);const pool=tp.length?tp:TOPICS.map((_,i)=>i).filter(i=>TOPICS[i].dig.length);
     for(;;){const T=TOPICS[pick(pool)],g=pick(T.dig),d=R(1,9),x=g(d);if(x)return{html:x,ans:d,topic:T.name}}
   }finally{L=save}
 }
@@ -1118,7 +1128,22 @@ const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (1
 let cfg={grade:6,big:1,music:1,n:2,L:1,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
 try{const s=JSON.parse(localStorage.getItem('bk8-cfg')||'null');if(s)cfg={...cfg,...s}}catch(e){}
 cfg.names=(cfg.names||[]).slice(0,4);while(cfg.names.length<4)cfg.names.push(`${cfg.names.length+1}-guruh`);
-cfg.topics=(cfg.topics||[]).filter(i=>TOPICS[i]);cfg.robo=[0,1,2,3].includes(cfg.robo)?cfg.robo:0;if(![1,2,3,4].includes(cfg.n))cfg.n=2;if(!GRADES[cfg.grade])cfg.grade=6;cfg.len=cfg.len||{};
+const FANS=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
+const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
+const MATHF=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
+const isMathFan=()=>MATHF.includes(cfg.fan);
+const TOPS=()=>isMathFan()?cfg.topics:[];
+const LIBF={};
+async function libForFan(f){if(LIBF[f])return;LIBF[f]='loading';
+  try{const r=await fetch(APIB()+'/api/lib/list',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fan:f,sort:'top'})});const j=await r.json();
+    (j.sets||[]).forEach(m=>{const id='L-'+m.id;if(!SETS.some(s=>s.id===id))SETS.push({id,name:String(m.name||'Toʻplam').slice(0,60),fan:f,sinf:String(m.sinf||''),lib:m.id,n:m.n||0,items:[],remote:true})});LIBF[f]='ok'}
+  catch(e){LIBF[f]='err'}
+  if(GK&&!$('#setup').classList.contains('hidden'))renderSettings()}
+async function libItems(s){if(s.items.length||s.loading)return;s.loading=true;
+  try{const r=await fetch(APIB()+'/api/lib/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:s.lib})});const j=await r.json();
+    s.items=((j.set&&j.set.items)||[]).map(normIt).filter(Boolean);fetch(APIB()+'/api/lib/play',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:s.lib})}).catch(()=>{})}catch(e){}
+  s.loading=false;if(!s.items.length)cfg.sets=(cfg.sets||[]).filter(x=>x!==s.id);if(GK&&!$('#setup').classList.contains('hidden'))renderSettings()}
+cfg.topics=(cfg.topics||[]).filter(i=>TOPICS[i]);if(!FANS.includes(cfg.fan))cfg.fan='Matematika';cfg.robo=[0,1,2,3].includes(cfg.robo)?cfg.robo:0;if(![1,2,3,4].includes(cfg.n))cfg.n=2;if(!GRADES[cfg.grade])cfg.grade=6;cfg.len=cfg.len||{};
 const save=()=>{try{localStorage.setItem('bk8-cfg',JSON.stringify(cfg))}catch(e){}};
 let GK=null;
 const lenOf=k=>{const v=cfg.len[k];return GAMES[k].len.o.includes(v)?v:GAMES[k].len.d};
@@ -1146,7 +1171,21 @@ function renderSettings(){
   const opened=document.querySelector('#otherTopics')?.open;
   $('#topics').innerHTML=`<div class="tg">${cfg.grade}-sinf mavzulari</div>`+mine.map(lab).join('')+`<details id="otherTopics" style="grid-column:1/-1;margin-top:6px"${opened?' open':''}><summary style="cursor:pointer;font-weight:800">Boshqa sinflar mavzulari</summary><div class="topics" style="margin-top:6px">${other}</div></details>`;
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
-  const shown=SETS.filter(s=>!s.fixed||(cfg.sets||[]).includes(s.id));
+  $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
+  const M=isMathFan();$('#mathTopics').classList.toggle('hidden',!M);$('#fanSets').classList.toggle('hidden',M);
+  if(!M&&g.big)$('#bigBox').classList.add('hidden');
+  if(!M){
+    if(cfg.fan&&!LIBF[cfg.fan])libForFan(cfg.fan);
+    const sel=cfg.sets||[],lab=s=>`<label class="${s.loading?'lload':''}"><input type="checkbox" data-s="${esc(s.id)}" ${sel.includes(s.id)?'checked':''}> ${esc(s.name)} <span class="small">(${s.items.length||s.n||'…'}${s.sinf?` · ${esc(s.sinf)}-sinf`:''})</span></label>`;
+    const ready=SETS.filter(s=>s.fan===cfg.fan&&!s.remote),lib=SETS.filter(s=>s.fan===cfg.fan&&s.remote),loose=cfg.fan?SETS.filter(s=>!s.fan&&!s.fixed&&!s.remote&&s.items.some(isMC)):[];
+    const ic=FAN_IC[cfg.fan]||'📦';
+    $('#fanSets').innerHTML=`<div class="fset"><h3>${ic} ${esc(cfg.fan||'Tanlangan toʻplam')}${cfg.fan?': savollar toʻplamlari':''}</h3><p class="small">Oʻyin faqat belgilangan toʻplamlardagi savollardan tuziladi. Bir nechtasini belgilasangiz, aralashib chiqadi.</p>
+      ${ready.length?`<h4>⭐ Tayyor va mening toʻplamlarim</h4><div class="topics">${ready.map(lab).join('')}</div>`:''}
+      ${lib.length?`<h4>📚 Kutubxonadan (boshqa oʻqituvchilar)</h4><div class="topics">${lib.map(lab).join('')}</div>`:LIBF[cfg.fan]==='loading'?'<p class="small">📚 Kutubxona yuklanmoqda…</p>':''}
+      ${cfg.fan&&!ready.length&&!lib.length&&LIBF[cfg.fan]!=='loading'?`<div class="fempty">Bu fan boʻyicha hali toʻplam yoʻq.<br><a href="../#/ai/darslik" target="_top">📸 Darslikdan yaratish</a><a href="../#/ai/savollar" target="_top">✨ AI bilan yaratish</a></div>`:''}
+      ${loose.length?`<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800">Fani koʻrsatilmagan toʻplamlarim (${loose.length})</summary><div class="topics" style="margin-top:6px">${loose.map(lab).join('')}</div></details>`:''}</div>`;
+  }
+  const shown=M?SETS.filter(s=>!s.remote&&(!s.fixed||(cfg.sets||[]).includes(s.id))&&(!s.fan||MATHF.includes(s.fan)||(cfg.sets||[]).includes(s.id))):[];
   $('#setBox').classList.toggle('hidden',!g.topics||!shown.length);
   $('#setList').innerHTML=shown.map(s=>`<label><input type="checkbox" data-s="${esc(s.id)}" ${(cfg.sets||[]).includes(s.id)?'checked':''}> ${esc(s.name)} <span class="small">(${s.items.length})</span></label>`).join('');
 }
@@ -1160,7 +1199,8 @@ $('#setup').addEventListener('click',e=>{
 $('#setup').addEventListener('change',e=>{
   const t=e.target;
   if(t.dataset.t!==undefined){const i=+t.dataset.t;cfg.topics=t.checked?[...new Set([...cfg.topics,i])]:cfg.topics.filter(x=>x!==i);$('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`}
-  if(t.dataset.s!==undefined){const id=t.dataset.s,c=cfg.sets||[];cfg.sets=t.checked?[...new Set([...c,id])]:c.filter(x=>x!==id)}
+  if(t.dataset.s!==undefined){const id=t.dataset.s,c=cfg.sets||[];cfg.sets=t.checked?[...new Set([...c,id])]:c.filter(x=>x!==id);const s=setById(id);if(t.checked&&s&&s.remote)libItems(s).then(()=>{});}
+  if(t.id==='fanSel'){cfg.fan=t.value;cfg.sets=(cfg.sets||[]).filter(id=>{const s=setById(id);return s&&(s.fan===cfg.fan||(!s.fan&&isMathFan()))});$('#startErr').textContent='';renderSettings()}
   if(t.id==='soundChk')cfg.sound=t.checked?1:0;
   if(t.id==='musicChk'&&t.checked!==MUSIC.on)MUSIC.toggle();
 });
@@ -1173,8 +1213,9 @@ const q=(t,s)=>t.el.querySelector(s);
 
 function startGame(){
   const g=GAMES[GK];
-  if(g.topics&&!cfg.topics.length&&!selSets().length){$('#startErr').textContent='Kamida bitta mavzu yoki toʻplamni belgilang.';return}
-  if(g.topics&&!cfg.topics.length&&new Set(selSets().flatMap(s=>s.items.filter(it=>isMC(it)?GK!=='bomba':okAns(it.a,BIG())).map(it=>isMC(it)?'mc:'+it.q:it.a))).size<(GK==='bomba'?4:1)){$('#startErr').textContent=GK==='bomba'?'Bomba uchun javobi 1–9 boʻlgan kamida 4 xil son-javobli savol kerak (test savollari bombaga mos emas). Boshqa oʻyinni tanlang.':'Bu oʻyin uchun javobi 1 dan 9 gacha boʻlgan savollar kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.';return}
+  if(g.topics&&!TOPS().length&&!selSets().length){$('#startErr').textContent=isMathFan()?'Kamida bitta mavzu yoki toʻplamni belgilang.':`${cfg.fan||'Kamida'} ${cfg.fan?'boʻyicha kamida ':''}bitta toʻplamni belgilang.`;return}
+  if(g.topics&&selSets().some(s=>s.loading)){$('#startErr').textContent='Toʻplam yuklanmoqda… bir soniyadan keyin qayta bosing.';return}
+  if(g.topics&&!TOPS().length&&new Set(selSets().flatMap(s=>s.items.filter(it=>isMC(it)?GK!=='bomba':okAns(it.a,BIG())).map(it=>isMC(it)?'mc:'+it.q:it.a))).size<(GK==='bomba'?4:1)){$('#startErr').textContent=GK==='bomba'?'Bomba uchun javobi 1–9 boʻlgan kamida 4 xil son-javobli savol kerak (test savollari bombaga mos emas). Boshqa oʻyinni tanlang.':'Bu oʻyin uchun javobi 1 dan 9 gacha boʻlgan savollar kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.';return}
   $('#startErr').textContent='';save();L=cfg.L;
   S.over=false;S.ending=false;S.start=Date.now();S.finished=0;S.log=[];QB={};musLabel();MUSIC.start(GK);
   const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
@@ -1850,6 +1891,10 @@ function musLabel(){$('#musicBtn').textContent=MUSIC.on?'🎵':'🔕';$('#musicB
 $('#soundBtn').onclick=()=>{cfg.sound=cfg.sound?0:1;save();$('#soundBtn').textContent=cfg.sound?'🔊':'🔇'};
 
 renderMenu();
+const APIB=()=>(TG&&TG.initData)?'':(/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com');
+const normIt=it=>{if(!it||typeof it.q!=='string')return null;
+  if(Array.isArray(it.o)){const o=it.o.map(x=>String(x).slice(0,120)).filter(Boolean).slice(0,4),c=+it.c;return o.length>=2&&c>=0&&c<o.length?{q:it.q.slice(0,300),o,c}:null}
+  return Number.isInteger(+it.a)&&+it.a>=0&&+it.a<=9999?{q:it.q.slice(0,300),a:+it.a}:null};
 async function loadSets(){
   const out=[];
   try{const r=await fetch('sets.json?v='+Date.now());if(r.ok){const j=await r.json();if(Array.isArray(j))j.forEach(s=>out.push({...s,id:'k-'+s.id}))}}catch(e){}
@@ -1860,17 +1905,16 @@ async function loadSets(){
   const P=new URLSearchParams(location.search),lib=P.get('lib');
   if(lib){try{const r=await fetch((TG&&TG.initData?'':API)+'/api/lib/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})});
     if(r.ok){const j=await r.json();if(j.set){out.push({...j.set,id:'L-'+lib});fetch((TG&&TG.initData?'':API)+'/api/lib/play',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})}).catch(()=>{})}}}catch(e){}}
-  const normIt=it=>{if(!it||typeof it.q!=='string')return null;
-    if(Array.isArray(it.o)){const o=it.o.map(x=>String(x).slice(0,120)).filter(Boolean).slice(0,4),c=+it.c;return o.length>=2&&c>=0&&c<o.length?{q:it.q.slice(0,300),o,c}:null}
-    return Number.isInteger(+it.a)&&+it.a>=0&&+it.a<=9999?{q:it.q.slice(0,300),a:+it.a}:null};
   SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),fixed:/^k-/.test(String(s.id)),
-    items:s.items.map(normIt).filter(Boolean)})).filter(s=>s.items.length);
+    fan:FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items:s.items.map(normIt).filter(Boolean)})).filter(s=>s.items.length);
   const sid=lib?'L-'+lib:P.get('set');
-  if(sid&&setById(sid)){cfg.sets=[sid];cfg.topics=[]}
+  if(sid&&setById(sid)){cfg.sets=[sid];cfg.topics=[];const s=setById(sid);
+    if(s.fan)cfg.fan=s.fan;else if(s.items.some(isMC)&&isMathFan()&&!P.get('fan'))cfg.fan='';}
   if(GK&&!$('#setup').classList.contains('hidden'))renderSettings();
 }
 (function(){const P=new URLSearchParams(location.search),g=P.get('g'),s=+P.get('sinf'),t=P.get('t');
-  if(GRADES[s]){cfg.grade=s;cfg.topics=GRADES[s].slice();cfg.sets=[]}
+  if(GRADES[s]){cfg.grade=s;cfg.topics=GRADES[s].slice();cfg.sets=[];cfg.fan='Matematika'}
+  const fp=P.get('fan');if(fp&&FANS.includes(fp))cfg.fan=fp;
   if(P.get('set'))cfg.topics=[];
   if(P.has('robo'))cfg.robo=Math.max(0,Math.min(3,+P.get('robo')||0));if(P.has('n'))cfg.n=Math.max(1,Math.min(4,+P.get('n')||2));
   if(t&&t!=='all'){const l=t.split(',').map(Number).filter(i=>TOPICS[i]);if(l.length)cfg.topics=l}
