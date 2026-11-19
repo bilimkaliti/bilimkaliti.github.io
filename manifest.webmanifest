@@ -61,5 +61,11 @@
         }
       ]
     }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://bilimkaliti.github.io/manifest.webmanifest"
+    }
   ]
 }

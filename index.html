@@ -186,6 +186,8 @@ footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap}
 @media (max-width:700px){.fgrid{grid-template-columns:1fr 1fr}}
 #pwaBar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:90;display:none;align-items:center;gap:10px;background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:var(--shadow);border-radius:18px;padding:8px 8px 8px 14px;font-weight:800;max-width:calc(100vw - 24px)}
 #pwaBar.on{display:flex}
+.pwa-btn{border-color:var(--teal)!important;color:var(--teal)!important}
+@media (display-mode: standalone){.pwa-btn,#pwaFoot{display:none!important}}
 #pwaBar img{width:34px;height:34px;border-radius:9px}
 #pwaBar .t{line-height:1.2;font-size:14px;min-width:0}#pwaBar .btn{white-space:nowrap;flex:none;padding:10px 14px}#pwaBar img,#pwaBar .x{flex:none}#pwaBar .t small{display:block;font-weight:700;color:var(--muted);font-size:12px}
 #pwaBar .x{border:0;background:none;color:var(--muted);font-size:20px;padding:4px 8px}
@@ -954,7 +956,7 @@ const PAGES={
      <span class="pill"><i></i>Bepul · roʻyxatdan oʻtishsiz</span>
      <h1>Darsni <span class="hl">oʻyinga</span> aylantiring</h1>
      <p class="lead">Elektron doskada guruhlar bellashadigan matematik oʻyinlar. Savollar har gal yangidan tuziladi: qisqa, tez va mantiqiy — diqqat va qiziqish uchun.</p>
-     <div class="cta"><button class="btn gold big" data-wiz="">▶️ Darsni boshlash</button><a class="btn ghost" href="#/sinflar">📚 Sinflar</a><a class="btn ghost" href="#/ai">✨ AI yordamchi</a></div>
+     <div class="cta"><button class="btn gold big" data-wiz="">▶️ Darsni boshlash</button><a class="btn ghost" href="#/sinflar">📚 Sinflar</a><a class="btn ghost" href="#/ai">✨ AI yordamchi</a><button class="btn ghost pwa-btn" onclick="bkInstall()">📲 Ilovani yuklab olish</button></div>
      <div class="stats"><div><b data-count="${GAMES.length}">0</b><span>oʻyin</span></div><div><b>1–7</b><span>sinflar</span></div><div><b id="tc" data-count="51">0</b><span>mavzu</span></div><div><b data-count="21">0</b><span>fan</span></div></div>
     </div>
     ${heroBoardHtml()}
@@ -2336,7 +2338,8 @@ fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).f
   const ua=navigator.userAgent||'';
   const ios=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   const inApp=/Telegram|FBAN|FBAV|Instagram/i.test(ua)||!!(window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData);
-  if(standalone||inApp)return;
+  window.bkInstall=()=>toast('Ilova allaqachon ochiq 🙂');
+  if(standalone)return;
   const B='<b style="all:unset;font-weight:900">';
   let deferred=null;
   const steps=(t,arr)=>`<div style="text-align:center"><div style="font-size:42px">📲</div><h3>${t}</h3><ol class="ios-steps">${arr.map((x,i)=>`<li><b>${i+1}</b><span>${x}</span></li>`).join('')}</ol>
@@ -2344,6 +2347,8 @@ fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).f
   async function install(){
     if(deferred){deferred.prompt();const r=await deferred.userChoice.catch(()=>null);deferred=null;hide();if(r&&r.outcome==='accepted')toast('Ilova oʻrnatildi 🎉');return}
     hide();
+    if(inApp){modal(steps('Brauzerda oching',[`Bu oyna ichida ilovani oʻrnatib boʻlmaydi`,`Yuqoridagi ${B}⋮</b> yoki ${B}↗</b> tugmasini bosib, ${B}“Brauzerda ochish”</b> ni tanlang`,`Chrome'da yana ${B}📲 Ilovani yuklab olish</b> ni bosing`]));return}
+    try{if(navigator.getInstalledRelatedApps){const r=await navigator.getInstalledRelatedApps();if(r&&r.length){modal(steps('Ilova allaqachon oʻrnatilgan ✅',[`Ish stolidagi yoki telefon ekranidagi ${B}Bilim Kaliti</b> ikonkasini bosib oching`,`Ikonka yoʻqolgan boʻlsa: Chrome'da ${B}chrome://apps</b> sahifasini oching`,`Qayta oʻrnatish kerak boʻlsa — avval ilovani oching, ${B}⋮ → “Oʻchirish”</b>, keyin shu tugmani yana bosing`]));return}}}catch(e){}
     if(ios){modal(steps("iPhone / iPad'ga oʻrnatish",[`Saytni ${B}Safari</b>da oching`,`Pastdagi ${B}Ulashish ⬆️</b> tugmasini bosing`,`${B}“Bosh ekranga qoʻshish” ➕</b> ni tanlang`]));return}
     const android=/Android/i.test(ua);
     if(android){modal(steps('Telefon yoki elektron doskaga oʻrnatish',[`Saytni ${B}Chrome</b> brauzerida oching`,`Yuqori oʻng burchakdagi ${B}⋮</b> menyuni bosing`,`${B}“Ilovani oʻrnatish”</b> yoki ${B}“Bosh ekranga qoʻshish”</b> ni tanlang`]));return}
@@ -2352,12 +2357,12 @@ fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).f
   window.bkInstall=install;
   /* pastki qismdagi doimiy tugma */
   const ft=document.querySelector('footer .wrap');
-  if(ft){const l=document.createElement('span');l.innerHTML='<a href="#" id="pwaFoot" style="color:var(--teal);font-weight:900">📲 Ilovani oʻrnatish</a>';ft.appendChild(l);
+  if(ft&&!inApp){const l=document.createElement('span');l.innerHTML='<a href="#" id="pwaFoot" style="color:var(--teal);font-weight:900">📲 Ilovani oʻrnatish</a>';ft.appendChild(l);
     l.firstChild.onclick=e=>{e.preventDefault();install()}}
   /* suzuvchi panel */
   const bar=document.createElement('div');bar.id='pwaBar';
   bar.innerHTML='<img src="image.png" alt=""><span class="t">Bilim Kaliti ilovasi<small>Bosh ekranga qoʻshing</small></span><button class="btn gold" id="pwaGo">Oʻrnatish</button><button class="x" id="pwaX" aria-label="Yopish">×</button>';
-  function show(){const later=store.get('pwaLater',0);if(later&&Date.now()-later<7*864e5)return;
+  function show(){if(inApp)return;const later=store.get('pwaLater',0);if(later&&Date.now()-later<7*864e5)return;
     if(document.getElementById('modal')){setTimeout(show,3000);return}if(!document.body.contains(bar))document.body.appendChild(bar);requestAnimationFrame(()=>bar.classList.add('on'))}
   function hide(){bar.classList.remove('on')}
   bar.addEventListener('click',e=>{if(e.target.id==='pwaX'){hide();store.set('pwaLater',Date.now());return}if(e.target.id==='pwaGo')install()});
