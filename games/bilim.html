@@ -191,7 +191,7 @@ const MODES={
  tartib:{icon:'📅',name:'Tartibga sol',c:['#f08c00','#ffb347'],desc:'Kartochkalarni toʻgʻri ketma-ketlikda joylang: voqealar, bosqichlar, jarayonlar. Toʻliq toʻgʻri — 2 ball.',kinds:['order'],len:{t:'Topshiriqlar soni',o:[4,6,8,10],d:6}},
  guruh:{icon:'🗂️',name:'Guruhlarga ajrat',c:['#7048e8','#9775fa'],desc:'Soʻz yoki tushunchani toʻgʻri savatga joylang. Navbat bilan, har bir toʻgʻri javob — 1 ball.',kinds:['group'],len:{t:'Soʻzlar soni',o:[12,18,24,30],d:18}}
 };
-const FANS=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
+const FANS=['Matematika','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
 const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
 const TC=['var(--t1)','var(--t2)','var(--t3)','var(--t4)'],BC=['#0f9d8a','#d6336c','#f08c00','#7048e8'];
 const MK=MODES[P.get('g')]?P.get('g'):'togri',M=MODES[MK];
@@ -217,7 +217,7 @@ function normIt(it){if(!it||typeof it!=='object')return null;
 const usable=s=>s.items.filter(it=>M.kinds.includes(it.k)).length;
 let SETS=[],LIBF={},FS=+P.get('fsinf')||0;
 function addSet(s,extra){const items=(s.items||[]).map(normIt).filter(Boolean);const id=String(s.id);if(SETS.some(x=>x.id===id))return;
-  SETS.push({id,name:String(s.name||'Toʻplam').slice(0,60),fan:FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items,...extra})}
+  SETS.push({id,name:String(s.name||'Toʻplam').slice(0,60),fan:/^(Algebra|Geometriya)$/.test(s.fan)?'Matematika':FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items,...extra})}
 async function post(path,body){const r=await fetch(APIB()+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json()}
 async function loadSets(){
   try{const r=await fetch('sets.json?v='+Date.now());if(r.ok)(await r.json()).forEach(s=>addSet({...s,id:'k-'+s.id},{fixed:1}))}catch(e){}

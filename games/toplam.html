@@ -1153,7 +1153,7 @@ const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (1
 let cfg={grade:6,big:1,music:1,n:2,L:1,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
 try{const s=JSON.parse(localStorage.getItem('bk8-cfg')||'null');if(s)cfg={...cfg,...s}}catch(e){}
 cfg.names=(cfg.names||[]).slice(0,4);while(cfg.names.length<4)cfg.names.push(`${cfg.names.length+1}-guruh`);
-const FANS=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
+const FANS=['Matematika','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
 const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
 const MATHF=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
 const isMathFan=()=>MATHF.includes(cfg.fan);
@@ -1999,7 +1999,7 @@ async function loadSets(){
       if(j.ok&&j.hw){HW={...j.hw,id:hw};out.push({id:'H-'+hw,name:j.hw.name,items:j.hw.items})}else HW={err:j.error||'Uy vazifasi topilmadi.'}}
     catch(e){HW={err:'Serverga ulanib boʻlmadi. Internetni tekshirib, sahifani yangilang.'}}}
   SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),fixed:/^k-/.test(String(s.id)),
-    fan:FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items:convPairs(s.items).map(normIt).filter(Boolean)})).filter(s=>s.items.length);
+    fan:/^(Algebra|Geometriya)$/.test(s.fan)?'Matematika':FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items:convPairs(s.items).map(normIt).filter(Boolean)})).filter(s=>s.items.length);
   const sid=lib?'L-'+lib:(bz&&bm)?'B-'+bm+'-'+bd:P.get('set');
   if(sid&&setById(sid)){cfg.sets=[sid];cfg.topics=[];const s=setById(sid);
     if(s.fan)cfg.fan=s.fan;else if(s.items.some(isMC)&&isMathFan()&&!P.get('fan'))cfg.fan='';}

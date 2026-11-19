@@ -1208,6 +1208,7 @@ function doRoute(){
   heroStop();
   const parts=location.hash.replace(/^#\/?/,'').split('/');let r=parts[0]||'';
   if(r==='sinf'&&!GRADES[parts[1]])r='sinflar';
+  if(r==='fan'&&/^(Algebra|Geometriya)$/.test(decodeURIComponent(parts[1]||''))){parts[1]='Matematika';history.replaceState(null,'','#/fan/Matematika')}
   if(CLEANUP){try{CLEANUP()}catch(e){}CLEANUP=null}
   if($('#modal')&&!$('#modal .lg'))closeModal();
   try{document.fullscreenElement&&document.exitFullscreen()}catch(e){}
@@ -1239,7 +1240,7 @@ const API=(()=>{try{const q=new URLSearchParams(location.search).get('api');if(q
   return /onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com'})();
 const AUTH={get tok(){return store.get('token',null)},get name(){return store.get('uname','')},
   set(t,n){store.set('token',t);store.set('uname',n)},out(){store.set('token',null);store.set('uname','');store.set('admin',false);drawAuth();try{adminNav()}catch(e){}}};
-const FANLAR=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
+const FANLAR=['Matematika','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
 const AI_TOOLS=[
  {id:'darslik',e:'📸',n:'Darslikdan oʻyin',d:'Darslik rasmi, PDF yoki Word → AI savollar → darhol guruh oʻyini.',c:'#12a38f'},
  {id:'savollar',e:'🎮',n:'Oʻyin uchun savollar',d:'Istalgan fandan qisqa savollar — darhol guruh oʻyinlarida oʻynaladi va kutubxonaga ulashiladi.',c:'#f5b301',f:['mavzu','fan','sinf','tur','til','extra','file'],ph:'Masalan: kasrlarni qoʻshish / soʻz turkumlari / hayvonlar (ingliz tili)'},
