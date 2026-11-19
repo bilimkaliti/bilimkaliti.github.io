@@ -1056,7 +1056,7 @@ const PAGES={
      <h1>Darsni <span class="hl">oʻyinga</span> aylantiring</h1>
      <p class="lead">Elektron doskada guruhlar bellashadigan oʻyinlar: matematika va boshqa fanlardan. Mavzuni tanlang — savollar tayyor: qisqa, tez va qiziqarli.</p>
      <div class="cta"><button class="btn gold big" data-wiz="">▶️ Darsni boshlash</button><a class="btn ghost" href="#/sinflar">📚 Sinflar</a><a class="btn ghost" href="#/ai">✨ AI yordamchi</a><button class="btn ghost pwa-btn" onclick="bkInstall()">📲 Ilovani yuklab olish</button></div>
-     <div class="stats"><div><b data-count="${GAMES.length}">0</b><span>oʻyin</span></div><div><b>1–7</b><span>sinflar</span></div><div><b id="tc" data-count="51">0</b><span>mavzu</span></div><div><b data-count="21">0</b><span>fan</span></div></div>
+     <div class="stats"><div><b data-count="${GAMES.length}">0</b><span>oʻyin</span></div><div><b>1–7</b><span>sinflar</span></div><div><b id="tc" data-count="51">0</b><span>mavzu</span></div><div><b data-count="${FANLAR.length}">0</b><span>fan</span></div></div>
     </div>
     ${heroBoardHtml()}
    </div>
@@ -1229,7 +1229,7 @@ function doRoute(){
   if(r==='')bindDaily();
   if(r!=='ai'||parts[1]!=='darslik')document.removeEventListener('paste',dlPaste);
   hit('view',{p:parts.slice(0,2).join('/')||'home'});
-  const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.dataset.count=all.size}
+  const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.dataset.count=all.size+53}
   window.scrollTo(0,0);
   revealInit();
   if(r===''){heroStart();if(document.documentElement.classList.contains('ready'))countUp()}

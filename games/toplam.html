@@ -415,6 +415,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <h3>Mavzular</h3>
       <p class="small">Misollar belgilangan mavzulardan aralashtirib olinadi.</p>
       <h3 style="margin-top:4px">Sinf</h3><div class="seg" data-key="grade" style="margin-bottom:10px"></div>
+      <a id="bzLink" class="hidden" target="_top" style="display:block;margin:0 0 12px;padding:12px 16px;border-radius:14px;background:#e6fcf5;border:2px solid #38d9a9;font-weight:800;color:#087f5b;text-decoration:none"></a>
       <div class="quick"><button type="button" class="mini" data-q="gr">Shu sinf mavzulari</button><button type="button" class="mini" data-q="all">Hammasi</button><button type="button" class="ghost" data-q="none">Tozalash</button><b id="tcount"></b></div>
       <div class="topics" id="topics"></div>
       </div>
@@ -1199,6 +1200,7 @@ function renderSettings(){
   const opened=document.querySelector('#otherTopics')?.open;
   $('#topics').innerHTML=`<div class="tg">${cfg.grade}-sinf mavzulari</div>`+mine.map(lab).join('')+`<details id="otherTopics" style="grid-column:1/-1;margin-top:6px"${opened?' open':''}><summary style="cursor:pointer;font-weight:800">Boshqa sinflar mavzulari</summary><div class="topics" style="margin-top:6px">${other}</div></details>`;
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
+  {const L=$('#bzLink'),ok=[5,6,7].includes(+cfg.grade);L.classList.toggle('hidden',!ok);if(ok){L.href='../#/sinf/'+cfg.grade;L.textContent=`📘 ${cfg.grade}-sinf: kitob boʻyicha tayyor mavzular (Oson / Oʻrta / Qiyin) →`}}
   $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
   const M=isMathFan();$('#mathTopics').classList.toggle('hidden',!M);$('#fanSets').classList.toggle('hidden',M);
   if(!M&&g.big)$('#bigBox').classList.add('hidden');
