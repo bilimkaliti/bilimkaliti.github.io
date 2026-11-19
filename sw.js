@@ -2,7 +2,7 @@
    Sahifalar va oʻyinlar: avval internetdan (har doim yangi versiya), internet boʻlmasa — saqlangan nusxa.
    Rasmlar va shriftlar: saqlangan nusxa darhol, orqada yangilanadi.
    Saytni yangilaganda shu yerdagi VERSION raqamini oshirish shart emas — sahifalar baribir internetdan olinadi. */
-const VERSION = 'bk-v5';
+const VERSION = 'bk-v6';
 const CORE = [
   '/',
   '/index.html',
@@ -14,7 +14,8 @@ const CORE = [
   '/games/eshik-kodi.html',
   '/games/kosmik-baza.html',
   '/games/sirli-xonalar.html',
-  '/games/toplam.html'
+  '/games/toplam.html',
+  '/games/diplom.js'
 ];
 
 self.addEventListener('install', e => {
@@ -33,7 +34,8 @@ self.addEventListener('activate', e => {
   );
 });
 
-const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+// Shriftlar, Telegram skripti va kutubxonalar ham saqlanadi — internet uzilsa ham ishlaydi
+const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'telegram.org', 'cdn.jsdelivr.net', 'cdnjs.cloudflare.com'];
 
 self.addEventListener('fetch', e => {
   const req = e.request;

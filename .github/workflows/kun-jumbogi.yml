@@ -1,0 +1,21 @@
+# Har kuni ertalab botni uygʻotadi va «Kun jumbogʻi»ni kanalga joylatadi.
+# Hech qanday sozlash kerak emas: bot bir kunda faqat bitta jumboq chiqaradi.
+name: Kun jumbogi
+
+on:
+  schedule:
+    - cron: "35 2 * * *"   # 07:35 Toshkent vaqti
+    - cron: "20 4 * * *"   # 09:20 — zaxira urinish
+  workflow_dispatch: {}
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Botni uygʻotish va jumboqni joylash
+        run: |
+          for i in 1 2 3; do
+            if curl -fsS -m 150 https://bilim-kaliti.onrender.com/api/daily; then echo; exit 0; fi
+            echo "Urinish $i boʻlmadi, 30 soniyadan keyin yana…"; sleep 30
+          done
+          exit 0

@@ -13,6 +13,7 @@ import json
 import logging
 import operator
 import os
+import random
 import re
 import secrets
 import time
@@ -372,7 +373,8 @@ async def save_sets(uid: int, sets: list[dict]) -> None:
             pass
 
 
-async def add_set(uid: int, name: str, items: list[dict], src: str, fan: str = "") -> tuple[dict, bool]:
+async def add_set(uid: int, name: str, items: list[dict], src: str, fan: str = "",
+                  sinf: str = "", mavzu: str = "", pub: bool = True) -> tuple[dict, bool]:
     async with lock_for(uid):
         sets = list(await load_sets(uid))
         s = {"id": secrets.token_hex(3), "name": name[:60], "src": src, "t": int(time.time()), "items": items[:MAX_ITEMS]}
@@ -383,6 +385,8 @@ async def add_set(uid: int, name: str, items: list[dict], src: str, fan: str = "
         sets = sets[-MAX_SETS:]
         await save_sets(uid, sets)
     stat_inc("sets")
+    if pub and AUTO_PUB:
+        asyncio.create_task(lib_auto(uid, s, sinf, mavzu))
     return s, dropped
 
 
@@ -769,6 +773,7 @@ async def cb_set_delete_yes(call: CallbackQuery) -> None:
     async with lock_for(uid):
         sets = [s for s in await load_sets(uid) if s["id"] != sid]
         await save_sets(uid, sets)
+    asyncio.create_task(lib_unlink(uid, sid))
     await call.answer("Oʻchirildi")
     await send_sets_list(uid, edit=call.message)
 
@@ -1265,24 +1270,83 @@ async def api_lib_publish(request: web.Request) -> web.Response:
         return jerr("Bitta oʻqituvchi koʻpi bilan 60 ta toʻplam ulasha oladi.")
     if any(m.get("uid") == uid and m.get("src") == s["id"] for m in lib["sets"]):
         return jerr("Bu toʻplam kutubxonada allaqachon bor.")
+    try:
+        lid = await lib_add(uid, u["n"], s["id"], name, fan, sinf, mavzu, items)
+    except Exception as e:
+        log.warning("publish: %s", e)
+        return jerr("Kanalga yozib boʻlmadi. Bot kanalda administrator ekanini tekshiring.", 502)
+    return web.json_response({"ok": True, "id": lid})
+
+
+def items_sig(items: list) -> str:
+    return hashlib.md5(json.dumps(items, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()[:12]
+
+
+async def lib_add(uid: int, author: str, src: str, name: str, fan: str, sinf: str, mavzu: str, items: list, auto: bool = False) -> str:
+    """Toʻplamni kutubxona kanaliga yozadi va roʻyxatga qoʻshadi (xato boʻlsa — exception)."""
+    lib = await lib_load()
     lid = secrets.token_hex(4)
-    payload = {"name": name, "fan": fan, "sinf": sinf, "mavzu": mavzu, "author": u["n"], "items": items}
+    payload = {"name": name, "fan": fan, "sinf": sinf, "mavzu": mavzu, "author": author, "items": items}
     async with LIB_LOCK:
-        try:
-            doc = await bot.send_document(
-                LIB_CHAT, BufferedInputFile(json.dumps(payload, ensure_ascii=False).encode("utf-8"), filename=f"{lid}.json"),
-                caption=f"📚 {name}\n{fan}{' · ' + sinf + '-sinf' if sinf else ''} · {len(items)} ta savol\n✍️ {u['n']}"[:1000],
-                disable_notification=True)
-        except Exception as e:
-            log.warning("publish: %s", e)
-            return jerr("Kanalga yozib boʻlmadi. Bot kanalda administrator ekanini tekshiring.", 502)
-        lib["sets"].insert(0, {"id": lid, "name": name, "fan": fan, "sinf": sinf, "mavzu": mavzu, "author": u["n"], "uid": uid,
-                               "src": s["id"], "n": len(items), "mc": any("o" in it for it in items), "kind": set_kind(items), "t": int(time.time()),
-                               "plays": 0, "fid": doc.document.file_id, "mid": doc.message_id})
+        doc = await bot.send_document(
+            LIB_CHAT, BufferedInputFile(json.dumps(payload, ensure_ascii=False).encode("utf-8"), filename=f"{lid}.json"),
+            caption=f"📚 {name}\n{fan}{' · ' + sinf + '-sinf' if sinf else ''} · {len(items)} ta savol\n✍️ {author}"[:1000],
+            disable_notification=True)
+        lib["sets"].insert(0, {"id": lid, "name": name, "fan": fan, "sinf": sinf, "mavzu": mavzu, "author": author, "uid": uid,
+                               "src": src, "n": len(items), "mc": any("o" in it for it in items), "kind": set_kind(items), "t": int(time.time()),
+                               "plays": 0, "fid": doc.document.file_id, "mid": doc.message_id, "sig": items_sig(items), "auto": auto})
         LIB_ITEMS[lid] = items
         await lib_save_index()
     stat_inc("pub")
-    return web.json_response({"ok": True, "id": lid})
+    return lid
+
+
+# Yangi yaratilgan har bir toʻplam avtomatik kutubxonaga ham tushadi (hammaga koʻrinadi).
+# Oʻchirish uchun Render'da AUTO_PUBLISH=0 qoʻyiladi.
+AUTO_PUB = os.environ.get("AUTO_PUBLISH", "1").strip() != "0"
+AUTO_PER_TEACHER = 60
+
+
+async def lib_auto(uid: int, s: dict, sinf: str = "", mavzu: str = "") -> None:
+    if not LIB_CHAT:
+        return
+    try:
+        items = norm_items(s.get("items"))
+        if len(items) < (2 if set_kind(items) in ("order", "group") else 4):
+            return
+        lib = await lib_load()
+        sig = items_sig(items)
+        if any(m.get("sig") == sig or (m.get("uid") == uid and m.get("src") == s["id"]) for m in lib["sets"]):
+            return   # aynan shu savollar kutubxonada allaqachon bor
+        if sum(1 for m in lib["sets"] if m.get("uid") == uid) >= AUTO_PER_TEACHER:
+            return
+        st = (STAT or {}).get("users", {}).get(str(uid)) or {}
+        author = st.get("n") or "Oʻqituvchi"
+        await lib_add(uid, author, s["id"], s["name"], s.get("fan") or "Matematika", sinf, mavzu, items, auto=True)
+    except Exception as e:
+        log.warning("lib_auto: %s", e)
+
+
+async def lib_unlink(uid: int, sid: str) -> None:
+    """Oʻqituvchi toʻplamini oʻchirsa, avtomatik ulashilgan nusxasi ham kutubxonadan olinadi."""
+    if not LIB_CHAT:
+        return
+    try:
+        lib = await lib_load()
+        gone = [m for m in lib["sets"] if m.get("uid") == uid and m.get("src") == sid and m.get("auto")]
+        if not gone:
+            return
+        async with LIB_LOCK:
+            lib["sets"] = [m for m in lib["sets"] if m not in gone]
+            for m in gone:
+                LIB_ITEMS.pop(m["id"], None)
+                try:
+                    await bot.delete_message(LIB_CHAT, m["mid"])
+                except Exception:
+                    pass
+            await lib_save_index()
+    except Exception as e:
+        log.warning("lib_unlink: %s", e)
 
 
 async def api_lib_delete(request: web.Request) -> web.Response:
@@ -1314,7 +1378,8 @@ async def api_sets_save(request: web.Request) -> web.Response:
     items = norm_items(data.get("items"))
     if not items:
         return jerr("Birorta ham toʻgʻri savol topilmadi.")
-    s, dropped = await add_set(u["u"], clip(data.get("name"), 60) or "Oʻz savollarim", items, "own", clip(data.get("fan"), 60))
+    s, dropped = await add_set(u["u"], clip(data.get("name"), 60) or "Oʻz savollarim", items, "own", clip(data.get("fan"), 60),
+                               sinf=clip(data.get("sinf"), 10), pub=data.get("pub", True) is not False)
     return web.json_response({"ok": True, "set": {"id": s["id"], "name": s["name"], "fan": s.get("fan", ""), "items": s["items"]}, "dropped": dropped})
 
 
@@ -1329,6 +1394,7 @@ async def api_sets_delete(request: web.Request) -> web.Response:
         if not any(s["id"] == sid for s in sets):
             return jerr("Topilmadi", 404)
         await save_sets(u["u"], [s for s in sets if s["id"] != sid])
+    asyncio.create_task(lib_unlink(u["u"], sid))
     return web.json_response({"ok": True})
 
 
@@ -1610,7 +1676,7 @@ async def api_ai(request: web.Request) -> web.Response:
             name, items = await gemini_kind(kind, fan, sinf, mavzu, LANGS.get(str(p.get("til")), LANGS["uz"]), clip(p.get("extra"), 600), fobj)
             if len(items) < (2 if kind in ("order", "group") else 4):
                 return jerr("AI yetarlicha material tuza olmadi. Mavzuni boshqacharoq yozing.")
-            s, _ = await add_set(uid, name, items, "ai", fan)
+            s, _ = await add_set(uid, name, items, "ai", fan, sinf=re.sub(r"\D", "", sinf)[:2], mavzu=mavzu[:100])
             return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
         if tool == "savollar" and (fan.lower() not in MATH_FANS or str(p.get("tur")) == "mc"):
             f = data.get("file")
@@ -1618,13 +1684,13 @@ async def api_ai(request: web.Request) -> web.Response:
             name, items = await gemini_mc(fan, sinf, mavzu, LANGS.get(str(p.get("til")), LANGS["uz"]), 12, clip(p.get("extra"), 600), fobj)
             if len(items) < 4:
                 return jerr("AI yetarlicha toʻgʻri savol tuza olmadi. Mavzuni boshqacharoq yozing.")
-            s, _ = await add_set(uid, name, items, "ai", fan)
+            s, _ = await add_set(uid, name, items, "ai", fan, sinf=re.sub(r"\D", "", sinf)[:2], mavzu=mavzu[:100])
             return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
         if tool == "savollar":
             name, items = await gemini_questions(f"{sinf}-sinf, {mavzu}" if sinf else mavzu)
             if len(items) < 4:
                 return jerr("AI yetarlicha toʻgʻri savol tuza olmadi. Mavzuni boshqacharoq yozing.")
-            s, _ = await add_set(uid, name, items, "ai", fan)
+            s, _ = await add_set(uid, name, items, "ai", fan, sinf=re.sub(r"\D", "", sinf)[:2], mavzu=mavzu[:100])
             return web.json_response({"ok": True, "result": {"title": s["name"], "set": s}, "left": ai_left(uid)})
         lo, hi, df = TOOL_LIMITS.get(tool, (1, 50, 10))
         try:
@@ -1917,6 +1983,358 @@ async def on_startup(app: web.Application) -> None:
     log.info("Webhook oʻrnatildi: %s", BASE_URL)
 
 
+# ===================== KUN JUMBOGʻI (har kuni kanalga) =====================
+# Har kuni ertalab bitta mantiqiy savol kanalga «viktorina» (quiz) koʻrinishida joylanadi
+# va saytning bosh sahifasida ham chiqadi. Render uxlab qolsa, GitHub Actions uni uygʻotadi
+# (.github/workflows/kun-jumbogi.yml). Bir kunda faqat bitta jumboq chiqadi.
+DAILY_CHANNEL = os.environ.get("DAILY_CHANNEL", "@bilimkaliti_uz").strip()
+DAILY_HOUR = int(os.environ.get("DAILY_HOUR", "7") or 7)   # Toshkent vaqti bilan, shu soatdan keyin
+DAILY_LOCK = asyncio.Lock()
+UZ_MONTHS = ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"]
+
+
+def _tash_now() -> datetime.datetime:
+    return datetime.datetime.utcnow() + datetime.timedelta(hours=5)
+
+
+def _uz_date(d: str) -> str:
+    try:
+        y, m, dd = (int(x) for x in d.split("-"))
+        return f"{dd}-{UZ_MONTHS[m - 1]}"
+    except Exception:
+        return d
+
+
+def valid_puzzle(p) -> dict | None:
+    if not isinstance(p, dict):
+        return None
+    q = str(p.get("q", "")).strip()
+    o = [str(x).strip()[:100] for x in (p.get("o") or []) if str(x).strip()] if isinstance(p.get("o"), list) else []
+    try:
+        a = int(p.get("a"))
+    except (TypeError, ValueError):
+        return None
+    e = str(p.get("e", "")).strip()
+    if not (10 <= len(q) <= 260) or len(o) != 4 or len(set(o)) != 4 or not 0 <= a < 4:
+        return None
+    return {"q": q, "o": o, "a": a, "e": e[:190]}
+
+
+def _shuffle_opts(rng, right, wrong: list) -> tuple[list, int]:
+    opts = [str(right)] + [str(w) for w in wrong]
+    order = list(range(4))
+    rng.shuffle(order)
+    return [opts[i] for i in order], order.index(0)
+
+
+def _wrong(rng, right: int, spread: int = 6) -> list[int]:
+    out = set()
+    while len(out) < 3:
+        w = right + rng.choice([-1, 1]) * rng.randint(1, spread)
+        if w != right and w >= 0:
+            out.add(w)
+    return list(out)
+
+
+def local_puzzle(seed: str) -> dict:
+    """Internet/AI boʻlmasa ham ishlaydigan jumboqlar (har kuni boshqacha)."""
+    rng = random.Random("bk-daily-" + seed)
+    kind = rng.randrange(8)
+    if kind == 0:
+        a, d = rng.randint(2, 20), rng.randint(3, 9)
+        seq = [a + d * i for i in range(5)]
+        r = a + d * 5
+        q, e = f"Ketma-ketlikni davom ettiring: {', '.join(map(str, seq))}, …", f"Har safar {d} qoʻshiladi: {seq[-1]} + {d} = {r}."
+    elif kind == 1:
+        a, k = rng.randint(1, 4), rng.choice([2, 3])
+        seq = [a * k ** i for i in range(5)]
+        r = a * k ** 5
+        q, e = f"Keyingi son qaysi? {', '.join(map(str, seq))}, …", f"Har bir son oldingisidan {k} marta katta: {seq[-1]} × {k} = {r}."
+    elif kind == 2:
+        n = rng.randint(4, 9)
+        seq = [i * i for i in range(n - 4, n)]
+        r = n * n
+        q, e = f"Qonuniyatni toping: {', '.join(map(str, seq))}, …", f"Bular ketma-ket sonlarning kvadratlari: {n} × {n} = {r}."
+    elif kind == 3:
+        x, y = rng.randint(6, 25), rng.randint(2, 9)
+        r = x
+        q, e = (f"Akasi ukasidan {y} yosh katta. Ikkalasining yoshi yigʻindisi {2 * x + y} ga teng. Ukasi necha yoshda?",
+                f"({2 * x + y} − {y}) : 2 = {x}. Ukasi {x} yoshda, akasi {x + y} yoshda.")
+    elif kind == 4:
+        legs_c, legs_r = rng.randint(3, 12), rng.randint(3, 12)
+        heads, legs = legs_c + legs_r, 2 * legs_c + 4 * legs_r
+        r = legs_r
+        q, e = (f"Hovlida tovuqlar va quyonlar bor: jami {heads} ta bosh va {legs} ta oyoq. Nechta quyon bor?",
+                f"Hammasi tovuq boʻlsa, {2 * heads} ta oyoq boʻlardi. Ortiqcha {legs - 2 * heads} ta oyoq — har quyonda 2 tadan: {r} ta quyon.")
+    elif kind == 5:
+        n = rng.choice([5, 6, 7, 8, 10])
+        r = n
+        q, e = (f"{n} ta mushuk {n} daqiqada {n} ta sichqon tutadi. 100 ta mushuk 100 ta sichqonni necha daqiqada tutadi?",
+                f"Har bir mushuk {n} daqiqada bitta sichqon tutadi. 100 ta mushuk 100 ta sichqonni ham {n} daqiqada tutadi.")
+    elif kind == 6:
+        n = rng.randint(5, 12)
+        r = n - 1
+        q, e = (f"Daraxt tanasini {n} boʻlakka arralash kerak. Har bir kesish 1 daqiqa. Necha daqiqa ketadi?",
+                f"{n} boʻlak uchun {n - 1} marta kesish kerak — {r} daqiqa.")
+    else:
+        n = rng.randint(4, 8)
+        r = n * (n - 1) // 2
+        q, e = (f"{n} doʻst uchrashdi va har biri qolganlar bilan bir martadan qoʻl berib koʻrishdi. Jami nechta qoʻl siqish boʻldi?",
+                f"Har biri {n - 1} kishi bilan koʻrishadi, lekin har bir juft ikki marta sanalmaydi: {n} × {n - 1} : 2 = {r}.")
+    opts, ai = _shuffle_opts(rng, r, _wrong(rng, r, 4 if r < 15 else 8))
+    return {"q": q, "o": opts, "a": ai, "e": e[:190]}
+
+
+async def ai_puzzle(day: str) -> dict | None:
+    if not GEMINI_KEY:
+        return None
+    system = ("Sen boshlangʻich va 5–7-sinf oʻquvchilari uchun mantiqiy jumboqlar tuzuvchi oʻqituvchisan. "
+              "Faqat oʻzbek tilida (lotin yozuvida), qisqa va aniq yoz. Savol 1–2 jumla, uzun hisob-kitobsiz, "
+              "aqlni charxlaydigan boʻlsin. Javob bir maʼnoli va 100% toʻgʻri boʻlishi shart.")
+    prompt = (f"Bugungi sana: {day}. Bitta «Kun jumbogʻi» tuz: mantiq, sonli qonuniyat, qiziqarli masala yoki hazil-savol. "
+              "JSON qaytar: {\"q\": savol (260 belgidan qisqa), \"o\": [4 ta qisqa variant], \"a\": toʻgʻri variant indeksi 0–3, "
+              "\"e\": qisqa yechim (180 belgidan qisqa)}. Variantlar bir-biridan farq qilsin.")
+    try:
+        text = await gemini_call([{"role": "user", "parts": [{"text": prompt}]}], system=system, max_tokens=1024, temperature=1.0)
+        return valid_puzzle(parse_json_text(text))
+    except Exception as e:
+        log.warning("ai_puzzle: %s", e)
+        return None
+
+
+async def daily_get(create: bool) -> dict | None:
+    global LIB_DIRTY
+    lib = await lib_load()
+    today = _today()
+    d = lib.get("daily")
+    if d and d.get("d") == today and (d.get("posted") or not create):
+        return d
+    if not create or _tash_now().hour < DAILY_HOUR:
+        return d
+    async with DAILY_LOCK:
+        d = lib.get("daily")
+        if not (d and d.get("d") == today):
+            p = await ai_puzzle(today) or local_puzzle(today)
+            d = {"d": today, **p, "posted": False, "tries": 0}
+        if not d.get("posted"):
+            if DAILY_CHANNEL:
+                try:
+                    msg = await bot.send_poll(
+                        DAILY_CHANNEL, question=f"🧩 Kun jumbogʻi · {_uz_date(today)}\n\n{d['q']}"[:300],
+                        options=d["o"], type="quiz", correct_option_id=d["a"],
+                        explanation=(d.get("e") or None), is_anonymous=True)
+                    d["posted"], d["mid"] = True, msg.message_id
+                    stat_inc("daily")
+                except Exception as e:
+                    log.warning("daily post: %s", e)
+                    d["err"] = str(e)[:200]
+                    d["tries"] = int(d.get("tries") or 0) + 1
+                    if d["tries"] >= 6:
+                        d["posted"] = True   # bugun boshqa urinmaymiz
+            else:
+                d["posted"] = True
+        async with LIB_LOCK:
+            lib["daily"] = d
+            if LIB_CHAT:
+                try:
+                    await lib_save_index()
+                except Exception as e:
+                    log.warning("daily save: %s", e)
+                    LIB_DIRTY = True
+    return d
+
+
+async def api_daily(request: web.Request) -> web.Response:
+    d = await daily_get(True)
+    if not d:
+        return web.json_response({"ok": True, "p": None})
+    return web.json_response({"ok": True, "p": {k: d.get(k) for k in ("d", "q", "o", "a", "e")},
+                              "today": d.get("d") == _today(), "channel": DAILY_CHANNEL})
+
+
+async def daily_loop(app: web.Application) -> None:
+    async def loop():
+        await asyncio.sleep(30)
+        while True:
+            try:
+                await daily_get(True)
+            except Exception as e:
+                log.warning("daily loop: %s", e)
+            await asyncio.sleep(900)
+    app["daily_task"] = asyncio.create_task(loop())
+
+
+# ===================== UY VAZIFASI =====================
+# Oʻqituvchi toʻplamdan uy vazifasi havolasini oladi. Oʻquvchi uyda oʻynaydi,
+# natija darhol oʻqituvchining Telegramiga keladi va saytdagi «Uy vazifalari» sahifasida koʻrinadi.
+# Savollar kutubxona kanalida JSON fayl boʻlib saqlanadi, roʻyxat — LIB["hw"].
+HW_MAX = 400
+HW_PER_TEACHER = 40
+HW_RES_MAX = 120
+HW_GAMES = {"minora", "xazina", "raketa", "mozaika", "bomba", "tez", "juft"}
+HW_ITEMS: dict[str, dict] = {}
+HW_RATE: dict[str, float] = {}
+
+
+def _hw() -> dict:
+    return LIB.setdefault("hw", {})
+
+
+async def hw_payload(hid: str, m: dict) -> dict:
+    if hid not in HW_ITEMS:
+        d = json.loads((await bot.download(m["f"])).read().decode("utf-8"))
+        HW_ITEMS[hid] = d if isinstance(d, dict) else {}
+    return HW_ITEMS[hid]
+
+
+async def api_hw_create(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    if not LIB_CHAT:
+        return jerr("Uy vazifasi hali ulanmagan (LIBRARY_CHAT_ID kerak).", 503)
+    items = [it for it in norm_items(data.get("items")) if "o" in it or "a" in it]
+    if len(items) < 3:
+        return jerr("Uy vazifasi uchun kamida 3 ta test yoki son-javobli savol kerak.")
+    g = str(data.get("g", "minora"))
+    if g not in HW_GAMES:
+        g = "minora"
+    if g == "bomba" and sum(1 for it in items if "a" in it and 1 <= it["a"] <= 9) < 4:
+        g = "minora"
+    name = clip(data.get("name"), 60) or "Uy vazifasi"
+    note = clip(data.get("note"), 200)
+    lib = await lib_load()
+    hw = lib.setdefault("hw", {})
+    mine = [k for k, m in hw.items() if m.get("u") == u["u"]]
+    if len(mine) >= HW_PER_TEACHER:
+        return jerr(f"Koʻpi bilan {HW_PER_TEACHER} ta uy vazifasi saqlanadi. Eskilarini oʻchiring.")
+    hid = secrets.token_hex(4)
+    payload = {"name": name, "note": note, "g": g, "tn": u["n"], "items": items}
+    async with LIB_LOCK:
+        try:
+            doc = await bot.send_document(
+                LIB_CHAT, BufferedInputFile(json.dumps(payload, ensure_ascii=False).encode("utf-8"), filename=f"uy-{hid}.json"),
+                caption=f"📝 Uy vazifasi: {name}\n{len(items)} ta savol · ✍️ {u['n']}"[:1000], disable_notification=True)
+        except Exception as e:
+            log.warning("hw create: %s", e)
+            return jerr("Saqlab boʻlmadi. Bot kutubxona kanalida administrator ekanini tekshiring.", 502)
+        hw[hid] = {"f": doc.document.file_id, "mid": doc.message_id, "u": u["u"], "n": name, "g": g,
+                   "c": len(items), "t": int(time.time()), "r": []}
+        HW_ITEMS[hid] = payload
+        if len(hw) > HW_MAX:
+            for k in sorted(hw, key=lambda k: hw[k].get("t", 0))[:len(hw) - HW_MAX]:
+                hw.pop(k, None)
+        await lib_save_index()
+    stat_inc("hw")
+    return web.json_response({"ok": True, "id": hid})
+
+
+async def api_hw_get(request: web.Request) -> web.Response:
+    hid = clip((await read_json(request)).get("id"), 20)
+    lib = await lib_load()
+    m = (lib.get("hw") or {}).get(hid)
+    if not m:
+        return jerr("Uy vazifasi topilmadi yoki oʻchirilgan.", 404)
+    try:
+        p = await hw_payload(hid, m)
+    except Exception as e:
+        log.warning("hw get: %s", e)
+        return jerr("Yuklab boʻlmadi", 502)
+    return web.json_response({"ok": True, "hw": {"id": hid, "name": p.get("name") or m["n"], "note": p.get("note", ""),
+                                                 "g": m.get("g", "minora"), "tn": p.get("tn", ""), "items": p.get("items", [])}})
+
+
+async def api_hw_submit(request: web.Request) -> web.Response:
+    global LIB_DIRTY
+    data = await read_json(request)
+    hid = clip(data.get("id"), 20)
+    lib = await lib_load()
+    m = (lib.get("hw") or {}).get(hid)
+    if not m:
+        return jerr("Uy vazifasi topilmadi", 404)
+    name = re.sub(r"\s+", " ", clip(data.get("name"), 60)) or "Oʻquvchi"
+    cls = clip(data.get("cls"), 20)
+    ip = request.headers.get("X-Forwarded-For", request.remote or "").split(",")[0].strip()
+    key = f"{hid}:{ip}:{name.lower()}"
+    now = time.time()
+    if now - HW_RATE.get(key, 0) < 20:
+        return web.json_response({"ok": True, "dup": True})
+    HW_RATE[key] = now
+    if len(HW_RATE) > 5000:
+        for k in [k for k, t in HW_RATE.items() if now - t > 600]:
+            HW_RATE.pop(k, None)
+
+    def num(v, hi=100000):
+        try:
+            return max(0, min(hi, int(v)))
+        except (TypeError, ValueError):
+            return 0
+    right, total, score, sec = num(data.get("right"), 500), num(data.get("total"), 500), num(data.get("score")), num(data.get("sec"), 36000)
+    right = min(right, total)
+    wrong = [clip(re.sub(r"<[^>]+>", "", str(x)), 120) for x in (data.get("wrong") or [])[:12]] if isinstance(data.get("wrong"), list) else []
+    pct = round(100 * right / total) if total else 0
+    rec = {"n": name, "k": cls, "r": right, "t": total, "s": score, "p": pct, "sec": sec, "ts": int(now), "w": wrong[:8]}
+    m.setdefault("r", []).append(rec)
+    m["r"] = m["r"][-HW_RES_MAX:]
+    LIB_DIRTY = True
+    stat_inc("hw_done")
+    icon = "🟢" if pct >= 80 else "🟡" if pct >= 50 else "🔴"
+    txt = (f"📝 Uy vazifasi: «{m['n']}»\n\n{icon} {name}{' (' + cls + ')' if cls else ''}\n"
+           f"✅ {right}/{total} toʻgʻri ({pct}%) · ball: {score}" + (f" · ⏱ {sec // 60}:{sec % 60:02d}" if sec else ""))
+    if wrong:
+        txt += "\n\n❌ Xato qilingan savollar:\n" + "\n".join("• " + w for w in wrong[:6])
+    txt += f"\n\nBarcha natijalar: {SITE_URL}#/uy"
+    try:
+        await bot.send_message(m["u"], txt[:4000], disable_web_page_preview=True)
+    except Exception as e:
+        log.warning("hw notify: %s", e)
+    return web.json_response({"ok": True, "pct": pct})
+
+
+async def api_hw_list(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    lib = await lib_load()
+    out = [{"id": k, "name": m.get("n"), "g": m.get("g"), "c": m.get("c"), "t": m.get("t"), "r": m.get("r", [])}
+           for k, m in (lib.get("hw") or {}).items() if m.get("u") == u["u"]]
+    out.sort(key=lambda x: -(x.get("t") or 0))
+    return web.json_response({"ok": True, "on": bool(LIB_CHAT), "hw": out})
+
+
+async def api_hw_delete(request: web.Request) -> web.Response:
+    data = await read_json(request)
+    u = site_user(data)
+    if not u:
+        return jerr("auth", 401)
+    hid = clip(data.get("id"), 20)
+    lib = await lib_load()
+    m = (lib.get("hw") or {}).get(hid)
+    if not m or (m.get("u") != u["u"] and u["u"] != ADMIN_ID):
+        return jerr("Ruxsat yoʻq", 403)
+    async with LIB_LOCK:
+        lib["hw"].pop(hid, None)
+        HW_ITEMS.pop(hid, None)
+        try:
+            await bot.delete_message(LIB_CHAT, m["mid"])
+        except Exception:
+            pass
+        await lib_save_index()
+    return web.json_response({"ok": True})
+
+
+async def lib_shutdown(app: web.Application) -> None:
+    """Uyqudan oldin uy vazifasi natijalarini ham saqlab qoʻyadi."""
+    if LIB_DIRTY and LIB_CHAT and LIB is not None:
+        try:
+            async with LIB_LOCK:
+                await asyncio.wait_for(lib_save_index(), 20)
+        except Exception as e:
+            log.warning("lib shutdown: %s", e)
+
+
 @web.middleware
 async def no_cache(request: web.Request, handler):
     response = await handler(request)
@@ -1937,15 +2355,20 @@ def build_app() -> web.Application:
                      ("/api/lib/list", api_lib_list), ("/api/lib/get", api_lib_get), ("/api/lib/play", api_lib_play),
                      ("/api/lib/publish", api_lib_publish), ("/api/lib/delete", api_lib_delete),
                      ("/api/sets/save", api_sets_save), ("/api/sets/delete", api_sets_delete),
-                     ("/api/hit", api_hit), ("/api/admin/stats", api_admin_stats), ("/api/darslik", api_darslik)):
+                     ("/api/hit", api_hit), ("/api/admin/stats", api_admin_stats), ("/api/darslik", api_darslik),
+                     ("/api/daily", api_daily), ("/api/hw/create", api_hw_create), ("/api/hw/get", api_hw_get),
+                     ("/api/hw/submit", api_hw_submit), ("/api/hw/list", api_hw_list), ("/api/hw/delete", api_hw_delete)):
         app.router.add_post(path, fn)
+    app.router.add_get("/api/daily", api_daily)
     app.router.add_static("/games/", GAMES_DIR)
     SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
     setup_application(app, dp, bot=bot)
     app.on_startup.append(on_startup)
     app.on_startup.append(lib_flush_loop)
     app.on_startup.append(stat_loop)
+    app.on_startup.append(daily_loop)
     app.on_shutdown.insert(0, stat_shutdown)
+    app.on_shutdown.insert(1, lib_shutdown)
     return app
 
 

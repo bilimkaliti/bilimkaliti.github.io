@@ -383,5 +383,5 @@ function send(k,g){try{var t=null;try{t=JSON.parse(localStorage.getItem('bk_toke
  fetch(A+'/api/hit',{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({v:vid(),k:k,g:g,p:'game/'+g,m:matchMedia('(max-width:760px)').matches?1:0,token:t||undefined})}).catch(function(){})}catch(e){}}
 var q=new URLSearchParams(location.search),G=window.__BK_GAME||q.get('g')||'toplam';
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#startBtn');if(b)send('game',G)},true);
-setInterval(function(){if(document.visibilityState==='visible')send('beat',G)},60000);})();</script><!--/bkHit--></body>
+setInterval(function(){if(document.visibilityState==='visible')send('beat',G)},60000);})();</script><!--/bkHit--><script src="diplom.js"></script></body>
 </html>

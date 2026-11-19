@@ -314,6 +314,9 @@ h1,h2,h3{margin:0}
 .fempty{padding:16px;border:2px dashed var(--line);border-radius:14px;text-align:center;font-weight:700;color:var(--muted)}
 .fempty a{display:inline-block;margin:8px 4px 0;background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 14px;text-decoration:none;font-weight:800}
 .lload{opacity:.6}
+.hwm{max-width:520px}.hwi{color:var(--muted);font-weight:700;margin:.3em 0}.hwnote{background:var(--bg2,rgba(127,127,127,.12));border-radius:12px;padding:10px 12px;font-weight:700}
+.hwf{display:block;text-align:left;margin:12px 0 0;font-weight:800}.hwf span{display:block;margin-bottom:6px}.hwf input{width:100%;padding:12px 14px;border-radius:12px;border:2px solid rgba(127,127,127,.3);font:inherit;font-size:1.1rem;background:transparent;color:inherit;box-sizing:border-box}
+.hwerr{color:#e5484d;font-weight:800;min-height:1.2em;margin:8px 0}.hwres{font-weight:800;padding:10px 14px;border-radius:12px;background:rgba(245,179,1,.15)}.hwres.ok{background:rgba(18,163,143,.16)}
 .overlay{position:fixed;inset:0;background:rgba(10,14,34,.7);display:grid;place-items:center;padding:16px;z-index:60;overflow:auto}
 .modal{background:var(--panel);border-radius:22px;padding:24px;max-width:720px;width:100%;text-align:center}
 .modal h2{font-size:1.9rem;margin:4px 0 14px}
@@ -1312,6 +1315,7 @@ function endGame(){
   $('#rank').innerHTML=rows.map((r,i)=>{if(r.score!==prev){place=i+1;prev=r.score}return `<div style="--tc:${r.t.color}"><span class="pl">${['🥇','🥈','🥉'][place-1]||place}</span><span><b>${esc(r.t.name)}</b><small>${r.detail}</small></span><span class="pts">${r.score}</span></div>`}).join('');
   $('#final').classList.remove('hidden');snd('win');
   try{reportKey(reportText(rows),true,'report')}catch(e){}
+  try{hwSubmit(rows)}catch(e){}
 }
 
 /* ================= GAMES ================= */
@@ -1931,6 +1935,44 @@ const normIt=it=>{if(!it||typeof it.q!=='string')return null;
 function convPairs(items){const pr=(items||[]).filter(it=>it&&it.a!=null&&it.b!=null&&!Array.isArray(it.o));if(pr.length<4)return items||[];
   const bs=[...new Set(pr.map(x=>String(x.b)))];
   return (items||[]).map(it=>{if(!(it&&it.a!=null&&it.b!=null))return it;const w=shuffle(bs.filter(b=>b!==String(it.b))).slice(0,3);return w.length===3?{q:`«${it.a}» — ?`,o:[String(it.b),...w],c:0}:null}).filter(Boolean)}
+/* ===== UY VAZIFASI: oʻquvchi ismini yozadi, oʻynaydi, natija oʻqituvchiga boradi ===== */
+let HW=null;
+function hwIntro(){
+  let ov=$('#hwOv');if(!ov){ov=document.createElement('div');ov.id='hwOv';ov.className='overlay';document.body.appendChild(ov)}
+  ov.classList.remove('hidden');
+  if(!HW||HW.loading){ov.innerHTML=`<div class="modal"><div style="font-size:3rem">📝</div><h2>Uy vazifasi yuklanmoqda…</h2><p style="color:var(--muted);font-weight:700">Birinchi ochilishda 1 daqiqagacha kutish mumkin.</p></div>`;return}
+  if(HW.err){ov.innerHTML=`<div class="modal"><div style="font-size:3rem">😕</div><h2>${esc(HW.err)}</h2><p style="color:var(--muted);font-weight:700">Havolani oʻqituvchingizdan qayta soʻrang.</p><button class="go" onclick="location.reload()">🔄 Qayta urinish</button></div>`;return}
+  let nm='',kl='';try{nm=localStorage.getItem('bk_hw_name')||'';kl=localStorage.getItem('bk_hw_cls')||''}catch(e){}
+  ov.innerHTML=`<div class="modal hwm"><div style="font-size:3rem">📝</div><h2 style="margin:.2em 0">${esc(HW.name)}</h2>
+    <p class="hwi">${HW.tn?`👩‍🏫 Oʻqituvchi: <b>${esc(HW.tn)}</b> · `:''}${HW.items.length} ta savol · ${GAMES[GK]?GAMES[GK].icon+' '+esc(GAMES[GK].name):''}</p>
+    ${HW.note?`<p class="hwnote">💬 ${esc(HW.note)}</p>`:''}
+    <label class="hwf"><span>Ism va familiyangiz</span><input id="hwName" maxlength="60" placeholder="Masalan: Aziza Karimova" value="${esc(nm)}" autocomplete="name"></label>
+    <label class="hwf"><span>Sinfingiz (ixtiyoriy)</span><input id="hwCls" maxlength="20" placeholder="Masalan: 5-A" value="${esc(kl)}"></label>
+    <p class="hwerr" id="hwErr"></p>
+    <button class="go" id="hwStart">▶ Boshlash</button>
+    <p class="hwi" style="margin-top:12px">Oʻyin tugagach, natijangiz oʻqituvchingizga avtomatik yuboriladi.</p></div>`;
+  const go=()=>{const n=$('#hwName').value.trim().replace(/\s+/g,' ');if(n.length<2){$('#hwErr').textContent='Iltimos, ismingizni yozing.';$('#hwName').focus();return}
+    const k=$('#hwCls').value.trim();try{localStorage.setItem('bk_hw_name',n);localStorage.setItem('bk_hw_cls',k)}catch(e){}
+    HW.student=n;HW.cls=k;cfg.names=[n];cfg.n=1;cfg.robo=0;ov.classList.add('hidden');startGame();
+    if(!$('#setup').classList.contains('hidden')&&$('#startErr').textContent){ov.classList.remove('hidden');$('#hwErr').textContent=$('#startErr').textContent}};
+  $('#hwStart').onclick=go;$('#hwName').onkeydown=e=>{if(e.key==='Enter')go()};
+  setTimeout(()=>{try{if(!$('#hwName').value)$('#hwName').focus()}catch(e){}},100);
+}
+function hwSubmit(rows){
+  if(!HW||!HW.id||!HW.student||HW.sent===S.start)return;HW.sent=S.start;
+  const me=S.log.filter(r=>r.team&&!r.robo),right=me.filter(r=>r.ok).length,total=me.length;
+  const strip=h=>{const d=document.createElement('div');d.innerHTML=h||'';return d.textContent.replace(/\s+/g,' ').trim()};
+  const wrong=[...new Set(me.filter(r=>!r.ok).map(r=>strip(r.qh)))].slice(0,8);
+  const r0=rows.find(r=>!r.t.robo)||rows[0];
+  let box=$('#hwRes');if(!box){box=document.createElement('p');box.id='hwRes';box.className='hwres';$('#rank').before(box)}
+  box.textContent='⏳ Natija oʻqituvchingizga yuborilmoqda…';
+  const API=/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com';
+  const send=(n)=>fetch((TG&&TG.initData?'':API)+'/api/hw/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:HW.id,name:HW.student,cls:HW.cls||'',right,total,score:r0?r0.score:0,sec:Math.round((Date.now()-S.start)/1000),wrong})})
+    .then(r=>r.json()).then(j=>{if(!j.ok)throw new Error(j.error||'');box.textContent=`✅ Natijangiz oʻqituvchingizga yuborildi: ${right}/${total} toʻgʻri javob.`;box.classList.add('ok')})
+    .catch(()=>{if(n<3)setTimeout(()=>send(n+1),4000*n);else{box.textContent='⚠️ Natijani yuborib boʻlmadi. Internetni tekshiring.';const b=document.createElement('button');b.className='ghost';b.textContent='🔄 Qayta yuborish';b.style.marginLeft='8px';b.onclick=()=>{b.remove();box.textContent='⏳ Yuborilmoqda…';send(1)};box.append(b)}});
+  send(1);
+}
 async function loadSets(){
   const out=[];
   try{const r=await fetch('sets.json?v='+Date.now());if(r.ok){const j=await r.json();if(Array.isArray(j))j.forEach(s=>out.push({...s,id:'k-'+s.id}))}}catch(e){}
@@ -1941,11 +1983,19 @@ async function loadSets(){
   const P=new URLSearchParams(location.search),lib=P.get('lib');
   if(lib){try{const r=await fetch((TG&&TG.initData?'':API)+'/api/lib/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})});
     if(r.ok){const j=await r.json();if(j.set){out.push({...j.set,id:'L-'+lib});fetch((TG&&TG.initData?'':API)+'/api/lib/play',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})}).catch(()=>{})}}}catch(e){}}
+  const hw=P.get('hw');
+  if(hw&&/^[\w-]{4,20}$/.test(hw)){HW={id:hw,loading:true};hwIntro();
+    try{const r=await fetch((TG&&TG.initData?'':API)+'/api/hw/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:hw})});const j=await r.json().catch(()=>({}));
+      if(j.ok&&j.hw){HW={...j.hw,id:hw};out.push({id:'H-'+hw,name:j.hw.name,items:j.hw.items})}else HW={err:j.error||'Uy vazifasi topilmadi.'}}
+    catch(e){HW={err:'Serverga ulanib boʻlmadi. Internetni tekshirib, sahifani yangilang.'}}}
   SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),fixed:/^k-/.test(String(s.id)),
     fan:FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items:convPairs(s.items).map(normIt).filter(Boolean)})).filter(s=>s.items.length);
   const sid=lib?'L-'+lib:P.get('set');
   if(sid&&setById(sid)){cfg.sets=[sid];cfg.topics=[];const s=setById(sid);
     if(s.fan)cfg.fan=s.fan;else if(s.items.some(isMC)&&isMathFan()&&!P.get('fan'))cfg.fan='';}
+  if(HW&&HW.id&&!HW.loading&&setById('H-'+HW.id)){const s=setById('H-'+HW.id);cfg.sets=['H-'+HW.id];cfg.topics=[];cfg.n=1;cfg.robo=0;
+    if(s.items.some(isMC)&&isMathFan())cfg.fan='';}
+  if(HW)hwIntro();
   if(GK&&!$('#setup').classList.contains('hidden'))renderSettings();
 }
 (function(){const P=new URLSearchParams(location.search),g=P.get('g'),s=+P.get('sinf'),t=P.get('t');
@@ -1962,5 +2012,5 @@ function send(k,g){try{var t=null;try{t=JSON.parse(localStorage.getItem('bk_toke
  fetch(A+'/api/hit',{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({v:vid(),k:k,g:g,p:'game/'+g,m:matchMedia('(max-width:760px)').matches?1:0,token:t||undefined})}).catch(function(){})}catch(e){}}
 var q=new URLSearchParams(location.search),G=window.__BK_GAME||q.get('g')||'toplam';
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#startBtn');if(b)send('game',G)},true);
-setInterval(function(){if(document.visibilityState==='visible')send('beat',G)},60000);})();</script><!--/bkHit--></body>
+setInterval(function(){if(document.visibilityState==='visible')send('beat',G)},60000);})();</script><!--/bkHit--><script src="diplom.js"></script></body>
 </html>
