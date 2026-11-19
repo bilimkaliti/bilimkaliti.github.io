@@ -1927,7 +1927,7 @@ function libPage(fan){
   </div></section>`}
 const BZ_SINF=[5,6,7],BZ_CNT={5:30,6:28,7:8};
 function bazaBlock(sinf){return `<div class="bz" id="bz"><h3>📘 ${sinf?sinf+'-sinf: tayyor mavzular':'Tayyor mavzular'}</h3><p class="sub" style="margin:4px 0 0">Darsda oʻtilgan mavzuni tanlang — savollar tayyor. Keyin darajani tanlab, oʻyinni boshlang.</p>
-  <input class="bzq" id="bzQ" placeholder="🔍 Mavzuni qidiring: kasr, foiz, burchak…" autocomplete="off">${sinf?'':'<div class="bzchips" id="bzSinf"></div>'}<div class="bzchips" id="bzChips"></div><div class="bzlist" id="bzList">${skel(4)}</div></div>`}
+  <input class="bzq" id="bzQ" placeholder="🔍 Mavzuni qidiring: kasr, foiz, burchak…" autocomplete="off">${sinf?'':'<div class="bzchips" id="bzSinf"></div>'}<div class="bzchips" id="bzChips"></div><div class="sgrid" id="bzList">${skel(4)}</div></div>`}
 let BAZA={};
 async function bazaGet(f){if(BAZA[f])return BAZA[f];const r=await fetch('games/baza/'+f+'.json');if(!r.ok)throw new Error('Mavzular yuklanmadi');return BAZA[f]=await r.json()}
 const BZ_LV=[[1,'🟢','Oson','#2f9e44','#51cf66'],[2,'🟡','Oʻrta','#e67700','#fab005'],[3,'🔴','Qiyin','#c92a2a','#ff6b6b'],[0,'🎲','Aralash','#5f3dc4','#845ef7']];
@@ -1936,6 +1936,7 @@ function bazaPlay(f,t){
   md.querySelector('.mbox').classList.add('wide');
   md.querySelector('.bzlv').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;const d=+b.dataset.d,it=t.items.filter(i=>!d||i.d===d);closeModal();
     const lv=BZ_LV.find(x=>x[0]===d);playModal({name:`${t.name} · ${lv[2]}`,kind:it.every(i=>!i.o)?'num':'mix',mc:it.some(i=>i.o)},`&baza=${encodeURIComponent(f)}&m=${encodeURIComponent(t.id)}&d=${d}`)}}
+const bzSet=t=>({id:'bz-'+t.id,name:t.name,fan:'Matematika',sinf:(t.sinf||[]).join(', '),mavzu:t.bob,author:'Bilim Kaliti',n:t.items.length,kind:t.items.every(i=>!i.o)?'num':'mix',mc:t.items.some(i=>i.o),items:t.items.map(({d,...r})=>r)});
 async function bindBaza(f,fix){
   const box=$('#bz');if(!box)return;let B,bob='',sn=fix||+store.get('bzsinf',0)||0;
   try{B=await bazaGet(f)}catch(e){$('#bzList').innerHTML=`<p class="sub">⚠️ ${esc(e.message)}</p>`;return}
@@ -1945,15 +1946,14 @@ async function bindBaza(f,fix){
     const bobs=B.bolimlar.filter(b=>B.topics.some(t=>t.bob===b&&inS(t)));if(bob&&!bobs.includes(bob))bob='';
     $('#bzChips').innerHTML=['',...bobs].map(b=>`<button data-b="${esc(b)}" class="${b===bob?'on':''}">${b?esc(b):'Barcha boʻlimlar'}</button>`).join('');
     const l=B.topics.filter(t=>inS(t)&&(!bob||t.bob===bob)&&(!q||(t.name+' '+t.bob).toLowerCase().includes(q)));let last='';
-    $('#bzList').innerHTML=l.length?l.map(t=>{const h=!bob&&!q&&t.bob!==last?`<div class="bzh">${esc(last=t.bob)}</div>`:'';
-      return h+`<div class="bzt" data-bp="${esc(t.id)}" role="button" tabindex="0"><div><b>${esc(t.name)}</b><small>${fix?'':(t.sinf||[]).map(x=>x+'-sinf').join(', ')+' · '}${t.items.length} ta savol</small></div><button class="bzeye" data-bv="${esc(t.id)}" title="Savollarni koʻrish" aria-label="Savollarni koʻrish">👁</button><span class="bzgo" aria-hidden="true">▶</span></div>`}).join('')
+    $('#bzList').innerHTML=l.length?l.map(t=>{const h=!bob&&!q&&t.bob!==last?`<div class="bzh">${esc(last=t.bob)}</div>`:'';return h+setCard(bzSet(t))}).join('')
       :`<p class="sub">Bunday mavzu topilmadi. Boshqa soʻz bilan qidiring.</p>`};
   $('#bzChips').onclick=e=>{const b=e.target.closest('[data-b]');if(!b)return;bob=b.dataset.b;draw()};
   if($('#bzSinf'))$('#bzSinf').onclick=e=>{const b=e.target.closest('[data-sn]');if(!b)return;sn=+b.dataset.sn;store.set('bzsinf',sn);draw()};
   let tm;$('#bzQ').oninput=()=>{clearTimeout(tm);tm=setTimeout(draw,200)};
-  $('#bzList').onkeydown=e=>{if(e.key==='Enter'&&e.target.dataset.bp)e.target.click()};
-  $('#bzList').onclick=e=>{const b=e.target.closest('[data-bv]')||e.target.closest('[data-bp]');if(!b)return;const t=by[b.dataset.bp||b.dataset.bv];if(!t)return;
-    if(b.dataset.bp)bazaPlay(f,t);else viewModal(t.name,t.items.slice().sort((x,y)=>x.d-y.d))};
+  $('#bzList').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.play||b.dataset.view||b.dataset.hw||b.dataset.copy,t=by[String(id).replace(/^bz-/,'')];if(!t)return;
+    if(b.dataset.play)return bazaPlay(f,t);if(b.dataset.view)return viewModal(t.name,t.items.slice().sort((x,y)=>x.d-y.d));
+    if(b.dataset.hw)return hwModal(bzSet(t));if(b.dataset.copy){b.disabled=true;await copyToMine(bzSet(t));b.disabled=false}};
   draw()}
 function bindLib(fan){
   let all=[];const by={};
