@@ -184,7 +184,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const P=new URLSearchParams(location.search);
+const P=new URLSearchParams(location.search);const BZ_V='df03fef8';
 const MODES={
  togri:{icon:'✅',name:'Toʻgʻri yoki notoʻgʻri',c:['#0f9d8a','#2fb9a3'],desc:'Ekranda gap chiqadi. Navbatdagi guruh «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['tf','mc'],len:{t:'Savollar soni',o:[10,16,20,30],d:16}},
  jlash:{icon:'🔗',name:'Juftlash',c:['#2f8cff','#6aa8ff'],desc:'Chapdagi har birini oʻngdagi mos javob bilan ulang. Toʻgʻri juft topgan guruh yana yuradi.',kinds:['pair','mc'],len:{t:'Juftlar soni',o:[10,15,20],d:15}},
@@ -225,7 +225,10 @@ async function loadSets(){
   const body=TG&&TG.initData?{initData:TG.initData}:tok?{token:tok}:null;
   if(body){try{const j=await post('/api/sets',body);(j.sets||[]).forEach(s=>addSet(s,{own:1}))}catch(e){}}
   const lib=P.get('lib');if(lib){try{const j=await post('/api/lib/get',{id:lib});if(j.set){addSet({...j.set,id:'L-'+lib},{});post('/api/lib/play',{id:lib}).catch(()=>{})}}catch(e){}}
-  const sid=lib?'L-'+lib:P.get('set');const s=SETS.find(x=>x.id===sid);
+  const bz=P.get('baza'),bm=P.get('m'),bd=Math.max(0,Math.min(3,+P.get('d')||0));
+  if(bz&&bm&&/^[\w-]{1,40}$/.test(bz+bm)){try{const r=await fetch('baza/'+bz+'.json?v='+BZ_V);if(r.ok){const j=await r.json();const t=(j.topics||[]).find(x=>x.id===bm);
+    if(t)addSet({id:'B-'+bm+'-'+bd,name:t.name+(bd?' · '+['','Oson','Oʻrta','Qiyin'][bd]:''),fan:j.fan,items:t.items.filter(i=>!bd||i.d===bd)},{fixed:1})}}catch(e){}}
+  const sid=lib?'L-'+lib:(bz&&bm)?'B-'+bm+'-'+bd:P.get('set');const s=SETS.find(x=>x.id===sid);
   if(s){cfg.sets=[s.id];if(s.fan)cfg.fan=s.fan}
   const fp=P.get('fan');if(fp&&FANS.includes(fp)&&!s)cfg.fan=fp;
   render();libForFan(cfg.fan)}

@@ -1335,13 +1335,8 @@ out = {'fan': 'Matematika', 'v': 1, 'bolimlar': bobs, 'topics': TOPICS}
 p = os.path.join(os.path.dirname(__file__), '..', 'games', 'baza', 'matematika.json')
 os.makedirs(os.path.dirname(p), exist_ok=True)
 json.dump(out, open(p, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
-import hashlib, re as _re
-_h = hashlib.md5(open(p, 'rb').read()).hexdigest()[:8]
-for _f in ('index.html', 'games/toplam.html'):
-    _fp = os.path.join(os.path.dirname(__file__), '..', _f); _s = open(_fp, encoding='utf-8').read()
-    _s2 = _re.sub(r"const BZ_V='[0-9a-f]*';", f"const BZ_V='{_h}';", _s, count=1)
-    if _s2 != _s: open(_fp, 'w', encoding='utf-8').write(_s2)
-print('versiya', _h)
+import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from common import update_version; update_version()
 print(len(TOPICS), 'mavzu,', sum(len(t['items']) for t in TOPICS), 'savol,', os.path.getsize(p) // 1024, 'KB')
 for t in TOPICS:
     c = [sum(1 for i in t['items'] if i['d'] == d) for d in (1, 2, 3)]
