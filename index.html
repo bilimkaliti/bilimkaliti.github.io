@@ -2546,7 +2546,7 @@ function bindAdmin(){if(!isAdmin())return;wake();if(ADM.data)admDraw();admLoad()
 /* ================= DARSNI BOSHLASH YORDAMCHISI ================= */
 const WZ={step:1,fan:'',sinf:5,topics:[],set:null,fs:0,sets:null};
 const MATH_FANLAR=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
-function wizard(fan){WZ.step=fan?2:1;WZ.fan=fan||'';WZ.set=null;WZ.fs=0;WZ.sets=null;
+function wizard(fan){WZ.step=fan?2:1;WZ.fan=fan||'';WZ.set=null;WZ.bt=null;WZ.bd=null;WZ.bq='';WZ.fs=0;WZ.sets=null;
   const md=modal('<div id="wz"></div>');md.querySelector('.mbox').classList.add('wide','wzbox');wzDraw()}
 function wzHead(t,sub){const st=['Fan','Sinf va mavzu','Oʻyin'];
   return `<div class="wzsteps">${st.map((s,i)=>`<span class="${i+1===WZ.step?'on':i+1<WZ.step?'ok':''}"><b>${i+1<WZ.step?'✓':i+1}</b>${s}</span>`).join('<i></i>')}</div>
@@ -2558,13 +2558,27 @@ async function wzLoadSets(){
   try{const j=await api('/api/lib/list',{fan:WZ.fan,sort:'top'},60000);lib=(j.sets||[]).map(m=>({id:'L-'+m.id,param:'&lib='+encodeURIComponent(m.id),name:m.name,sinf:String(m.sinf||''),n:m.n,mc:m.mc,kind:m.kind||(m.mc?'mc':'num'),tag:'📚 '+(m.author||'Kutubxona')}))}catch(e){}
   if(AUTH.tok){try{const j=await api('/api/sets',{token:AUTH.tok},60000);mine=(j.sets||[]).filter(s=>s.fan===WZ.fan).map(s=>({id:s.id,param:'&set='+encodeURIComponent(s.id),name:s.name,sinf:'',n:s.items.length,mc:s.items.some(i=>i.o),kind:setKind(s.items),tag:'📦 Meniki'}))}catch(e){}}
   WZ.sets=[...mine,...st,...lib];if(WZ.step===2)wzDraw()}
+const wzMM=()=>store.get('wzmm','baza');
+const wzMMtabs=()=>`<div class="tabs" style="margin:0 0 14px"><button data-mm="baza" class="${wzMM()==='baza'?'on':''}">📘 Tayyor mavzular</button><button data-mm="sinf" class="${wzMM()==='sinf'?'on':''}">🎲 Sinf boʻyicha misollar</button></div>`;
+function wzBlist(){const q=(WZ.bq||'').trim().toLowerCase(),l=BAZA.matematika.topics.filter(t=>!q||(t.name+' '+t.bob).toLowerCase().includes(q));
+  return l.length?l.map(t=>`<button class="wzset" data-bt="${esc(t.id)}"><b>${esc(t.name)}</b><small>${esc(t.bob)} · ${t.items.length} ta savol</small></button>`).join(''):'<p class="sub">Bunday mavzu topilmadi.</p>'}
 function wzDraw(){
   const box=$('#wz');if(!box)return;const M=MATH_FANLAR.includes(WZ.fan);
   if(WZ.step===1){
     box.innerHTML=wzHead('Qaysi fandan dars oʻtasiz?')+`<div class="wzfans">${FANLAR.map(f=>`<button class="wzfan${f==='Matematika'?' hl':''}" data-fan="${esc(f)}"><span>${FAN_IC[f]||'📘'}</span>${esc(f)}</button>`).join('')}</div>`+wzFoot();
+  }else if(WZ.step===2&&M&&WZ.fan==='Matematika'&&wzMM()==='baza'){
+    if(!BAZA.matematika){box.innerHTML=wzHead('Qaysi mavzu?')+wzMMtabs()+`<div class="sgrid">${skel(3)}</div>`+wzFoot();bazaGet('matematika').then(wzDraw).catch(()=>{store.set('wzmm','sinf');wzDraw()});return}
+    const t=WZ.bt&&BAZA.matematika.topics.find(x=>x.id===WZ.bt);
+    box.innerHTML=wzHead('Qaysi mavzu?','Darsda oʻtilgan mavzuni tanlang, keyin darajani.')+wzMMtabs()+
+     (t?`<div class="wzset on" style="cursor:default"><b>📘 ${esc(t.name)}</b><small>${esc(t.bob)} · <a href="#" data-bt="">boshqa mavzu</a></small></div>
+       <div class="bzlv">${BZ_LV.map(([d,e,n,c1,c2])=>`<button data-bd="${d}" style="background:linear-gradient(135deg,${c1},${c2});${WZ.bd===d?'outline:4px solid var(--ink);outline-offset:2px':''}"><span style="font-size:1.6rem">${e}</span>${n}<small>${d?t.items.filter(i=>i.d===d).length:t.items.length} ta savol</small></button>`).join('')}</div>`
+      :`<input class="bzq" id="wzBq" placeholder="🔍 Mavzuni qidiring: kasr, foiz, burchak…" autocomplete="off" value="${esc(WZ.bq||'')}"><div class="wzsets" id="wzBl">${wzBlist()}</div>`)+
+     wzFoot(`<button class="btn gold" data-wz="next" ${t&&WZ.bd!=null?'':'disabled'}>Keyingisi: oʻyin →</button>`);
+    const q=$('#wzBq');if(q)q.oninput=()=>{WZ.bq=q.value;$('#wzBl').innerHTML=wzBlist()};
   }else if(WZ.step===2&&M){
     const tl=(GRADES[WZ.sinf]||[]);if(!WZ.topics.length||!WZ.topics.every(i=>tl.some(t=>t.i===i)))WZ.topics=tl.map(t=>t.i);
     box.innerHTML=wzHead('Qaysi sinf va mavzular?','Misollar har gal yangidan tuziladi. Mavzular oldindan belgilangan — keraksizini olib tashlang.')+
+     (WZ.fan==='Matematika'?wzMMtabs():'')+
      `<div class="wzgr">${[1,2,3,4,5,6,7].map(n=>`<button data-sinf="${n}" class="${n===WZ.sinf?'on':''}">${n}-sinf</button>`).join('')}</div>
       <div class="wztop">${tl.map(t=>`<label class="${WZ.topics.includes(t.i)?'on':''}"><input type="checkbox" data-top="${t.i}" ${WZ.topics.includes(t.i)?'checked':''}>${esc(t.n)}</label>`).join('')||'<p class="sub">Mavzular yuklanmoqda…</p>'}</div>`+
      wzFoot(`<button class="btn gold" data-wz="next" ${WZ.topics.length?'':'disabled'}>Keyingisi: oʻyin →</button>`);
@@ -2579,9 +2593,10 @@ function wzDraw(){
      wzFoot(`<button class="btn gold" data-wz="next" ${WZ.set?'':'disabled'}>Keyingisi: oʻyin →</button>`);
   }else{
     const mode=store.get('mode','g'),mx={g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[mode]||'';
-    const base=M?`&sinf=${WZ.sinf}&t=${WZ.topics.join(',')}`:WZ.set.param+'&fan='+encodeURIComponent(WZ.fan);
-    const games=M?GAMES.filter(g=>g.f==='toplam'):gamesFor(WZ.set);
-    box.innerHTML=wzHead('Qaysi oʻyinni oʻynaymiz?',M?`${WZ.sinf}-sinf · ${WZ.topics.length} ta mavzu`:`${esc(WZ.set.name)}`)+
+    const BZ=M&&WZ.fan==='Matematika'&&wzMM()==='baza'&&WZ.bt,bt=BZ&&BAZA.matematika.topics.find(x=>x.id===WZ.bt);
+    const base=BZ?`&baza=matematika&m=${encodeURIComponent(WZ.bt)}&d=${WZ.bd}`:M?`&sinf=${WZ.sinf}&t=${WZ.topics.join(',')}`:WZ.set.param+'&fan='+encodeURIComponent(WZ.fan);
+    const games=BZ?gamesFor({kind:bt.items.every(i=>!i.o)?'num':'mix'}):M?GAMES.filter(g=>g.f==='toplam'):gamesFor(WZ.set);
+    box.innerHTML=wzHead('Qaysi oʻyinni oʻynaymiz?',BZ?`📘 ${esc(bt.name)} · ${BZ_LV.find(x=>x[0]===WZ.bd)[2]}`:M?`${WZ.sinf}-sinf · ${WZ.topics.length} ta mavzu`:`${esc(WZ.set.name)}`)+
      `<div class="tabs" id="wzMode" style="margin:0 0 12px"><button data-m="g" class="${mode==='g'?'on':''}">👥 Guruhlar</button><button data-m="r" class="${mode==='r'?'on':''}">🤖 Kompyuterga qarshi</button><button data-m="s" class="${mode==='s'?'on':''}">👤 Bitta oʻquvchi</button></div>
       <div class="pmgames">${games.map(g=>`<a class="pmg" href="${gameUrl(g,base+mx)}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b><small>${esc(g.t[0]||'')}</small></a>`).join('')}</div>
       <p class="small" style="margin-top:12px">💡 Oʻyin ochilgach, guruhlar sonini tanlab, katta <b>«Oʻyinni boshlash»</b> tugmasini bosing.</p>`+wzFoot();
@@ -2589,7 +2604,10 @@ function wzDraw(){
 }
 document.addEventListener('click',e=>{
   const box=e.target.closest('#wz');if(!box)return;
-  const b=e.target.closest('[data-fan],[data-wz],[data-sinf],[data-fs],[data-si],[data-m],[data-close]');if(!b)return;
+  const b=e.target.closest('[data-fan],[data-wz],[data-sinf],[data-fs],[data-si],[data-m],[data-close],[data-mm],[data-bt],[data-bd]');if(!b)return;
+  if(b.dataset.mm){store.set('wzmm',b.dataset.mm);wzDraw();return}
+  if(b.dataset.bt!=null){e.preventDefault();WZ.bt=b.dataset.bt||null;WZ.bd=null;wzDraw();return}
+  if(b.dataset.bd!=null){WZ.bd=+b.dataset.bd;WZ.step=3;wzDraw();const mb=box.closest('.mbox');if(mb)mb.scrollTop=0;return}
   if(b.dataset.close!=null){if(b.dataset.pre)PREFILL={tool:'savollar',p:{fan:WZ.fan}};closeModal();return}
   if(b.dataset.fan){WZ.fan=b.dataset.fan;WZ.set=null;WZ.sets=null;WZ.fs=0;WZ.step=2}
   else if(b.dataset.wz==='back')WZ.step--;
