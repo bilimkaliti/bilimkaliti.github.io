@@ -380,6 +380,18 @@ button.pmg{border:0;font:inherit;cursor:pointer;text-align:left}.pmg.on{outline:
 .scm{display:flex;gap:12px;flex-wrap:wrap;color:var(--ink2);font-weight:700;font-size:13.5px}
 .sca{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
 .mbox.wide{max-width:760px;max-height:88vh;overflow:auto}
+.bz{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:18px;margin:0 0 22px}
+.bz h3{margin:0}.bzq{width:100%;margin:12px 0 10px;font-size:1.05rem;padding:12px 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg2);color:var(--ink);font-family:inherit;font-weight:700}.bzq:focus{outline:none;border-color:var(--teal)}
+.bzchips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:thin}
+.bzchips button{flex:0 0 auto;border:1.5px solid var(--line);background:var(--bg2);color:var(--ink2);border-radius:999px;padding:9px 15px;font-weight:800;min-height:44px}
+.bzchips button.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.bzlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.bzt{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1.5px solid transparent;border-radius:16px;padding:10px 10px 10px 14px;min-height:64px}
+.bzt:hover{border-color:var(--line)}.bzt div{flex:1;min-width:0}.bzt b{display:block;line-height:1.25}.bzt small{color:var(--muted);font-weight:700}
+.bzt .btn{flex:0 0 auto}.bzh{grid-column:1/-1;margin:10px 0 0;font-weight:900;color:var(--muted);font-size:.9rem;text-transform:uppercase;letter-spacing:.04em}
+.bzlv{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:14px}
+.bzlv button{border:0;border-radius:18px;padding:20px 12px;font-weight:900;font-size:1.15rem;color:#fff;min-height:96px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:transform .15s}
+.bzlv button:hover{transform:translateY(-3px)}.bzlv button small{font-weight:700;font-size:.8rem;opacity:.9}
 .pmgames{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .pmg{border-radius:16px;padding:14px;color:#fff;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;flex-direction:column;gap:4px;font-weight:800;transition:transform .15s}
 .pmg:hover{transform:translateY(-2px)}.pmg span{font-size:30px}
@@ -1898,12 +1910,37 @@ function libPage(fan){
     <div class="mrow"><a class="btn ghost" href="#/toplamlar">📦 Mening toʻplamlarim</a><a class="btn ghost" href="#/ai/darslik">📸 Darslikdan</a><a class="btn gold" href="#/ai/savollar" id="libAi">✨ AI bilan yaratish</a></div></div>
    ${fan&&!MATH_FANLAR.includes(fan)?`<div class="fangames"><div class="sh" style="margin:0 0 10px"><div><h3 style="margin:0">🎮 ${esc(fan)} bilan oʻynash</h3><p class="sub" style="margin:2px 0 0">Oʻyinni tanlang — u ${esc(fan)} savollari bilan ochiladi.</p></div><button class="btn gold" data-wiz="${esc(fan)}">▶️ Darsni boshlash</button></div>
      <div class="pmgames">${[...gamesFor({kind:'mc'}),GAMES.find(g=>g.id==='tartib'),GAMES.find(g=>g.id==='guruh')].map(g=>`<a class="pmg" href="${gameUrl(g,'&fan='+encodeURIComponent(fan))}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')}</div></div>`:''}
+   ${fan==='Matematika'?`<div class="bz" id="bz"><h3>📘 Tayyor mavzular</h3><p class="sub" style="margin:4px 0 0">Darsda oʻtilgan mavzuni tanlang — savollar tayyor. Keyin darajani tanlab, oʻyinni boshlang.</p>
+     <input class="bzq" id="bzQ" placeholder="🔍 Mavzuni qidiring: kasr, foiz, burchak…" autocomplete="off"><div class="bzchips" id="bzChips"></div><div class="bzlist" id="bzList">${skel(4)}</div></div>`:''}
    ${fan==='Matematika'?`<div class="note" style="margin:0 0 16px">🧮 Matematikada savollar har gal yangidan yaratiladi: <a href="#/sinflar" style="color:var(--teal)">sinf va mavzuni tanlang →</a></div>`:''}
    <div class="lfilter"><select id="lFan">${fans.map(f=>`<option value="${esc(f)}" ${f===fan?'selected':''}>${f?esc(f):'Barcha fanlar'}</option>`).join('')}</select>
     <select id="lSinf"><option value="">Barcha sinflar</option>${[...Array(11)].map((_,i)=>`<option value="${i+1}">${i+1}-sinf</option>`).join('')}</select>
     <input id="lQ" placeholder="🔍 Mavzu yoki nom boʻyicha qidirish"><select id="lSort"><option value="new">Yangilari</option><option value="top">Koʻp oʻynalgan</option></select></div>
    <div class="sgrid" id="lList">${skel(6)}</div>
   </div></section>`}
+let BAZA={};
+async function bazaGet(f){if(BAZA[f])return BAZA[f];const r=await fetch('games/baza/'+f+'.json');if(!r.ok)throw new Error('Mavzular yuklanmadi');return BAZA[f]=await r.json()}
+const BZ_LV=[[1,'🟢','Oson','#2f9e44','#51cf66'],[2,'🟡','Oʻrta','#e67700','#fab005'],[3,'🔴','Qiyin','#c92a2a','#ff6b6b'],[0,'🎲','Aralash','#5f3dc4','#845ef7']];
+function bazaPlay(f,t){
+  const md=modal(`<h3>▶️ ${esc(t.name)}</h3><p class="sub">Qaysi darajada oʻynaymiz?</p><div class="bzlv">${BZ_LV.map(([d,e,n,c1,c2])=>{const k=d?t.items.filter(i=>i.d===d).length:t.items.length;return `<button data-d="${d}" style="background:linear-gradient(135deg,${c1},${c2})"><span style="font-size:1.8rem">${e}</span>${n}<small>${k} ta savol</small></button>`}).join('')}</div>`);
+  md.querySelector('.mbox').classList.add('wide');
+  md.querySelector('.bzlv').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;const d=+b.dataset.d,it=t.items.filter(i=>!d||i.d===d);closeModal();
+    const lv=BZ_LV.find(x=>x[0]===d);playModal({name:`${t.name} · ${lv[2]}`,kind:it.every(i=>!i.o)?'num':'mix',mc:it.some(i=>i.o)},`&baza=${encodeURIComponent(f)}&m=${encodeURIComponent(t.id)}&d=${d}`)}}
+async function bindBaza(f){
+  const box=$('#bz');if(!box)return;let B,bob='';
+  try{B=await bazaGet(f)}catch(e){$('#bzList').innerHTML=`<p class="sub">⚠️ ${esc(e.message)}</p>`;return}
+  const by={};B.topics.forEach(t=>by[t.id]=t);
+  const draw=()=>{const q=$('#bzQ').value.trim().toLowerCase();
+    $('#bzChips').innerHTML=['',...B.bolimlar].map(b=>`<button data-b="${esc(b)}" class="${b===bob?'on':''}">${b?esc(b):'Hammasi'}</button>`).join('');
+    const l=B.topics.filter(t=>(!bob||t.bob===bob)&&(!q||(t.name+' '+t.bob).toLowerCase().includes(q)));let last='';
+    $('#bzList').innerHTML=l.length?l.map(t=>{const h=!bob&&!q&&t.bob!==last?`<div class="bzh">${esc(last=t.bob)}</div>`:'';
+      return h+`<div class="bzt"><div><b>${esc(t.name)}</b><small>${t.items.length} ta savol · 3 daraja</small></div><button class="btn ghost sm" data-bv="${esc(t.id)}" title="Savollarni koʻrish" aria-label="Savollarni koʻrish">👁</button><button class="btn gold sm" data-bp="${esc(t.id)}">▶️ Oʻynash</button></div>`}).join('')
+      :`<p class="sub">Bunday mavzu topilmadi. Boshqa soʻz bilan qidiring.</p>`};
+  $('#bzChips').onclick=e=>{const b=e.target.closest('[data-b]');if(!b)return;bob=b.dataset.b;draw()};
+  let tm;$('#bzQ').oninput=()=>{clearTimeout(tm);tm=setTimeout(draw,200)};
+  $('#bzList').onclick=e=>{const b=e.target.closest('button');if(!b)return;const t=by[b.dataset.bp||b.dataset.bv];if(!t)return;
+    if(b.dataset.bp)bazaPlay(f,t);else viewModal(t.name,t.items.slice().sort((x,y)=>x.d-y.d))};
+  draw()}
 function bindLib(fan){
   let all=[];const by={};
   async function load(){
@@ -1923,6 +1960,7 @@ function bindLib(fan){
     if(b.dataset.view){if(s.items)return viewModal(s.name,s.items);b.disabled=true;try{const j=await api('/api/lib/get',{id},60000);viewModal(s.name,j.set.items)}catch(err){toast(err.message)}b.disabled=false}
     if(b.dataset.ldel){if(!b.dataset.c){b.dataset.c=1;b.textContent='✓?';setTimeout(()=>{b.dataset.c='';b.textContent='🗑'},2500);return}
       try{await api('/api/lib/delete',{token:AUTH.tok,id});toast('Kutubxonadan olib tashlandi');load()}catch(err){toast(err.message)}}};
+  if(fan==='Matematika')bindBaza('matematika');
   wake();load();
 }
 
