@@ -868,6 +868,22 @@ def pz3():
     return num(f'Prizmaning {k[1]} ta {k[0]} bor. Asosi necha burchakli?', n)
 topic(B11, 'prizma', 'Prizma', pz([3, 4]), pz([5, 6, 8]), pz3)
 
+# ---- sinflar (Oʻzbekiston maktab dasturi boʻyicha taxminiy) ----
+SINF = {
+ 'qoshish': [5], 'ayirish': [5], 'kopaytirish': [5], 'bolish': [5], 'aralash': [5], 'tenglama1': [5],
+ 'natural': [5], 'taqqoslash': [5], 'boshqotirma': [5, 6], 'butun': [6], 'sonoqi': [6], 'daraja': [5, 7], 'faktorial': [6, 7], 'rim': [5],
+ 'qoldiq': [5], 'belgilar': [6], 'boluvchi': [6], 'ekub': [6],
+ 'kasr': [5], 'kasrxossa': [5, 6], 'kasrkopbol': [6], 'kasrqosh': [5, 6], 'umumiymaxraj': [6], 'kasraralash': [6],
+ 'onli': [5], 'onliqosh': [5], 'onlikop': [5, 6],
+ 'darajaxossa': [7], 'qavs': [6, 7], 'oxshash': [6, 7], 'tenglama2': [6, 7], 'proporsiya': [6],
+ 'masala': [5], 'yosh': [5, 6], 'proporsional': [6], 'olchov': [5], 'masshtab': [6], 'foiz': [5, 6], 'foyda': [6], 'vaqt': [5],
+ 'sistema': [7], 'harakat': [5, 6], 'ish': [6],
+ 'nuqta': [5], 'burchak': [5], 'uchburchak': [6, 7], 'perimetr': [5], 'yuz': [5], 'aylana': [6], 'simmetriya': [6],
+ 'kub': [5], 'parallelepiped': [5], 'prizma': [6],
+}
+for t in TOPICS:
+    t['sinf'] = SINF[t['id']]
+
 # ---- tekshiruv va yozish ----
 ids = [t['id'] for t in TOPICS]; assert len(ids) == len(set(ids))
 for t in TOPICS:
