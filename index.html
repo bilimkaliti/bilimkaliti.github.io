@@ -819,6 +819,19 @@ header .bar{gap:12px}
 .pqb:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}.pqb.ok{background:var(--teal);color:#fff;border-color:var(--teal)}.pqb.no{background:#e5484d;color:#fff;border-color:#e5484d}
 .pqs{text-align:center;font-weight:900;font-size:1.2rem;margin-top:16px;color:var(--ink2)}
 @media (max-width:900px){.pquiz{grid-template-columns:1fr}.pgrid{gap:2px}.pc{border-radius:6px}}
+
+/* ===== Mobil «Yana» paneli ===== */
+.mnav a{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:400px){.mnav{padding-left:2px;padding-right:2px}.mnav a{font-size:10.5px;letter-spacing:-.2px}}
+.msheet{position:fixed;inset:0;z-index:250}
+.ms-bg{position:absolute;inset:0;background:rgba(10,14,30,.45);animation:msFade .2s both}
+.ms-p{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-radius:24px 24px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -14px 40px rgba(0,0,0,.25);animation:msUp .3s var(--ease) both}
+@keyframes msUp{from{transform:translateY(100%)}}@keyframes msFade{from{opacity:0}}
+.ms-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:18px}
+.ms-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ms-g a{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:12.5px;font-weight:800;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:12px 4px;line-height:1.2}
+.ms-g a span{font-size:24px}
+.ms-g a.hidden{display:none}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -946,9 +959,23 @@ header .bar{gap:12px}
   <a href="#/" data-r=""><span>🏠</span>Asosiy</a>
   <a href="#/oyinlar" data-r="oyinlar"><span>🎮</span>Oʻyinlar</a>
   <a href="#/ai" data-r="ai"><span>✨</span>AI</a>
-  <a href="#/sinflar" data-r="sinflar"><span>📚</span>Sinflar</a>
+  <a href="#/vositalar" data-r="vositalar"><span>🧰</span>Vositalar</a>
   <a href="#/kutubxona" data-r="kutubxona"><span>📚</span>Kutubxona</a>
+  <a href="#" id="moreBtn" data-r="__more"><span>☰</span>Yana</a>
 </nav>
+<div class="msheet hidden" id="msheet" role="dialog" aria-label="Boʻlimlar"><div class="ms-bg" data-msc></div><div class="ms-p">
+  <div class="ms-h"><b>Boʻlimlar</b><button class="icon-btn" data-msc aria-label="Yopish">✕</button></div>
+  <div class="ms-g">
+   <a href="#/sinflar"><span>🎒</span>Sinflar</a>
+   <a href="#/toplamlar"><span>📦</span>Toʻplamlarim</a>
+   <a href="#/uy"><span>📝</span>Uy vazifalari</a>
+   <a href="#/fayllar"><span>📁</span>Fayllarim</a>
+   <a href="#/vosita/pifagor"><span>🔢</span>Pifagor jadvali</a>
+   <a href="#/ai/darslik"><span>📸</span>Darslikdan oʻyin</a>
+   <a href="#/admin" class="ms-adm hidden"><span>📊</span>Statistika</a>
+   <a href="#" data-install><span>📲</span>Ilovani oʻrnatish</a>
+   <a href="#/" data-about><span>ℹ️</span>Biz haqimizda</a>
+  </div></div></div>
 
 <script>
 const BOT='https://t.me/bilimkaliti_bot';
@@ -1168,6 +1195,7 @@ function doRoute(){
   $('#app').innerHTML=html;
   const nav={sinf:'sinflar',doc:'ai',fayllar:'ai',vosita:'vositalar',fan:'kutubxona',toplamlar:'kutubxona',uy:'kutubxona'}[r]||r;
   document.querySelectorAll('[data-r]').forEach(a=>a.classList.toggle('on',a.dataset.r===nav));
+  {const mb=document.getElementById('moreBtn');if(mb)mb.classList.toggle('on',!['','oyinlar','ai','vositalar','kutubxona'].includes(nav))}
   if(r==='sinf')bindGrade(parts[1]);
   if(r==='ai')bindAi(parts[1]);
   if(r==='doc')bindDoc(parts[1]);
@@ -2390,7 +2418,7 @@ function adminNav(){
   document.querySelectorAll('.admlink').forEach(a=>a.remove());
   if(!on)return;
   const top=document.querySelector('nav.top');if(top)top.insertAdjacentHTML('beforeend','<a href="#/admin" data-r="admin" class="admlink" title="Statistika" aria-label="Statistika">📊</a>');
-  const mn=document.querySelector('.mnav');if(mn)mn.insertAdjacentHTML('beforeend','<a href="#/admin" data-r="admin" class="admlink"><span>📊</span>Statistika</a>');
+  const ma=document.querySelector('.ms-adm');if(ma)ma.classList.toggle('hidden',!on);
   const r=location.hash.replace(/^#\/?/,'').split('/')[0];document.querySelectorAll('.admlink').forEach(a=>a.classList.toggle('on',r==='admin'))}
 function checkAdmin(){if(!AUTH.tok){store.set('admin',false);adminNav();return}
   api('/api/me',{token:AUTH.tok},90000).then(j=>{store.set('admin',!!j.admin);adminNav()}).catch(()=>{})}
@@ -2544,6 +2572,17 @@ function tourMaybe(){if(store.get('tour',0)||location.hash.replace(/^#\/?/,''))r
     store.set('tour',1);md.querySelector('#tGo').onclick=()=>wizard();md.querySelector('#tLater').onclick=closeModal},900)}
 
 document.addEventListener('click',e=>{const w=e.target.closest('[data-wiz]');if(w){e.preventDefault();wizard(w.dataset.wiz||'')}});
+/* mobil «Yana» paneli */
+const msOpen=o=>{const s=document.getElementById('msheet');if(s)s.classList.toggle('hidden',!o)};
+document.addEventListener('click',e=>{
+  if(e.target.closest('#moreBtn')){e.preventDefault();msOpen(true);return}
+  if(e.target.closest('[data-msc]')){msOpen(false);return}
+  const a=e.target.closest('#msheet a');if(!a)return;msOpen(false);
+  if(a.hasAttribute('data-install')){e.preventDefault();if(window.bkInstall)window.bkInstall();return}
+  if(a.hasAttribute('data-about')){e.preventDefault();location.hash='#/';setTimeout(()=>{const x=document.getElementById('about');x&&x.scrollIntoView({behavior:'smooth'})},500)}});
+window.addEventListener('hashchange',()=>msOpen(false));
+if(matchMedia('(display-mode: standalone)').matches||navigator.standalone){const i=document.querySelector('#msheet [data-install]');if(i)i.remove()}
+
 /* rejim */
 (function(){const t=store.get('theme',null);if(t)document.documentElement.dataset.theme=t;
   const upd=()=>{const dark=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);$('#themeBtn').textContent=dark?'☀️':'🌙'};
