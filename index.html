@@ -18,8 +18,8 @@
 <meta property="og:locale" content="uz_UZ">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bilimkaliti.github.io/og.png">
-<link rel="icon" type="image/png" href="image.png">
-<link rel="apple-touch-icon" href="image.png">
+<link rel="icon" type="image/png" href="ikonka.png">
+<link rel="apple-touch-icon" href="ikonka.png">
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2351,8 +2351,15 @@ fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).f
     try{if(navigator.getInstalledRelatedApps){const r=await navigator.getInstalledRelatedApps();if(r&&r.length){modal(steps('Ilova allaqachon oʻrnatilgan ✅',[`Ish stolidagi yoki telefon ekranidagi ${B}Bilim Kaliti</b> ikonkasini bosib oching`,`Ikonka yoʻqolgan boʻlsa: Chrome'da ${B}chrome://apps</b> sahifasini oching`,`Qayta oʻrnatish kerak boʻlsa — avval ilovani oching, ${B}⋮ → “Oʻchirish”</b>, keyin shu tugmani yana bosing`]));return}}}catch(e){}
     if(ios){modal(steps("iPhone / iPad'ga oʻrnatish",[`Saytni ${B}Safari</b>da oching`,`Pastdagi ${B}Ulashish ⬆️</b> tugmasini bosing`,`${B}“Bosh ekranga qoʻshish” ➕</b> ni tanlang`]));return}
     const android=/Android/i.test(ua);
-    if(android){modal(steps('Telefon yoki elektron doskaga oʻrnatish',[`Saytni ${B}Chrome</b> brauzerida oching`,`Yuqori oʻng burchakdagi ${B}⋮</b> menyuni bosing`,`${B}“Ilovani oʻrnatish”</b> yoki ${B}“Bosh ekranga qoʻshish”</b> ni tanlang`]));return}
-    modal(steps('Kompyuter yoki elektron doskaga oʻrnatish',[`Saytni ${B}Google Chrome</b> yoki ${B}Microsoft Edge</b>da oching`,`Manzil satrining oʻng tomonidagi ${B}⊕ / 🖥️ belgisini</b> bosing (yoki ${B}⋮ → “Ilovani oʻrnatish”</b>)`,`${B}“Oʻrnatish”</b> ni bosing — ish stolida Bilim Kaliti ikonkasi paydo boʻladi`]));
+    const br=/YaBrowser/.test(ua)?'Yandex':/OPR\/|Opera/.test(ua)?'Opera':/SamsungBrowser/.test(ua)?'Samsung':/Firefox|FxiOS/.test(ua)?'Firefox':/Edg\//.test(ua)?'Edge':/Chrome/.test(ua)?'Chrome':'';
+    const drag=`Agar bunday tugma boʻlmasa: manzil satri chap tomonidagi ${B}🔒 qulf belgisini</b> sichqoncha bilan ushlab, ${B}ish stoliga sudrab tashlang</b> — sayt yorligʻi paydo boʻladi`;
+    if(android){
+      const m={Samsung:`${B}≡</b> menyu → ${B}“Sahifani qoʻshish” → “Bosh ekran”</b>`,Firefox:`${B}⋮</b> menyu → ${B}“Oʻrnatish”</b> yoki ${B}“Bosh ekranga qoʻshish”</b>`,Opera:`${B}⋮</b> menyu → ${B}“Bosh ekran”</b>`,Yandex:`${B}⋮</b> menyu → ${B}“Yorliq qoʻshish”</b> (Добавить ярлык)`}[br]||`${B}⋮</b> menyu → ${B}“Ilovani oʻrnatish”</b> yoki ${B}“Bosh ekranga qoʻshish”</b>`;
+      modal(steps('Telefon yoki elektron doskaga oʻrnatish',[`Saytni hozirgi brauzeringizda ochiq qoldiring${br?' ('+br+')':''}`,m,`Ekranda ${B}Bilim Kaliti</b> ikonkasi paydo boʻladi — shu bilan ochasiz`]));return}
+    const d={Edge:[`Manzil satrining oʻng tomonidagi ${B}⊕ belgisini</b> bosing yoki ${B}⋯ → Ilovalar → “Bilim Kaliti'ni oʻrnatish”</b>`,`${B}“Oʻrnatish”</b> ni bosing — ish stolida ikonka paydo boʻladi`],
+      Chrome:[`Manzil satrining oʻng tomonidagi ${B}🖥️⬇ belgisini</b> bosing yoki ${B}⋮ → “Saqlash va ulashish” → “Ilovani oʻrnatish”</b>`,`${B}“Oʻrnatish”</b> ni bosing — ish stolida ikonka paydo boʻladi`],
+      Yandex:[`Manzil satri oʻng tomonidagi ${B}oʻrnatish belgisini</b> yoki ${B}≡ menyu → “Ilovani oʻrnatish”</b> ni bosing`,drag]}[br]||[`Bu brauzer${br?' ('+br+')':''} saytni ilova sifatida oʻrnata olmaydi, lekin ish stoliga yorliq qoʻyish mumkin`,`Manzil satri chap tomonidagi ${B}🔒 qulf belgisini</b> sichqoncha bilan ushlang`,`Uni ${B}ish stoliga sudrab tashlang</b> — Bilim Kaliti yorligʻi paydo boʻladi`];
+    modal(steps('Kompyuter yoki elektron doskaga oʻrnatish',d));
   }
   window.bkInstall=install;
   /* pastki qismdagi doimiy tugma */
@@ -2361,7 +2368,7 @@ fetch('games/grades.json').then(r=>r.json()).then(j=>{GRADES=j}).catch(()=>{}).f
     l.firstChild.onclick=e=>{e.preventDefault();install()}}
   /* suzuvchi panel */
   const bar=document.createElement('div');bar.id='pwaBar';
-  bar.innerHTML='<img src="image.png" alt=""><span class="t">Bilim Kaliti ilovasi<small>Bosh ekranga qoʻshing</small></span><button class="btn gold" id="pwaGo">Oʻrnatish</button><button class="x" id="pwaX" aria-label="Yopish">×</button>';
+  bar.innerHTML='<img src="ikonka.png" alt=""><span class="t">Bilim Kaliti ilovasi<small>Bosh ekranga qoʻshing</small></span><button class="btn gold" id="pwaGo">Oʻrnatish</button><button class="x" id="pwaX" aria-label="Yopish">×</button>';
   function show(){if(inApp)return;const later=store.get('pwaLater',0);if(later&&Date.now()-later<7*864e5)return;
     if(document.getElementById('modal')){setTimeout(show,3000);return}if(!document.body.contains(bar))document.body.appendChild(bar);requestAnimationFrame(()=>bar.classList.add('on'))}
   function hide(){bar.classList.remove('on')}
