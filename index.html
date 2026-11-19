@@ -382,7 +382,8 @@ button.pmg{border:0;font:inherit;cursor:pointer;text-align:left}.pmg.on{outline:
 .mbox.wide{max-width:760px;max-height:88vh;overflow:auto}
 .bz{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:18px;margin:0 0 22px}
 .bz h3{margin:0}.bzq{width:100%;margin:12px 0 10px;font-size:1.05rem;padding:12px 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--bg2);color:var(--ink);font-family:inherit;font-weight:700}.bzq:focus{outline:none;border-color:var(--teal)}
-.bzchips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:thin}
+.bzchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+@media (max-width:760px){.bzchips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.bzchips::-webkit-scrollbar{display:none}}
 .bzchips button{flex:0 0 auto;border:1.5px solid var(--line);background:var(--bg2);color:var(--ink2);border-radius:999px;padding:9px 15px;font-weight:800;min-height:44px}
 .bzchips button.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
 .bzlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
@@ -1926,11 +1927,11 @@ function libPage(fan){
     <input id="lQ" placeholder="🔍 Mavzu yoki nom boʻyicha qidirish"><select id="lSort"><option value="new">Yangilari</option><option value="top">Koʻp oʻynalgan</option></select></div>
    <div class="sgrid" id="lList">${skel(6)}</div>
   </div></section>`}
-const BZ_SINF=[1,2,3,4,5,6,7],BZ_CNT={1:5,2:7,3:10,4:9,5:30,6:29,7:14};
+const BZ_V='e8f7baa9';const BZ_SINF=[1,2,3,4,5,6,7],BZ_CNT={1:5,2:7,3:10,4:9,5:30,6:29,7:14};
 function bazaBlock(sinf){return `<div class="bz" id="bz"><h3>📘 ${sinf?sinf+'-sinf: tayyor mavzular':'Tayyor mavzular'}</h3><p class="sub" style="margin:4px 0 0">Darsda oʻtilgan mavzuni tanlang — savollar tayyor. Keyin darajani tanlab, oʻyinni boshlang.</p>
   <input class="bzq" id="bzQ" placeholder="🔍 Mavzuni qidiring: kasr, foiz, burchak…" autocomplete="off">${sinf?'':'<div class="bzchips" id="bzSinf"></div>'}<div class="bzchips" id="bzChips"></div><div class="sgrid" id="bzList">${skel(4)}</div></div>`}
 let BAZA={};
-async function bazaGet(f){if(BAZA[f])return BAZA[f];const r=await fetch('games/baza/'+f+'.json');if(!r.ok)throw new Error('Mavzular yuklanmadi');return BAZA[f]=await r.json()}
+async function bazaGet(f){if(BAZA[f])return BAZA[f];const r=await fetch('games/baza/'+f+'.json?v='+BZ_V);if(!r.ok)throw new Error('Mavzular yuklanmadi');return BAZA[f]=await r.json()}
 const BZ_LV=[[1,'🟢','Oson','#2f9e44','#51cf66'],[2,'🟡','Oʻrta','#e67700','#fab005'],[3,'🔴','Qiyin','#c92a2a','#ff6b6b'],[0,'🎲','Aralash','#5f3dc4','#845ef7']];
 function bazaPlay(f,t){
   const md=modal(`<h3>▶️ ${esc(t.name)}</h3><p class="sub">Qaysi darajada oʻynaymiz?</p><div class="bzlv">${BZ_LV.map(([d,e,n,c1,c2])=>{const k=d?t.items.filter(i=>i.d===d).length:t.items.length;return `<button data-d="${d}" style="background:linear-gradient(135deg,${c1},${c2})"><span style="font-size:1.8rem">${e}</span>${n}<small>${k} ta savol</small></button>`}).join('')}</div>`);

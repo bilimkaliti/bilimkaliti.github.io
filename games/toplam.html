@@ -1944,7 +1944,7 @@ function convPairs(items){const pr=(items||[]).filter(it=>it&&it.a!=null&&it.b!=
   const bs=[...new Set(pr.map(x=>String(x.b)))];
   return (items||[]).map(it=>{if(!(it&&it.a!=null&&it.b!=null))return it;const w=shuffle(bs.filter(b=>b!==String(it.b))).slice(0,3);return w.length===3?{q:`«${it.a}» — ?`,o:[String(it.b),...w],c:0}:null}).filter(Boolean)}
 /* ===== UY VAZIFASI: oʻquvchi ismini yozadi, oʻynaydi, natija oʻqituvchiga boradi ===== */
-var BZOPEN=0;
+var BZOPEN=0;const BZ_V='e8f7baa9';
 let HW=null;
 function hwIntro(){
   let ov=$('#hwOv');if(!ov){ov=document.createElement('div');ov.id='hwOv';ov.className='overlay';document.body.appendChild(ov)}
@@ -1993,7 +1993,7 @@ async function loadSets(){
   if(lib){try{const r=await fetch((TG&&TG.initData?'':API)+'/api/lib/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})});
     if(r.ok){const j=await r.json();if(j.set){out.push({...j.set,id:'L-'+lib});fetch((TG&&TG.initData?'':API)+'/api/lib/play',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:lib})}).catch(()=>{})}}}catch(e){}}
   const bz=P.get('baza'),bm=P.get('m'),bd=Math.max(0,Math.min(3,+P.get('d')||0));
-  if(bz&&bm&&/^[\w-]{1,40}$/.test(bz+bm)){try{const r=await fetch('baza/'+bz+'.json');if(r.ok){const j=await r.json();const t=(j.topics||[]).find(x=>x.id===bm);
+  if(bz&&bm&&/^[\w-]{1,40}$/.test(bz+bm)){try{const r=await fetch('baza/'+bz+'.json?v='+BZ_V);if(r.ok){const j=await r.json();const t=(j.topics||[]).find(x=>x.id===bm);
     if(t)out.push({id:'B-'+bm+'-'+bd,name:t.name+(bd?' · '+['','Oson','Oʻrta','Qiyin'][bd]:''),fan:j.fan,items:t.items.filter(i=>!bd||i.d===bd)})}}catch(e){}}
   const hw=P.get('hw');
   if(hw&&/^[\w-]{4,20}$/.test(hw)){HW={id:hw,loading:true};hwIntro();

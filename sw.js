@@ -2,7 +2,7 @@
    Sahifalar va oʻyinlar: avval internetdan (har doim yangi versiya), internet boʻlmasa — saqlangan nusxa.
    Rasmlar va shriftlar: saqlangan nusxa darhol, orqada yangilanadi.
    Saytni yangilaganda shu yerdagi VERSION raqamini oshirish shart emas — sahifalar baribir internetdan olinadi. */
-const VERSION = 'bk-v7';
+const VERSION = 'bk-v8';
 const CORE = [
   '/',
   '/index.html',
@@ -56,7 +56,8 @@ self.addEventListener('fetch', e => {
 async function networkFirst(req) {
   const cache = await caches.open(VERSION);
   try {
-    const res = await fetch(req);
+    // no-cache: brauzer keshidagi eski nusxa emas, har doim yangisi (ETag bilan tez tekshiriladi)
+    const res = await fetch(new Request(req.url, { cache: 'no-cache', credentials: 'same-origin' }));
     if (res && res.ok) cache.put(stripQuery(req), res.clone());
     return res;
   } catch (err) {
