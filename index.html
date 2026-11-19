@@ -1946,7 +1946,7 @@ async function bindBaza(f,fix){
     if($('#bzSinf'))$('#bzSinf').innerHTML=[0,...BZ_SINF].map(n=>`<button data-sn="${n}" class="${n===sn?'on':''}">${n?n+'-sinf':'Barcha sinflar'}</button>`).join('');
     const bobs=B.bolimlar.filter(b=>B.topics.some(t=>t.bob===b&&inS(t)));if(bob&&!bobs.includes(bob))bob='';
     $('#bzChips').innerHTML=['',...bobs].map(b=>`<button data-b="${esc(b)}" class="${b===bob?'on':''}">${b?esc(b):'Barcha boʻlimlar'}</button>`).join('');
-    const l=B.topics.filter(t=>inS(t)&&(!bob||t.bob===bob)&&(!q||(t.name+' '+t.bob).toLowerCase().includes(q)));let last='';
+    const l=B.topics.filter(t=>inS(t)&&(!bob||t.bob===bob)&&(!q||(t.name+' '+t.bob+' '+(t.k||'')).toLowerCase().includes(q)));let last='';
     $('#bzList').innerHTML=l.length?l.map(t=>{const h=!bob&&!q&&t.bob!==last?`<div class="bzh">${esc(last=t.bob)}</div>`:'';return h+setCard(bzSet(t))}).join('')
       :`<p class="sub">Bunday mavzu topilmadi. Boshqa soʻz bilan qidiring.</p>`};
   $('#bzChips').onclick=e=>{const b=e.target.closest('[data-b]');if(!b)return;bob=b.dataset.b;draw()};
@@ -1963,7 +1963,7 @@ function bindLib(fan){
     try{const j=await api('/api/lib/list',{token:AUTH.tok||'',fan:$('#lFan').value,sinf:$('#lSinf').value,q:$('#lQ').value,sort:$('#lSort').value},60000);remote=(j.sets||[]).map(s=>({...s,lib:1}));on=j.on}catch(e){}
     const f=$('#lFan').value,sn=$('#lSinf').value,q=$('#lQ').value.toLowerCase();
     const loc=st.filter(s=>(!f||s.fan===f)&&(!sn||String(s.sinf)===sn)&&(!q||`${s.name} ${s.mavzu} ${s.author}`.toLowerCase().includes(q)));
-    let bz=[];if(fan!=='Matematika'&&(!f||f==='Matematika')){try{const B=await bazaGet('matematika');bz=B.topics.filter(t=>(!sn||(t.sinf||[]).includes(+sn))&&(!q||`${t.name} ${t.bob} matematika`.toLowerCase().includes(q))).map(bzSet)}catch(e){}}
+    let bz=[];if(fan!=='Matematika'&&(!f||f==='Matematika')){try{const B=await bazaGet('matematika');bz=B.topics.filter(t=>(!sn||(t.sinf||[]).includes(+sn))&&(!q||`${t.name} ${t.bob} ${t.k||''} matematika`.toLowerCase().includes(q))).map(bzSet)}catch(e){}}
     all=[...remote,...loc,...bz];all.forEach(s=>by[s.id]=s);
     $('#lList').innerHTML=all.length?all.map(setCard).join(''):`<div class="empty"><div>📭</div><p>Hozircha bu yerda toʻplam yoʻq.${f?' Birinchi boʻlib siz yarating!':''}</p><a class="btn gold" href="#/ai/savollar">✨ AI bilan yaratish</a></div>`;
   }
@@ -2577,7 +2577,7 @@ async function wzLoadSets(){
   WZ.sets=[...mine,...st,...lib];if(WZ.step===2)wzDraw()}
 const wzMM=()=>store.get('wzmm','baza');
 const wzMMtabs=()=>`<div class="tabs seg2" style="margin:0 0 14px"><button data-mm="baza" class="${wzMM()==='baza'?'on':''}">📘 Tayyor mavzular</button><button data-mm="sinf" class="${wzMM()==='sinf'?'on':''}">🎲 Yangi misollar</button></div>`;
-function wzBlist(){const q=(WZ.bq||'').trim().toLowerCase(),sn=+store.get('bzsinf',0)||0,l=BAZA.matematika.topics.filter(t=>(!sn||(t.sinf||[]).includes(sn))&&(!q||(t.name+' '+t.bob).toLowerCase().includes(q)));
+function wzBlist(){const q=(WZ.bq||'').trim().toLowerCase(),sn=+store.get('bzsinf',0)||0,l=BAZA.matematika.topics.filter(t=>(!sn||(t.sinf||[]).includes(sn))&&(!q||(t.name+' '+t.bob+' '+(t.k||'')).toLowerCase().includes(q)));
   return l.length?l.map(t=>`<button class="wzset" data-bt="${esc(t.id)}"><b>${esc(t.name)}</b><small>${(t.sinf||[]).map(x=>x+'-sinf').join(', ')} · ${esc(t.bob)}</small></button>`).join(''):'<p class="sub">Bunday mavzu topilmadi.</p>'}
 function wzDraw(){
   const box=$('#wz');if(!box)return;const M=MATH_FANLAR.includes(WZ.fan);

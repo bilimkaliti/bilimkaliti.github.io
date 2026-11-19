@@ -883,6 +883,23 @@ SINF = {
 }
 for t in TOPICS:
     t['sinf'] = SINF[t['id']]
+KW = {
+ 'qoshish': 'yigʻindi qoʻshish', 'ayirish': 'ayirma', 'kopaytirish': 'koʻpaytma karra jadval', 'bolish': 'boʻlinma', 'aralash': 'amallar tartibi qavs',
+ 'tenglama1': 'tenglama nomaʼlum x', 'tenglama2': 'tenglama nomaʼlum x', 'natural': 'xona raqam', 'taqqoslash': 'yaxlitlash taqqoslash katta kichik',
+ 'boshqotirma': 'mantiq qonuniyat ketma-ketlik', 'butun': 'manfiy musbat butun', 'sonoqi': 'modul manfiy', 'daraja': 'kvadrat kub daraja',
+ 'faktorial': 'kombinatorika oʻrin almashtirish', 'rim': 'rim raqam', 'qoldiq': 'qoldiq boʻlish', 'belgilar': 'boʻlinish belgi',
+ 'boluvchi': 'tub murakkab boʻluvchi', 'ekub': 'ekub ekuk umumiy boʻluvchi karrali', 'kasr': 'kasr qism', 'kasrxossa': 'qisqartirish kasr',
+ 'kasrkopbol': 'kasr koʻpaytirish boʻlish', 'kasrqosh': 'kasr qoʻshish ayirish maxraj', 'umumiymaxraj': 'kasr maxraj taqqoslash', 'kasraralash': 'kasr aralash son',
+ 'onli': 'oʻnli kasr', 'onliqosh': 'oʻnli kasr', 'onlikop': 'oʻnli kasr', 'darajaxossa': 'daraja xossa', 'qavs': 'qavs koʻpaytuvchi algebra',
+ 'oxshash': 'oʻxshash had algebra ifoda', 'proporsiya': 'nisbat proporsiya', 'masala': 'masala matnli', 'yosh': 'masala yosh', 'proporsional': 'proporsiya nisbat masala',
+ 'olchov': 'uzunlik massa vaqt birlik km kg', 'masshtab': 'xarita masshtab', 'foiz': 'foiz protsent', 'foyda': 'foiz chegirma narx foyda zarar',
+ 'vaqt': 'soat minut vaqt', 'sistema': 'tenglamalar sistemasi', 'harakat': 'tezlik masofa vaqt masala', 'ish': 'unumdorlik masala ish',
+ 'nuqta': 'geometriya kesma nur', 'burchak': 'geometriya burchak gradus', 'uchburchak': 'geometriya uchburchak burchak', 'perimetr': 'geometriya perimetr',
+ 'yuz': 'geometriya yuza yuz maydon', 'aylana': 'geometriya aylana doira radius', 'simmetriya': 'geometriya simmetriya koordinata',
+ 'kub': 'geometriya hajm kub', 'parallelepiped': 'geometriya hajm', 'prizma': 'geometriya prizma hajm',
+}
+for t in TOPICS:
+    t['k'] = KW.get(t['id'], '')
 
 # ---- tekshiruv va yozish ----
 ids = [t['id'] for t in TOPICS]; assert len(ids) == len(set(ids))
