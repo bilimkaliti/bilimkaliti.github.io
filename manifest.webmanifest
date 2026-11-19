@@ -1,0 +1,65 @@
+{
+  "name": "Bilim Kaliti — sinf uchun oʻyinlar",
+  "short_name": "Bilim Kaliti",
+  "description": "Elektron doskada guruhlar bellashadigan oʻyinlar, Robo raqib, AI yordamchi va kutubxona. Bepul.",
+  "id": "/",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "uz",
+  "dir": "ltr",
+  "background_color": "#1a1238",
+  "theme_color": "#f5b301",
+  "categories": [
+    "education",
+    "games",
+    "kids"
+  ],
+  "icons": [
+    {
+      "src": "/image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Oʻyinlar",
+      "url": "/#/oyinlar",
+      "icons": [
+        {
+          "src": "/image.png",
+          "sizes": "512x512"
+        }
+      ]
+    },
+    {
+      "name": "AI yordamchi",
+      "url": "/#/ai",
+      "icons": [
+        {
+          "src": "/image.png",
+          "sizes": "512x512"
+        }
+      ]
+    },
+    {
+      "name": "Kutubxona",
+      "url": "/#/kutubxona",
+      "icons": [
+        {
+          "src": "/image.png",
+          "sizes": "512x512"
+        }
+      ]
+    }
+  ]
+}
