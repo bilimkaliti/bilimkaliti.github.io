@@ -747,6 +747,31 @@ header .bar{gap:12px}
 .faq p{margin:0 0 16px;color:var(--ink2);font-weight:600;line-height:1.6}
 @media (max-width:900px){.whys,.hows{grid-template-columns:1fr 1fr}.about{grid-template-columns:1fr;padding:22px}}
 @media (max-width:560px){.whys,.hows{grid-template-columns:1fr}}
+
+/* ===== Pifagor jadvali ===== */
+.pbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.pf{font-size:clamp(1.3rem,3vw,2.2rem);font-weight:900;min-height:1.4em}.pf span{color:#7048e8}
+.pgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;max-width:min(100%,calc(78vh*1.05));margin:0 auto}
+.toolstage:fullscreen .pgrid{max-width:min(100%,calc(86vh*1.05))}
+.pc{aspect-ratio:1;display:grid;place-items:center;border-radius:10px;font:inherit;font-weight:800;font-size:clamp(12px,2.1vw,26px);border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:0;transition:background-color .15s,transform .15s,color .15s,box-shadow .15s;font-variant-numeric:tabular-nums}
+.pc.ph{background:linear-gradient(135deg,#8b6cf0,#7048e8);color:#fff;border-color:transparent;font-weight:900;cursor:pointer}
+.pc.px{background:var(--ink);color:var(--bg);cursor:default}
+.pc.pv{cursor:pointer}.pc.pv.sq{background:color-mix(in srgb,var(--gold) 16%,var(--card))}
+.pc.on{background:color-mix(in srgb,#7048e8 16%,var(--card));border-color:color-mix(in srgb,#7048e8 45%,var(--line))}
+.pc.ph.hl{background:linear-gradient(135deg,#ffd25c,#f5b301);color:#1b1400}
+.pc.pv.hl{background:color-mix(in srgb,#f5b301 22%,var(--card))}
+.pc.tgt{background:#7048e8!important;color:#fff;transform:scale(1.12);box-shadow:0 8px 20px rgba(112,72,232,.4);z-index:1;border-color:transparent}
+.pc.hid{background:repeating-linear-gradient(45deg,var(--bg2),var(--bg2) 6px,var(--bg) 6px,var(--bg) 12px);color:var(--muted)}
+.pc.rev{animation:pifRev .45s var(--ease)}@keyframes pifRev{from{transform:rotateY(90deg)}}
+.pc.lit{background:color-mix(in srgb,var(--teal) 22%,var(--card));border-color:var(--teal)}
+.pquiz{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:start}
+.pq-rows{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:14px}.pq-rows .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pq{font-size:clamp(2.6rem,7vw,5rem);font-weight:900;text-align:center;margin:10px 0 18px;letter-spacing:-1px}.pq .g{color:var(--teal)}.pq .r{color:#e5484d}
+.pqo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pqb{font:inherit;font-weight:900;font-size:clamp(1.6rem,4vw,2.6rem);border:2.5px solid var(--line);background:var(--card);border-radius:20px;padding:16px;box-shadow:0 6px 0 var(--line);cursor:pointer;color:var(--ink);transition:transform .08s}
+.pqb:active{transform:translateY(4px);box-shadow:0 2px 0 var(--line)}.pqb.ok{background:var(--teal);color:#fff;border-color:var(--teal)}.pqb.no{background:#e5484d;color:#fff;border-color:#e5484d}
+.pqs{text-align:center;font-weight:900;font-size:1.2rem;margin-top:16px;color:var(--ink2)}
+@media (max-width:900px){.pquiz{grid-template-columns:1fr}.pgrid{gap:2px}.pc{border-radius:6px}}
 .hidden{display:none!important}
 .fade{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
@@ -912,6 +937,7 @@ const TOOLS=[
  {e:'🤫',n:'Sukunat oʻlchagich',d:'Sinf jim boʻlsa sharlar tinch, shovqin oshsa — yoriladi. Mikrofon orqali.',c:'#12a38f',href:'#/vosita/sukunat'},
  {e:'⏱️',n:'Taymer va sekundomer',d:'Katta raqamli taymer: guruh ishi va mustaqil ish uchun.',c:'#f5b301',href:'#/vosita/taymer'},
  {e:'✏️',n:'Chizish doskasi',d:'Qalam, chizgʻich, shakllar, katakli yoki qora doska foni.',c:'#2f8cff',href:'#/vosita/doska'},
+ {e:'🔢',n:'Pifagor jadvali',d:'Karra jadvali: koʻrsatish, yashirib soʻrash va doskada mashq qilish.',c:'#7048e8',href:'#/vosita/pifagor'},
  {e:'✨',n:'AI yordamchi',d:'Test, taqdimot, dars ishlanma, krossvord, fleshkartalar va AI chat.',c:'#7b5cff',href:'#/ai'},
  {e:'🎮',n:'AI bilan oʻyin savollari',d:'Mavzuni yozing — AI qisqa savollar tuzadi va guruh oʻyinlariga qoʻshadi.',c:'#f5b301',href:'#/ai/savollar'},
 ];
@@ -1523,6 +1549,7 @@ let CLEANUP=null;
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const TPAL=['#ff6b4a','#2f8cff','#12a38f','#f5b301','#7b5cff','#d6336c','#0b7285','#ff8a3d','#5f3dc4','#2b8a3e'];
 const TOOLDEFS={
+ pifagor:{e:'🔢',n:'Pifagor jadvali',d:'Karra jadvali: koʻrsatish, yashirib soʻrash va mashq.'},
  tanlash:{e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi. Sinfni guruhlarga ham boʻlib beradi.'},
  sukunat:{e:'🤫',n:'Sukunat oʻlchagich',d:'Mikrofon sinf shovqinini oʻlchaydi: shovqin oshsa, sharlar yoriladi.'},
  taymer:{e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer: guruh ishi, mustaqil ish uchun.'},
@@ -1533,8 +1560,57 @@ function bindFs(){const b=$('#fsTool');if(b)b.onclick=()=>{const el=$('#toolStag
 function toolPage(id){
   const t=TOOLDEFS[id];if(!t)return PAGES.vositalar();
   return `<div class="wrap fade"><div class="crumbs"><a href="#/vositalar">Vositalar</a><span>›</span><span>${t.n}</span></div>
-    <div class="toolstage tool-${id}" id="toolStage">${({tanlash:wheelHtml,sukunat:noiseHtml,taymer:timerHtml,doska:drawHtml})[id]()}</div></div>`}
-function bindTool(id){({tanlash:bindWheel,sukunat:bindNoise,taymer:bindTimer,doska:bindDraw})[id]();bindFs()}
+    <div class="toolstage tool-${id}" id="toolStage">${({tanlash:wheelHtml,sukunat:noiseHtml,taymer:timerHtml,doska:drawHtml,pifagor:pifHtml})[id]()}</div></div>`}
+function bindTool(id){({tanlash:bindWheel,sukunat:bindNoise,taymer:bindTimer,doska:bindDraw,pifagor:bindPif})[id]();bindFs()}
+/* ===== Pifagor jadvali ===== */
+const PIF={mode:'show',n:store.get('pifN',10),hid:new Set(),rows:[2,3,4,5,6,7,8,9],q:null,ok:0,all:0,streak:0,done:new Set()};
+function pifHtml(){return `
+ <div class="thead"><h2>🔢 Pifagor jadvali</h2><div class="tabs" id="pMode"><button data-m="show">📖 Jadval</button><button data-m="hide">🙈 Yashirin</button><button data-m="quiz">🎯 Mashq</button></div>${fsBtn()}</div>
+ <div class="pif" id="pif"></div>`}
+function pifTable(){const N=PIF.n,M=PIF.mode;let s='<div class="pgrid" style="--n:'+(N+1)+'"><div class="pc ph px">×</div>';
+  for(let b=1;b<=N;b++)s+=`<div class="pc ph pcol" data-c="${b}">${b}</div>`;
+  for(let a=1;a<=N;a++){s+=`<div class="pc ph prow" data-r="${a}">${a}</div>`;
+    for(let b=1;b<=N;b++){const k=a+'x'+b,hide=M==='hide'&&PIF.hid.has(k);const lit=M==='quiz'&&PIF.done.has(k);
+      s+=`<button class="pc pv${a===b?' sq':''}${hide?' hid':''}${lit?' lit':''}" data-a="${a}" data-b="${b}">${hide?'?':a*b}</button>`}}
+  return s+'</div>'}
+function pifDraw(){const box=$('#pif');if(!box)return;const M=PIF.mode;
+  document.querySelectorAll('#pMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===M));
+  const size=`<div class="tabs pifsz">${[5,9,10].map(n=>`<button data-n="${n}" class="${PIF.n===n?'on':''}">${n}×${n}</button>`).join('')}</div>`;
+  if(M==='show')box.innerHTML=`<div class="pbar">${size}<div class="pf" id="pF">Katakni bosing — koʻpaytma koʻrinadi</div></div>${pifTable()}<p class="small center" style="margin-top:10px">💡 Satr yoki ustun raqamini bossangiz, uning barcha karralari belgilanadi. Diagonaldagi kvadrat sonlar alohida rangda.</p>`;
+  else if(M==='hide')box.innerHTML=`<div class="pbar">${size}<div class="mrow"><button class="chip" data-h="all">🙈 Hammasini yashirish</button><button class="chip" data-h="rnd">🎲 Tasodifiy 15 ta</button><button class="chip" data-h="open">👀 Hammasini ochish</button></div></div>${pifTable()}<p class="small center" style="margin-top:10px">💡 Oʻquvchidan soʻrang, keyin «?» katakni bosib javobni oching.</p>`;
+  else{box.innerHTML=`<div class="pquiz"><div class="pq-l"><div class="pq-rows"><span class="small">Qaysi karralar:</span>${[2,3,4,5,6,7,8,9,10].map(r=>`<button class="chip${PIF.rows.includes(r)?' on':''}" data-row="${r}">${r}</button>`).join('')}</div>
+      <div class="pq" id="pQ"></div><div class="pqo" id="pO"></div><div class="pqs" id="pS"></div></div><div class="pq-r">${pifTable()}</div></div>`;pifNext()}
+  pifHl(0,0)}
+function pifHl(a,b){document.querySelectorAll('#pif .pc').forEach(c=>{const r=+c.dataset.a,k=+c.dataset.b,hr=+c.dataset.r,hc=+c.dataset.c;
+  c.classList.toggle('on',!!a&&!!b&&((r===a&&k<=b)||(k===b&&r<=a)));c.classList.toggle('tgt',r===a&&k===b);
+  c.classList.toggle('hl',(!!a&&!b&&(r===a||hr===a))||(!!b&&!a&&(k===b||hc===b))||(!!a&&!!b&&(hr===a||hc===b)))})}
+function pifNext(){const rows=PIF.rows.length?PIF.rows:[2,3,4,5,6,7,8,9];let a,b,g=0;
+  do{a=rows[Math.floor(Math.random()*rows.length)];b=1+Math.floor(Math.random()*Math.min(10,PIF.n))}while(PIF.q&&PIF.q.a===a&&PIF.q.b===b&&++g<20);
+  if(Math.random()<.5&&b<=PIF.n&&a<=PIF.n)[a,b]=[b,a];if(a>PIF.n||b>PIF.n){a=Math.min(a,PIF.n);b=Math.min(b,PIF.n)}
+  const c=a*b,w=new Set();const cand=[c+a,c-a,c+b,c-b,(a+1)*(b+1),(a-1)*b,c+10,c-1,c+1].filter(x=>x>0&&x!==c);while(w.size<3)w.add(cand.length?cand.splice(Math.floor(Math.random()*cand.length),1)[0]:c+w.size+2);
+  PIF.q={a,b,c,lock:false};$('#pQ').innerHTML=`${a} × ${b} = <b>?</b>`;
+  $('#pO').innerHTML=shuffle([c,...w]).map(v=>`<button class="pqb" data-v="${v}">${v}</button>`).join('');
+  $('#pS').innerHTML=`✅ ${PIF.ok} / ${PIF.all}${PIF.streak>=3?` · 🔥 ${PIF.streak} ketma-ket`:''}`;pifHl(0,0)}
+function bindPif(){
+  const st=$('#toolStage');pifDraw();
+  $('#pMode').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;PIF.mode=b.dataset.m;if(PIF.mode==='hide'&&!PIF.hid.size)pifHide('all');pifDraw()};
+  st.addEventListener('click',e=>{
+    const sz=e.target.closest('[data-n]');if(sz){PIF.n=+sz.dataset.n;store.set('pifN',PIF.n);PIF.hid.clear();if(PIF.mode==='hide')pifHide('all');pifDraw();return}
+    const hb=e.target.closest('[data-h]');if(hb){pifHide(hb.dataset.h);pifDraw();return}
+    const rw=e.target.closest('[data-row]');if(rw){const r=+rw.dataset.row;PIF.rows=PIF.rows.includes(r)?PIF.rows.filter(x=>x!==r):[...PIF.rows,r];rw.classList.toggle('on');return}
+    const qb=e.target.closest('.pqb');if(qb&&PIF.q&&!PIF.q.lock){const q=PIF.q;q.lock=true;const ok=+qb.dataset.v===q.c;PIF.all++;
+      if(ok){PIF.ok++;PIF.streak++;PIF.done.add(q.a+'x'+q.b);qb.classList.add('ok');burstAt(qb,PIF.streak>=5?70:30)}else{PIF.streak=0;qb.classList.add('no');$(`#pO [data-v="${q.c}"]`).classList.add('ok')}
+      $('#pQ').innerHTML=`${q.a} × ${q.b} = <b class="${ok?'g':'r'}">${q.c}</b>`;pifHl(q.a,q.b);const cell=$(`#pif .pv[data-a="${q.a}"][data-b="${q.b}"]`);if(cell&&ok)cell.classList.add('lit');
+      setTimeout(pifNext,ok?1100:2200);return}
+    const c=e.target.closest('.pc');if(!c)return;
+    if(c.classList.contains('hid')){const k=c.dataset.a+'x'+c.dataset.b;PIF.hid.delete(k);c.classList.remove('hid');c.classList.add('rev');c.textContent=c.dataset.a*c.dataset.b;pifHl(+c.dataset.a,+c.dataset.b);return}
+    if(c.dataset.r){pifHl(+c.dataset.r,0);const F=$('#pF');if(F)F.innerHTML=`${c.dataset.r} ning karralari: ${Array.from({length:PIF.n},(_,i)=>(i+1)*c.dataset.r).join(', ')}`;return}
+    if(c.dataset.c){pifHl(0,+c.dataset.c);const F=$('#pF');if(F)F.innerHTML=`${c.dataset.c} ning karralari: ${Array.from({length:PIF.n},(_,i)=>(i+1)*c.dataset.c).join(', ')}`;return}
+    if(c.dataset.a&&PIF.mode==='show'){const a=+c.dataset.a,b=+c.dataset.b;pifHl(a,b);$('#pF').innerHTML=`<b>${a}</b> × <b>${b}</b> = <span>${a*b}</span>`}});
+  if(matchMedia('(hover:hover)').matches)st.addEventListener('pointerover',e=>{if(PIF.mode!=='show')return;const c=e.target.closest('.pv');if(!c)return;const a=+c.dataset.a,b=+c.dataset.b;pifHl(a,b);const F=$('#pF');if(F)F.innerHTML=`<b>${a}</b> × <b>${b}</b> = <span>${a*b}</span>`});
+}
+function pifHide(how){const N=PIF.n;PIF.hid.clear();if(how==='open')return;const all=[];for(let a=1;a<=N;a++)for(let b=1;b<=N;b++)all.push(a+'x'+b);
+  (how==='rnd'?shuffle(all).slice(0,15):all).forEach(k=>PIF.hid.add(k))}
 
 /* ---------- 🎡 tasodifiy tanlash ---------- */
 function wheelHtml(){return `
