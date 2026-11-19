@@ -2,7 +2,7 @@
    Sahifalar va oʻyinlar: avval internetdan (har doim yangi versiya), internet boʻlmasa — saqlangan nusxa.
    Rasmlar va shriftlar: saqlangan nusxa darhol, orqada yangilanadi.
    Saytni yangilaganda shu yerdagi VERSION raqamini oshirish shart emas — sahifalar baribir internetdan olinadi. */
-const VERSION = 'bk-v9';
+const VERSION = 'bk-v10';
 const CORE = [
   '/',
   '/index.html',
@@ -12,6 +12,7 @@ const CORE = [
   '/games/sets.json',
   '/games/baza/matematika.json',
   '/games/baza/ona-tili.json',
+  '/games/baza/ingliz.json',
   '/games/bilim.html',
   '/games/eshik-kodi.html',
   '/games/kosmik-baza.html',

@@ -184,7 +184,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const P=new URLSearchParams(location.search);const BZ_V='df03fef8';
+const P=new URLSearchParams(location.search);const BZ_V='8e27a07f';
 const MODES={
  togri:{icon:'✅',name:'Toʻgʻri yoki notoʻgʻri',c:['#0f9d8a','#2fb9a3'],desc:'Ekranda gap chiqadi. Navbatdagi guruh «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['tf','mc'],len:{t:'Savollar soni',o:[10,16,20,30],d:16}},
  jlash:{icon:'🔗',name:'Juftlash',c:['#2f8cff','#6aa8ff'],desc:'Chapdagi har birini oʻngdagi mos javob bilan ulang. Toʻgʻri juft topgan guruh yana yuradi.',kinds:['pair','mc'],len:{t:'Juftlar soni',o:[10,15,20],d:15}},
