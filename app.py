@@ -2090,13 +2090,26 @@ async def ai_puzzle(day: str) -> dict | None:
         return None
     system = ("Sen boshlangʻich va 5–7-sinf oʻquvchilari uchun mantiqiy jumboqlar tuzuvchi oʻqituvchisan. "
               "Faqat oʻzbek tilida (lotin yozuvida), qisqa va aniq yoz. Savol 1–2 jumla, uzun hisob-kitobsiz, "
-              "aqlni charxlaydigan boʻlsin. Javob bir maʼnoli va 100% toʻgʻri boʻlishi shart.")
+              "aqlni charxlaydigan boʻlsin. Javob bir maʼnoli va 100% toʻgʻri boʻlishi shart: kerakli barcha maʼlumot "
+              "savolda aniq yozilsin, ikki xil tushunish mumkin boʻlgan (masalan, oila aʼzolarini sanash) savollar tuzma.")
     prompt = (f"Bugungi sana: {day}. Bitta «Kun jumbogʻi» tuz: mantiq, sonli qonuniyat, qiziqarli masala yoki hazil-savol. "
               "JSON qaytar: {\"q\": savol (260 belgidan qisqa), \"o\": [4 ta qisqa variant], \"a\": toʻgʻri variant indeksi 0–3, "
               "\"e\": qisqa yechim (180 belgidan qisqa)}. Variantlar bir-biridan farq qilsin.")
     try:
         text = await gemini_call([{"role": "user", "parts": [{"text": prompt}]}], system=system, max_tokens=1024, temperature=1.0)
-        return valid_puzzle(parse_json_text(text))
+        p = valid_puzzle(parse_json_text(text))
+        if not p:
+            return None
+        # Ikkinchi tekshiruv: AI jumboqni mustaqil yechadi; javob mos kelmasa yoki noaniq boʻlsa — tashlanadi.
+        check = ("Quyidagi jumboqni diqqat bilan, bosqichma-bosqich yech. Agar savol ikki xil tushunilishi mumkin boʻlsa "
+                 "yoki toʻgʻri javob variantlarda boʻlmasa, ok=false qaytar.\n\n"
+                 f"Savol: {p['q']}\nVariantlar: " + "; ".join(f"{i}) {o}" for i, o in enumerate(p["o"])) +
+                 '\n\nJSON qaytar: {"a": toʻgʻri variant indeksi 0–3, "ok": true/false}')
+        v = parse_json_text(await gemini_call([{"role": "user", "parts": [{"text": check}]}], max_tokens=2048, temperature=0.0))
+        if not isinstance(v, dict) or v.get("ok") is False or int(v.get("a", -1)) != p["a"]:
+            log.info("ai_puzzle rad etildi: %s / %s", p, v)
+            return None
+        return p
     except Exception as e:
         log.warning("ai_puzzle: %s", e)
         return None
@@ -2149,7 +2162,8 @@ async def api_daily(request: web.Request) -> web.Response:
     if not d:
         return web.json_response({"ok": True, "p": None})
     return web.json_response({"ok": True, "p": {k: d.get(k) for k in ("d", "q", "o", "a", "e")},
-                              "today": d.get("d") == _today(), "channel": DAILY_CHANNEL})
+                              "today": d.get("d") == _today(), "channel": DAILY_CHANNEL,
+                              "posted": bool(d.get("mid")), "err": d.get("err", "") if not d.get("mid") else ""})
 
 
 async def daily_loop(app: web.Application) -> None:
