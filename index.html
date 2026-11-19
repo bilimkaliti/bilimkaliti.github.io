@@ -1963,7 +1963,8 @@ function bindLib(fan){
     try{const j=await api('/api/lib/list',{token:AUTH.tok||'',fan:$('#lFan').value,sinf:$('#lSinf').value,q:$('#lQ').value,sort:$('#lSort').value},60000);remote=(j.sets||[]).map(s=>({...s,lib:1}));on=j.on}catch(e){}
     const f=$('#lFan').value,sn=$('#lSinf').value,q=$('#lQ').value.toLowerCase();
     const loc=st.filter(s=>(!f||s.fan===f)&&(!sn||String(s.sinf)===sn)&&(!q||`${s.name} ${s.mavzu} ${s.author}`.toLowerCase().includes(q)));
-    all=[...remote,...loc];all.forEach(s=>by[s.id]=s);
+    let bz=[];if(fan!=='Matematika'&&(!f||f==='Matematika')){try{const B=await bazaGet('matematika');bz=B.topics.filter(t=>(!sn||(t.sinf||[]).includes(+sn))&&(!q||`${t.name} ${t.bob} matematika`.toLowerCase().includes(q))).map(bzSet)}catch(e){}}
+    all=[...remote,...loc,...bz];all.forEach(s=>by[s.id]=s);
     $('#lList').innerHTML=all.length?all.map(setCard).join(''):`<div class="empty"><div>📭</div><p>Hozircha bu yerda toʻplam yoʻq.${f?' Birinchi boʻlib siz yarating!':''}</p><a class="btn gold" href="#/ai/savollar">✨ AI bilan yaratish</a></div>`;
   }
   ['#lFan','#lSinf','#lSort'].forEach(s=>$(s).onchange=load);let tm;$('#lQ').oninput=()=>{clearTimeout(tm);tm=setTimeout(load,350)};
@@ -1971,6 +1972,7 @@ function bindLib(fan){
   $('#lList').onclick=async e=>{const b=e.target.closest('button');if(!b)return;
     const id=b.dataset.play||b.dataset.view||b.dataset.ldel||b.dataset.hw||b.dataset.copy,s=by[id];if(!s)return;
     if(b.dataset.hw)return hwModal(s);if(b.dataset.copy){b.disabled=true;await copyToMine(s);b.disabled=false;return}
+    if(b.dataset.play&&/^bz-/.test(s.id)){const t=BAZA.matematika.topics.find(x=>'bz-'+x.id===s.id);return bazaPlay('matematika',t)}
     if(b.dataset.play)playModal(s,s.fixed?`&set=${encodeURIComponent(s.id)}`:`&lib=${encodeURIComponent(s.id)}`);
     if(b.dataset.view){if(s.items)return viewModal(s.name,s.items);b.disabled=true;try{const j=await api('/api/lib/get',{id},60000);viewModal(s.name,j.set.items)}catch(err){toast(err.message)}b.disabled=false}
     if(b.dataset.ldel){if(!b.dataset.c){b.dataset.c=1;b.textContent='✓?';setTimeout(()=>{b.dataset.c='';b.textContent='🗑'},2500);return}
