@@ -1158,7 +1158,7 @@ const PAGES={
   sel=sel.filter(i=>list.some(t=>t.i===i));
   return `<div class="wrap fade">
    <div class="crumbs"><a href="#/sinflar">Sinflar</a><span>›</span><span>${n}-sinf</span><span>›</span><span>Matematika</span></div>
-   <div class="sh"><div><h2>${n}-sinf · Matematika</h2><p class="sub">${BZ_SINF.includes(+n)?'Tayyor mavzular — kitob boʻyicha savollar. Yangi misollar — har gal yangidan tuziladi.':'Mavzularni belgilang, keyin oʻyinni tanlang.'}</p></div></div>
+   <div class="sh"><div><h2>${n}-sinf · Matematika</h2><p class="sub">${BZ_SINF.includes(+n)?'Tayyor mavzular — Oson, Oʻrta va Qiyin darajadagi savollar. Yangi misollar — har gal yangidan tuziladi.':'Mavzularni belgilang, keyin oʻyinni tanlang.'}</p></div></div>
    ${BZ_SINF.includes(+n)?`<div class="tabs seg2" id="sMode" style="margin:0 0 16px"><button data-sm="baza">📘 Tayyor mavzular</button><button data-sm="gen">🎲 Yangi misollar</button></div><div id="sBaza">${bazaBlock(n)}</div>`:''}
    <div id="sGen">
    <div class="topics" id="tps">${list.map(t=>`<button class="chip ${sel.includes(t.i)?'on':''}" data-i="${t.i}"><i></i>${esc(t.n)}</button>`).join('')}</div>
@@ -1229,7 +1229,7 @@ function doRoute(){
   if(r==='')bindDaily();
   if(r!=='ai'||parts[1]!=='darslik')document.removeEventListener('paste',dlPaste);
   hit('view',{p:parts.slice(0,2).join('/')||'home'});
-  const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.dataset.count=all.size+53}
+  const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.dataset.count=all.size+83}
   window.scrollTo(0,0);
   revealInit();
   if(r===''){heroStart();if(document.documentElement.classList.contains('ready'))countUp()}
@@ -1926,7 +1926,7 @@ function libPage(fan){
     <input id="lQ" placeholder="🔍 Mavzu yoki nom boʻyicha qidirish"><select id="lSort"><option value="new">Yangilari</option><option value="top">Koʻp oʻynalgan</option></select></div>
    <div class="sgrid" id="lList">${skel(6)}</div>
   </div></section>`}
-const BZ_SINF=[5,6,7],BZ_CNT={5:30,6:28,7:8};
+const BZ_SINF=[1,2,3,4,5,6,7],BZ_CNT={1:5,2:7,3:10,4:9,5:30,6:29,7:14};
 function bazaBlock(sinf){return `<div class="bz" id="bz"><h3>📘 ${sinf?sinf+'-sinf: tayyor mavzular':'Tayyor mavzular'}</h3><p class="sub" style="margin:4px 0 0">Darsda oʻtilgan mavzuni tanlang — savollar tayyor. Keyin darajani tanlab, oʻyinni boshlang.</p>
   <input class="bzq" id="bzQ" placeholder="🔍 Mavzuni qidiring: kasr, foiz, burchak…" autocomplete="off">${sinf?'':'<div class="bzchips" id="bzSinf"></div>'}<div class="bzchips" id="bzChips"></div><div class="sgrid" id="bzList">${skel(4)}</div></div>`}
 let BAZA={};
@@ -1947,7 +1947,7 @@ async function bindBaza(f,fix){
     const bobs=B.bolimlar.filter(b=>B.topics.some(t=>t.bob===b&&inS(t)));if(bob&&!bobs.includes(bob))bob='';
     $('#bzChips').innerHTML=['',...bobs].map(b=>`<button data-b="${esc(b)}" class="${b===bob?'on':''}">${b?esc(b):'Barcha boʻlimlar'}</button>`).join('');
     const l=B.topics.filter(t=>inS(t)&&(!bob||t.bob===bob)&&(!q||(t.name+' '+t.bob+' '+(t.k||'')).toLowerCase().includes(q)));let last='';
-    $('#bzList').innerHTML=l.length?l.map(t=>{const h=!bob&&!q&&t.bob!==last?`<div class="bzh">${esc(last=t.bob)}</div>`:'';return h+setCard(bzSet(t))}).join('')
+    $('#bzList').innerHTML=l.length?l.map(t=>{const h=!fix&&!bob&&!q&&t.bob!==last?`<div class="bzh">${esc(last=t.bob)}</div>`:'';return h+setCard(bzSet(t))}).join('')
       :`<p class="sub">Bunday mavzu topilmadi. Boshqa soʻz bilan qidiring.</p>`};
   $('#bzChips').onclick=e=>{const b=e.target.closest('[data-b]');if(!b)return;bob=b.dataset.b;draw()};
   if($('#bzSinf'))$('#bzSinf').onclick=e=>{const b=e.target.closest('[data-sn]');if(!b)return;sn=+b.dataset.sn;store.set('bzsinf',sn);draw()};

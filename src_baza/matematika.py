@@ -36,6 +36,7 @@ def nwr(a, k=(1, -1, 10, -10, 2)):  # sonli xato variantlar
 
 SUP = str.maketrans('0123456789', '⁰¹²³⁴⁵⁶⁷⁸⁹')
 def up(n): return str(n).translate(SUP)
+def ex(n): return '' if n == 1 else up(n)
 def cf(c, v): return v if c == 1 else f'{c}{v}'
 def neg(n): return ('−' + str(-n)) if n < 0 else str(n)
 def par(n): return f'({neg(n)})' if n < 0 else str(n)
@@ -868,6 +869,419 @@ def pz3():
     return num(f'Prizmaning {k[1]} ta {k[0]} bor. Asosi necha burchakli?', n)
 topic(B11, 'prizma', 'Prizma', pz([3, 4]), pz([5, 6, 8]), pz3)
 
+# ================= BOSHLANGʻICH SINFLAR (1–4) va 7-SINF QOʻSHIMCHA =================
+NEW_START = len(TOPICS)
+P1 = 'Boshlangʻich: sonlar va amallar'; P2 = 'Boshlangʻich: oʻlchov va geometriya'; P3 = 'Boshlangʻich: masalalar'
+A7 = 'Algebra (7-sinf)'; G7 = 'Geometriya (7-sinf)'
+NSINF = {}
+def ntopic(bob, tid, name, sinf, g1, g2, g3):
+    topic(bob, tid, name, g1, g2, g3); NSINF[tid] = sinf
+
+# ---------- 1-sinf ----------
+def sn1():
+    n = ri(1, 9)
+    return ch([num(f'{n} dan keyin qaysi son keladi?', n + 1), num(f'{n + 1} dan oldin qaysi son keladi?', n)])
+def sn2():
+    n = ri(2, 18)
+    return ch([num(f'{n - 1} va {n + 1} orasida qaysi son turadi?', n), num(f'{n} dan keyin qaysi son keladi?', n + 1), num(f'{n} dan oldin qaysi son keladi?', n - 1)])
+def sn3():
+    a = ri(1, 15); d = ch([1, 2, 5])
+    s = [a + d * i for i in range(4)]
+    return ch([num(f'Davom ettiring: {s[0]}, {s[1]}, {s[2]}, ?', s[3]), num(f'{a} va {a + 4} orasida nechta son bor?', 3),
+               mc('Qaysi son eng katta?', str(a + 9), [str(a), str(a + 3), str(a + 6)]), mc('Qaysi son eng kichik?', str(a), [str(a + 2), str(a + 5), str(a + 8)])])
+ntopic(P1, 'b1sanash', 'Sanash va son qatori', [1], sn1, sn2, sn3)
+
+def q10a():
+    a, b = ri(0, 5), ri(0, 5)
+    if a + b > 10: return None
+    return ch([num(f'{a} + {b} = ?', a + b), num(f'{a + b} − {b} = ?', a)])
+def q10b():
+    a, b = ri(1, 9), ri(1, 9)
+    if a + b > 10: return None
+    return ch([num(f'{a} + {b} = ?', a + b), num(f'{a + b} − {a} = ?', b), num(f'10 − {a} = ?', 10 - a)])
+def q10c():
+    a, b = ri(1, 9), ri(1, 9)
+    if a + b > 10: return None
+    return ch([num(f'{a} + ? = {a + b}', b), num(f'? + {b} = {a + b}', a), num(f'{a + b} − ? = {a}', b), num(f'{a} + {b} − {min(a, b)} = ?', max(a, b))])
+ntopic(P1, 'b1qosh10', '10 ichida qoʻshish va ayirish', [1], q10a, q10b, q10c)
+
+def q20a():
+    a = ri(1, 9)
+    return ch([num(f'10 + {a} = ?', 10 + a), num(f'{10 + a} − {a} = ?', 10), num(f'{10 + a} − 10 = ?', a)])
+def q20b():
+    a, b = ri(2, 9), ri(2, 9)
+    if a + b <= 10: return None
+    return ch([num(f'{a} + {b} = ?', a + b), num(f'{a + b} − {b} = ?', a)])
+def q20c():
+    a, b = ri(2, 9), ri(2, 9)
+    if a + b <= 10: return None
+    return ch([num(f'{a} + ? = {a + b}', b), num(f'{a + b} − ? = {a}', b), num(f'{a} + {b} − 10 = ?', a + b - 10)])
+ntopic(P1, 'b1qosh20', '20 ichida qoʻshish va ayirish', [1, 2], q20a, q20b, q20c)
+
+def tq1a():
+    a, b = ri(0, 10), ri(0, 10)
+    return mc(f'{a} ☐ {b}. Qaysi belgi qoʻyiladi?', '>' if a > b else '<' if a < b else '=', ['>', '<', '=', '+'])
+def tq1b():
+    a, b, c = ri(1, 9), ri(1, 9), ri(1, 18)
+    return mc(f'{a} + {b} ☐ {c}. Qaysi belgi qoʻyiladi?', '>' if a + b > c else '<' if a + b < c else '=', ['>', '<', '=', '+'])
+def tq1c():
+    a, b, c, d = ri(1, 9), ri(1, 9), ri(1, 9), ri(1, 9)
+    return mc(f'{a} + {b} ☐ {c} + {d}. Qaysi belgi qoʻyiladi?', '>' if a + b > c + d else '<' if a + b < c + d else '=', ['>', '<', '=', '+'])
+ntopic(P1, 'b1taqqos', 'Sonlarni taqqoslash', [1], tq1a, tq1b, tq1c)
+
+shk1 = [num('Uchburchakning nechta burchagi bor?', 3), num('Kvadratning nechta tomoni bor?', 4), num('Toʻgʻri toʻrtburchakning nechta burchagi bor?', 4),
+        num('Uchburchakning nechta tomoni bor?', 3), mc('Burchagi yoʻq shakl qaysi?', 'Doira', ['Kvadrat', 'Uchburchak', 'Toʻrtburchak']),
+        mc('Hamma tomonlari teng toʻrtburchak qanday ataladi?', 'Kvadrat', ['Doira', 'Uchburchak', 'Oval']), num('Kvadratning nechta burchagi bor?', 4),
+        mc('Koptok qaysi shaklga oʻxshaydi?', 'Shar', ['Kub', 'Uchburchak', 'Kvadrat']), mc('Qaysi shaklning 3 ta burchagi bor?', 'Uchburchak', ['Kvadrat', 'Doira', 'Toʻrtburchak']),
+        mc('Kubik (oʻyinchoq) qaysi shaklga oʻxshaydi?', 'Kub', ['Shar', 'Doira', 'Uchburchak'])]
+def shk2():
+    a, b = ri(1, 5), ri(1, 5)
+    return ch([num(f'{a} ta uchburchakning jami nechta burchagi bor?', 3 * a), num(f'{a} ta kvadratning jami nechta tomoni bor?', 4 * a),
+               num(f'{a} ta uchburchak va {b} ta kvadratda jami nechta burchak bor?', 3 * a + 4 * b) if a + b <= 6 else None])
+shk3 = [num('Kubning nechta yogʻi bor?', 6), num('Beshburchakning nechta burchagi bor?', 5), num('Oltiburchakning nechta tomoni bor?', 6),
+        num('Kvadratni bitta chiziq bilan ikkiga boʻlsak, nechta uchburchak hosil boʻlishi mumkin?', 2), num('Kubning nechta uchi bor?', 8),
+        mc('Qaysi shaklning hamma nuqtalari markazdan bir xil uzoqlikda?', 'Doira', ['Kvadrat', 'Uchburchak', 'Toʻrtburchak']),
+        num('Toʻrtburchakda nechta tomon va burchak bor? (jami)', 8), num('Ikki uchburchakning jami nechta tomoni bor?', 6),
+        num('Uchta kvadratning jami nechta burchagi bor?', 12), mc('Qaysi shakl yumalaydi?', 'Shar', ['Kub', 'Prizma', 'Piramida'])]
+ntopic(P2, 'b1shakl', 'Geometrik shakllar', [1, 2], shk1, shk2, shk3)
+
+# ---------- 2-sinf ----------
+def h100a():
+    a, b = ri(1, 9) * 10, ri(1, 9) * 10
+    if a + b > 100: return None
+    return ch([num(f'{a} + {b} = ?', a + b), num(f'{a + b} − {b} = ?', a)])
+def h100b():
+    a, b = ri(11, 89), ri(1, 9)
+    if a % 10 + b >= 10: return None
+    return ch([num(f'{a} + {b} = ?', a + b), num(f'{a + b} − {b} = ?', a), num(f'{a} + {b * 10} = ?', a + b * 10) if a + b * 10 <= 100 else None])
+def h100c():
+    a, b = ri(15, 79), ri(6, 29)
+    if a + b > 100: return None
+    return ch([num(f'{a} + {b} = ?', a + b), num(f'{a + b} − {b} = ?', a), num(f'{a} + ? = {a + b}', b)])
+ntopic(P1, 'b2qosh100', '100 ichida qoʻshish va ayirish', [2], h100a, h100b, h100c)
+
+def xn2a():
+    n = ri(11, 99)
+    return ch([num(f'{n} sonida nechta oʻnlik bor?', n // 10), num(f'{n} sonida nechta birlik bor? (birlar xonasi)', n % 10)])
+def xn2b():
+    a, b = ri(1, 9), ri(0, 9)
+    return ch([num(f'{a} ta oʻnlik va {b} ta birlik — qaysi son?', a * 10 + b), num(f'{a * 10 + b} = {a * 10} + ?', b)])
+def xn2c():
+    t = ri(0, 3)
+    if t == 0: return num('Eng katta ikki xonali son?', 99)
+    if t == 1: a = ri(1, 9); return num(f'Oʻnliklar raqami {a}, birliklar raqami undan 1 ta kam. Qaysi son?', a * 10 + a - 1) if a > 0 else None
+    if t == 2: n = ri(10, 98); return num(f'{n} ni oʻnlikkacha yaxlitlang.', ((n + 5) // 10) * 10)
+    a = ri(2, 9); return num(f'Raqamlari bir xil boʻlgan ikki xonali son, oʻnliklari {a}. Qaysi son?', a * 11)
+ntopic(P1, 'b2xona', 'Ikki xonali sonlar: oʻnlik va birlik', [2], xn2a, xn2b, xn2c)
+
+def jad(lo, hi):
+    def g():
+        a, b = ri(lo, hi), ri(1, 10)
+        return ch([num(f'{a} · {b} = ?', a * b), num(f'{b} · {a} = ?', a * b)])
+    return g
+def jadb(lo, hi):
+    def g():
+        a, b = ri(lo, hi), ri(1, 10)
+        return ch([num(f'{a * b} : {a} = ?', b), num(f'{a} · ? = {a * b}', b)])
+    return g
+ntopic(P1, 'b2jadval', 'Koʻpaytirish jadvali (2–5)', [2, 3], jad(2, 3), jad(4, 5), jadb(2, 5))
+
+def ol2a():
+    n = ri(1, 9)
+    return ch([num(f'{n} dm = ? sm', n * 10), num(f'{n} m = ? sm', n * 100), num(f'{n} soat = ? minut', n * 60) if n <= 3 else None])
+def ol2b():
+    a, b = ri(1, 9), ri(1, 9)
+    return ch([num(f'{a} dm {b} sm = ? sm', a * 10 + b), num(f'{a} m {b * 10} sm = ? sm', a * 100 + b * 10), num(f'{a * 10} sm = ? dm', a)])
+def ol2c():
+    t = ri(0, 3)
+    if t == 0: n = ri(1, 3); m = ch([10, 15, 20, 30, 45]); return num(f'{n} soat {m} minut = ? minut', n * 60 + m)
+    if t == 1: return num(f'1 sutka = ? soat', 24)
+    if t == 2: w = ri(1, 4); return num(f'{w} hafta = ? kun', w * 7)
+    a, b = ri(20, 90), ri(5, 19); return num(f'Lenta {a} sm edi, {b} sm qirqildi. Necha sm qoldi?', a - b)
+ntopic(P2, 'b2olchov', 'Uzunlik va vaqt birliklari', [2, 3], ol2a, ol2b, ol2c)
+
+def ms2a():
+    a, b = ri(2, 15), ri(2, 15)
+    return ch([num(f'Savatda {a} ta olma, {b} ta nok bor. Jami nechta meva bor?', a + b), num(f'Alida {a + b} ta qalam bor edi. {b} tasini berdi. Nechta qoldi?', a)])
+def ms2b():
+    a, b = ri(3, 20), ri(2, 9)
+    return ch([num(f'Sinfda {a} ta qiz bor, oʻgʻil bolalar {b} ta koʻp. Oʻgʻil bolalar nechta?', a + b), num(f'Vali {a + b} yoshda, ukasi undan {b} yosh kichik. Ukasi necha yoshda?', a),
+               num(f'Bitta stolda 2 ta oʻquvchi oʻtiradi. {b} ta stolda nechta oʻquvchi oʻtiradi?', 2 * b)])
+def ms2c():
+    a, b, c = ri(10, 30), ri(2, 9), ri(2, 9)
+    return ch([num(f'Avtobusda {a} kishi bor edi. {b} kishi tushdi, {c} kishi chiqdi. Endi nechta kishi bor?', a - b + c),
+               num(f'{b} ta qutining har birida {c} tadan konfet bor. Jami nechta konfet?', b * c) if b <= 5 or c <= 5 else None,
+               num(f'{b * c} ta daftarni {b} ta oʻquvchiga teng boʻlishdi. Har biriga nechta tegdi?', c)])
+ntopic(P3, 'b2masala', 'Oddiy masalalar', [2], ms2a, ms2b, ms2c)
+
+# ---------- 3-sinf ----------
+ntopic(P1, 'b3jadval', 'Koʻpaytirish jadvali (6–9)', [3], jad(6, 7), jad(8, 9), jadb(6, 9))
+
+def q3a():
+    b = ri(2, 5); q = ri(2, 9); r = ri(1, b - 1)
+    return num(f'{b * q + r} : {b} — qoldiq nechaga teng?', r)
+def q3b():
+    b = ri(3, 9); q = ri(2, 9); r = ri(1, b - 1)
+    return ch([num(f'{b * q + r} : {b} — qoldiq nechaga teng?', r), num(f'{b * q + r} : {b} — boʻlinma nechaga teng?', q)])
+def q3c():
+    b = ri(3, 9); q = ri(2, 9); r = ri(1, b - 1)
+    return ch([num(f'{b * q + r} ta oʻquvchini {b} kishilik qatorlarga turgʻizishdi. Nechta toʻla qator boʻladi?', q),
+               num(f'{b * q + r} ta olmani {b} ta savatga teng soldi. Nechta olma ortib qoldi?', r)])
+ntopic(P1, 'b3qoldiq', 'Qoldiqli boʻlish (jadval ichida)', [3], q3a, q3b, q3c)
+
+def if3a():
+    a, b, c = ri(2, 20), ri(2, 9), ri(2, 9)
+    return ch([num(f'{a} + {b} · {c} = ?', a + b * c), num(f'({a} + {b}) − {c} = ?', a + b - c)])
+def if3b():
+    a, b, c = ri(2, 9), ri(2, 9), ri(2, 9)
+    return ch([num(f'({a} + {b}) · {c} = ?', (a + b) * c), num(f'{a * c} : {c} + {b} = ?', a + b), num(f'{a} · {b} − {c} = ?', a * b - c) if a * b > c else None])
+def if3c():
+    a, b, c, d = ri(2, 9), ri(2, 9), ri(2, 9), ri(2, 9)
+    return ch([num(f'{a} · {b} + {c} · {d} = ?', a * b + c * d), num(f'({a * c} + {b * c}) : {c} = ?', a + b), num(f'{a} · ({b} + {c}) − {d} = ?', a * (b + c) - d)])
+ntopic(P1, 'b3ifoda', 'Ifoda qiymati (qavslar, amallar tartibi)', [3, 4], if3a, if3b, if3c)
+
+def h1000a():
+    a, b = ri(1, 9) * 100, ri(1, 9) * 100
+    if a + b > 1000: return None
+    return ch([num(f'{a} + {b} = ?', a + b), num(f'{a + b} − {b} = ?', a)])
+def h1000b():
+    a, b = ri(100, 899), ri(11, 99)
+    return ch([num(f'{a} + {b} = ?', a + b) if a + b <= 1000 else None, num(f'{a} − {b} = ?', a - b)])
+def h1000c():
+    a, b = ri(150, 899), ri(101, 499)
+    return ch([num(f'{a} + {b} = ?', a + b) if a + b <= 1000 else None, num(f'{a} − {b} = ?', a - b) if a > b else None, num(f'{a} + ? = {a + b}', b) if a + b <= 1000 else None])
+ntopic(P1, 'b3qosh1000', '1000 ichida qoʻshish va ayirish', [3], h1000a, h1000b, h1000c)
+
+def xn3a():
+    n = ri(100, 999)
+    return ch([num(f'{n} sonida yuzlar xonasidagi raqam?', n // 100), num(f'{n} sonida oʻnlar xonasidagi raqam?', n // 10 % 10), num(f'{n} sonida birlar xonasidagi raqam?', n % 10)])
+def xn3b():
+    a, b, c = ri(1, 9), ri(0, 9), ri(0, 9)
+    return ch([num(f'{a} ta yuzlik, {b} ta oʻnlik va {c} ta birlik — qaysi son?', a * 100 + b * 10 + c), num(f'{a * 100 + b * 10 + c} = {a * 100} + {b * 10} + ?', c)])
+def xn3c():
+    n = ri(101, 989)
+    return ch([num(f'{n} ni yuzlikkacha yaxlitlang.', ((n + 50) // 100) * 100), num(f'{n} sonida jami nechta oʻnlik bor?', n // 10),
+               num('Raqamlari har xil boʻlgan eng katta uch xonali son?', 987), num('Eng kichik uch xonali son?', 100)])
+ntopic(P1, 'b3xona', 'Uch xonali sonlar', [3], xn3a, xn3b, xn3c)
+
+def pm3a():
+    a, b = ri(2, 15), ri(2, 15)
+    return ch([num(f'Kvadrat tomoni {a} sm. Perimetri necha sm?', 4 * a), num(f'Toʻgʻri toʻrtburchak tomonlari {a} sm va {b} sm. Perimetri?', 2 * (a + b))])
+def pm3b():
+    a, b, c = ri(2, 15), ri(2, 15), ri(2, 15)
+    if a + b <= c or a + c <= b or b + c <= a: return None
+    return ch([num(f'Uchburchak tomonlari {a}, {b} va {c} sm. Perimetri necha sm?', a + b + c), num(f'Kvadrat perimetri {4 * a} sm. Tomoni necha sm?', a)])
+def pm3c():
+    a, b = ri(2, 15), ri(2, 15)
+    if a == b: return None
+    return ch([num(f'Toʻgʻri toʻrtburchak perimetri {2 * (a + b)} sm, bir tomoni {a} sm. Ikkinchi tomoni?', b),
+               num(f'Bogʻning eni {a} m, boʻyi {b} m. Atrofiga necha metr devor kerak?', 2 * (a + b))])
+ntopic(P2, 'b3perimetr', 'Perimetr', [3], pm3a, pm3b, pm3c)
+
+def ms3a():
+    a, b = ri(2, 9), ri(2, 9)
+    return ch([num(f'Bir qutida {a} ta qalam bor. {b} ta qutida nechta qalam?', a * b), num(f'{a * b} ta gulni {b} ta guldonga teng qoʻyishdi. Har birida nechta?', a)])
+def ms3b():
+    a, b, c = ri(2, 9), ri(2, 9), ri(2, 9)
+    return ch([num(f'{a} ta qutida {b} tadan olma bor. {c} ta olma yeyildi. Nechta qoldi?', a * b - c) if a * b > c else None,
+               num(f'Daftar {a} ming soʻm, ruchka {b} ming soʻm. {c} ta daftar va 1 ta ruchka necha ming soʻm?', a * c + b)])
+def ms3c():
+    a, k = ri(3, 12), ri(2, 4)
+    return ch([num(f'Alida {a} ta marka, Valida {k} marta koʻp. Ikkalasida jami nechta?', a + a * k),
+               num(f'Akada {a * k} ta yongʻoq bor, bu ukadagidan {k} marta koʻp. Ukada nechta?', a),
+               num(f'Oʻquvchi kuniga {a} bet oʻqiydi. {a * 7} betli kitobni necha kunda oʻqiydi?', 7)])
+ntopic(P3, 'b3masala', 'Ikki amalli masalalar', [3, 4], ms3a, ms3b, ms3c)
+
+# ---------- 4-sinf ----------
+def kx4a():
+    n = ri(1000, 9999)
+    return ch([num(f'{sp(n)} sonida minglar xonasidagi raqam?', n // 1000), num(f'{sp(n)} sonida yuzlar xonasidagi raqam?', n // 100 % 10)])
+def kx4b():
+    a, b = ri(1000, 9999), ri(1000, 9999)
+    return ch([mc(f'{sp(a)} ☐ {sp(b)}. Qaysi belgi?', '>' if a > b else '<' if a < b else '=', ['>', '<', '=', '+']), num(f'{sp(a)} ni yuzlikkacha yaxlitlang.', ((a + 50) // 100) * 100) if a < 9950 else None])
+def kx4c():
+    n = ri(1001, 9499)
+    return ch([num(f'{sp(n)} ni minglikkacha yaxlitlang.', ((n + 500) // 1000) * 1000), num(f'{sp(n)} sonida jami nechta yuzlik bor?', n // 100),
+               num(f'Raqamlari 2, 0, 7, 5 boʻlgan eng katta toʻrt xonali son?', 7520), num(f'Raqamlari 3, 0, 8, 1 boʻlgan eng kichik toʻrt xonali son?', 1038)])
+ntopic(P1, 'b4kopxona', 'Koʻp xonali sonlar', [4], kx4a, kx4b, kx4c)
+
+def kb4a():
+    a, k = ri(2, 99), ch([10, 100])
+    return ch([num(f'{a} · {k} = ?', a * k), num(f'{a * k} : {k} = ?', a)])
+def kb4b():
+    a, b = ri(11, 99), ri(2, 9)
+    return ch([num(f'{a} · {b} = ?', a * b), num(f'{a * b} : {b} = ?', a)])
+def kb4c():
+    a, b = ri(101, 999), ri(2, 9)
+    return ch([num(f'{a} · {b} = ?', a * b), num(f'{sp(a * b)} : {b} = ?', a)])
+ntopic(P1, 'b4kopbol', 'Koʻp xonali sonlarni koʻpaytirish va boʻlish', [4], kb4a, kb4b, kb4c)
+
+def tg4a():
+    x, a = ri(10, 90), ri(5, 60)
+    return ch([num(f'x + {a} = {x + a}. x = ?', x), num(f'x − {a} = {x}. x = ?', x + a)])
+def tg4b():
+    x, a = ri(2, 12), ri(2, 9)
+    return ch([num(f'{a} · x = {a * x}. x = ?', x), num(f'x : {a} = {x}. x = ?', x * a)])
+def tg4c():
+    x, a, b = ri(2, 12), ri(2, 9), ri(5, 50)
+    return ch([num(f'x · {a} + {b} = {x * a + b}. x = ?', x), num(f'{x * a + b} − x · {a} = {b}. x = ?', x)])
+ntopic(P1, 'b4tenglama', 'Oddiy tenglamalar', [3, 4], tg4a, tg4b, tg4c)
+
+def hr4a():
+    v, t = ch([4, 5, 10, 12, 20, 40, 60, 80]), ri(2, 5)
+    return num(f'Tezlik {v} km/soat. {t} soatda necha km yuradi?', v * t)
+def hr4b():
+    v, t = ch([4, 5, 10, 12, 20, 40, 60, 80]), ri(2, 5)
+    return ch([num(f'{v * t} km ni {t} soatda bosib oʻtdi. Tezlik necha km/soat?', v), num(f'{v * t} km ni {v} km/soat tezlikda necha soatda bosib oʻtadi?', t)])
+def hr4c():
+    a, b, t = ch([40, 50, 60]), ch([30, 40, 70, 80]), ri(2, 4)
+    return ch([num(f'Ikki mashina bir-biriga qarab {a} va {b} km/soat tezlikda yurdi va {t} soatda uchrashdi. Oraliq necha km edi?', (a + b) * t),
+               num(f'Velosipedchi {ch([10, 12, 15])} km/soat tezlikda 2 soat, keyin piyoda 5 km/soat tezlikda 1 soat yurdi. Jami necha km?', None) if False else None,
+               num(f'Ikki shahar oraligʻi {(a + b) * t} km. Ikki mashina bir-biriga qarab {a} va {b} km/soat tezlikda yurdi. Necha soatda uchrashadi?', t)])
+ntopic(P3, 'b4harakat', 'Tezlik, vaqt, masofa', [4], hr4a, hr4b, hr4c)
+
+def yz4a():
+    a, b = ri(2, 10), ri(2, 10)
+    return ch([num(f'Kvadrat tomoni {a} sm. Yuzi necha sm²?', a * a), num(f'Toʻgʻri toʻrtburchak tomonlari {a} sm va {b} sm. Yuzi necha sm²?', a * b)])
+def yz4b():
+    a, b = ri(2, 12), ri(2, 12)
+    return ch([num(f'Toʻgʻri toʻrtburchak yuzi {a * b} sm², bir tomoni {a} sm. Ikkinchi tomoni?', b), num(f'Kvadrat yuzi {a * a} sm². Tomoni necha sm?', a)])
+def yz4c():
+    t = ri(0, 2)
+    if t == 0: n = ri(1, 9); return num(f'{n} dm² = ? sm²', n * 100)
+    if t == 1: n = ri(1, 9); return num(f'{n} m² = ? dm²', n * 100)
+    a, b = ri(2, 9), ri(2, 9); return num(f'Xona {a} m ga {b} m. Polning yuzi necha m²?', a * b)
+ntopic(P2, 'b4yuz', 'Yuz va yuz birliklari', [4], yz4a, yz4b, yz4c)
+
+def kq4a():
+    d = ch([2, 3, 4, 5, 10]); n = d * ri(1, 10)
+    return num(f'{n} ning 1/{d} qismi nechaga teng?', n // d)
+def kq4b():
+    d = ch([3, 4, 5, 6, 8, 10]); c = ri(2, d - 1); n = d * ri(1, 10)
+    return num(f'{n} ning {c}/{d} qismi nechaga teng?', n // d * c) if gcd(c, d) == 1 else None
+def kq4c():
+    d = ch([2, 3, 4, 5]); n = d * ri(2, 10)
+    return ch([num(f'Sonning 1/{d} qismi {n // d} ga teng. Son nechaga teng?', n), num(f'Lentaning 1/{d} qismi {n // d} sm. Butun lenta necha sm?', n),
+               mc('Qaysi kasr katta: 1/3 yoki 1/5?', '1/3', ['1/5', 'Teng', 'Aniqlab boʻlmaydi'])])
+ntopic(P1, 'b4kasr', 'Kasrlar: sonning qismi', [4], kq4a, kq4b, kq4c)
+
+def ol4a():
+    n = ri(1, 9)
+    return ch([num(f'{n} kg = ? g', n * 1000), num(f'{n} km = ? m', n * 1000), num(f'{n} t = ? kg', n * 1000)])
+def ol4b():
+    a, b = ri(1, 9), ri(1, 999)
+    return ch([num(f'{a} kg {b} g = ? g', a * 1000 + b), num(f'{a} km {b} m = ? m', a * 1000 + b), num(f'{a * 1000} g = ? kg', a)])
+def ol4c():
+    t = ri(0, 2)
+    if t == 0: a = ri(2, 9); return num(f'{a} ta qop har biri 50 kg. Jami necha kg?', a * 50)
+    if t == 1: a = ri(1, 3); return num(f'{a} asr = ? yil', a * 100)
+    a, b = ri(1, 4), ri(5, 55); return num(f'{a} soat {b} minut = ? minut', a * 60 + b)
+ntopic(P2, 'b4olchov', 'Oʻlchov birliklari (massa, uzunlik, vaqt)', [4], ol4a, ol4b, ol4c)
+
+# ---------- 7-sinf qoʻshimcha ----------
+def bh1():
+    a, m, n = ri(2, 9), ri(1, 5), ri(1, 5)
+    return ch([num(f'{a}x{ex(m)}y{ex(n)} birhadning darajasi?', m + n), num(f'{a}x{ex(m)}y birhadning koeffitsiyenti?', a)])
+def bh2():
+    a, b, m, n = ri(2, 6), ri(2, 6), ri(1, 4), ri(1, 4)
+    return mc(f'{a}x{ex(m)} · {b}x{ex(n)} = ?', f'{a * b}x{ex(m + n)}', [f'{a + b}x{ex(m + n)}', f'{a * b}x{ex(m * n)}', f'{a * b}x{ex(m + n + 1)}'])
+def bh3():
+    a, b, c = ri(2, 9), ri(1, 9), ri(1, 9)
+    return ch([mc(f'({a}x + {b}) + ({c}x − {b}) = ?', f'{a + c}x', [f'{a + c}x + {2 * b}', f'{a - c}x' if a != c else f'{a}x', f'{a * c}x']),
+               num(f'{a}x² + {b}x + {c} koʻphadning x = 1 dagi qiymati?', a + b + c), num(f'{a}x² − {b}x koʻphadning x = 2 dagi qiymati?', 4 * a - 2 * b) if 4 * a > 2 * b else None])
+ntopic(A7, 'b7birhad', 'Birhad va koʻphad', [7], bh1, bh2, bh3)
+
+def qk1():
+    return ch([mc('(a + b)² = ?', 'a² + 2ab + b²', ['a² + b²', 'a² + ab + b²', '2a + 2b']), mc('(a − b)² = ?', 'a² − 2ab + b²', ['a² − b²', 'a² + 2ab − b²', 'a² − b² − 2ab']),
+               mc('a² − b² = ?', '(a − b)(a + b)', ['(a − b)²', '(a + b)²', 'a(a − b)'])] + [None] * 0)
+qk1l = [mc('(a + b)² = ?', 'a² + 2ab + b²', ['a² + b²', 'a² + ab + b²', '2a + 2b']), mc('(a − b)² = ?', 'a² − 2ab + b²', ['a² − b²', 'a² + 2ab − b²', 'a² − b² − 2ab']),
+        mc('a² − b² = ?', '(a − b)(a + b)', ['(a − b)²', '(a + b)²', 'a(a − b)']), mc('(x + 3)² = ?', 'x² + 6x + 9', ['x² + 9', 'x² + 3x + 9', 'x² + 6x + 6']),
+        mc('(x − 5)² = ?', 'x² − 10x + 25', ['x² − 25', 'x² − 5x + 25', 'x² + 10x + 25']), mc('x² − 16 = ?', '(x − 4)(x + 4)', ['(x − 4)²', '(x − 8)(x + 8)', '(x + 4)²']),
+        mc('(2x + 1)² = ?', '4x² + 4x + 1', ['4x² + 1', '2x² + 4x + 1', '4x² + 2x + 1']), mc('(x + 1)(x − 1) = ?', 'x² − 1', ['x² + 1', 'x² − 2x + 1', 'x² + x − 1']),
+        mc('a³ + b³ = ?', '(a + b)(a² − ab + b²)', ['(a + b)³', '(a + b)(a² + ab + b²)', '(a − b)(a² + ab + b²)']), mc('x² + 10x + 25 = ?', '(x + 5)²', ['(x − 5)²', '(x + 25)²', '(x + 10)²'])]
+def qk2():
+    a = ri(11, 99)
+    if a % 10 not in (1, 9): return None
+    return num(f'Qisqa koʻpaytirish formulasi bilan hisoblang: {a}² = ?', a * a)
+def qk2g():
+    if R.random() < .5: return qk2()
+    n = ri(2, 9); return mc(f'(x + {n})² = ?', f'x² + {2 * n}x + {n * n}', [f'x² + {n * n}', f'x² + {n}x + {n * n}', f'x² + {2 * n}x + {2 * n}'])
+def qk3():
+    a, b = ri(20, 99), ri(1, 19)
+    if a <= b: return None
+    return ch([num(f'{a}² − {b}² = ?', a * a - b * b) if a * a - b * b <= 9999 else None, num(f'{a + b} · {a - b} = ?', a * a - b * b) if a * a - b * b <= 9999 and b < 10 else None,
+               num(f'{50 + b}² − {50 - b}² = ?', 200 * b)])
+ntopic(A7, 'b7qisqa', 'Qisqa koʻpaytirish formulalari', [7], qk1l, qk2g, qk3)
+
+def cf1():
+    k, b, x = ri(1, 9), ri(0, 20), ri(0, 9)
+    return num(f'y = {cf(k, "x")} + {b} funksiyaning x = {x} dagi qiymati?', k * x + b)
+def cf2():
+    k, b = ri(1, 9), ri(1, 20)
+    return ch([num(f'y = {cf(k, "x")} + {b} grafigi Oy oʻqini qaysi nuqtada kesadi? (y ni toping)', b), num(f'y = {k}x + {b} funksiyada burchak koeffitsiyenti k = ?', k),
+               num(f'y = {cf(k, "x")} + {b}. y = {k * 5 + b} boʻlsa, x = ?', 5)])
+def cf3():
+    k, b, x = ri(2, 6), ri(1, 10), ri(1, 6)
+    y = k * x + b
+    return ch([mc(f'Qaysi nuqta y = {k}x + {b} grafigida yotadi?', f'({x}; {y})', [f'({x}; {y + 1})', f'({y}; {x})', f'({x + 1}; {y})']),
+               mc(f'y = {k}x + {b} va y = {k}x − 3 grafiklari qanday joylashgan?', 'Parallel', ['Kesishadi', 'Ustma-ust tushadi', 'Perpendikulyar']),
+               mc('Qaysi funksiya oʻsuvchi?', f'y = {k}x − {b}', [f'y = −{k}x + {b}', f'y = {b} − {k}x', f'y = −x − {b}'])])
+ntopic(A7, 'b7funksiya', 'Chiziqli funksiya', [7], cf1, cf2, cf3)
+
+def oa(n_lo, n_hi):
+    def g():
+        n = ri(n_lo, n_hi); vs = [ri(1, 20) for _ in range(n)]
+        s = sum(vs)
+        if s % n: return None
+        return num(f'Sonlarning oʻrta arifmetigi: {", ".join(map(str, vs))}', s // n)
+    return g
+def oa3():
+    t = ri(0, 2)
+    if t == 0:
+        vs = sorted(ri(1, 30) for _ in range(5)); return num(f'Sonlar qatorining medianasi: {", ".join(map(str, vs))}', vs[2])
+    if t == 1:
+        vs = [ri(1, 30) for _ in range(5)]; return num(f'Qatorning qulochi (eng katta − eng kichik): {", ".join(map(str, vs))}', max(vs) - min(vs))
+    a, n = ri(3, 9), ri(3, 5)
+    return num(f'{n} ta sonning oʻrta arifmetigi {a}. Ularning yigʻindisi nechaga teng?', a * n)
+ntopic(A7, 'b7statistika', 'Oʻrta arifmetik, mediana, qulochi', [6, 7], oa(2, 3), oa(4, 5), oa3)
+
+def pa1():
+    a = ri(30, 150)
+    return ch([num(f'Parallel toʻgʻri chiziqlarni kesuvchi kesib oʻtdi. Ichki almashinuvchi burchaklardan biri {a}°. Ikkinchisi?', a),
+               num(f'Parallel toʻgʻri chiziqlar va kesuvchida mos burchaklardan biri {a}°. Ikkinchisi?', a)])
+def pa2():
+    a = ri(30, 150)
+    return ch([num(f'Parallel toʻgʻri chiziqlar va kesuvchida ichki bir tomonli burchaklardan biri {a}°. Ikkinchisi?', 180 - a),
+               mc('Ichki bir tomonli burchaklar yigʻindisi 180° boʻlsa, toʻgʻri chiziqlar qanday?', 'Parallel', ['Kesishadi', 'Perpendikulyar', 'Aniqlab boʻlmaydi'])])
+def pa3():
+    a = ri(20, 80)
+    return ch([num(f'Ichki bir tomonli burchaklardan biri ikkinchisidan {2 * a - 180 if 2 * a > 180 else 180 - 2 * a}° katta. Kichigi necha gradus?', min(a, 180 - a)) if a != 90 else None,
+               num(f'Parallel chiziqlarda kesuvchi hosil qilgan burchaklardan biri {a}°. Qolganlaridan kattasi?', 180 - a)])
+ntopic(G7, 'b7parallel', 'Parallel toʻgʻri chiziqlar va burchaklar', [7], pa1, pa2, pa3)
+
+def ut1():
+    a, b = ri(2, 12), ri(2, 12)
+    c = ri(abs(a - b) + 1, a + b - 1) if R.random() < .5 else ri(a + b, a + b + 8)
+    ok = a + b > c and a + c > b and b + c > a
+    return mc(f'Tomonlari {a}, {b} va {c} sm boʻlgan uchburchak mavjudmi?', 'Ha' if ok else 'Yoʻq', ['Yoʻq' if ok else 'Ha', 'Faqat toʻgʻri burchakli', 'Faqat teng yonli'])
+def ut2():
+    a = ri(20, 80); b = ri(20, 80)
+    if a + b >= 170: return None
+    return ch([num(f'Uchburchakning ikki burchagi {a}° va {b}°. Uchinchi burchakka qoʻshni tashqi burchak?', a + b),
+               num(f'Uchburchakning tashqi burchagi {a + b}°, unga qoʻshni boʻlmagan ichki burchaklardan biri {a}°. Ikkinchisi?', b)])
+def ut3():
+    a, b = ri(2, 15), ri(2, 15)
+    if a == b: return None
+    return ch([num(f'Uchburchakning ikki tomoni {a} va {b} sm. Uchinchi tomon eng katta butun qiymati?', a + b - 1),
+               num(f'Uchburchakning ikki tomoni {a} va {b} sm. Uchinchi tomon eng kichik butun qiymati?', abs(a - b) + 1),
+               num(f'Teng yonli uchburchakning asosi {a} sm, yon tomoni {b} sm. Perimetri?', a + 2 * b) if 2 * b > a else None])
+ntopic(G7, 'b7uchtomon', 'Uchburchak tomonlari va tashqi burchak', [7], ut1, ut2, ut3)
+
+# yangi mavzular roʻyxat boshiga (1–4-sinf), 7-sinf qoʻshimchalari oxirga
+_new = TOPICS[NEW_START:]; del TOPICS[NEW_START:]
+_prim = [t for t in _new if min(NSINF[t['id']]) <= 4]; _s7 = [t for t in _new if min(NSINF[t['id']]) > 4]
+TOPICS[:0] = _prim; TOPICS.extend(_s7)
+
 # ---- sinflar (Oʻzbekiston maktab dasturi boʻyicha taxminiy) ----
 SINF = {
  'qoshish': [5], 'ayirish': [5], 'kopaytirish': [5], 'bolish': [5], 'aralash': [5], 'tenglama1': [5],
@@ -882,8 +1296,13 @@ SINF = {
  'kub': [5], 'parallelepiped': [5], 'prizma': [6],
 }
 for t in TOPICS:
-    t['sinf'] = SINF[t['id']]
+    t['sinf'] = SINF.get(t['id']) or NSINF[t['id']]
 KW = {
+ 'b1sanash': 'son qatori sanash', 'b1qosh10': 'qoʻshish ayirish', 'b1qosh20': 'qoʻshish ayirish', 'b1taqqos': 'taqqoslash katta kichik', 'b1shakl': 'geometriya shakl',
+ 'b2qosh100': 'qoʻshish ayirish', 'b2xona': 'oʻnlik birlik xona', 'b2jadval': 'karra jadval koʻpaytirish', 'b2olchov': 'uzunlik vaqt sm dm', 'b2masala': 'masala matnli',
+ 'b3jadval': 'karra jadval koʻpaytirish', 'b3qoldiq': 'qoldiq boʻlish', 'b3ifoda': 'amallar tartibi qavs', 'b3qosh1000': 'qoʻshish ayirish', 'b3xona': 'xona yuzlik', 'b3perimetr': 'geometriya perimetr', 'b3masala': 'masala matnli',
+ 'b4kopxona': 'xona yaxlitlash', 'b4kopbol': 'koʻpaytirish boʻlish', 'b4tenglama': 'tenglama x nomaʼlum', 'b4harakat': 'tezlik masofa vaqt masala', 'b4yuz': 'geometriya yuza yuz', 'b4kasr': 'kasr qism', 'b4olchov': 'massa uzunlik vaqt kg km',
+ 'b7birhad': 'algebra birhad koʻphad', 'b7qisqa': 'algebra formula kvadrat', 'b7funksiya': 'algebra funksiya grafik', 'b7statistika': 'statistika oʻrta arifmetik mediana', 'b7parallel': 'geometriya parallel burchak', 'b7uchtomon': 'geometriya uchburchak',
  'qoshish': 'yigʻindi qoʻshish', 'ayirish': 'ayirma', 'kopaytirish': 'koʻpaytma karra jadval', 'bolish': 'boʻlinma', 'aralash': 'amallar tartibi qavs',
  'tenglama1': 'tenglama nomaʼlum x', 'tenglama2': 'tenglama nomaʼlum x', 'natural': 'xona raqam', 'taqqoslash': 'yaxlitlash taqqoslash katta kichik',
  'boshqotirma': 'mantiq qonuniyat ketma-ketlik', 'butun': 'manfiy musbat butun', 'sonoqi': 'modul manfiy', 'daraja': 'kvadrat kub daraja',

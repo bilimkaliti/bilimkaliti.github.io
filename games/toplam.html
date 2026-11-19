@@ -1200,7 +1200,7 @@ function renderSettings(){
   const opened=document.querySelector('#otherTopics')?.open;
   $('#topics').innerHTML=`<div class="tg">${cfg.grade}-sinf mavzulari</div>`+mine.map(lab).join('')+`<details id="otherTopics" style="grid-column:1/-1;margin-top:6px"${opened?' open':''}><summary style="cursor:pointer;font-weight:800">Boshqa sinflar mavzulari</summary><div class="topics" style="margin-top:6px">${other}</div></details>`;
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
-  {const L=$('#bzLink'),ok=[5,6,7].includes(+cfg.grade);L.classList.toggle('hidden',!ok);if(ok){L.href='../#/sinf/'+cfg.grade;L.textContent=`📘 ${cfg.grade}-sinf: kitob boʻyicha tayyor mavzular (Oson / Oʻrta / Qiyin) →`}}
+  {const L=$('#bzLink'),ok=+cfg.grade>=1&&+cfg.grade<=7;L.classList.toggle('hidden',!ok);if(ok){L.href='../#/sinf/'+cfg.grade;L.textContent=`📘 ${cfg.grade}-sinf: tayyor mavzular (Oson / Oʻrta / Qiyin) →`}}
   $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
   const M=isMathFan();$('#mathTopics').classList.toggle('hidden',!M);$('#fanSets').classList.toggle('hidden',M);
   if(!M&&g.big)$('#bigBox').classList.add('hidden');
