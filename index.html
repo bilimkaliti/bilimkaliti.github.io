@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bilim Kaliti — sinf uchun matematik oʻyinlar</title>
-<meta name="description" content="Bilim Kaliti — oʻqituvchilar uchun bepul: elektron doskada 2–4 guruh bellashadigan 13 ta oʻyin, Robo raqib, AI yordamchi (test, taqdimot, dars ishlanma), fanlar boʻyicha kutubxona va sinf vositalari.">
+<meta name="description" content="Bilim Kaliti — oʻqituvchilar uchun bepul: elektron doskada 2–4 guruh bellashadigan 17 ta oʻyin, Robo raqib, AI yordamchi (test, taqdimot, dars ishlanma), fanlar boʻyicha kutubxona va sinf vositalari.">
 <meta name="keywords" content="sinf uchun oʻyinlar, matematik oʻyinlar, elektron doska, interaktiv oʻyin, oʻqituvchi, dars ishlanma, test tuzish, taqdimot, AI, Bilim Kaliti">
 <meta name="theme-color" content="#f5b301">
 <link rel="canonical" href="https://bilimkaliti.github.io/">
@@ -1003,13 +1003,13 @@ const GAMES=[
  {id:'mozaika',f:'toplam',g:'mozaika',e:'🧩',n:'Rasm ochish',d:'Har bir toʻgʻri javob yashirin rasmdan bitta katakni ochadi. Rasmni birinchi topgan guruh bonus oladi.',c:['#ff8a3d','#ffb37a'],t:['Diqqat','Mavzular']},
  {id:'bomba',f:'toplam',g:'bomba',e:'💣',n:'Bombani zararsizlantirish',d:'Misol javobi qaysi simni kesishni koʻrsatadi. Notoʻgʻri sim — taymer tezlashadi.',c:['#e5484d','#ff8589'],t:['Tezlik','1–9 javob']},
  {id:'tez',f:'toplam',g:'tez',e:'⚡',n:'Kim tezroq',d:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob ball oladi.',c:['#f5b301','#ffd25c'],t:['Tezlik','Isinish']},
- {id:'nishon',f:'toplam',g:'nishon',e:'🎯',n:'Nishon',d:'Guruhlar navbat bilan oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',c:['#d6336c','#ff7aa8'],t:['Navbat','Tavakkal']},
+ {id:'nishon',f:'toplam',g:'nishon',e:'🎯',n:'Nishon',d:'Har guruhning oʻz nishoni bor, hamma bir vaqtda oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',c:['#d6336c','#ff7aa8'],t:['Bir vaqtda','Tavakkal']},
  {id:'mental',f:'toplam',g:'mental',e:'🧮',n:'Mental arifmetika',d:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. Birinchi toʻgʻri javob +2 ball.',c:['#0ca678','#63e6be'],t:['Diqqat','Ogʻzaki hisob']},
- {id:'juft',f:'toplam',g:'juft',e:'🃏',n:'Juftini top',d:'Kartalarni ochib, misolni javobi bilan juftlang. Juftni topgan guruh yana yuradi.',c:['#6d5dfc','#a69bff'],t:['Xotira','Mavzular']},
+ {id:'juft',f:'toplam',g:'juft',e:'🃏',n:'Juftini top',d:'Har guruhning oʻz kartalari bor: misolni javobi bilan juftlang. Hammasini birinchi topgan guruh gʻolib.',c:['#6d5dfc','#a69bff'],t:['Xotira','Mavzular']},
  {id:'zanjir',f:'toplam',g:'zanjir',e:'🔗',n:'Son zanjiri',d:'Sondan boshlab ketma-ket amallarni bajarib, zanjir oxiriga yeting.',c:['#0b7285','#3bb3c9'],t:['Ogʻzaki hisob']},
- {id:'togri',f:'bilim',g:'togri',e:'✅',n:'Toʻgʻri yoki notoʻgʻri',d:'Ekranda gap chiqadi — guruh «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Istalgan fan uchun.',c:['#0f9d8a','#2fb9a3'],t:['Barcha fanlar','Yangi']},
- {id:'jlash',f:'bilim',g:'jlash',e:'🔗',n:'Juftlash',d:'Soʻz ↔ tarjima, sana ↔ voqea, element ↔ belgi: chapdagini oʻngdagi jufti bilan ulang.',c:['#2f8cff','#6aa8ff'],t:['Tillar','Tarix','Yangi']},
- {id:'tartib',f:'bilim',g:'tartib',e:'📅',n:'Tartibga sol',d:'Voqealar, bosqichlar va jarayonlarni toʻgʻri ketma-ketlikda joylang.',c:['#f08c00','#ffb347'],t:['Tarix','Biologiya','Yangi']},
+ {id:'togri',f:'bilim',g:'togri',e:'✅',n:'Toʻgʻri yoki notoʻgʻri',d:'Ekran guruhlarga boʻlinadi: har guruh oʻz gapini koʻrib, «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Istalgan fan uchun.',c:['#0f9d8a','#2fb9a3'],t:['Barcha fanlar','Yangi']},
+ {id:'jlash',f:'bilim',g:'jlash',e:'🔗',n:'Juftlash',d:'Soʻz ↔ tarjima, sana ↔ voqea, element ↔ belgi: chapdagini oʻngdagi jufti bilan ulang. Har guruh oʻz oynasida.',c:['#2f8cff','#6aa8ff'],t:['Tillar','Tarix']},
+ {id:'tartib',f:'bilim',g:'tartib',e:'📅',n:'Tartibga sol',d:'Voqealar, bosqichlar, jarayonlar va gap boʻlaklarini toʻgʻri ketma-ketlikda joylang.',c:['#f08c00','#ffb347'],t:['Tarix','Tillar','Biologiya']},
  {id:'guruh',f:'bilim',g:'guruh',e:'🗂️',n:'Guruhlarga ajrat',d:'Soʻz va tushunchalarni toʻgʻri savatga joylang: ot/sifat/feʼl, metall/nometall…',c:['#7048e8','#9775fa'],t:['Ona tili','Biologiya','Yangi']},
  {id:'kosmik',f:'kosmik-baza',g:'',e:'🛸',n:'Kosmik baza',d:'Har bir guruh oʻz eshiklarini kod bilan ochib, bazani qutqaradi.',c:['#283c86','#5a6fd0'],t:['Kod topish','Mavzular']},
  {id:'sirli',f:'sirli-xonalar',g:'',e:'🗝️',n:'Sirli xonalar',d:'Qulflangan xonalardan chiqish: har bir xona — yangi jumboq.',c:['#5f3dc4','#9775fa'],t:['Escape-room','Mantiq']},
@@ -1080,7 +1080,7 @@ const PAGES={
    <div class="hows">
     <div class="how"><b>1</b><div><h3>Fan va sinfni tanlang</h3><p>Matematikada mavzularni belgilaysiz, boshqa fanlarda — tayyor savollar toʻplamini.</p></div></div>
     <div class="how"><b>2</b><div><h3>Oʻyinni tanlang</h3><p>Minora, raketa poygasi, juftlash, tartibga sol… — ${GAMES.length} xil oʻyin.</p></div></div>
-    <div class="how"><b>3</b><div><h3>Doskada bellashing</h3><p>Guruhlar navbat bilan javob beradi, ochkolar avtomatik. Natija Telegram’ga keladi.</p></div></div>
+    <div class="how"><b>3</b><div><h3>Doskada bellashing</h3><p>Har guruh oʻz oynasida bir vaqtda oʻynaydi, ochkolar avtomatik. Natija Telegram’ga keladi.</p></div></div>
    </div>
   </div></section>
   <section><div class="wrap">

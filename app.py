@@ -59,7 +59,7 @@ GAMES = [
     ("toplam", "mozaika", "🧩 Rasm ochish", "yashirin rasmni top"),
     ("toplam", "bomba", "💣 Bomba", "toʻgʻri simni kes"),
     ("toplam", "tez", "⚡ Kim tezroq", "dars boshidagi isinish"),
-    ("toplam", "nishon", "🎯 Nishon", "navbat bilan oʻq otish"),
+    ("toplam", "nishon", "🎯 Nishon", "har guruhning oʻz nishoni"),
     ("toplam", "mental", "🧮 Mental arifmetika", "ongda hisoblash"),
     ("toplam", "juft", "🃏 Juftini top", "xotira va diqqat"),
     ("toplam", "zanjir", "🔗 Son zanjiri", "ketma-ket amallar"),
@@ -253,7 +253,11 @@ async def show_topics(message: Message, m) -> None:
 
 @dp.message(F.text == BTN_OTHER)
 async def other_subjects(message: Message) -> None:
-    await message.answer("Boshqa fanlar tez orada qoʻshiladi. Hozircha 🧮 Matematika mavjud.")
+    kbd = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="📖 Ona tili", url=SITE_URL + "#/fan/Ona%20tili%20va%20adabiyot"),
+                                                 InlineKeyboardButton(text="🇬🇧 Ingliz tili", url=SITE_URL + "#/fan/Ingliz%20tili")],
+                                                [InlineKeyboardButton(text="🇷🇺 Rus tili", url=SITE_URL + "#/fan/Rus%20tili"),
+                                                 InlineKeyboardButton(text="🌐 Hamma fanlar", url=SITE_URL + "#/kutubxona")]])
+    await message.answer("Botda hozircha 🧮 Matematika bor. Ona tili, 🇬🇧 Ingliz tili va 🇷🇺 Rus tili boʻyicha tayyor savollar bazasi saytda — mavzuni tanlab, oʻyinni shu yerning oʻzida boshlaysiz. Boshqa fanlar ketma-ket qoʻshilmoqda.", reply_markup=kbd)
 
 
 @dp.callback_query(F.data.startswith("tp:"))
@@ -1944,7 +1948,7 @@ async def index(request: web.Request) -> web.StreamResponse:
 
 BOT_SHORT = "Sinf uchun guruh oʻyinlari, Robo raqib va AI yordamchi — bepul. Sayt: " + SITE_URL.replace("https://", "").rstrip("/")
 BOT_DESC = ("🔑 Bilim Kaliti — oʻqituvchilar uchun bepul yordamchi:\n\n"
-            "🎮 Elektron doskada 2–4 guruh bellashadigan 13 ta oʻyin\n"
+            "🎮 Elektron doskada 2–4 guruh bellashadigan 17 ta oʻyin\n"
             "🤖 Robo bilan bellashuv va yakka mashq\n"
             "✨ AI: test, taqdimot, dars ishlanma, krossvord\n"
             "📚 Matematika va boshqa fanlar boʻyicha kutubxona\n\n"
