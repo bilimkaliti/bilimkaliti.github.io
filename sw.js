@@ -2,12 +2,14 @@
    Sahifalar va oʻyinlar: avval internetdan (har doim yangi versiya), internet boʻlmasa — saqlangan nusxa.
    Rasmlar va shriftlar: saqlangan nusxa darhol, orqada yangilanadi.
    Saytni yangilaganda shu yerdagi VERSION raqamini oshirish shart emas — sahifalar baribir internetdan olinadi. */
-const VERSION = 'bk-v10';
+const VERSION = 'bk-v11';
 const CORE = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
   '/ikonka.png',
+  '/icon-192.png',
+  '/icon-512.png',
   '/games/grades.json',
   '/games/sets.json',
   '/games/baza/matematika.json',
