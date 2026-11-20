@@ -348,19 +348,25 @@ const IMPL={
   timeout(p){p.lock=1;SP.say(p,'⏰ Vaqt tugadi','bad');SP.next(this,p,1200)},tmul:3
  },
  tartib:{
-  init(){const q=pool(['order']),n=cfg.n;this.q=q;this.per=Math.min(lenOf(),Math.floor(q.length/n));return this.per>=1?'':'Tartibga sol toʻplamida kamida '+n+' ta topshiriq kerak.'},
-  step(){const per=this.per;SP.start(this,i=>this.q.slice(i*per,(i+1)*per))},
-  draw(p,it){p.it=it;let sh;do{sh=shuffle(it.s.map((_,i)=>i))}while(sh.every((x,i)=>x===i)&&it.s.length>1);p.free=sh;p.put=[];p.checked=0;this.paint(p)},
-  paint(p){const it=p.it,c=G.teams[p.i].c;
-    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><div class="slots" style="--tc:${c}">${it.s.map((_,i)=>{const v=p.put[i];return `<div class="slot${v!=null?' full':''}${p.checked?(v===i?' ok':' no'):''}" data-p="${i}"><b>${i+1}</b>${v!=null?esc(it.s[v]):''}${p.checked&&v!==i?`<small>✓ ${esc(it.s[i])}</small>`:''}</div>`}).join('')}</div>${p.checked?'':`<div class="pool" style="--tc:${c}">${p.free.map(i=>`<button class="card" data-f="${i}">${esc(it.s[i])}</button>`).join('')}</div><button class="check" ${p.put.length===it.s.length?'':'disabled'}>✔ Tekshirish</button>`}`;
-    p.pb.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const i=+b.dataset.f;p.free=p.free.filter(x=>x!==i);p.put.push(i);snd('tick');this.paint(p)});
-    if(!p.checked)p.pb.querySelectorAll('.slot.full').forEach(s=>s.onclick=()=>{const k=+s.dataset.p,v=p.put[k];p.put.splice(k,1);p.free.push(v);this.paint(p)});
-    const ck=p.pb.querySelector('.check');if(ck)ck.onclick=()=>this.check(p)},
-  check(p,tout){if(p.checked)return;clearInterval(p.iv);while(p.free.length)p.put.push(p.free.shift());p.checked=1;
-    const n=p.it.s.length,ok=p.put.filter((v,i)=>v===i).length,pts=ok===n?2:ok>=Math.ceil(n/2)?1:0;
-    this.paint(p);if(pts)SP.add(p,pts);
-    if(ok===n){snd('win');SP.say(p,'🎉 Toʻliq toʻgʻri! +2 ball','good');burstEl(p.pb.querySelector('.slots'),40)}else{snd(pts?'good':'bad');SP.say(p,`${tout?'⏰ ':''}${ok} / ${n} toʻgʻri${pts?' — +1 ball':''}. Toʻgʻri tartib yashil bilan koʻrsatildi.`,pts?'good':'bad')}
-    SP.next(this,p,3000)},
+  init(){const q=pool(['order']),n=cfg.n,by={};q.forEach(it=>(by[it.s.length]=by[it.s.length]||[]).push(it));
+    const R=[];let go=1;while(go){go=0;for(const L of shuffle(Object.keys(by))){if(by[L].length>=n){R.push(by[L].splice(0,n));go=1}}}
+    R.sort((x,y)=>x[0].s.length-y[0].s.length);this.R=R;this.per=Math.min(lenOf(),R.length);
+    return this.per>=1?'':'Tartibga sol toʻplamida bir xil uzunlikdagi kamida '+n+' ta topshiriq kerak.'},
+  step(){const per=this.per;SP.start(this,i=>this.R.slice(0,per).map(r=>r[i]))},
+  draw(p,it){p.it=it;let sh;do{sh=shuffle(it.s.map((_,i)=>i))}while(sh.every((x,i)=>x===i)&&it.s.length>1);p.free=sh;p.put=it.s.map(()=>null);p.fixed=it.s.map(()=>false);p.att=1;p.done=0;this.paint(p)},
+  paint(p){const it=p.it,c=G.teams[p.i].c,full=p.put.every(v=>v!=null);
+    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><div class="slots" style="--tc:${c}">${it.s.map((_,i)=>{const v=p.put[i],fx=p.fixed[i];return `<div class="slot${v!=null?' full':''}${fx?' ok':''}${p.done&&!fx?' no':''}" data-p="${i}"><b>${i+1}</b>${v!=null?esc(it.s[v]):''}${p.done&&!fx?`<small>✓ ${esc(it.s[i])}</small>`:''}</div>`}).join('')}</div>${p.done?'<button class="next">Keyingisi →</button>':`<div class="pool" style="--tc:${c}">${p.free.map(i=>`<button class="card" data-f="${i}">${esc(it.s[i])}</button>`).join('')}</div><button class="check" ${full?'':'disabled'}>✔ Tekshirish</button>`}`;
+    if(p.done){p.pb.querySelector('.next').onclick=()=>SP.next(this,p,0);return}
+    p.pb.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const i=+b.dataset.f,k=p.put.indexOf(null);if(k<0)return;p.free=p.free.filter(x=>x!==i);p.put[k]=i;snd('tick');this.paint(p)});
+    p.pb.querySelectorAll('.slot.full').forEach(s=>s.onclick=()=>{const k=+s.dataset.p;if(p.fixed[k])return;p.free.push(p.put[k]);p.put[k]=null;this.paint(p)});
+    p.pb.querySelector('.check').onclick=()=>this.check(p)},
+  check(p,tout){if(p.done)return;clearInterval(p.iv);
+    if(tout){p.put.forEach((v,i)=>{if(v!=null&&v===i)p.fixed[i]=true});p.free.push(...p.put.filter((v,i)=>v!=null&&!p.fixed[i]));p.put=p.it.s.map((_,i)=>i);p.done=1;this.paint(p);snd('bad');SP.say(p,'⏰ Vaqt tugadi. Toʻgʻri tartib koʻrsatildi.','bad');return}
+    const n=p.it.s.length,wrong=p.put.map((v,i)=>v!==i?i:-1).filter(i=>i>=0);
+    if(!wrong.length){p.fixed=p.fixed.map(()=>true);p.done=1;this.paint(p);const pts=p.att===1?2:1;SP.add(p,pts);snd('win');SP.say(p,`🎉 Toʻgʻri! +${pts} ball${p.att===2?' (2-urinishda)':''}`,'good');burstEl(p.pb.querySelector('.slots'),36);return}
+    if(p.att===1){p.att=2;wrong.forEach(i=>{p.free.push(p.put[i]);p.put[i]=null});p.put.forEach((v,i)=>{if(v!=null)p.fixed[i]=true});this.paint(p);snd('bad');
+      SP.say(p,`${n-wrong.length} / ${n} toʻgʻri joyda (yashil). Qolgan soʻzlarni qayta joylang — 2-urinishda +1 ball.`,'bad');return}
+    p.put.forEach((v,i)=>{if(v===i)p.fixed[i]=true});p.free=[];p.put=p.it.s.map((_,i)=>i);p.done=1;this.paint(p);snd('bad');SP.say(p,'Afsus, bu safar boʻlmadi. Toʻgʻri tartib koʻrsatildi.','bad')},
   timeout(p){this.check(p,1)},tmul:2
  },
  guruh:{
