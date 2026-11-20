@@ -282,6 +282,7 @@ h1,h2,h3{margin:0}
 @media (min-width:900px){.nrow{grid-template-columns:minmax(0,1fr) minmax(320px,.9fr)}}
 .target{position:relative;border-radius:18px;background:linear-gradient(#8fd3ff,#d9f2ff 60%,#7cc576 60%,#4f9a3c);padding:10px;overflow:hidden}
 .target svg{display:block;width:100%;max-width:540px;margin:0 auto}
+.tp .target svg{max-width:min(100%,calc(34vh * .95))}
 .ring{cursor:pointer;transition:filter .15s}
 .ring:hover{filter:brightness(1.12) drop-shadow(0 0 6px #fff)}
 .turn{border:3px solid var(--tc);border-radius:14px;padding:10px 12px;background:var(--panel);display:grid;gap:8px}
@@ -1145,9 +1146,9 @@ const GAMES={
  mozaika:{big:1,icon:'🧩',name:'Rasm ochish',desc:'Har bir toʻgʻri javob yashirin rasmdan bitta katakni ochadi. Rasmni birinchi topgan guruh +5 ball oladi.',len:{t:'Kataklar soni',o:['4×3','5×4','6×5'],d:'5×4'},lvl:1,topics:1,cool:1},
  bomba:{icon:'💣',name:'Bombani zararsizlantirish',desc:'Misollar javobi qaysi simni kesishni koʻrsatadi. Notoʻgʻri sim kesilsa, taymer tezlashadi.',len:{t:'Bombalar soni',o:[2,3,5],d:3},lvl:1,topics:1,cool:0},
  tez:{big:1,icon:'⚡',name:'Kim tezroq',desc:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob bergan guruh ball oladi.',len:{t:'Savollar soni',o:[8,10,15],d:10},lvl:1,topics:1,cool:0},
- nishon:{big:1,icon:'🎯',name:'Nishon',desc:'Guruhlar navbat bilan nishonga oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
+ nishon:{big:1,icon:'🎯',name:'Nishon',desc:'Har guruhning oʻz nishoni bor, hamma bir vaqtda oʻynaydi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
  mental:{icon:'🧮',name:'Mental arifmetika',desc:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. Birinchi toʻgʻri javob +2, keyingi toʻgʻri javoblar +1 ball.',len:{t:'Raundlar soni',o:[5,8,10],d:8},lvl:1,topics:0,cool:0},
- juft:{big:1,icon:'🃏',name:'Juftini top',desc:'Kartalarni ochib, misolni uning javobi bilan juftlang. Juftni topgan guruh yana yuradi. Xotira va diqqat oʻyini.',len:{t:'Juftlar soni',o:[6,8,10],d:8},lvl:1,topics:1,cool:0},
+ juft:{big:1,icon:'🃏',name:'Juftini top',desc:'Har guruhning oʻz kartalari bor: misolni uning javobi bilan juftlang. Hammasini birinchi topgan guruh gʻolib. Xotira oʻyini.',len:{t:'Juftlar soni',o:[6,8,10],d:8},lvl:1,topics:1,cool:0},
  zanjir:{icon:'🔗',name:'Son zanjiri',desc:'Bitta sondan boshlab ketma-ket amallar bajariladi. Har bir halqa tekshiriladi, xato qayerda ekani darhol koʻrinadi.',len:{t:'Zanjirlar soni',o:[2,3,5],d:3},lvl:1,topics:0,cool:1}
 };
 const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
@@ -1651,9 +1652,8 @@ IMPL.tez={
 /* ---------- 7. Nishon ---------- */
 IMPL.nishon={
   start(st,N){
-    this.N=N;this.turn=0;this.phase='choose';
-    S.teams.forEach(t=>{t.shots=0});
-    st.innerHTML=`<div class="nrow"><div class="target"><svg viewBox="-200 -200 400 420" role="img" aria-label="Nishon"><defs>
+    this.N=N;
+    teamPanels(st,t=>`<div class="target"><svg viewBox="-200 -200 400 420" role="img" aria-label="Nishon"><defs>
       <pattern id="straw" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><rect width="6" height="6" fill="#e9d29a"/><path d="M0 3h6" stroke="#c9ab64" stroke-width="1"/></pattern>
       <radialGradient id="rg1"><stop offset=".7" stop-color="#3e7bfa"/><stop offset="1" stop-color="#1e4fb8"/></radialGradient>
       <radialGradient id="rg2"><stop offset=".6" stop-color="#ffd23f"/><stop offset="1" stop-color="#e0a200"/></radialGradient>
@@ -1661,52 +1661,44 @@ IMPL.nishon={
       <g stroke="#6b4224" stroke-width="12" stroke-linecap="round"><path d="M-110 150l-40 60"/><path d="M110 150l40 60"/><path d="M0 170v40"/></g>
       <circle r="186" fill="url(#straw)" stroke="#a07a3a" stroke-width="8"/>
       <circle class="ring" data-r="1" r="160" fill="url(#rg1)" stroke="#fff" stroke-width="5"/><circle class="ring" data-r="2" r="105" fill="url(#rg2)" stroke="#fff" stroke-width="5"/><circle class="ring" data-r="3" r="50" fill="url(#rg3)" stroke="#fff" stroke-width="5"/>
-      <g font-weight="800" font-size="24" fill="#fff" text-anchor="middle" pointer-events="none" style="paint-order:stroke" stroke="rgba(0,0,0,.25)" stroke-width="3"><text y="-124">1 ball</text><text y="-70" fill="#4a3200" stroke="none">2 ball</text><text y="9">3</text></g><g id="hits" pointer-events="none"></g></svg></div>
-      <div><div class="board" id="board"></div><div class="turn" id="turn"><h3 id="turnName"></h3><div class="qc" id="nq"></div><div class="msg" id="nmsg"></div><div id="npad"></div></div></div></div>`;
-    $('.target svg').addEventListener('click',e=>{const c=e.target.closest('.ring');if(c)this.aim(+c.dataset.r)});
-    this.pad=makePad($('#npad'),{max:PADMAX(),onSubmit:v=>this.ans(v)});
-    this.setTurn();
+      <g font-weight="800" font-size="24" fill="#fff" text-anchor="middle" pointer-events="none" style="paint-order:stroke" stroke="rgba(0,0,0,.25)" stroke-width="3"><text y="-124">1 ball</text><text y="-70" fill="#4a3200" stroke="none">2 ball</text><text y="9">3</text></g><g class="hits" pointer-events="none"></g></svg></div><div class="qc"></div><div class="msg"></div><div class="padw"></div>`);
+    S.teams.forEach(t=>{t.shots=0;t.finished=false;t.pad=makePad(q(t,'.padw'),{max:PADMAX(),onSubmit:v=>this.ans(t,v)});
+      q(t,'.target svg').addEventListener('click',e=>{const c=e.target.closest('.ring');if(c&&!t.robo)this.aim(t,+c.dataset.r)});this.setShot(t)});
   },
-  cur(){return S.teams[this.turn]},
-  setTurn(){
-    const t=this.cur();this.phase='choose';this.ring=0;this.q=null;
-    $('#turn').style.setProperty('--tc',t.color);$('#turnName').textContent=`🏹 Navbat: ${t.name} (${t.shots+1}-oʻq)`;
-    $('#nq').innerHTML='Nishondagi halqani tanlang: koʻk — 1 ball, sariq — 2 ball, qizil markaz — 3 ball.';
-    $('#nmsg').textContent='';$('#nmsg').className='msg';this.pad.disable(true);this.board();keyUpd();
+  sc(t){q(t,'.sc').textContent=`${'🏹'.repeat(Math.max(0,this.N-t.shots))} · ${t.score}`},
+  setShot(t){t.phase='choose';t.ring=0;t.q={ans:'(halqa tanlanmoqda)'};
+    q(t,'.qc').innerHTML='🎯 Halqani tanlang: koʻk — 1 ball, sariq — 2 ball, qizil markaz — 3 ball.';setMsg(t,'');t.pad.disable(true);this.sc(t);keyUpd()},
+  aim(t,r){
+    if(S.over||S.ending||t.phase!=='choose'||t.finished)return;
+    t.phase='answer';t.ring=r;t.q=genQ(r-1,BIG());
+    q(t,'.qc').innerHTML=`<span class="tn">${['','🔵 1 ball · oson','🟡 2 ball · oʻrta','🔴 3 ball · qiyin'][r]} · ${t.q.topic}</span>${t.q.html}`;
+    if(!locked(t))t.pad.disable(false);keyUpd();
   },
-  aim(r){
-    if(S.over||this.phase!=='choose')return;
-    this.phase='answer';this.ring=r;this.q=genQ(r-1,BIG());
-    $('#nq').innerHTML=`<span class="tn">${['','🔵 1 ball · oson','🟡 2 ball · oʻrta','🔴 3 ball · qiyin'][r]} · ${this.q.topic}</span>${this.q.html}`;
-    this.pad.disable(false);keyUpd();
-  },
-  arrow(x,y,color,ok,done){
+  arrow(t,x,y,color,ok,done){
     const g=document.createElementNS('http://www.w3.org/2000/svg','g');
     g.innerHTML=`<g><line x1="0" y1="0" x2="0" y2="70" stroke="#6b4224" stroke-width="5"/><path d="M-8 70l8 22 8-22-8 6z" style="fill:${color}"/><path d="M-6 0h12l-6-12z" fill="#555"/></g>`;
-    $('#hits').appendChild(g);
+    q(t,'.hits').appendChild(g);
     const sx=0,sy=330,t0=performance.now(),D=420;
     const fr=now=>{const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3),cx=sx+(x-sx)*e,cy=sy+(y-sy)*e,sc=1.6-.6*e;
       g.setAttribute('transform',`translate(${cx} ${cy}) scale(${sc}) rotate(${ok?0:12*e})`);
       if(k<1)requestAnimationFrame(fr);else{if(ok){let w=0;const wob=()=>{w++;g.firstChild.setAttribute('transform',`rotate(${Math.sin(w*.9)*6*Math.exp(-w*.15)})`);if(w<24)requestAnimationFrame(wob)};wob()}done()}};
     requestAnimationFrame(fr);
   },
-  ans(v){
-    if(S.over||this.phase!=='answer')return;
-    const t=this.cur(),ok=mark(this.cur(),this.q,+v===this.q.ans);this.phase='result';this.pad.disable(true);t.shots++;
-    const band=[[0,0],[112,152],[58,98],[0,42]][this.ring],ang=Math.random()*Math.PI*2;
+  ans(t,v){
+    if(S.over||S.ending||t.phase!=='answer'||locked(t))return;
+    const ok=mark(t,t.q,+v===t.q.ans);t.phase='result';t.pad.disable(true);t.shots++;
+    const band=[[0,0],[112,152],[58,98],[0,42]][t.ring],ang=Math.random()*Math.PI*2;
     const rad=ok?R(band[0],band[1]):R(172,184),x=Math.cos(ang)*rad,y=Math.sin(ang)*rad;
     snd('whoosh');
-    this.arrow(x,y,t.color,ok,()=>{
-      if(ok){t.score+=this.ring;snd('thunk');$('#nmsg').textContent=`🎯 Tegdi! +${this.ring} ball`;$('#nmsg').className='msg good';if(this.ring===3)confetti($('.target'),40)}
-      else{snd('bad');$('#nmsg').textContent=`Oʻtib ketdi! Javob ${this.q.ans} edi`;$('#nmsg').className='msg bad'}
-      this.board();
+    this.arrow(t,x,y,t.color,ok,()=>{
+      if(ok){t.score+=t.ring;snd('thunk');setMsg(t,`🎯 Tegdi! +${t.ring} ball`,'good');if(t.ring===3)confetti(q(t,'.target'),30)}
+      else{snd('bad');setMsg(t,`Oʻtib ketdi! Javob ${t.q.ans} edi`,'bad')}
+      this.sc(t);
       setTimeout(()=>{if(S.over)return;
-        if(S.teams.every(x=>x.shots>=this.N)){endGame();return}
-        do{this.turn=(this.turn+1)%S.teams.length}while(this.cur().shots>=this.N);
-        this.setTurn()},1500)});
+        if(t.shots>=this.N){t.finished=true;q(t,'.qc').innerHTML='✅ Tugadi!';if(S.teams.every(x=>x.finished))finishSoon(900);return}
+        this.setShot(t)},1400)});
   },
-  board(){$('#board').innerHTML=S.teams.map((t,i)=>`<div style="--tc:${t.color}" class="${i===this.turn?'on':''}"><span>${esc(t.name)}</span><span>${'🏹'.repeat(Math.max(0,this.N-t.shots))} <b>${t.score}</b></span></div>`).join('')},
-  key(){return `${this.cur().name}: ${this.q?this.q.ans:'(halqa tanlanmoqda)'}`},
+  key(){return S.teams.map(t=>`${t.name}: ${t.q?t.q.ans:'—'}`).join('\n')},
   result(){return S.teams.map(t=>({t,score:t.score,detail:`${t.shots} ta oʻq`}))}
 };
 
@@ -1810,47 +1802,43 @@ IMPL.mental={
 /* ---------- 10. Juftini top ---------- */
 IMPL.juft={
   start(st,P){
-    const wide=BIG();if(!wide)P=Math.min(P,9);
-    const qs=[],seen=new Set(),akey=x=>x.mc?x.mc.opts[x.ans-1]:x.ans;for(let k=0;k<400&&qs.length<P;k++){const x=genQ(cfg.L,wide);if(!seen.has(akey(x))){seen.add(akey(x));qs.push(x)}}
-    this.P=qs.length;this.qs=qs;this.turn=0;this.open=[];this.busy=false;this.found=0;this.mem=new Map();
-    this.cards=shuffle(qs.flatMap((x,i)=>[{id:i,k:'q',h:x.mc?esc(x.mc.q):qhtml(x).replace(/<span class="tn">.*?<\/span>/,'')},{id:i,k:'a',h:x.mc?esc(x.mc.opts[x.ans-1]):String(x.ans),txt:!!x.mc}])).map((c,j)=>({...c,j,done:false}));
-    const cols=this.cards.length<=12?4:this.cards.length<=16?4:5,rows=Math.ceil(this.cards.length/cols);
-    st.innerHTML=`<div class="jwrap"><div class="jboard" id="jboard" style="--jc:${cols};max-width:calc((100vh - 150px) / ${rows} * ${cols} * 1.3);margin:0 auto;width:100%">${this.cards.map(c=>`<button type="button" class="jc" data-j="${c.j}" aria-label="karta"><span class="jb">?</span><span class="jf ${c.k==='a'?(c.txt?'ans txt':'ans'):''}">${c.h}</span></button>`).join('')}</div>
-      <div class="jside"><div class="board" id="jscore"></div><div class="turn" id="jturn"><h3 id="jname"></h3><div class="msg" id="jmsg"></div></div></div></div>`;
-    S.teams.forEach(t=>{t.pairs=0;t.moves=0});
-    $('#jboard').addEventListener('click',e=>{const b=e.target.closest('.jc');if(b&&!this.cur().robo)this.flip(+b.dataset.j)});
-    this.setTurn();
+    const wide=BIG(),n=S.teams.length;P=Math.min(P,n>1?6:9,wide?99:9);
+    const seen=new Set(),akey=x=>x.mc?x.mc.opts[x.ans-1]:x.ans;this.P=P;
+    teamPanels(st,t=>`<div class="jboard" style="--jc:4"></div><div class="msg"></div>`);
+    S.teams.forEach(t=>{t.qs=[];for(let k=0;k<600&&t.qs.length<P;k++){const x=genQ(cfg.L,wide);if(!seen.has(akey(x))){seen.add(akey(x));t.qs.push(x)}}
+      t.P=t.qs.length;t.open=[];t.busy=false;t.pairs=0;t.moves=0;t.mem=new Map();t.finished=false;
+      t.cards=shuffle(t.qs.flatMap((x,i)=>[{id:i,k:'q',h:x.mc?esc(x.mc.q):qhtml(x).replace(/<span class="tn">.*?<\/span>/,'')},{id:i,k:'a',h:x.mc?esc(x.mc.opts[x.ans-1]):String(x.ans),txt:!!x.mc}])).map((c,j)=>({...c,j,done:false}));
+      const bd=q(t,'.jboard');bd.innerHTML=t.cards.map(c=>`<button type="button" class="jc" data-j="${c.j}" aria-label="karta"><span class="jb">?</span><span class="jf ${c.k==='a'?(c.txt?'ans txt':'ans'):''}">${c.h}</span></button>`).join('');
+      bd.addEventListener('click',e=>{const b=e.target.closest('.jc');if(b&&!t.robo)this.flip(t,+b.dataset.j)});
+      setMsg(t,'Ikkita kartani oching: misol va uning javobi.');this.sc(t)});
+    keyUpd();
   },
-  cur(){return S.teams[this.turn]},
-  setTurn(){const t=this.cur();$('#jturn').style.setProperty('--tc',t.color);$('#jname').textContent=`🃏 Navbat: ${t.name}`;$('#jmsg').textContent='Ikkita kartani oching: misol va uning javobi.';$('#jmsg').className='msg';this.board();keyUpd()},
-  board(){$('#jscore').innerHTML=S.teams.map((t,i)=>`<div style="--tc:${t.color}" class="${i===this.turn?'on':''}"><span>${esc(t.name)}</span><span>${t.moves} yurish · <b>${t.pairs}</b></span></div>`).join('')},
-  el(j){return $(`#jboard .jc[data-j="${j}"]`)},
-  flip(j){
-    if(S.over||this.busy)return;const c=this.cards[j];if(c.done||this.open.includes(j))return;
-    this.open.push(j);this.el(j).classList.add('up');snd('tk');this.remember(c);
-    if(this.open.length<2)return;
-    const t=this.cur(),[a,b]=this.open.map(x=>this.cards[x]);t.moves++;this.busy=true;
+  sc(t){q(t,'.sc').textContent=`🃏 ${t.pairs} / ${t.P}`},
+  el(t,j){return q(t,`.jc[data-j="${j}"]`)},
+  flip(t,j){
+    if(S.over||S.ending||t.busy||t.finished)return;const c=t.cards[j];if(!c||c.done||t.open.includes(j))return;
+    t.open.push(j);this.el(t,j).classList.add('up');snd('tk');this.remember(t,c);
+    if(t.open.length<2)return;
+    const [a,b]=t.open.map(x=>t.cards[x]);t.moves++;t.busy=true;
     if(a.id===b.id&&a.k!==b.k){
-      mark(t,this.qs[a.id],true);a.done=b.done=true;t.pairs++;this.found++;snd('ding');
-      this.open.forEach(x=>{const e=this.el(x);e.classList.add('done');e.style.setProperty('--tc',t.color)});
-      $('#jmsg').textContent=`✅ Topdingiz! — yana yuring`;$('#jmsg').className='msg good';
-      this.open=[];this.board();
-      setTimeout(()=>{this.busy=false;if(this.found>=this.P){confetti($('#jboard'),80);snd('fan');finishSoon(1600);return}keyUpd()},700);
+      mark(t,t.qs[a.id],true);a.done=b.done=true;t.pairs++;snd('ding');
+      t.open.forEach(x=>{const e=this.el(t,x);e.classList.add('done');e.style.setProperty('--tc',t.color)});
+      setMsg(t,'✅ Topdingiz!','good');t.open=[];this.sc(t);
+      setTimeout(()=>{t.busy=false;if(t.pairs>=t.P){t.finished=true;confetti(q(t,'.jboard'),60);snd('fan');setMsg(t,'🏆 Hammasini topdi!','good');finishSoon(1800);return}keyUpd()},600);
     }else{
-      snd('bad');$('#jmsg').textContent='Juft emas…';$('#jmsg').className='msg bad';
-      setTimeout(()=>{if(S.over)return;this.open.forEach(x=>this.el(x).classList.remove('up'));this.open=[];this.busy=false;
-        this.turn=(this.turn+1)%S.teams.length;this.setTurn()},1500);
+      snd('bad');setMsg(t,'Juft emas…','bad');
+      setTimeout(()=>{if(S.over)return;t.open.forEach(x=>this.el(t,x).classList.remove('up'));t.open=[];t.busy=false;setMsg(t,'')},1100);
     }
   },
-  remember(c){if(!cfg.robo)return;const p=[0,.45,.7,.92][cfg.robo];if(Math.random()<p)this.mem.set(c.j,c)},
-  roboMove(){/* Robo navbati: bilganini ochadi, bilmasa tavakkal */
-    const live=this.cards.filter(c=>!c.done),known=[...this.mem.values()].filter(c=>!c.done);
+  remember(t,c){if(!t.robo||!cfg.robo)return;const p=[0,.45,.7,.92][cfg.robo];if(Math.random()<p)t.mem.set(c.j,c)},
+  roboMove(t){/* Robo: bilganini ochadi, bilmasa tavakkal */
+    const live=t.cards.filter(c=>!c.done),known=[...t.mem.values()].filter(c=>!c.done);
     const pairOf=c=>known.find(x=>x.id===c.id&&x.k!==c.k&&x.j!==c.j);
-    if(this.open.length===0){const k=known.find(c=>pairOf(c));if(k)return k.j;const unk=live.filter(c=>!this.mem.has(c.j));return (unk.length?pick(unk):pick(live)).j}
-    const first=this.cards[this.open[0]],p=pairOf(first);if(p)return p.j;
-    const unk=live.filter(c=>!this.mem.has(c.j)&&c.j!==first.j);return (unk.length?pick(unk):pick(live.filter(c=>c.j!==first.j))).j;
+    if(t.open.length===0){const k=known.find(c=>pairOf(c));if(k)return k.j;const unk=live.filter(c=>!t.mem.has(c.j));return (unk.length?pick(unk):pick(live)).j}
+    const first=t.cards[t.open[0]],p=pairOf(first);if(p)return p.j;
+    const unk=live.filter(c=>!t.mem.has(c.j)&&c.j!==first.j);return (unk.length?pick(unk):pick(live.filter(c=>c.j!==first.j))).j;
   },
-  key(){return this.qs.map(x=>`${x.html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()} = ${x.ans}`).join('\n')},
+  key(){return S.teams.map(t=>t.name+':\n'+t.qs.map(x=>`${x.html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()} = ${x.ans}`).join('\n')).join('\n\n')},
   result(){return S.teams.map(t=>({t,score:t.pairs,detail:`${t.pairs} juft · ${t.moves} yurish`}))}
 };
 
@@ -1873,9 +1861,9 @@ function roboTick(){
   if(S.over||S.ending||!cfg.robo)return;
   const t=S.teams.find(x=>x.robo);if(!t||t.finished)return;
   const G=S.game,g=GK,now=Date.now();let sit=null;
-  if(g==='nishon'){if(G.cur()!==t)return;sit=G.phase==='choose'?'aim:'+t.shots:G.phase==='answer'?'ans:'+t.shots:null}
+  if(g==='nishon'){if(t.finished||locked(t))return;sit=t.phase==='choose'?'aim:'+t.shots:t.phase==='answer'?'ans:'+t.shots:null}
   else if(g==='mental'){if(G.phase!=='answer'||t.done)return;sit='m:'+G.r}
-  else if(g==='juft'){if(G.cur()!==t||G.busy)return;sit='j:'+t.moves+':'+G.open.length+':'+G.found}
+  else if(g==='juft'){if(t.busy||t.finished)return;sit='j:'+t.moves+':'+t.open.length+':'+t.pairs}
   else if(g==='tez'){if(G.done||t.out)return;sit='tez:'+G.r}
   else if(g==='bomba'){if(!t.active||locked(t))return;sit='b:'+t.bi+':'+t.step}
   else if(g==='zanjir'){if(locked(t)||!t.ch||(t.pad&&t.el.querySelector('.pad button:disabled')))return;sit='z:'+t.ci+':'+t.step}
@@ -1888,10 +1876,10 @@ function roboTick(){
   if(t.rDone||now<t.rAt)return;
   t.rDone=true;roboThink(t,false);
   const choice=/^(ch|aim|j:)/.test(sit),ok=choice||roboOk();if(!ok)t.rw++;
-  if(g==='juft'){G.flip(G.roboMove());return}
+  if(g==='juft'){G.flip(t,G.roboMove(t));return}
   if(g==='mental'){roboType(t,t.pad,ok?G.sum:wrongOf(G.sum));return}
-  if(g==='nishon'){if(G.phase==='choose'){G.aim(cfg.robo===3?pick([2,3,3]):cfg.robo===2?pick([1,2,3]):pick([1,1,2]));return}
-    roboType(t,G.pad,ok?G.q.ans:wrongOf(G.q.ans));return}
+  if(g==='nishon'){if(t.phase==='choose'){G.aim(t,cfg.robo===3?pick([2,3,3]):cfg.robo===2?pick([1,2,3]):pick([1,1,2]));return}
+    roboType(t,t.pad,ok?t.q.ans:wrongOf(t.q.ans));return}
   if(g==='tez'){const a=G.q.ans,bs=[...t.el.querySelectorAll('.tops button')],b=ok?bs.find(x=>+x.dataset.o===a):pick(bs.filter(x=>+x.dataset.o!==a));if(b)b.click();return}
   if(g==='bomba'){const a=t.qs[t.step].ans;let i=t.wires.findIndex((w,k)=>w===a&&!t.cutSet.has(k));
     if(!ok){const o=t.wires.map((_,k)=>k).filter(k=>k!==i&&!t.cutSet.has(k));if(o.length)i=pick(o)}
