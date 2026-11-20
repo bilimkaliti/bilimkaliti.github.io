@@ -131,6 +131,16 @@ details.adv h3{margin-top:12px}
 .pn .ph em{font-style:normal;color:#6b7280;font-size:.85em}
 .pn .stmt{flex:1;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;text-align:center}
 .pn .fin{flex:1;display:flex;align-items:center;justify-content:center;font-size:1.4em;font-weight:900;color:var(--tc);text-align:center}
+.cg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cell{aspect-ratio:1;border:0;border-radius:14px;background:linear-gradient(135deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#fff));color:#fff;font-weight:900;font-size:1.4rem;cursor:pointer;min-height:46px;box-shadow:0 4px 0 color-mix(in srgb,var(--tc) 60%,#000)}
+.cell.pos{background:var(--good);box-shadow:none}.cell.neg{background:var(--bad);box-shadow:none}.cell.mis{background:var(--line);color:var(--ink);box-shadow:none}.cell:disabled{cursor:default}
+.mo{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mo button{border:2.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px;font-weight:800;min-height:54px;text-align:left;box-shadow:0 3px 0 var(--line)}
+.mo button.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 16%,var(--card))}.mo button.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}.mo button.gone{opacity:.25}.mo button:disabled{cursor:default}
+.ll{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.ll button{border:2px solid var(--tc);background:var(--card);color:var(--tc);border-radius:999px;padding:5px 12px;font-weight:800}.ll button:disabled{opacity:.35}
+.lt{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}.lt .ls{width:42px;height:50px;border:2.5px dashed var(--line);border-radius:12px;display:grid;place-items:center;font-weight:900;font-size:1.35rem;text-transform:uppercase;background:var(--bg)}.lt .ls.full{border-style:solid;border-color:var(--tc);cursor:pointer}.lt .ls.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--card))}.lt .ls.no{border-color:var(--bad)}
+.lt .lc{width:42px;height:50px;border:2.5px solid var(--line);background:var(--card);border-radius:12px;font-weight:900;font-size:1.35rem;text-transform:uppercase;box-shadow:0 3px 0 var(--line)}
+.lvl{text-align:center;font-weight:800;color:var(--muted);font-size:.9rem}
+.rev{text-align:left;margin-top:14px;border-top:2px dashed var(--line);padding-top:10px}.rev h4{margin:0 0 6px}.rev ol{margin:0;padding-left:20px;font-size:.92rem}.rev li{margin:3px 0}.rev small{color:var(--muted)}
 @media (max-width:700px){.split{grid-template-columns:1fr}.split.g4{grid-template-columns:1fr}.pn{min-height:0}}
 @media (max-width:700px){.baskets{grid-template-columns:1fr 1fr}.jcols{gap:10px}.tfb{gap:10px}.stage{padding:14px}}
 /* end */
@@ -198,7 +208,10 @@ const MODES={
  togri:{icon:'✅',name:'Toʻgʻri yoki notoʻgʻri',c:['#0f9d8a','#2fb9a3'],desc:'Ekran guruhlar uchun boʻlinadi. Har guruh oʻz gapini koʻradi (daraja bir xil) va oʻz tezligida «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['tf','mc'],len:{t:'Savollar soni',o:[10,16,20,30],d:16}},
  jlash:{icon:'🔗',name:'Juftlash',c:['#2f8cff','#6aa8ff'],desc:'Ekran guruhlar uchun boʻlinadi. Har guruh oʻz juftlarini oʻz tezligida ulaydi (daraja bir xil). Har bir toʻgʻri juft — 1 ball.',kinds:['pair','mc'],len:{t:'Juftlar soni',o:[10,15,20],d:15}},
  tartib:{icon:'📅',name:'Tartibga sol',c:['#f08c00','#ffb347'],desc:'Kartochkalarni toʻgʻri ketma-ketlikda joylang: voqealar, bosqichlar, jarayonlar. Har guruh oʻz topshirigʻini bir vaqtda bajaradi. Toʻliq toʻgʻri — 2 ball.',kinds:['order'],len:{t:'Topshiriqlar soni',o:[4,6,8,10],d:6}},
- guruh:{icon:'🗂️',name:'Guruhlarga ajrat',c:['#7048e8','#9775fa'],desc:'Ekran guruhlar uchun boʻlinadi. Har guruh oʻz soʻzlarini toʻgʻri savatga joylaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['group'],len:{t:'Soʻzlar soni',o:[12,18,24,30],d:18}}
+ guruh:{icon:'🗂️',name:'Guruhlarga ajrat',c:['#7048e8','#9775fa'],desc:'Ekran guruhlar uchun boʻlinadi. Har guruh oʻz soʻzlarini toʻgʻri savatga joylaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['group'],len:{t:'Soʻzlar soni',o:[12,18,24,30],d:18}},
+ timsoh:{icon:'🐊',name:'Timsohli katakchalar',c:['#12a38f','#5fd1bf'],desc:'Har guruhning oʻz jadvali bor. Katakni tanlang, savolga toʻgʻri javob bering — ichidan ball chiqadi. Ehtiyot boʻling: ba’zi katakda timsoh yashiringan!',kinds:['mc'],len:{t:'Katakchalar soni (har guruhga)',o:[6,9,12],d:9}},
+ million:{icon:'💰',name:'Million',c:['#5f3dc4','#9775fa'],desc:'Har guruh oʻz narvonidan chiqadi: savollar tobora ogʻirlashadi, ball koʻpayadi. Ikki yordam: 50/50 va savolni almashtirish.',kinds:['mc'],len:{t:'Pogʻonalar soni',o:[6,9,12],d:9}},
+ harf:{icon:'🔤',name:'Anagram',c:['#e8590c','#ffa94d'],desc:'Harflar aralashib ketgan — soʻzni toping. Birinchi urinishda +2, ikkinchisida +1 ball. Til fanlari uchun.',kinds:['mc','pair'],len:{t:'Soʻzlar soni',o:[5,8,10],d:8}},
 };
 const FANS=['Matematika','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
 const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
@@ -290,7 +303,7 @@ function burst(x,y,n=40,sp=1.9){if(!document.body.animate)return;const L=documen
   setTimeout(()=>L.remove(),2400)}
 const burstEl=(el,n)=>{const r=el.getBoundingClientRect();burst(r.left+r.width/2,r.top+r.height/2,n||36)};
 /* ---------- oʻyin ---------- */
-const G={teams:[],turn:0,done:0,total:0,over:true,t0:0,tmLeft:0,tmIv:null,clk:null};
+const G={wr:[],teams:[],turn:0,done:0,total:0,over:true,t0:0,tmLeft:0,tmIv:null,clk:null};
 const cur=()=>G.teams[G.turn];
 function drawScores(){$('#scores').innerHTML=G.teams.map((t,i)=>`<div class="sc${i===G.turn&&G.teams.length>1?' on':''}" style="--tc:${t.c}"><span>${esc(t.name)}</span><b>${t.score}</b></div>`).join('')}
 function nextTurn(){G.turn=(G.turn+1)%G.teams.length;drawScores()}
@@ -300,6 +313,7 @@ function startTimer(onEnd){clearInterval(G.tmIv);if(!cfg.tm)return;G.tmLeft=cfg.
 const stopTimer=()=>{clearInterval(G.tmIv);(G.pIv||[]).forEach(clearInterval);G.pIv=[]};
 function setMsg(t,c){const m=$('#msg');if(m){m.textContent=t;m.className='msg '+(c||'')}}
 function score(n){cur().score+=n;drawScores()}
+function miss(q,a){G.wr.push({q:String(q).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,170),a:String(a).slice(0,120)})}
 function pool(kind){return shuffle(cfg.sets.map(id=>SETS.find(s=>s.id===id)).filter(Boolean).flatMap(s=>s.items.filter(it=>kind.includes(it.k))))}
 /* ---------- ikkiga boʻlingan ekran: guruhlar bir vaqtda oʻynaydi ---------- */
 const SP={
@@ -315,9 +329,9 @@ const SP={
 };
 const IMPL={
  togri:{
-  init(){this.q=pool(['tf','mc']).map(it=>{if(it.k==='tf')return{txt:esc(it.q),t:it.t,why:''};
+  init(){this.q=pool(['tf','mc']).map(it=>{if(it.k==='tf')return{txt:esc(it.q),t:it.t,why:'',pl:it.q,pa:it.t?'Toʻgʻri':'Notoʻgʻri'};
       const tr=Math.random()<.5,w=it.o.filter((_,i)=>i!==it.c),show=tr?it.o[it.c]:pick(w);
-      return{txt:`<small>${esc(it.q)}</small><span class="an">${esc(show)}</span>`,t:tr?1:0,why:tr?'':`Toʻgʻri javob: ${it.o[it.c]}`}});
+      return{txt:`<small>${esc(it.q)}</small><span class="an">${esc(show)}</span>`,t:tr?1:0,why:tr?'':`Toʻgʻri javob: ${it.o[it.c]}`,pl:`${it.q} — ${show}`,pa:tr?'Toʻgʻri':`Notoʻgʻri (toʻgʻrisi: ${it.o[it.c]})`}});
     this.per=Math.min(lenOf(),Math.floor(this.q.length/cfg.n));G.total=this.per*cfg.n;return this.per>=3?'':'Kamida '+3*cfg.n+' ta savol kerak.'},
   step(){const n=G.teams.length,per=this.per;G.turn=-1;drawScores();this.P=G.teams.map((t,i)=>({i,k:0,lock:0,q:this.q.slice(i*per,(i+1)*per)}));G.pIv=[];
     $('#stage').innerHTML=`<div class="split${n>2?' g4':''}" style="--n:${n}">${G.teams.map((t,i)=>`<div class="pn" id="pn${i}" style="--tc:${t.c}"></div>`).join('')}</div>`;
@@ -329,7 +343,7 @@ const IMPL={
   ans(p,a,b){if(p.lock||G.over)return;p.lock=1;clearInterval(p.iv);const ok=a===p.cq.t,el=$('#pn'+p.i),m=el.querySelector('.msg');
     el.querySelectorAll('.tfb button').forEach(x=>{x.disabled=true;if(x===b)x.classList.add('pick')});
     if(ok){G.teams[p.i].score++;drawScores();snd('good');m.textContent='🎉 Toʻgʻri! +1 ball';m.className='msg good';if(b)burstEl(b,24)}
-    else{snd('bad');m.textContent=a<0?`⏰ Vaqt tugadi. ${p.cq.t?'Bu gap toʻgʻri.':'Bu gap notoʻgʻri.'}`:`Afsus! Bu gap ${p.cq.t?'toʻgʻri':'notoʻgʻri'}. ${p.cq.why}`;m.className='msg bad'}
+    else{snd('bad');miss(p.cq.pl,p.cq.pa);m.textContent=a<0?`⏰ Vaqt tugadi. ${p.cq.t?'Bu gap toʻgʻri.':'Bu gap notoʻgʻri.'}`:`Afsus! Bu gap ${p.cq.t?'toʻgʻri':'notoʻgʻri'}. ${p.cq.why}`;m.className='msg bad'}
     setTimeout(()=>{if(G.over)return;p.k++;if(p.k>=this.per){p.fin=1;el.innerHTML=`<div class="ph"><span>${esc(G.teams[p.i].name)}</span><em>${this.per} / ${this.per}</em></div><div class="fin">✅ Tugadi!<br>${G.teams[p.i].score} ball</div>`;if(this.P.every(x=>x.fin))setTimeout(finish,900)}else this.show(p)},ok?1100:2200)}
  },
  jlash:{
@@ -344,7 +358,7 @@ const IMPL={
     if(p.sel==null){SP.say(p,'Avval chap ustundan tanlang','bad');return}
     const L=p.pb.querySelector(`[data-l="${p.sel}"]`),ok=+b.dataset.r===p.sel,c=G.teams[p.i].c;
     if(ok){[L,b].forEach(x=>{x.classList.remove('sel');x.classList.add('done');x.style.setProperty('--dc',c);x.disabled=true});SP.add(p,1);snd('good');burstEl(b,18);p.sel=null;p.left--;SP.say(p,'🎉 +1 ball','good');if(p.left<=0){p.lock=1;SP.next(this,p,1000)}}
-    else{snd('bad');[L,b].forEach(x=>{x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong')});L.classList.remove('sel');p.sel=null;SP.say(p,'Notoʻgʻri juft — qayta urinib koʻring','bad')}},
+    else{snd('bad');[L,b].forEach(x=>{x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong')});L.classList.remove('sel');p.sel=null;SP.say(p,'Notoʻgʻri juft — qayta urinib koʻring','bad');{const A=p.bd.find(x=>x.id===+L.dataset.l);if(A)miss(A.a,A.b)}}},
   timeout(p){p.lock=1;SP.say(p,'⏰ Vaqt tugadi','bad');SP.next(this,p,1200)},tmul:3
  },
  tartib:{
@@ -364,7 +378,7 @@ const IMPL={
     if(tout){p.put.forEach((v,i)=>{if(v!=null&&v===i)p.fixed[i]=true});p.free.push(...p.put.filter((v,i)=>v!=null&&!p.fixed[i]));p.put=p.it.s.map((_,i)=>i);p.done=1;this.paint(p);snd('bad');SP.say(p,'⏰ Vaqt tugadi. Toʻgʻri tartib koʻrsatildi.','bad');return}
     const n=p.it.s.length,wrong=p.put.map((v,i)=>v!==i?i:-1).filter(i=>i>=0);
     if(!wrong.length){p.fixed=p.fixed.map(()=>true);p.done=1;this.paint(p);const pts=p.att===1?2:1;SP.add(p,pts);snd('win');SP.say(p,`🎉 Toʻgʻri! +${pts} ball${p.att===2?' (2-urinishda)':''}`,'good');burstEl(p.pb.querySelector('.slots'),36);return}
-    if(p.att===1){p.att=2;wrong.forEach(i=>{p.free.push(p.put[i]);p.put[i]=null});p.put.forEach((v,i)=>{if(v!=null)p.fixed[i]=true});this.paint(p);snd('bad');
+    if(p.att===1){miss(p.it.s.join(' '),'toʻgʻri tartib');p.att=2;wrong.forEach(i=>{p.free.push(p.put[i]);p.put[i]=null});p.put.forEach((v,i)=>{if(v!=null)p.fixed[i]=true});this.paint(p);snd('bad');
       SP.say(p,`${n-wrong.length} / ${n} toʻgʻri joyda (yashil). Qolgan soʻzlarni qayta joylang — 2-urinishda +1 ball.`,'bad');return}
     p.put.forEach((v,i)=>{if(v===i)p.fixed[i]=true});p.free=[];p.put=p.it.s.map((_,i)=>i);p.done=1;this.paint(p);snd('bad');SP.say(p,'Afsus, bu safar boʻlmadi. Toʻgʻri tartib koʻrsatildi.','bad')},
   timeout(p){this.check(p,1)},tmul:2
@@ -378,9 +392,62 @@ const IMPL={
     p.pb.querySelector('.baskets').onclick=e=>{const b=e.target.closest('[data-g]');if(b)this.ans(p,+b.dataset.g)}},
   ans(p,g){if(p.lock)return;p.lock=1;clearInterval(p.iv);const x=p.q[p.k],ok=g===x.gi,right=p.pb.querySelector(`[data-g="${x.gi}"]`);
     p.fill[x.gi].push(x.w);right.querySelector('.in').insertAdjacentHTML('beforeend',`<span>${esc(x.w)}</span>`);p.pb.querySelector('.word').style.visibility='hidden';
-    if(ok){SP.add(p,1);snd('good');SP.say(p,'🎉 Toʻgʻri! +1 ball','good');burstEl(right,18)}else{snd('bad');right.classList.add('hint');SP.say(p,g<0?`⏰ Vaqt tugadi. Javob: «${x.it.g[x.gi].n}»`:`Afsus! «${x.w}» — «${x.it.g[x.gi].n}» guruhiga kiradi`,'bad')}
+    if(ok){SP.add(p,1);snd('good');SP.say(p,'🎉 Toʻgʻri! +1 ball','good');burstEl(right,18)}else{snd('bad');miss(x.w,x.it.g[x.gi].n);right.classList.add('hint');SP.say(p,g<0?`⏰ Vaqt tugadi. Javob: «${x.it.g[x.gi].n}»`:`Afsus! «${x.w}» — «${x.it.g[x.gi].n}» guruhiga kiradi`,'bad')}
     SP.next(this,p,ok?1000:2000)},
   timeout(p){this.ans(p,-1)}
+ },
+ timsoh:{
+  init(){const q=pool(['mc']),n=cfg.n;this.q=q;this.per=Math.min(lenOf(),12,Math.floor(q.length/n));return this.per>=3?'':'Kamida '+3*n+' ta test savoli kerak.'},
+  step(){const per=this.per;SP.start(this,i=>this.q.slice(i*per,(i+1)*per))},
+  draw(p,it){if(!p.pz){p.pz=shuffle([...Array(16)].map((_,k)=>k<2?-2:k<4?3:1));p.open={}}p.it=it;p.ph='cell';this.grid(p,'🐊 Katakni tanlang')},
+  grid(p,t){p.pb.innerHTML=`<div class="ttq">${t}</div><div class="cg" style="--tc:${G.teams[p.i].c}">${p.pz.map((z,k)=>{const o=p.open[k];return `<button class="cell${o?(z<0?' neg':' pos'):''}" data-k="${k}" ${o?'disabled':''}>${o?(z<0?'🐊':'+'+z):'?'}</button>`}).join('')}</div>`;
+    p.pb.querySelector('.cg').onclick=e=>{const b=e.target.closest('[data-k]');if(b&&p.ph==='cell'&&!p.lock)this.cell(p,+b.dataset.k)}},
+  cell(p,k){p.ph='q';p.cur=k;const it=p.it,perm=shuffle(it.o.map((_,i)=>i));p.perm=perm;
+    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><div class="mo">${perm.map((o,i)=>`<button data-o="${i}">${esc(it.o[o])}</button>`).join('')}</div>`;
+    p.pb.querySelector('.mo').onclick=e=>{const b=e.target.closest('[data-o]');if(b)this.ans(p,+b.dataset.o)}},
+  ans(p,i){if(p.lock)return;if(p.ph==='cell'){const free=p.pz.map((_,k)=>k).filter(k=>!p.open[k]);p.cur=pick(free);p.ph='q';p.perm=p.perm||[]}p.lock=1;clearInterval(p.iv);
+    const it=p.it,ok=i>=0&&p.perm[i]===it.c,z=p.pz[p.cur];
+    if(ok){p.open[p.cur]=1;const t=G.teams[p.i];t.score=Math.max(0,t.score+z);drawScores();if(z<0){snd('bad');SP.say(p,'🐊 Timsoh tishladi! −2 ball','bad')}else{snd('good');SP.say(p,`🎉 Toʻgʻri! +${z} ball${z===3?' — jackpot!':''}`,'good');if(z===3)burst(innerWidth/2,innerHeight/2,40)}}
+    else{snd('bad');miss(it.q,it.o[it.c]);SP.say(p,i<0?`⏰ Vaqt tugadi. Javob: ${it.o[it.c]}`:`Afsus! Toʻgʻri javob: ${it.o[it.c]}`,'bad')}
+    p.pb.querySelectorAll('.mo button').forEach((b,k)=>{b.disabled=true;if(p.perm[k]===it.c)b.classList.add('ok');else if(k===i)b.classList.add('bad')});
+    setTimeout(()=>{if(G.over)return;if(ok)this.grid(p,ok&&z<0?'🐊':'✅')},900);SP.next(this,p,ok?2000:2600)},
+  timeout(p){this.ans(p,-1)}
+ },
+ million:{
+  init(){const q=pool(['mc']),n=cfg.n;this.per=Math.min(lenOf(),Math.floor(q.length/n));this.q=q;this.sp=q.slice(this.per*n);return this.per>=3?'':'Kamida '+3*n+' ta test savoli kerak.'},
+  step(){const per=this.per,n=cfg.n;SP.start(this,i=>this.q.slice(i*per,(i+1)*per));this.P.forEach((p,i)=>{p.sp=this.sp.filter((_,j)=>j%n===i).slice(0,2);p.l5=1;p.lw=1})},
+  pts(p){const k=p.k,per=p.q.length;return k<per/3?1:k<2*per/3?2:3},
+  draw(p,it){p.it=it;p.gone=[];p.perm=shuffle(it.o.map((_,i)=>i));this.paint(p)},
+  paint(p){const it=p.it,c=G.teams[p.i].c;
+    p.pb.innerHTML=`<div class="lvl">🪜 Pogʻona ${p.k+1} / ${p.q.length} · <b>+${this.pts(p)} ball</b></div><div class="ttq">${esc(it.q)}</div><div class="mo">${p.perm.map((o,i)=>`<button data-o="${i}" class="${p.gone.includes(i)?'gone':''}" ${p.gone.includes(i)||p.lock?'disabled':''}>${esc(it.o[o])}</button>`).join('')}</div>
+      <div class="ll" style="--tc:${c}"><button data-l="5" ${p.l5&&!p.lock?'':'disabled'}>50 / 50</button><button data-l="w" ${p.lw&&p.sp.length&&!p.lock?'':'disabled'}>🔄 Almashtirish</button></div>`;
+    p.pb.querySelector('.mo').onclick=e=>{const b=e.target.closest('[data-o]');if(b)this.ans(p,+b.dataset.o)};
+    p.pb.querySelector('.ll').onclick=e=>{const b=e.target.closest('[data-l]');if(!b||p.lock)return;
+      if(b.dataset.l==='5'){p.l5=0;const bad=p.perm.map((o,i)=>i).filter(i=>p.perm[i]!==p.it.c);p.gone=shuffle(bad).slice(0,2)}
+      else{p.lw=0;p.q[p.k]=p.sp.shift();this.draw(p,p.q[p.k]);return}this.paint(p)}},
+  ans(p,i){if(p.lock)return;p.lock=1;clearInterval(p.iv);const it=p.it,ok=i>=0&&p.perm[i]===it.c,z=this.pts(p);
+    if(ok){SP.add(p,z);snd('good');SP.say(p,`🎉 Toʻgʻri! +${z} ball`,'good')}else{snd('bad');miss(it.q,it.o[it.c]);SP.say(p,i<0?`⏰ Vaqt tugadi. Javob: ${it.o[it.c]}`:`Afsus! Toʻgʻri javob: ${it.o[it.c]}`,'bad')}
+    p.pb.querySelectorAll('.mo button').forEach((b,k)=>{b.disabled=true;if(p.perm[k]===it.c)b.classList.add('ok');else if(k===i)b.classList.add('bad')});p.pb.querySelectorAll('.ll button').forEach(b=>b.disabled=true);
+    SP.next(this,p,ok?1400:2400)},
+  timeout(p){this.ans(p,-1)}
+ },
+ harf:{
+  init(){const n=cfg.n,seen=new Set(),W=[];for(const it of pool(['mc','pair'])){const clue=it.k==='mc'?it.q:it.a,w=String(it.k==='mc'?it.o[it.c]:it.b).trim().toLowerCase();
+      if(!/^[\p{L}ʻ’'\-]{4,10}$/u.test(w)||new Set(w).size<3||seen.has(w))continue;seen.add(w);W.push({q:clue,w})}
+    this.W=shuffle(W);this.per=Math.min(lenOf(),Math.floor(W.length/n));return this.per>=3?'':'Anagram uchun kamida '+3*n+' ta bir soʻzli javob kerak (til fanlari mos).'},
+  step(){const per=this.per;SP.start(this,i=>this.W.slice(i*per,(i+1)*per))},
+  draw(p,it){p.it=it;p.ch=[...it.w];let sh;do{sh=shuffle(p.ch.map((_,i)=>i))}while(sh.every((x,i)=>x===i));p.free=sh;p.put=[];p.att=1;p.done=0;this.paint(p)},
+  paint(p){const it=p.it,c=G.teams[p.i].c,n=p.ch.length;
+    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><div class="lt" style="--tc:${c}">${p.ch.map((_,k)=>{const v=p.put[k];return `<div class="ls${v!=null?' full':''}${p.done===1?' ok':''}${p.done===2?' no':''}" data-p="${k}">${p.done===2?esc(p.ch[k]):v!=null?esc(p.ch[v]):''}</div>`}).join('')}</div>
+      ${p.done?'':`<div class="lt" style="--tc:${c}">${p.free.map(i=>`<button class="lc" data-f="${i}">${esc(p.ch[i])}</button>`).join('')}</div>`}`;
+    if(p.done)return;
+    p.pb.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{if(p.lock)return;const i=+b.dataset.f;p.free=p.free.filter(x=>x!==i);p.put.push(i);snd('tick');this.paint(p);if(p.put.length===n)this.check(p)});
+    p.pb.querySelectorAll('.ls.full').forEach(s=>s.onclick=()=>{if(p.lock)return;const k=+s.dataset.p;p.free.push(p.put[k]);p.put.splice(k,1);this.paint(p)})},
+  check(p,tout){clearInterval(p.iv);const w=p.it.w,got=tout?'':p.put.map(i=>p.ch[i]).join('');
+    if(got===w){p.done=1;this.paint(p);const pts=p.att===1?2:1;SP.add(p,pts);snd('win');SP.say(p,`🎉 Toʻgʻri! +${pts} ball`,'good');SP.next(this,p,1500);return}
+    if(p.att===1&&!tout){p.att=2;snd('bad');p.free=shuffle(p.ch.map((_,i)=>i));p.put=[];this.paint(p);SP.say(p,'Notoʻgʻri — yana bir marta urinib koʻring (+1 ball).','bad');return}
+    p.done=2;p.lock=1;this.paint(p);snd('bad');miss(p.it.q,p.it.w);SP.say(p,`${tout?'⏰ Vaqt tugadi. ':''}Toʻgʻri soʻz: ${w}`,'bad');SP.next(this,p,2600)},
+  timeout(p){this.check(p,1)},tmul:2
  }
 };
 function startGame(){
@@ -390,7 +457,7 @@ function startGame(){
   const I=IMPL[MK];I.lock=0;const er=I.init();if(er){$('#err').textContent=er+' Boshqa toʻplamni tanlang.';return}
   $('#err').textContent='';save();
   G.teams=Array.from({length:cfg.n},(_,i)=>({name:cfg.n===1?'Oʻquvchi':((cfg.names[i]||'').trim()||`${i+1}-guruh`),c:TC[i],score:0}));
-  G.turn=0;G.done=0;G.over=false;G.t0=Date.now();
+  G.turn=0;G.done=0;G.wr=[];G.over=false;G.t0=Date.now();
   $('#ttl').innerHTML=`${M.icon} ${esc(M.name)} <span class="badge">${FAN_IC[cfg.fan]||'📘'} ${esc(cfg.fan)}</span>`;$('#sndBtn').textContent=cfg.sound?'🔊':'🔇';
   $('#setup').classList.add('hidden');$('#play').classList.remove('hidden');$('#end').classList.add('hidden');window.scrollTo(0,0);
   clearInterval(G.clk);G.clk=setInterval(()=>{const s=Math.floor((Date.now()-G.t0)/1000);$('#timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
@@ -399,6 +466,8 @@ function finish(){if(G.over)return;G.over=true;stopTimer();clearInterval(G.clk);
   const r=G.teams.slice().sort((a,b)=>b.score-a.score),top=r[0].score,win=r.filter(t=>t.score===top);
   $('#endT').textContent=G.teams.length===1?`Natija: ${top} ball`:win.length>1?'Durang! 🤝':`🏆 ${win[0].name} gʻolib!`;
   $('#res').innerHTML=r.map((t,i)=>`<div style="--tc:${t.c}"><span>${i===0&&top>0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':''}${esc(t.name)}</span><b>${t.score}</b></div>`).join('');
+  {const m=new Map();G.wr.forEach(x=>{const e=m.get(x.q)||{...x,n:0};e.n++;m.set(x.q,e)});const L=[...m.values()].sort((a,b)=>b.n-a.n).slice(0,5);
+  const old=$('#end .rev');if(old)old.remove();if(L.length)$('#res').insertAdjacentHTML('afterend',`<div class="rev"><h4>📚 Takrorlaymiz</h4><ol>${L.map(x=>`<li>${esc(x.q)}<br><small>→ ${esc(x.a)}${x.n>1?` · ${x.n} marta xato`:''}</small></li>`).join('')}</ol></div>`)}
   $('#end').classList.remove('hidden');snd('win');const w=innerWidth;burst(w*.3,innerHeight*.35,70,2.2);setTimeout(()=>burst(w*.7,innerHeight*.35,70,2.2),250)}
 $('#startBtn').onclick=startGame;$('#again').onclick=startGame;
 const toSetup=()=>{G.over=true;stopTimer();clearInterval(G.clk);$('#end').classList.add('hidden');$('#play').classList.add('hidden');$('#setup').classList.remove('hidden');render()};

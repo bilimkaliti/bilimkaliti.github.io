@@ -1948,7 +1948,7 @@ async def index(request: web.Request) -> web.StreamResponse:
 
 BOT_SHORT = "Sinf uchun guruh oʻyinlari, Robo raqib va AI yordamchi — bepul. Sayt: " + SITE_URL.replace("https://", "").rstrip("/")
 BOT_DESC = ("🔑 Bilim Kaliti — oʻqituvchilar uchun bepul yordamchi:\n\n"
-            "🎮 Elektron doskada 2–4 guruh bellashadigan 17 ta oʻyin\n"
+            "🎮 Elektron doskada 2–4 guruh bellashadigan 20 ta oʻyin\n"
             "🤖 Robo bilan bellashuv va yakka mashq\n"
             "✨ AI: test, taqdimot, dars ishlanma, krossvord\n"
             "📚 Matematika va boshqa fanlar boʻyicha kutubxona\n\n"

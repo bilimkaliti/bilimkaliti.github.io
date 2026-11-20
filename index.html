@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bilim Kaliti — sinf uchun matematik oʻyinlar</title>
-<meta name="description" content="Bilim Kaliti — oʻqituvchilar uchun bepul: elektron doskada 2–4 guruh bellashadigan 17 ta oʻyin, Robo raqib, AI yordamchi (test, taqdimot, dars ishlanma), fanlar boʻyicha kutubxona va sinf vositalari.">
+<meta name="description" content="Bilim Kaliti — oʻqituvchilar uchun bepul: elektron doskada 2–4 guruh bellashadigan 20 ta oʻyin, Robo raqib, AI yordamchi (test, taqdimot, dars ishlanma), fanlar boʻyicha kutubxona va sinf vositalari.">
 <meta name="keywords" content="sinf uchun oʻyinlar, matematik oʻyinlar, elektron doska, interaktiv oʻyin, oʻqituvchi, dars ishlanma, test tuzish, taqdimot, AI, Bilim Kaliti">
 <meta name="theme-color" content="#f5b301">
 <link rel="canonical" href="https://bilimkaliti.github.io/">
@@ -955,7 +955,6 @@ header .bar{gap:12px}
     <nav class="top">
       <a href="#/" data-r="">🏠<span class="nlh"> Bosh sahifa</span></a>
       <a href="#/oyinlar" data-r="oyinlar">Oʻyinlar</a>
-      <a href="#/sinflar" data-r="sinflar">Sinflar</a>
       <a href="#/ai" data-r="ai">✨ AI<span class="nl"> yordamchi</span></a>
       <a href="#/kutubxona" data-r="kutubxona">📚 Kutubxona</a>
       <a href="#/vositalar" data-r="vositalar">Vositalar</a>
@@ -1011,6 +1010,9 @@ const GAMES=[
  {id:'jlash',f:'bilim',g:'jlash',e:'🔗',n:'Juftlash',d:'Soʻz ↔ tarjima, sana ↔ voqea, element ↔ belgi: chapdagini oʻngdagi jufti bilan ulang. Har guruh oʻz oynasida.',c:['#2f8cff','#6aa8ff'],t:['Tillar','Tarix']},
  {id:'tartib',f:'bilim',g:'tartib',e:'📅',n:'Tartibga sol',d:'Voqealar, bosqichlar, jarayonlar va gap boʻlaklarini toʻgʻri ketma-ketlikda joylang.',c:['#f08c00','#ffb347'],t:['Tarix','Tillar','Biologiya']},
  {id:'guruh',f:'bilim',g:'guruh',e:'🗂️',n:'Guruhlarga ajrat',d:'Soʻz va tushunchalarni toʻgʻri savatga joylang: ot/sifat/feʼl, metall/nometall…',c:['#7048e8','#9775fa'],t:['Ona tili','Biologiya','Yangi']},
+ {id:'timsoh',f:'bilim',g:'timsoh',e:'🐊',n:'Timsohli katakchalar',d:'Har guruhning oʻz jadvali: katakni tanlang, savolga javob bering — ichidan ball yoki timsoh chiqadi.',c:['#12a38f','#5fd1bf'],t:['Tavakkal','Barcha fanlar','Yangi']},
+ {id:'million',f:'bilim',g:'million',e:'💰',n:'Million',d:'Savollar pogʻonama-pogʻona ogʻirlashadi, ball koʻpayadi. Yordam: 50/50 va savolni almashtirish.',c:['#5f3dc4','#9775fa'],t:['Barcha fanlar','Yangi']},
+ {id:'harf',f:'bilim',g:'harf',e:'🔤',n:'Anagram',d:'Harflar aralashib ketgan — soʻzni toping. Ingliz, rus va ona tili soʻzlari uchun.',c:['#e8590c','#ffa94d'],t:['Tillar','Yangi']},
  {id:'kosmik',f:'kosmik-baza',g:'',e:'🛸',n:'Kosmik baza',d:'Har bir guruh oʻz eshiklarini kod bilan ochib, bazani qutqaradi.',c:['#283c86','#5a6fd0'],t:['Kod topish','Mavzular']},
  {id:'sirli',f:'sirli-xonalar',g:'',e:'🗝️',n:'Sirli xonalar',d:'Qulflangan xonalardan chiqish: har bir xona — yangi jumboq.',c:['#5f3dc4','#9775fa'],t:['Escape-room','Mantiq']},
  {id:'eshik',f:'eshik-kodi',g:'',e:'🏰',n:'Eshik kodi',d:'Besh eshikli qasr: misollarni yechib, har bir eshik kodini toping.',c:['#8d5b2d','#c98e55'],t:['Kod topish']},
@@ -1869,7 +1871,8 @@ function gamesFor(s){const k=s.kind||(s.mc?'mc':'num');
   if(k==='tf')return GAMES.filter(g=>g.id==='togri');if(k==='order')return GAMES.filter(g=>g.id==='tartib');if(k==='group')return GAMES.filter(g=>g.id==='guruh');
   const top=GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(k!=='num'&&g.g==='bomba'));
   const old=GAMES.filter(g=>['kosmik','sirli','eshik'].includes(g.id));
-  const R=k==='pair'?[GAMES.find(g=>g.id==='jlash'),...top,...old]:k==='mc'?[...top,...GAMES.filter(g=>g.id==='togri'||g.id==='jlash'),...old]:top;return s.ord?[...R,GAMES.find(g=>g.id==='tartib')]:R}
+  const lang=s.fan&&s.fan!=='Matematika',X=[...(s.ord?[GAMES.find(g=>g.id==='tartib')]:[]),...(lang&&(k==='mc'||k==='pair')?[GAMES.find(g=>g.id==='harf')]:[])];
+  return k==='pair'?[GAMES.find(g=>g.id==='jlash'),...top,...old,...X]:k==='mc'?[...top,...GAMES.filter(g=>['togri','jlash','timsoh','million'].includes(g.id)),...old,...X]:[...top,...X]}
 const itemTxt=it=>{const k=itKind(it);return k==='mc'?`${ex(it.q)}<br><b>→ ${ex(it.o[it.c||0])}</b>`:k==='num'?`${ex(it.q)}<br><b>→ ${ex(it.a)}</b>`:k==='tf'?`${ex(it.q)} <b>→ ${it.t?'✅ toʻgʻri':'❌ notoʻgʻri'}</b>`:k==='pair'?`<b>${ex(it.a)}</b> ↔ ${ex(it.b)}`:k==='order'?`${ex(it.q)}<br><b>${it.s.map(ex).join(' → ')}</b>`:`${ex(it.q)}<br>${it.g.map(g=>`<b>${ex(g.n)}:</b> ${g.w.map(ex).join(', ')}`).join('<br>')}`};
 function playModal(s,param){
   const m=store.get('mode','g'),mx=()=>({g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[store.get('mode','g')]||'');
@@ -1915,7 +1918,7 @@ function bazaPlay(f,t){
   const md=modal(`<h3>▶️ ${esc(t.name)}</h3><p class="sub">Qaysi darajada oʻynaymiz?</p><div class="bzlv">${BZ_LV.map(([d,e,n,c1,c2])=>{const k=d?t.items.filter(i=>i.d===d).length:t.items.length;return `<button data-d="${d}" style="background:linear-gradient(135deg,${c1},${c2})"><span style="font-size:1.8rem">${e}</span>${n}<small>${k} ta savol</small></button>`}).join('')}</div>`);
   md.querySelector('.mbox').classList.add('wide');
   md.querySelector('.bzlv').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;const d=+b.dataset.d,it=t.items.filter(i=>!d||i.d===d);closeModal();
-    const lv=BZ_LV.find(x=>x[0]===d);playModal({name:`${t.name} · ${lv[2]}`,kind:bzKind(it),mc:it.some(i=>i.o),ord:it.some(i=>i.s),bz:f},`&baza=${encodeURIComponent(f)}&m=${encodeURIComponent(t.id)}&d=${d}`)}}
+    const lv=BZ_LV.find(x=>x[0]===d);playModal({name:`${t.name} · ${lv[2]}`,kind:bzKind(it),mc:it.some(i=>i.o),ord:it.some(i=>i.s),fan:(BAZA[f]||{}).fan,bz:f},`&baza=${encodeURIComponent(f)}&m=${encodeURIComponent(t.id)}&d=${d}`)}}
 const bzKind=it0=>{const it=it0.filter(i=>!i.s);return it.every(i=>!i.o)?'num':it.every(i=>i.o)?'mc':'mix'};
 const bzSet=(t,B)=>({id:'bz-'+B.slug+'-'+t.id,bz:B.slug,tid:t.id,name:t.name,fan:B.fan,sinf:(t.sinf||[]).join(', '),sinfs:t.sinf||[],mavzu:t.bob,author:'Bilim Kaliti',n:t.items.length,kind:bzKind(t.items),mc:t.items.some(i=>i.o),ord:t.items.some(i=>i.s),items:t.items.map(({d,...r})=>r)});
 async function bindBaza(f,fix){
