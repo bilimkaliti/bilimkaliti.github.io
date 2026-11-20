@@ -1055,9 +1055,8 @@ const PAGES={
     <div class="hcopy">
      <span class="pill"><i></i>Bepul · roʻyxatdan oʻtishsiz</span>
      <h1>Darsni <span class="hl">oʻyinga</span> aylantiring</h1>
-     <p class="lead">Elektron doskada guruhlar bellashadigan oʻyinlar: matematika va boshqa fanlardan. Mavzuni tanlang — savollar tayyor: qisqa, tez va qiziqarli.</p>
-     <div class="cta"><button class="btn gold big" data-wiz="">▶️ Darsni boshlash</button><a class="btn ghost" href="#/sinflar">📚 Sinflar</a><a class="btn ghost" href="#/ai">✨ AI yordamchi</a><button class="btn ghost pwa-btn" onclick="bkInstall()">📲 Ilovani yuklab olish</button></div>
-     <div class="stats"><div><b data-count="${GAMES.length}">0</b><span>oʻyin</span></div><div><b>1–7</b><span>sinflar</span></div><div><b id="tc" data-count="51">0</b><span>mavzu</span></div><div><b data-count="${FANLAR.length}">0</b><span>fan</span></div></div>
+     <p class="lead">Elektron doskada guruhlar bir vaqtda bellashadigan oʻyinlar. Fan va mavzuni tanlang — savollar tayyor.</p>
+     <div class="cta"><button class="btn gold big" data-wiz="">▶️ Darsni boshlash</button><a class="btn ghost" href="#/ai">✨ AI yordamchi</a><button class="btn ghost pwa-btn" onclick="bkInstall()">📲 Ilovani yuklab olish</button></div>
     </div>
     ${heroBoardHtml()}
    </div>
@@ -1065,26 +1064,7 @@ const PAGES={
    <div id="dailyBox"></div>
   </div>
   <section><div class="wrap">
-   <div class="sh"><div><h2>Nega aynan Bilim Kaliti?</h2><p class="sub">Darsni oʻyinga aylantirish — oʻquvchi uchun qiziqarli, oʻqituvchi uchun oson.</p></div></div>
-   <div class="whys">
-    <div class="why"><span>🎯</span><b>Har bir oʻquvchi faol</b><p>Guruhlar bellashadi, hamma javob izlaydi. Diqqat va qiziqish dars oxirigacha saqlanadi.</p></div>
-    <div class="why"><span>⏱</span><b>Tayyorgarlik — 1 daqiqa</b><p>Savollar avtomatik tuziladi, ballar oʻzi hisoblanadi. Oʻqituvchi faqat darsga eʼtibor beradi.</p></div>
-    <div class="why"><span>💚</span><b>Butunlay bepul</b><p>Reklamasiz, toʻlovsiz. Oʻyinlar uchun roʻyxatdan oʻtish ham shart emas.</p></div>
-    <div class="why"><span>🖥</span><b>Bitta kompyuter yetarli</b><p>Elektron doska yoki proyektor, kompyuter, telefon — hammasida ishlaydi, Telegram ichida ham.</p></div>
-    <div class="why"><span>🇺🇿</span><b>Maktab dasturiga mos</b><p>1–7-sinf matematika mavzulari va 21 ta fan. Interfeys toʻliq oʻzbek tilida.</p></div>
-    <div class="why"><span>🤖</span><b>Sunʼiy intellekt yordamida</b><p>Test, krossvord, dars ishlanmasi, taqdimot — mavzuni yozing yoki darslik sahifasini suratga oling.</p></div>
-   </div>
-  </div></section>
-  <section><div class="wrap">
-   <div class="sh"><div><h2>Qanday ishlaydi?</h2><p class="sub">Uch qadam — va sinf bellashuvga tayyor.</p></div><button class="btn gold" data-wiz="">▶️ Darsni boshlash</button></div>
-   <div class="hows">
-    <div class="how"><b>1</b><div><h3>Fan va sinfni tanlang</h3><p>Matematikada mavzularni belgilaysiz, boshqa fanlarda — tayyor savollar toʻplamini.</p></div></div>
-    <div class="how"><b>2</b><div><h3>Oʻyinni tanlang</h3><p>Minora, raketa poygasi, juftlash, tartibga sol… — ${GAMES.length} xil oʻyin.</p></div></div>
-    <div class="how"><b>3</b><div><h3>Doskada bellashing</h3><p>Har guruh oʻz oynasida bir vaqtda oʻynaydi, ochkolar avtomatik. Natija Telegram’ga keladi.</p></div></div>
-   </div>
-  </div></section>
-  <section><div class="wrap">
-   <div class="sh"><div><h2>Sinfingizni tanlang</h2><p class="sub">Mavzularni belgilang — oʻyin shu mavzulardan savol beradi.</p></div></div>
+   <div class="sh"><div><h2>🧮 Matematika — sinfni tanlang</h2><p class="sub">Mavzularni belgilang — oʻyin shu mavzulardan savol beradi.</p></div></div>
    ${gradesGrid()}
   </div></section>
   <section><div class="wrap">
@@ -1094,10 +1074,6 @@ const PAGES={
   <section><div class="wrap">
    <div class="sh"><div><h2>Mashhur oʻyinlar</h2><p class="sub">Har biri 2–4 guruh uchun, bitta kompyuter va doskada.</p></div><a class="btn ghost" href="#/oyinlar">Hammasi →</a></div>
    <div class="grid">${GAMES.slice(0,8).map(g=>gameCard(g)).join('')}</div>
-  </div></section>
-  <section><div class="wrap">
-   <div class="sh"><div><h2>✨ AI yordamchi</h2><p class="sub">Mavzuni yozing — bir daqiqada tayyor material. Doskada koʻrsating, chop eting, Word yoki PowerPoint qilib oling.</p></div><a class="btn ghost" href="#/ai">Hammasi →</a></div>
-   <div class="aigrid">${AI_TOOLS.slice(0,8).map(t=>`<a class="aitool" href="#/ai/${t.id}"><span class="ic" style="background:color-mix(in srgb,${t.c} 15%,transparent)">${t.e}</span><b>${esc(t.n)}</b><small>${esc(t.d)}</small></a>`).join('')}</div>
   </div></section>
   <section><div class="wrap">
    <div class="sh"><div><h2>Sinf vositalari</h2><p class="sub">Darsni jonli va tartibli oʻtkazish uchun.</p></div><a class="btn ghost" href="#/vositalar">Hammasi →</a></div>
@@ -1133,7 +1109,7 @@ const PAGES={
   </div></section>
   <section><div class="wrap"><div class="banner">
    <div><h2>Telegram bot orqali ham</h2><p>Saytga bot orqali bir bosishda kirasiz. Oʻyinlarni Telegram'dan ham ochish mumkin, oʻyin tugagach natija va «takrorlash kerak» mavzular sizga keladi.</p></div>
-   <div class="mrow"><a class="btn gold" href="${BOT}" target="_blank" rel="noopener">✈️ @bilimkaliti_bot</a><a class="btn ghost" href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener">📢 Kanal</a></div>
+   <div class="mrow"><a class="btn gold" href="${BOT}" target="_blank" rel="noopener">✈️ @bilimkaliti_bot</a><a class="btn" style="background:#fff;color:#1f2a55" href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener">📢 Kanal</a></div>
   </div></div></section>`,
 
  oyinlar:()=>`
