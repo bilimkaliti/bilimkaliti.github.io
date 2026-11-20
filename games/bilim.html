@@ -123,6 +123,15 @@ details.adv h3{margin-top:12px}
 .bk.hint{box-shadow:0 0 0 5px color-mix(in srgb,var(--bc) 45%,transparent)}
 @keyframes pop{from{transform:scale(.4);opacity:0}}
 .word{display:block;width:max-content;max-width:100%;margin:0 auto 18px;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;padding:12px 28px;border-radius:20px;background:var(--card);border:3px solid var(--tc);box-shadow:0 8px 0 color-mix(in srgb,var(--tc) 40%,transparent);animation:pop .4s var(--ease)}
+
+.split{display:grid;gap:12px;grid-template-columns:repeat(var(--n),1fr)}
+.split.g4{grid-template-columns:1fr 1fr}
+.pn{background:#fff;border:3px solid var(--tc);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:260px}
+.pn .ph{display:flex;justify-content:space-between;align-items:center;font-weight:900;color:var(--tc)}
+.pn .ph em{font-style:normal;color:#6b7280;font-size:.85em}
+.pn .stmt{flex:1;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;text-align:center}
+.pn .fin{flex:1;display:flex;align-items:center;justify-content:center;font-size:1.4em;font-weight:900;color:var(--tc);text-align:center}
+@media (max-width:700px){.split{grid-template-columns:1fr}.split.g4{grid-template-columns:1fr}.pn{min-height:0}}
 @media (max-width:700px){.baskets{grid-template-columns:1fr 1fr}.jcols{gap:10px}.tfb{gap:10px}.stage{padding:14px}}
 /* end */
 .ov{position:fixed;inset:0;background:rgba(10,14,30,.6);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px;z-index:60}
@@ -186,7 +195,7 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const P=new URLSearchParams(location.search);const BZ_V='eab2af35';
 const MODES={
- togri:{icon:'✅',name:'Toʻgʻri yoki notoʻgʻri',c:['#0f9d8a','#2fb9a3'],desc:'Ekranda gap chiqadi. Navbatdagi guruh «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['tf','mc'],len:{t:'Savollar soni',o:[10,16,20,30],d:16}},
+ togri:{icon:'✅',name:'Toʻgʻri yoki notoʻgʻri',c:['#0f9d8a','#2fb9a3'],desc:'Ekran guruhlar uchun boʻlinadi. Har guruh oʻz gapini koʻradi (daraja bir xil) va oʻz tezligida «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['tf','mc'],len:{t:'Savollar soni',o:[10,16,20,30],d:16}},
  jlash:{icon:'🔗',name:'Juftlash',c:['#2f8cff','#6aa8ff'],desc:'Chapdagi har birini oʻngdagi mos javob bilan ulang. Toʻgʻri juft topgan guruh yana yuradi.',kinds:['pair','mc'],len:{t:'Juftlar soni',o:[10,15,20],d:15}},
  tartib:{icon:'📅',name:'Tartibga sol',c:['#f08c00','#ffb347'],desc:'Kartochkalarni toʻgʻri ketma-ketlikda joylang: voqealar, bosqichlar, jarayonlar. Toʻliq toʻgʻri — 2 ball.',kinds:['order'],len:{t:'Topshiriqlar soni',o:[4,6,8,10],d:6}},
  guruh:{icon:'🗂️',name:'Guruhlarga ajrat',c:['#7048e8','#9775fa'],desc:'Soʻz yoki tushunchani toʻgʻri savatga joylang. Navbat bilan, har bir toʻgʻri javob — 1 ball.',kinds:['group'],len:{t:'Soʻzlar soni',o:[12,18,24,30],d:18}}
@@ -288,7 +297,7 @@ function nextTurn(){G.turn=(G.turn+1)%G.teams.length;drawScores()}
 function head(extra){const t=cur();return `${G.teams.length>1?`<span class="turn" style="--tc:${t.c}">🎯 Navbat: ${esc(t.name)}</span>`:''}<span class="prog">${Math.min(G.done+1,G.total)} / ${G.total}</span>${cfg.tm?'<div class="tbar" style="--tc:'+t.c+'"><i id="tb"></i></div>':''}${extra||''}`}
 function startTimer(onEnd){clearInterval(G.tmIv);if(!cfg.tm)return;G.tmLeft=cfg.tm;const tb=$('#tb');
   G.tmIv=setInterval(()=>{G.tmLeft-=.1;if(tb)tb.style.transform=`scaleX(${Math.max(0,G.tmLeft/cfg.tm)})`;if(G.tmLeft<=3&&Math.abs(G.tmLeft-Math.round(G.tmLeft))<.05)snd('tick');if(G.tmLeft<=0){clearInterval(G.tmIv);onEnd()}},100)}
-const stopTimer=()=>clearInterval(G.tmIv);
+const stopTimer=()=>{clearInterval(G.tmIv);(G.pIv||[]).forEach(clearInterval);G.pIv=[]};
 function setMsg(t,c){const m=$('#msg');if(m){m.textContent=t;m.className='msg '+(c||'')}}
 function score(n){cur().score+=n;drawScores()}
 function pool(kind){return shuffle(cfg.sets.map(id=>SETS.find(s=>s.id===id)).filter(Boolean).flatMap(s=>s.items.filter(it=>kind.includes(it.k))))}
@@ -297,13 +306,19 @@ const IMPL={
   init(){this.q=pool(['tf','mc']).map(it=>{if(it.k==='tf')return{txt:esc(it.q),t:it.t,why:''};
       const tr=Math.random()<.5,w=it.o.filter((_,i)=>i!==it.c),show=tr?it.o[it.c]:pick(w);
       return{txt:`<small>${esc(it.q)}</small><span class="an">${esc(show)}</span>`,t:tr?1:0,why:tr?'':`Toʻgʻri javob: ${it.o[it.c]}`}});
-    G.total=Math.min(lenOf(),this.q.length);return G.total>=3?'':'Kamida 3 ta savol kerak.'},
-  step(){const q=this.q[G.done];this.cq=q;$('#stage').innerHTML=head(`<div class="stmt">${q.txt}</div><div class="tfb"><button class="y" data-a="1">✅ Toʻgʻri</button><button class="n" data-a="0">❌ Notoʻgʻri</button></div><div class="msg" id="msg"></div>`);
-    $('#stage').querySelector('.tfb').onclick=e=>{const b=e.target.closest('[data-a]');if(b)this.ans(+b.dataset.a,b)};startTimer(()=>this.ans(-1))},
-  ans(a,b){if(this.lock)return;this.lock=1;stopTimer();const ok=a===this.cq.t;
-    $('#stage').querySelectorAll('.tfb button').forEach(x=>{x.disabled=true;if(x===b)x.classList.add('pick')});
-    if(ok){score(1);snd('good');setMsg('🎉 Toʻgʻri! +1 ball','good');burstEl(b,30)}else{snd('bad');setMsg(a<0?`⏰ Vaqt tugadi. ${this.cq.t?'Bu gap toʻgʻri.':'Bu gap notoʻgʻri.'}`:`Afsus! Bu gap ${this.cq.t?'toʻgʻri':'notoʻgʻri'}. ${this.cq.why}`,'bad')}
-    setTimeout(()=>{this.lock=0;G.done++;if(G.done>=G.total)return finish();nextTurn();this.step()},ok?1400:2600)}
+    this.per=Math.min(lenOf(),Math.floor(this.q.length/cfg.n));G.total=this.per*cfg.n;return this.per>=3?'':'Kamida '+3*cfg.n+' ta savol kerak.'},
+  step(){const n=G.teams.length,per=this.per;G.turn=-1;drawScores();this.P=G.teams.map((t,i)=>({i,k:0,lock:0,q:this.q.slice(i*per,(i+1)*per)}));G.pIv=[];
+    $('#stage').innerHTML=`<div class="split${n>2?' g4':''}" style="--n:${n}">${G.teams.map((t,i)=>`<div class="pn" id="pn${i}" style="--tc:${t.c}"></div>`).join('')}</div>`;
+    this.P.forEach(p=>this.show(p))},
+  show(p){const t=G.teams[p.i],el=$('#pn'+p.i),q=p.q[p.k];p.cq=q;p.lock=0;
+    el.innerHTML=`<div class="ph"><span>${G.teams.length>1?esc(t.name):'Savol'}</span><em>${p.k+1} / ${this.per}</em></div>${cfg.tm?'<div class="tbar" style="--tc:'+t.c+'"><i></i></div>':''}<div class="stmt">${q.txt}</div><div class="tfb"><button class="y" data-a="1">✅ Toʻgʻri</button><button class="n" data-a="0">❌ Notoʻgʻri</button></div><div class="msg"></div>`;
+    el.querySelector('.tfb').onclick=e=>{const b=e.target.closest('[data-a]');if(b)this.ans(p,+b.dataset.a,b)};
+    clearInterval(p.iv);if(cfg.tm){p.left=cfg.tm;const bar=el.querySelector('.tbar i');p.iv=setInterval(()=>{p.left-=.1;if(bar)bar.style.transform=`scaleX(${Math.max(0,p.left/cfg.tm)})`;if(p.left<=0){clearInterval(p.iv);this.ans(p,-1)}},100);G.pIv.push(p.iv)}},
+  ans(p,a,b){if(p.lock||G.over)return;p.lock=1;clearInterval(p.iv);const ok=a===p.cq.t,el=$('#pn'+p.i),m=el.querySelector('.msg');
+    el.querySelectorAll('.tfb button').forEach(x=>{x.disabled=true;if(x===b)x.classList.add('pick')});
+    if(ok){G.teams[p.i].score++;drawScores();snd('good');m.textContent='🎉 Toʻgʻri! +1 ball';m.className='msg good';if(b)burstEl(b,24)}
+    else{snd('bad');m.textContent=a<0?`⏰ Vaqt tugadi. ${p.cq.t?'Bu gap toʻgʻri.':'Bu gap notoʻgʻri.'}`:`Afsus! Bu gap ${p.cq.t?'toʻgʻri':'notoʻgʻri'}. ${p.cq.why}`;m.className='msg bad'}
+    setTimeout(()=>{if(G.over)return;p.k++;if(p.k>=this.per){p.fin=1;el.innerHTML=`<div class="ph"><span>${esc(G.teams[p.i].name)}</span><em>${this.per} / ${this.per}</em></div><div class="fin">✅ Tugadi!<br>${G.teams[p.i].score} ball</div>`;if(this.P.every(x=>x.fin))setTimeout(finish,900)}else this.show(p)},ok?1100:2200)}
  },
  jlash:{
   init(){const seen=new Set();this.p=pool(['pair','mc']).map(it=>it.k==='pair'?{a:it.a,b:it.b}:{a:it.q,b:it.o[it.c]}).filter(x=>{const k=x.b.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
