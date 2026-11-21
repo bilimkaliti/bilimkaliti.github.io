@@ -1906,7 +1906,7 @@ function libPage(fan){
     <input id="lQ" placeholder="🔍 Mavzu yoki nom boʻyicha qidirish"><select id="lSort"><option value="new">Yangilari</option><option value="top">Koʻp oʻynalgan</option></select></div>
    <div class="sgrid" id="lList">${skel(6)}</div>
   </div></section>`}
-const BZ_V='a9a8a9da';const BAZA_FAN={'Matematika':'matematika','Ona tili va adabiyot':'ona-tili','Ingliz tili':'ingliz','Rus tili':'rus-tili'};
+const BZ_V='81ee2e30';const BAZA_FAN={'Matematika':'matematika','Ona tili va adabiyot':'ona-tili','Ingliz tili':'ingliz','Rus tili':'rus-tili'};
 const BZ_SINF=[1,2,3,4,5,6,7],BZ_CNT={1:5,2:7,3:10,4:9,5:30,6:29,7:14};
 const BZ_PH={'Matematika':'kasr, foiz, burchak','Ona tili va adabiyot':'sifat, kelishik, maqol','Ingliz tili':'animals, present simple, plural','Rus tili':'oila, kelishik, sifat, Pushkin'};
 function bazaBlock(sinf,fan){return `<div class="bz" id="bz"><h3>📘 ${sinf?sinf+'-sinf: tayyor mavzular':'Tayyor mavzular'}</h3><p class="sub" style="margin:4px 0 0">Darsda oʻtilgan mavzuni tanlang — savollar tayyor. Keyin darajani tanlab, oʻyinni boshlang.</p>
@@ -1919,7 +1919,7 @@ function bazaPlay(f,t){
   md.querySelector('.mbox').classList.add('wide');
   md.querySelector('.bzlv').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;const d=+b.dataset.d,it=t.items.filter(i=>!d||i.d===d);closeModal();
     const lv=BZ_LV.find(x=>x[0]===d);playModal({name:`${t.name} · ${lv[2]}`,kind:bzKind(it),bomb:new Set(it.filter(i=>/^[1-9]$/.test(String(i.a))).map(i=>String(i.a))).size>=4&&it.filter(i=>/^[1-9]$/.test(String(i.a))).length>=4,mc:it.some(i=>i.o),ord:it.some(i=>i.s),fan:(BAZA[f]||{}).fan,bz:f},`&baza=${encodeURIComponent(f)}&m=${encodeURIComponent(t.id)}&d=${d}`)}}
-const bzKind=it0=>{const it=it0.filter(i=>!i.s);return it.every(i=>!i.o)?'num':it.every(i=>i.o)?'mc':'mix'};
+const bzKind=it0=>{if(it0.length&&it0.every(i=>i.g))return 'group';if(it0.length&&it0.every(i=>i.s))return 'order';const it=it0.filter(i=>!i.s&&!i.g);return it.every(i=>!i.o)?'num':it.every(i=>i.o)?'mc':'mix'};
 const bzSet=(t,B)=>({id:'bz-'+B.slug+'-'+t.id,bz:B.slug,tid:t.id,name:t.name,fan:B.fan,sinf:(t.sinf||[]).join(', '),sinfs:t.sinf||[],mavzu:t.bob,author:'Bilim Kaliti',n:t.items.length,kind:bzKind(t.items),mc:t.items.some(i=>i.o),ord:t.items.some(i=>i.s),items:t.items.map(({d,...r})=>r)});
 async function bindBaza(f,fix){
   const box=$('#bz');if(!box)return;let B,bob='',sn=fix||+store.get('bzsinf',0)||0;
