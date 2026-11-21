@@ -240,7 +240,11 @@ function normIt(it){if(!it||typeof it!=='object')return null;
   return null}
 const usable=s=>s.items.filter(it=>M.kinds.includes(it.k)).length;
 let SETS=[],LIBF={},FS=+P.get('fsinf')||0;
-function addSet(s,extra){const items=(s.items||[]).map(x=>{const n=normIt(x);if(n&&x&&x.d)n.d=x.d;return n}).filter(Boolean);const id=String(s.id);if(SETS.some(x=>x.id===id))return;
+function numMC(x){const a=String(x.a).trim();if(!x.q||!/^-?\d{1,9}$/.test(a))return x;const n=+a,neg=n<0,sw=+(String(Math.abs(n)).split('').reverse().join(''))*(neg?-1:1);
+  const c=[n+1,n-1,n+2,n-2,n+10,n-10,n+5,n-5,n*2,Math.trunc(n/2),sw,n+100,n-100,n*10].filter((v,i,r)=>Number.isFinite(v)&&v!==n&&(n<0||v>=0)&&r.indexOf(v)===i);
+  const big=Math.abs(n)>=50,near=c.slice(0,big?8:10),far=big?c.slice(8):[],pick=shuffle(near).slice(0,big?2:3);if(big)pick.push(...shuffle(far.concat(near.filter(v=>!pick.includes(v)))).slice(0,1));
+  const o=shuffle([n,...pick.slice(0,3)]).map(String);return{q:x.q,o,c:o.indexOf(a.replace(/^-0+$/,'0')),d:x.d}}
+function addSet(s,extra){const items=(s.items||[]).map(x=>{if(extra&&extra.bank&&x&&!x.o&&!x.s&&!x.g&&!('b' in x)&&'a' in x)x=numMC(x);const n=normIt(x);if(n&&x&&x.d)n.d=x.d;return n}).filter(Boolean);const id=String(s.id);if(SETS.some(x=>x.id===id))return;
   SETS.push({id,name:String(s.name||'Toʻplam').slice(0,60),fan:/^(Algebra|Geometriya)$/.test(s.fan)?'Matematika':FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items,...extra})}
 async function post(path,body){const r=await fetch(APIB()+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json()}
 async function loadSets(){

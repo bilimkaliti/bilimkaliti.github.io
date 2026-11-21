@@ -1872,7 +1872,7 @@ function gamesFor(s){const k=s.kind||(s.mc?'mc':'num');
   const top=GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(k!=='num'&&g.g==='bomba'));
   const old=GAMES.filter(g=>['kosmik','sirli','eshik'].includes(g.id));
   const lang=s.fan&&s.fan!=='Matematika',X=[...(s.ord?[GAMES.find(g=>g.id==='tartib')]:[]),...(lang&&(k==='mc'||k==='pair')?[GAMES.find(g=>g.id==='harf')]:[])];
-  return k==='pair'?[GAMES.find(g=>g.id==='jlash'),...top,...old,...X]:k==='mc'?[...top,...GAMES.filter(g=>['togri','jlash','timsoh','million'].includes(g.id)),...old,...X]:[...top,...X]}
+  return k==='pair'?[GAMES.find(g=>g.id==='jlash'),...top,...old,...X]:(k==='num'||k==='mix')&&s.bz?[...top,...GAMES.filter(g=>['togri','timsoh','million'].includes(g.id)),...old,...X]:k==='mc'?[...top,...GAMES.filter(g=>['togri','jlash','timsoh','million'].includes(g.id)),...old,...X]:[...top,...X]}
 const itemTxt=it=>{const k=itKind(it);return k==='mc'?`${ex(it.q)}<br><b>→ ${ex(it.o[it.c||0])}</b>`:k==='num'?`${ex(it.q)}<br><b>→ ${ex(it.a)}</b>`:k==='tf'?`${ex(it.q)} <b>→ ${it.t?'✅ toʻgʻri':'❌ notoʻgʻri'}</b>`:k==='pair'?`<b>${ex(it.a)}</b> ↔ ${ex(it.b)}`:k==='order'?`${ex(it.q)}<br><b>${it.s.map(ex).join(' → ')}</b>`:`${ex(it.q)}<br>${it.g.map(g=>`<b>${ex(g.n)}:</b> ${g.w.map(ex).join(', ')}`).join('<br>')}`};
 function playModal(s,param){
   const m=store.get('mode','g'),mx=()=>({g:'&robo=0',r:'&robo=2&n=1',s:'&robo=0&n=1'}[store.get('mode','g')]||'');
@@ -2598,7 +2598,7 @@ function wzDraw(){
     const BZ=M&&WZ.fan==='Matematika'&&wzMM()==='baza'&&WZ.bt,bt=BZ&&BAZA.matematika.topics.find(x=>x.id===WZ.bt);
     const SB=!M&&WZ.set&&WZ.set.bz,sd=WZ.bd2==null?1:WZ.bd2;
     const base=BZ?`&baza=matematika&m=${encodeURIComponent(WZ.bt)}&d=${WZ.bd}`:M?`&sinf=${WZ.sinf}&t=${WZ.topics.join(',')}`:SB?WZ.set.param+'&d='+sd:WZ.set.param+'&fan='+encodeURIComponent(WZ.fan);
-    const games=BZ?gamesFor({kind:bzKind(bt.items)}).filter(g=>g.f==='toplam'||g.f==='bilim'):M?GAMES.filter(g=>g.f==='toplam'):SB?gamesFor(WZ.set).filter(g=>g.f==='toplam'||g.f==='bilim'):gamesFor(WZ.set);
+    const games=BZ?gamesFor({kind:bzKind(bt.items),bz:1,fan:(BZ&&BAZA[BZ]||{}).fan}).filter(g=>g.f==='toplam'||g.f==='bilim'):M?GAMES.filter(g=>g.f==='toplam'):SB?gamesFor(WZ.set).filter(g=>g.f==='toplam'||g.f==='bilim'):gamesFor(WZ.set);
     box.innerHTML=wzHead('Qaysi oʻyinni oʻynaymiz?',BZ?`📘 ${esc(bt.name)} · ${BZ_LV.find(x=>x[0]===WZ.bd)[2]}`:SB?`📘 ${esc(WZ.set.name)} — darajani tanlang`:M?`${WZ.sinf}-sinf · ${WZ.topics.length} ta mavzu`:`${esc(WZ.set.name)}`)+
      (SB?`<div class="wzgr" style="margin:0 0 12px">${BZ_LV.map(([d,e,n])=>`<button data-wbd="${d}" class="${d===sd?'on':''}">${e} ${n}</button>`).join('')}</div>`:'')+
      `<div class="tabs" id="wzMode" style="margin:0 0 12px"><button data-m="g" class="${mode==='g'?'on':''}">👥 Guruhlar</button><button data-m="r" class="${mode==='r'?'on':''}">🤖 Kompyuterga qarshi</button><button data-m="s" class="${mode==='s'?'on':''}">👤 Bitta oʻquvchi</button></div>
