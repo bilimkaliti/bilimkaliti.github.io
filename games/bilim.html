@@ -366,7 +366,7 @@ const IMPL={
  jlash:{
   init(){const seen=new Set(),n=cfg.n;const p=pool(['pair','mc']).map(it=>it.k==='pair'?{a:it.a,b:it.b}:{a:it.q,b:it.o[it.c]}).filter(x=>{const k=x.b.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
     this.per=Math.min(lenOf(),Math.floor(p.length/n));this.p=p;return this.per>=3?'':'Kamida '+3*n+' ta juft kerak.'},
-  step(){const per=this.per;SP.start(this,i=>{const mine=this.p.slice(i*per,(i+1)*per),B=[];for(let k=0;k<mine.length;k+=5)B.push(mine.slice(k,k+5).map((x,id)=>({...x,id})));if(B.length>1&&B[B.length-1].length<2)B[B.length-2]=B[B.length-2].concat(B.pop().map((x,id)=>({...x,id:B[B.length-2].length+id})));return B})},
+  step(){const per=this.per;SP.start(this,i=>{const mine=this.p.slice(i*per,(i+1)*per),B=[];for(let k=0;k<mine.length;k+=5)B.push(mine.slice(k,k+5).map((x,id)=>({...x,id})));if(B.length>1&&B[B.length-1].length<2){const last=B.pop(),prev=B[B.length-1];B[B.length-1]=prev.concat(last.map((x,id)=>({...x,id:prev.length+id})))}return B})},
   draw(p,B){p.bd=B;p.left=B.length;p.sel=null;const R=shuffle(B.map(x=>x.id)),c=G.teams[p.i].c;
     p.pb.innerHTML=`<div class="jcols"><div class="jcol">${B.map(x=>`<button class="jc" data-l="${x.id}" style="--tc:${c}">${esc(x.a)}</button>`).join('')}</div><div class="jcol">${R.map(id=>`<button class="jc" data-r="${id}" style="--tc:${c}">${esc(B.find(x=>x.id===id).b)}</button>`).join('')}</div></div>`;
     SP.say(p,'Avval chapdan, keyin oʻngdan tanlang.');p.pb.onclick=e=>this.tap(p,e.target.closest('.jc'))},

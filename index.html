@@ -1869,7 +1869,7 @@ const setKind=items=>{const k=new Set((items||[]).map(itKind));return k.size===1
 const KIND_LBL={mc:'test',tf:'toʻgʻri/notoʻgʻri',pair:'juftlar',order:'tartibga sol',group:'guruhlash',num:'son javob',mix:'aralash'};
 function gamesFor(s){const k=s.kind||(s.mc?'mc':'num');
   if(k==='tf')return GAMES.filter(g=>g.id==='togri');if(k==='order')return GAMES.filter(g=>g.id==='tartib');if(k==='group')return GAMES.filter(g=>g.id==='guruh');
-  const top=GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(k!=='num'&&g.g==='bomba'));
+  const top=GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(k!=='num'&&g.g==='bomba')&&!(g.g==='bomba'&&s.bz&&!s.bomb));
   const old=GAMES.filter(g=>['kosmik','sirli','eshik'].includes(g.id));
   const lang=s.fan&&s.fan!=='Matematika',X=[...(s.ord?[GAMES.find(g=>g.id==='tartib')]:[]),...(lang&&(k==='mc'||k==='pair')?[GAMES.find(g=>g.id==='harf')]:[])];
   return k==='pair'?[GAMES.find(g=>g.id==='jlash'),...top,...old,...X]:(k==='num'||k==='mix')&&s.bz?[...top,...GAMES.filter(g=>['togri','timsoh','million'].includes(g.id)),...old,...X]:k==='mc'?[...top,...GAMES.filter(g=>['togri','jlash','timsoh','million'].includes(g.id)),...old,...X]:[...top,...X]}
@@ -1918,7 +1918,7 @@ function bazaPlay(f,t){
   const md=modal(`<h3>▶️ ${esc(t.name)}</h3><p class="sub">Qaysi darajada oʻynaymiz?</p><div class="bzlv">${BZ_LV.map(([d,e,n,c1,c2])=>{const k=d?t.items.filter(i=>i.d===d).length:t.items.length;return `<button data-d="${d}" style="background:linear-gradient(135deg,${c1},${c2})"><span style="font-size:1.8rem">${e}</span>${n}<small>${k} ta savol</small></button>`}).join('')}</div>`);
   md.querySelector('.mbox').classList.add('wide');
   md.querySelector('.bzlv').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;const d=+b.dataset.d,it=t.items.filter(i=>!d||i.d===d);closeModal();
-    const lv=BZ_LV.find(x=>x[0]===d);playModal({name:`${t.name} · ${lv[2]}`,kind:bzKind(it),mc:it.some(i=>i.o),ord:it.some(i=>i.s),fan:(BAZA[f]||{}).fan,bz:f},`&baza=${encodeURIComponent(f)}&m=${encodeURIComponent(t.id)}&d=${d}`)}}
+    const lv=BZ_LV.find(x=>x[0]===d);playModal({name:`${t.name} · ${lv[2]}`,kind:bzKind(it),bomb:new Set(it.filter(i=>/^[1-9]$/.test(String(i.a))).map(i=>String(i.a))).size>=4&&it.filter(i=>/^[1-9]$/.test(String(i.a))).length>=4,mc:it.some(i=>i.o),ord:it.some(i=>i.s),fan:(BAZA[f]||{}).fan,bz:f},`&baza=${encodeURIComponent(f)}&m=${encodeURIComponent(t.id)}&d=${d}`)}}
 const bzKind=it0=>{const it=it0.filter(i=>!i.s);return it.every(i=>!i.o)?'num':it.every(i=>i.o)?'mc':'mix'};
 const bzSet=(t,B)=>({id:'bz-'+B.slug+'-'+t.id,bz:B.slug,tid:t.id,name:t.name,fan:B.fan,sinf:(t.sinf||[]).join(', '),sinfs:t.sinf||[],mavzu:t.bob,author:'Bilim Kaliti',n:t.items.length,kind:bzKind(t.items),mc:t.items.some(i=>i.o),ord:t.items.some(i=>i.s),items:t.items.map(({d,...r})=>r)});
 async function bindBaza(f,fix){
@@ -2598,7 +2598,7 @@ function wzDraw(){
     const BZ=M&&WZ.fan==='Matematika'&&wzMM()==='baza'&&WZ.bt,bt=BZ&&BAZA.matematika.topics.find(x=>x.id===WZ.bt);
     const SB=!M&&WZ.set&&WZ.set.bz,sd=WZ.bd2==null?1:WZ.bd2;
     const base=BZ?`&baza=matematika&m=${encodeURIComponent(WZ.bt)}&d=${WZ.bd}`:M?`&sinf=${WZ.sinf}&t=${WZ.topics.join(',')}`:SB?WZ.set.param+'&d='+sd:WZ.set.param+'&fan='+encodeURIComponent(WZ.fan);
-    const games=BZ?gamesFor({kind:bzKind(bt.items),bz:1,fan:(BZ&&BAZA[BZ]||{}).fan}).filter(g=>g.f==='toplam'||g.f==='bilim'):M?GAMES.filter(g=>g.f==='toplam'):SB?gamesFor(WZ.set).filter(g=>g.f==='toplam'||g.f==='bilim'):gamesFor(WZ.set);
+    const games=BZ?gamesFor({kind:bzKind(bt.items),bz:1,bomb:(()=>{const q=bt.items.filter(i=>(!WZ.bd||i.d===WZ.bd)&&/^[1-9]$/.test(String(i.a)));return new Set(q.map(i=>i.a)).size>=4})(),fan:(BZ&&BAZA[BZ]||{}).fan}).filter(g=>g.f==='toplam'||g.f==='bilim'):M?GAMES.filter(g=>g.f==='toplam'):SB?gamesFor(WZ.set).filter(g=>g.f==='toplam'||g.f==='bilim'):gamesFor(WZ.set);
     box.innerHTML=wzHead('Qaysi oʻyinni oʻynaymiz?',BZ?`📘 ${esc(bt.name)} · ${BZ_LV.find(x=>x[0]===WZ.bd)[2]}`:SB?`📘 ${esc(WZ.set.name)} — darajani tanlang`:M?`${WZ.sinf}-sinf · ${WZ.topics.length} ta mavzu`:`${esc(WZ.set.name)}`)+
      (SB?`<div class="wzgr" style="margin:0 0 12px">${BZ_LV.map(([d,e,n])=>`<button data-wbd="${d}" class="${d===sd?'on':''}">${e} ${n}</button>`).join('')}</div>`:'')+
      `<div class="tabs" id="wzMode" style="margin:0 0 12px"><button data-m="g" class="${mode==='g'?'on':''}">👥 Guruhlar</button><button data-m="r" class="${mode==='r'?'on':''}">🤖 Kompyuterga qarshi</button><button data-m="s" class="${mode==='s'?'on':''}">👤 Bitta oʻquvchi</button></div>
