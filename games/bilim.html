@@ -169,6 +169,7 @@ details.adv h3{margin-top:12px}
       <h3>👥 Kim oʻynaydi?</h3>
       <div class="seg" data-key="n"></div>
       <div class="names" id="names"></div>
+      <div id="dlBox" class="hidden"><h3 style="margin-top:14px">🎚 Daraja (savollar bazasi uchun)</h3><div class="seg" data-key="dl"></div></div>
       <div id="dirBox" class="hidden"><h3 style="margin-top:14px">🔁 Tarjima yoʻnalishi</h3><div class="seg" data-key="dir"></div></div>
       <details class="adv"><summary>⚙️ Qoʻshimcha sozlamalar</summary>
         <h3 id="lenT"></h3><div class="seg" data-key="len"></div>
@@ -221,12 +222,12 @@ const MK=MODES[P.get('g')]?P.get('g'):'togri',M=MODES[MK];
 const home=location.pathname.replace(/games\/[^\/]*$/,'');$('#backA').href=home+'#/oyinlar';$('#brandA').href=home;
 document.documentElement.style.setProperty('--mc',M.c[0]);document.documentElement.style.setProperty('--mc2',M.c[1]);
 document.title=M.name+' — Bilim Kaliti';
-let cfg={dir:0,n:2,names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{},tm:0,sound:1,fan:'Tarix',sets:[]};
+let cfg={dl:0,dir:0,n:2,names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{},tm:0,sound:1,fan:'Tarix',sets:[]};
 try{const s=JSON.parse(localStorage.getItem('bk-bilim-cfg')||'null');if(s)cfg={...cfg,...s,sets:[]}}catch(e){}
 if(!FANS.includes(cfg.fan))cfg.fan='Tarix';
 const save=()=>{try{localStorage.setItem('bk-bilim-cfg',JSON.stringify({...cfg,sets:[]}))}catch(e){}};
 const lenOf=()=>M.len.o.includes(cfg.len[MK])?cfg.len[MK]:M.len.d;
-const SEGS={dir:[[0,'Aralash'],[1,'Chet tildan → oʻzbekcha'],[2,'Oʻzbekchadan → chet tilga']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],tm:[[0,'Cheklanmagan'],[20,'20 soniya'],[30,'30 soniya'],[60,'1 daqiqa']]};
+const SEGS={dl:[[0,'Aralash'],[1,'Oson'],[2,'Oʻrta'],[3,'Qiyin']],dir:[[0,'Aralash'],[1,'Chet tildan → oʻzbekcha'],[2,'Oʻzbekchadan → chet tilga']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],tm:[[0,'Cheklanmagan'],[20,'20 soniya'],[30,'30 soniya'],[60,'1 daqiqa']]};
 /* ---------- maʼlumotlar ---------- */
 const APIB=()=>(TG&&TG.initData)?'':(/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com');
 function normIt(it){if(!it||typeof it!=='object')return null;
@@ -239,7 +240,7 @@ function normIt(it){if(!it||typeof it!=='object')return null;
   return null}
 const usable=s=>s.items.filter(it=>M.kinds.includes(it.k)).length;
 let SETS=[],LIBF={},FS=+P.get('fsinf')||0;
-function addSet(s,extra){const items=(s.items||[]).map(normIt).filter(Boolean);const id=String(s.id);if(SETS.some(x=>x.id===id))return;
+function addSet(s,extra){const items=(s.items||[]).map(x=>{const n=normIt(x);if(n&&x&&x.d)n.d=x.d;return n}).filter(Boolean);const id=String(s.id);if(SETS.some(x=>x.id===id))return;
   SETS.push({id,name:String(s.name||'Toʻplam').slice(0,60),fan:/^(Algebra|Geometriya)$/.test(s.fan)?'Matematika':FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items,...extra})}
 async function post(path,body){const r=await fetch(APIB()+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json()}
 async function loadSets(){
@@ -254,7 +255,12 @@ async function loadSets(){
   const sid=lib?'L-'+lib:(bz&&bm)?'B-'+bm+'-'+bd:P.get('set');const s=SETS.find(x=>x.id===sid);
   if(s){cfg.sets=[s.id];if(s.fan)cfg.fan=s.fan}
   const fp=P.get('fan');if(fp&&FANS.includes(fp)&&!s)cfg.fan=fp;
-  render();libForFan(cfg.fan)}
+  render();libForFan(cfg.fan);bankForFan(cfg.fan)}
+const BANKS={'Matematika':'matematika','Ona tili va adabiyot':'ona-tili','Ingliz tili':'ingliz','Rus tili':'rus-tili'},BKL={};
+async function bankForFan(f){const slug=BANKS[f];if(!slug||BKL[f])return;BKL[f]='loading';render();
+  try{const r=await fetch('baza/'+slug+'.json?v='+BZ_V),j=await r.json();
+    (j.topics||[]).forEach(t=>addSet({id:'BK-'+slug+'-'+t.id,name:t.name,fan:f,items:t.items},{fixed:1,bank:1,bob:t.bob||'',sinfs:(t.sinf||[]).map(String)}));BKL[f]='ok'}catch(e){BKL[f]='err'}
+  render()}
 async function libForFan(f){if(LIBF[f])return;LIBF[f]='loading';render();
   try{const j=await post('/api/lib/list',{fan:f,sort:'top'});(j.sets||[]).forEach(m=>{const id='L-'+m.id;if(!SETS.some(s=>s.id===id))SETS.push({id,name:String(m.name||'Toʻplam').slice(0,60),fan:f,sinf:String(m.sinf||''),items:[],remote:1,lib:m.id,n:m.n||0,kind:m.kind||(m.mc?'mc':'num')})});LIBF[f]='ok'}catch(e){LIBF[f]='err'}
   render()}
@@ -262,7 +268,7 @@ async function libItems(s){if(s.items.length||s.loading)return;s.loading=1;rende
   try{const j=await post('/api/lib/get',{id:s.lib});s.items=((j.set&&j.set.items)||[]).map(normIt).filter(Boolean);post('/api/lib/play',{id:s.lib}).catch(()=>{})}catch(e){}
   s.loading=0;if(!usable(s))cfg.sets=cfg.sets.filter(x=>x!==s.id);render()}
 /* ---------- sozlamalar ---------- */
-function render(){$('#dirBox').classList.toggle('hidden',MK!=='harf');
+function render(){$('#dlBox').classList.toggle('hidden',!BANKS[cfg.fan]);$('#dirBox').classList.toggle('hidden',MK!=='harf');
   $('#mTitle').textContent=`${M.icon} ${M.name}`;$('#mDesc').textContent=M.desc;$('#mEm').textContent=M.icon;$('#lenT').textContent=M.len.t;
   SEGS.len=M.len.o.map(v=>[v,String(v)]);
   document.querySelectorAll('#setup .seg[data-key]').forEach(el=>{const k=el.dataset.key,cur=k==='len'?lenOf():cfg[k];el.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')});
@@ -272,14 +278,16 @@ function render(){$('#dirBox').classList.toggle('hidden',MK!=='harf');
   const hint={togri:'Test savollari va «toʻgʻri/notoʻgʻri» gaplari mos keladi.',jlash:'Test savollari va «juft» toʻplamlari mos keladi.',tartib:'Faqat «tartibga sol» toʻplamlari mos keladi.',guruh:'Faqat «guruhlarga ajrat» toʻplamlari mos keladi.'}[MK];
   $('#setsHint').textContent=hint;
   const fit=s=>s.remote?(M.kinds.includes(s.kind)):usable(s)>0;
-  const inF=SETS.filter(s=>s.fan===cfg.fan&&fit(s)),grs=[...new Set(inF.map(s=>s.sinf).filter(Boolean))].sort((a,b)=>a-b);
+  const inF=SETS.filter(s=>s.fan===cfg.fan&&fit(s)),grs=[...new Set(inF.flatMap(s=>s.sinfs||[s.sinf]).filter(Boolean))].sort((a,b)=>a-b);
   $('#sinfSeg').innerHTML=grs.length>1?`<button type="button" data-fs="0" aria-pressed="${!FS}">Barcha sinflar</button>`+grs.map(g=>`<button type="button" data-fs="${g}" aria-pressed="${String(FS)===g}">${g}-sinf</button>`).join(''):'';
-  const okS=s=>!FS||!s.sinf||s.sinf===String(FS)||cfg.sets.includes(s.id);
+  const okS=s=>!FS||(s.sinfs?s.sinfs.includes(String(FS)):(!s.sinf||s.sinf===String(FS)))||cfg.sets.includes(s.id);
   const lab=s=>`<label><input type="checkbox" data-s="${esc(s.id)}" ${cfg.sets.includes(s.id)?'checked':''}><span>${esc(s.name)}<small>${s.loading?'yuklanmoqda…':(s.remote&&!s.items.length?(s.n||'')+' ta':usable(s)+' ta')}${s.sinf?` · ${esc(s.sinf)}-sinf`:''}${s.own?' · meniki':s.fixed?' · tayyor':s.remote?' · kutubxona':''}</small></span></label>`;
-  const mine=inF.filter(s=>!s.remote&&okS(s)),lib=inF.filter(s=>s.remote&&okS(s)),loose=SETS.filter(s=>!s.fan&&s.own&&fit(s));
+  const mine=inF.filter(s=>!s.remote&&!s.bank&&okS(s)),bank=inF.filter(s=>s.bank&&okS(s)),lib=inF.filter(s=>s.remote&&okS(s)),loose=SETS.filter(s=>!s.fan&&s.own&&fit(s));
   let html=mine.length?`<h4>⭐ Tayyor va mening toʻplamlarim</h4>${mine.map(lab).join('')}`:'';
+  if(bank.length){const by={};bank.forEach(s=>(by[s.bob||'Savollar bazasi']=by[s.bob||'Savollar bazasi']||[]).push(s));html+=Object.entries(by).map(([b,a])=>`<h4>📖 ${esc(b)}</h4>${a.map(lab).join('')}`).join('')}
+  else if(BANKS[cfg.fan]&&BKL[cfg.fan]==='loading')html+='<p class="small" style="grid-column:1/-1">📖 Savollar bazasi yuklanmoqda…</p>';
   html+=lib.length?`<h4>📚 Kutubxonadan</h4>${lib.map(lab).join('')}`:LIBF[cfg.fan]==='loading'?'<p class="small" style="grid-column:1/-1">📚 Kutubxona yuklanmoqda…</p>':'';
-  if(!mine.length&&!lib.length&&LIBF[cfg.fan]!=='loading')html+=`<div class="empty">Bu fan boʻyicha «${esc(M.name)}» uchun hali toʻplam yoʻq.<br><a href="${home}#/ai/savollar" target="_top">✨ AI bilan yaratish</a><a href="${home}#/ai/darslik" target="_top">📸 Darslikdan</a></div>`;
+  if(!mine.length&&!lib.length&&!bank.length&&LIBF[cfg.fan]!=='loading'&&BKL[cfg.fan]!=='loading')html+=`<div class="empty">Bu fan boʻyicha «${esc(M.name)}» uchun hali toʻplam yoʻq.<br><a href="${home}#/ai/savollar" target="_top">✨ AI bilan yaratish</a><a href="${home}#/ai/darslik" target="_top">📸 Darslikdan</a></div>`;
   if(loose.length)html+=`<details style="grid-column:1/-1;margin-top:8px"><summary style="cursor:pointer;font-weight:800">Fani koʻrsatilmagan toʻplamlarim (${loose.length})</summary><div class="sets" style="margin-top:8px">${loose.map(lab).join('')}</div></details>`;
   $('#sets').innerHTML=html;
 }
@@ -289,7 +297,7 @@ $('#setup').addEventListener('click',e=>{
   if(k==='len')cfg.len[MK]=v;else cfg[k]=v;render()});
 $('#setup').addEventListener('change',e=>{const t=e.target;
   if(t.dataset.s!=null){const id=t.dataset.s;cfg.sets=t.checked?[...new Set([...cfg.sets,id])]:cfg.sets.filter(x=>x!==id);const s=SETS.find(x=>x.id===id);if(t.checked&&s&&s.remote)libItems(s);$('#err').textContent=''}
-  if(t.id==='fanSel'){cfg.fan=t.value;cfg.sets=cfg.sets.filter(id=>{const s=SETS.find(x=>x.id===id);return s&&s.fan===cfg.fan});FS=0;render();libForFan(cfg.fan)}
+  if(t.id==='fanSel'){cfg.fan=t.value;cfg.sets=cfg.sets.filter(id=>{const s=SETS.find(x=>x.id===id);return s&&s.fan===cfg.fan});FS=0;render();libForFan(cfg.fan);bankForFan(cfg.fan)}
   if(t.id==='sndChk')cfg.sound=t.checked?1:0});
 $('#names').addEventListener('input',e=>{if(e.target.dataset.i!=null)cfg.names[+e.target.dataset.i]=e.target.value});
 /* ---------- tovush va konfetti ---------- */
@@ -315,7 +323,7 @@ const stopTimer=()=>{clearInterval(G.tmIv);(G.pIv||[]).forEach(clearInterval);G.
 function setMsg(t,c){const m=$('#msg');if(m){m.textContent=t;m.className='msg '+(c||'')}}
 function score(n){cur().score+=n;drawScores()}
 function miss(q,a){G.wr.push({q:String(q).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,170),a:String(a).slice(0,120)})}
-function pool(kind){return shuffle(cfg.sets.map(id=>SETS.find(s=>s.id===id)).filter(Boolean).flatMap(s=>s.items.filter(it=>kind.includes(it.k))))}
+function pool(kind){return shuffle(cfg.sets.map(id=>SETS.find(s=>s.id===id)).filter(Boolean).flatMap(s=>s.items.filter(it=>kind.includes(it.k)&&(!s.bank||!cfg.dl||it.d===cfg.dl))))}
 /* ---------- ikkiga boʻlingan ekran: guruhlar bir vaqtda oʻynaydi ---------- */
 const SP={
  start(g,mk){const n=G.teams.length;G.turn=-1;drawScores();G.pIv=[];g.P=G.teams.map((t,i)=>({i,k:0,lock:0,fin:0,q:mk(i)}));
