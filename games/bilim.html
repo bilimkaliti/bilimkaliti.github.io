@@ -100,7 +100,7 @@ details.adv h3{margin-top:12px}
 .jc.wrong{animation:shk .4s;border-color:var(--bad)}
 @keyframes shk{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 /* tartib */
-.ttq{font-size:clamp(1.2rem,2.6vw,1.7rem);font-weight:900;text-align:center;margin:6px 0 16px}
+.bigem{font-size:clamp(3.2rem,9vh,5.5rem);line-height:1.1}.ttq{font-size:clamp(1.2rem,2.6vw,1.7rem);font-weight:900;text-align:center;margin:6px 0 16px}
 .slots{display:grid;gap:10px;max-width:760px;margin:0 auto}
 .slot{display:flex;align-items:center;gap:12px;border:2.5px dashed var(--line);border-radius:16px;min-height:58px;padding:8px 12px;font-weight:800;background:var(--bg)}
 .slot>b{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--bg2);font-weight:900}
@@ -128,6 +128,7 @@ details.adv h3{margin-top:12px}
 .split.g4{grid-template-columns:1fr 1fr}
 .pn{background:#fff;border:3px solid var(--tc);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:260px}
 .pn .ph{display:flex;justify-content:space-between;align-items:center;font-weight:900;color:var(--tc)}
+.fire{color:#e8590c;font-weight:900;margin-left:auto;margin-right:10px}.fire.pop{animation:fpop .5s}@keyframes fpop{0%{transform:scale(.6)}60%{transform:scale(1.4)}100%{transform:scale(1)}}.rp{font-style:normal;font-size:.8em;background:#fff3bf;border-radius:8px;padding:1px 8px;color:#8a6100;margin-left:8px}
 .pn .ph em{font-style:normal;color:#6b7280;font-size:.85em}
 .pn .stmt{flex:1;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;text-align:center}
 .pn .fin{flex:1;display:flex;align-items:center;justify-content:center;font-size:1.4em;font-weight:900;color:var(--tc);text-align:center}
@@ -205,7 +206,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const P=new URLSearchParams(location.search);const BZ_V='4ebc0bbc';
+const P=new URLSearchParams(location.search);const BZ_V='a9a8a9da';
 const MODES={
  togri:{icon:'✅',name:'Toʻgʻri yoki notoʻgʻri',c:['#0f9d8a','#2fb9a3'],desc:'Ekran guruhlar uchun boʻlinadi. Har guruh oʻz gapini koʻradi (daraja bir xil) va oʻz tezligida «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Har bir toʻgʻri javob — 1 ball.',kinds:['tf','mc'],len:{t:'Savollar soni',o:[10,16,20,30],d:16}},
  jlash:{icon:'🔗',name:'Juftlash',c:['#2f8cff','#6aa8ff'],desc:'Ekran guruhlar uchun boʻlinadi. Har guruh oʻz juftlarini oʻz tezligida ulaydi (daraja bir xil). Har bir toʻgʻri juft — 1 ball.',kinds:['pair','mc'],len:{t:'Juftlar soni',o:[10,15,20],d:15}},
@@ -326,6 +327,7 @@ function startTimer(onEnd){clearInterval(G.tmIv);if(!cfg.tm)return;G.tmLeft=cfg.
 const stopTimer=()=>{clearInterval(G.tmIv);(G.pIv||[]).forEach(clearInterval);G.pIv=[]};
 function setMsg(t,c){const m=$('#msg');if(m){m.textContent=t;m.className='msg '+(c||'')}}
 function score(n){cur().score+=n;drawScores()}
+const QH=q=>{const m=/^(\p{Extended_Pictographic}\uFE0F?)\s+(.*)$/su.exec(String(q));return m?`<span class="bigem">${m[1]}</span><br>${esc(m[2])}`:esc(q)};
 function miss(q,a){G.wr.push({q:String(q).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,170),a:String(a).slice(0,120)})}
 function pool(kind){return shuffle(cfg.sets.map(id=>SETS.find(s=>s.id===id)).filter(Boolean).flatMap(s=>s.items.filter(it=>kind.includes(it.k)&&(!s.bank||!cfg.dl||it.d===cfg.dl))))}
 /* ---------- ikkiga boʻlingan ekran: guruhlar bir vaqtda oʻynaydi ---------- */
@@ -333,12 +335,14 @@ const SP={
  start(g,mk){const n=G.teams.length;G.turn=-1;drawScores();G.pIv=[];g.P=G.teams.map((t,i)=>({i,k:0,lock:0,fin:0,q:mk(i)}));
   $('#stage').innerHTML=`<div class="split${n>2?' g4':''}" style="--n:${n}">${G.teams.map((t,i)=>`<div class="pn" id="pn${i}" style="--tc:${t.c}"></div>`).join('')}</div>`;g.P.forEach(p=>SP.show(g,p))},
  show(g,p){const t=G.teams[p.i],el=$('#pn'+p.i);p.el=el;p.lock=0;
-  el.innerHTML=`<div class="ph"><span>${G.teams.length>1?esc(t.name):'Savol'}</span><em>${p.k+1} / ${p.q.length}</em></div>${cfg.tm?'<div class="tbar" style="--tc:'+t.c+'"><i></i></div>':''}<div class="pb"></div><div class="msg"></div>`;
-  p.pb=el.querySelector('.pb');p.msg=el.querySelector('.msg');g.draw(p,p.q[p.k]);
+  el.innerHTML=`<div class="ph"><span>${G.teams.length>1?esc(t.name):'Savol'}</span>${p.q[p.k]&&p.q[p.k].rep?'<i class="rp">🔁 Takror</i>':''}<em>${p.k+1} / ${p.q.length}</em></div>${cfg.tm?'<div class="tbar" style="--tc:'+t.c+'"><i></i></div>':''}<div class="pb"></div><div class="msg"></div>`;
+  p.pb=el.querySelector('.pb');p.msg=el.querySelector('.msg');SP.fire(p);g.draw(p,p.q[p.k]);
   clearInterval(p.iv);if(cfg.tm){const T=cfg.tm*(g.tmul||1),bar=el.querySelector('.tbar i');p.left_t=T;p.iv=setInterval(()=>{p.left_t-=.1;if(bar)bar.style.transform=`scaleX(${Math.max(0,p.left_t/T)})`;if(p.left_t<=0){clearInterval(p.iv);if(!p.lock||g===IMPL.tartib)g.timeout(p)}},100);G.pIv.push(p.iv)}},
  say(p,t,c){p.msg.textContent=t;p.msg.className='msg '+(c||'')},
- add(p,n){G.teams[p.i].score+=n;drawScores()},
- next(g,p,delay){clearInterval(p.iv);setTimeout(()=>{if(G.over)return;p.k++;if(p.k>=p.q.length){p.fin=1;p.el.innerHTML=`<div class="ph"><span>${esc(G.teams[p.i].name)}</span><em>${p.q.length} / ${p.q.length}</em></div><div class="fin">✅ Tugadi!<br>${G.teams[p.i].score} ball</div>`;if(g.P.every(x=>x.fin))setTimeout(finish,900)}else SP.show(g,p)},delay)}
+ add(p,n){G.teams[p.i].score+=n;drawScores();p.st=(p.st||0)+1;SP.fire(p)},
+ fire(p){const h=p.el&&p.el.querySelector('.ph');if(!h)return;let f=h.querySelector('.fire');if((p.st||0)>=3){if(!f){f=document.createElement('b');f.className='fire';h.insertBefore(f,h.lastElementChild)}f.textContent='🔥 '+p.st;f.classList.remove('pop');void f.offsetWidth;f.classList.add('pop')}else if(f)f.remove()},
+ again(p){const c=p.q[p.k],j=p.k+3;if(!c||typeof c!=='object'||Array.isArray(c)||c.rep||j>=p.q.length)return;p.q[j]={...c,rep:1}},
+ next(g,p,delay,bad,norep){clearInterval(p.iv);if(bad){p.st=0;if(!norep)SP.again(p)}setTimeout(()=>{if(G.over)return;p.k++;if(p.k>=p.q.length){p.fin=1;p.el.innerHTML=`<div class="ph"><span>${esc(G.teams[p.i].name)}</span><em>${p.q.length} / ${p.q.length}</em></div><div class="fin">✅ Tugadi!<br>${G.teams[p.i].score} ball</div>`;if(g.P.every(x=>x.fin))setTimeout(finish,900)}else SP.show(g,p)},delay)}
 };
 const IMPL={
  togri:{
@@ -350,13 +354,13 @@ const IMPL={
     $('#stage').innerHTML=`<div class="split${n>2?' g4':''}" style="--n:${n}">${G.teams.map((t,i)=>`<div class="pn" id="pn${i}" style="--tc:${t.c}"></div>`).join('')}</div>`;
     this.P.forEach(p=>this.show(p))},
   show(p){const t=G.teams[p.i],el=$('#pn'+p.i),q=p.q[p.k];p.cq=q;p.lock=0;
-    el.innerHTML=`<div class="ph"><span>${G.teams.length>1?esc(t.name):'Savol'}</span><em>${p.k+1} / ${this.per}</em></div>${cfg.tm?'<div class="tbar" style="--tc:'+t.c+'"><i></i></div>':''}<div class="stmt">${q.txt}</div><div class="tfb"><button class="y" data-a="1">✅ Toʻgʻri</button><button class="n" data-a="0">❌ Notoʻgʻri</button></div><div class="msg"></div>`;
-    el.querySelector('.tfb').onclick=e=>{const b=e.target.closest('[data-a]');if(b)this.ans(p,+b.dataset.a,b)};
+    el.innerHTML=`<div class="ph"><span>${G.teams.length>1?esc(t.name):'Savol'}</span>${q.rep?'<i class="rp">🔁 Takror</i>':''}<em>${p.k+1} / ${this.per}</em></div>${cfg.tm?'<div class="tbar" style="--tc:'+t.c+'"><i></i></div>':''}<div class="stmt">${q.txt}</div><div class="tfb"><button class="y" data-a="1">✅ Toʻgʻri</button><button class="n" data-a="0">❌ Notoʻgʻri</button></div><div class="msg"></div>`;
+    el.querySelector('.tfb').onclick=e=>{const b=e.target.closest('[data-a]');if(b)this.ans(p,+b.dataset.a,b)};SP.fire(p);p.el=el;
     clearInterval(p.iv);if(cfg.tm){p.left=cfg.tm;const bar=el.querySelector('.tbar i');p.iv=setInterval(()=>{p.left-=.1;if(bar)bar.style.transform=`scaleX(${Math.max(0,p.left/cfg.tm)})`;if(p.left<=0){clearInterval(p.iv);this.ans(p,-1)}},100);G.pIv.push(p.iv)}},
   ans(p,a,b){if(p.lock||G.over)return;p.lock=1;clearInterval(p.iv);const ok=a===p.cq.t,el=$('#pn'+p.i),m=el.querySelector('.msg');
     el.querySelectorAll('.tfb button').forEach(x=>{x.disabled=true;if(x===b)x.classList.add('pick')});
-    if(ok){G.teams[p.i].score++;drawScores();snd('good');m.textContent='🎉 Toʻgʻri! +1 ball';m.className='msg good';if(b)burstEl(b,24)}
-    else{snd('bad');miss(p.cq.pl,p.cq.pa);m.textContent=a<0?`⏰ Vaqt tugadi. ${p.cq.t?'Bu gap toʻgʻri.':'Bu gap notoʻgʻri.'}`:`Afsus! Bu gap ${p.cq.t?'toʻgʻri':'notoʻgʻri'}. ${p.cq.why}`;m.className='msg bad'}
+    if(ok){G.teams[p.i].score++;drawScores();p.st=(p.st||0)+1;SP.fire(p);snd('good');m.textContent='🎉 Toʻgʻri! +1 ball';m.className='msg good';if(b)burstEl(b,24)}
+    else{snd('bad');p.st=0;SP.fire(p);SP.again(p);miss(p.cq.pl,p.cq.pa);m.textContent=a<0?`⏰ Vaqt tugadi. ${p.cq.t?'Bu gap toʻgʻri.':'Bu gap notoʻgʻri.'}`:`Afsus! Bu gap ${p.cq.t?'toʻgʻri':'notoʻgʻri'}. ${p.cq.why}`;m.className='msg bad'}
     setTimeout(()=>{if(G.over)return;p.k++;if(p.k>=this.per){p.fin=1;el.innerHTML=`<div class="ph"><span>${esc(G.teams[p.i].name)}</span><em>${this.per} / ${this.per}</em></div><div class="fin">✅ Tugadi!<br>${G.teams[p.i].score} ball</div>`;if(this.P.every(x=>x.fin))setTimeout(finish,900)}else this.show(p)},ok?1100:2200)}
  },
  jlash:{
@@ -371,7 +375,7 @@ const IMPL={
     if(p.sel==null){SP.say(p,'Avval chap ustundan tanlang','bad');return}
     const L=p.pb.querySelector(`[data-l="${p.sel}"]`),ok=+b.dataset.r===p.sel,c=G.teams[p.i].c;
     if(ok){[L,b].forEach(x=>{x.classList.remove('sel');x.classList.add('done');x.style.setProperty('--dc',c);x.disabled=true});SP.add(p,1);snd('good');burstEl(b,18);p.sel=null;p.left--;SP.say(p,'🎉 +1 ball','good');if(p.left<=0){p.lock=1;SP.next(this,p,1000)}}
-    else{snd('bad');[L,b].forEach(x=>{x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong')});L.classList.remove('sel');p.sel=null;SP.say(p,'Notoʻgʻri juft — qayta urinib koʻring','bad');{const A=p.bd.find(x=>x.id===+L.dataset.l);if(A)miss(A.a,A.b)}}},
+    else{snd('bad');p.st=0;SP.fire(p);[L,b].forEach(x=>{x.classList.remove('wrong');void x.offsetWidth;x.classList.add('wrong')});L.classList.remove('sel');p.sel=null;SP.say(p,'Notoʻgʻri juft — qayta urinib koʻring','bad');{const A=p.bd.find(x=>x.id===+L.dataset.l);if(A)miss(A.a,A.b)}}},
   timeout(p){p.lock=1;SP.say(p,'⏰ Vaqt tugadi','bad');SP.next(this,p,1200)},tmul:3
  },
  tartib:{
@@ -382,7 +386,7 @@ const IMPL={
   step(){const per=this.per;SP.start(this,i=>this.R.slice(0,per).map(r=>r[i]))},
   draw(p,it){p.it=it;let sh;do{sh=shuffle(it.s.map((_,i)=>i))}while(sh.every((x,i)=>x===i)&&it.s.length>1);p.free=sh;p.put=it.s.map(()=>null);p.fixed=it.s.map(()=>false);p.att=1;p.done=0;this.paint(p)},
   paint(p){const it=p.it,c=G.teams[p.i].c,full=p.put.every(v=>v!=null);
-    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><div class="slots" style="--tc:${c}">${it.s.map((_,i)=>{const v=p.put[i],fx=p.fixed[i];return `<div class="slot${v!=null?' full':''}${fx?' ok':''}${p.done&&!fx?' no':''}" data-p="${i}"><b>${i+1}</b>${v!=null?esc(it.s[v]):''}${p.done&&!fx?`<small>✓ ${esc(it.s[i])}</small>`:''}</div>`}).join('')}</div>${p.done?'<button class="next">Keyingisi →</button>':`<div class="pool" style="--tc:${c}">${p.free.map(i=>`<button class="card" data-f="${i}">${esc(it.s[i])}</button>`).join('')}</div><button class="check" ${full?'':'disabled'}>✔ Tekshirish</button>`}`;
+    p.pb.innerHTML=`<div class="ttq">${QH(it.q)}</div><div class="slots" style="--tc:${c}">${it.s.map((_,i)=>{const v=p.put[i],fx=p.fixed[i];return `<div class="slot${v!=null?' full':''}${fx?' ok':''}${p.done&&!fx?' no':''}" data-p="${i}"><b>${i+1}</b>${v!=null?esc(it.s[v]):''}${p.done&&!fx?`<small>✓ ${esc(it.s[i])}</small>`:''}</div>`}).join('')}</div>${p.done?'<button class="next">Keyingisi →</button>':`<div class="pool" style="--tc:${c}">${p.free.map(i=>`<button class="card" data-f="${i}">${esc(it.s[i])}</button>`).join('')}</div><button class="check" ${full?'':'disabled'}>✔ Tekshirish</button>`}`;
     if(p.done){p.pb.querySelector('.next').onclick=()=>SP.next(this,p,0);return}
     p.pb.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const i=+b.dataset.f,k=p.put.indexOf(null);if(k<0)return;p.free=p.free.filter(x=>x!==i);p.put[k]=i;snd('tick');this.paint(p)});
     p.pb.querySelectorAll('.slot.full').forEach(s=>s.onclick=()=>{const k=+s.dataset.p;if(p.fixed[k])return;p.free.push(p.put[k]);p.put[k]=null;this.paint(p)});
@@ -401,12 +405,12 @@ const IMPL={
     this.w=w;this.per=Math.min(lenOf(),Math.floor(w.length/n));return this.per>=2?'':'Guruhlarga ajrat toʻplamini tanlang.'},
   step(){const n=cfg.n,per=this.per;SP.start(this,i=>this.w.filter((_,j)=>j%n===i).slice(0,per))},
   draw(p,x){if(x.it!==p.cit){p.cit=x.it;p.fill=x.it.g.map(()=>[])}const it=x.it;
-    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><span class="word" style="--tc:${G.teams[p.i].c}">${esc(x.w)}</span><div class="baskets" style="--n:${it.g.length}">${it.g.map((g,i)=>`<button class="bk" data-g="${i}" style="--bc:${BC[i%4]}"><h4>${esc(g.n)}</h4><div class="in">${p.fill[i].map(w=>`<span>${esc(w)}</span>`).join('')}</div></button>`).join('')}</div>`;
+    p.pb.innerHTML=`<div class="ttq">${QH(it.q)}</div><span class="word" style="--tc:${G.teams[p.i].c}">${esc(x.w)}</span><div class="baskets" style="--n:${it.g.length}">${it.g.map((g,i)=>`<button class="bk" data-g="${i}" style="--bc:${BC[i%4]}"><h4>${esc(g.n)}</h4><div class="in">${p.fill[i].map(w=>`<span>${esc(w)}</span>`).join('')}</div></button>`).join('')}</div>`;
     p.pb.querySelector('.baskets').onclick=e=>{const b=e.target.closest('[data-g]');if(b)this.ans(p,+b.dataset.g)}},
   ans(p,g){if(p.lock)return;p.lock=1;clearInterval(p.iv);const x=p.q[p.k],ok=g===x.gi,right=p.pb.querySelector(`[data-g="${x.gi}"]`);
     p.fill[x.gi].push(x.w);right.querySelector('.in').insertAdjacentHTML('beforeend',`<span>${esc(x.w)}</span>`);p.pb.querySelector('.word').style.visibility='hidden';
     if(ok){SP.add(p,1);snd('good');SP.say(p,'🎉 Toʻgʻri! +1 ball','good');burstEl(right,18)}else{snd('bad');miss(x.w,x.it.g[x.gi].n);right.classList.add('hint');SP.say(p,g<0?`⏰ Vaqt tugadi. Javob: «${x.it.g[x.gi].n}»`:`Afsus! «${x.w}» — «${x.it.g[x.gi].n}» guruhiga kiradi`,'bad')}
-    SP.next(this,p,ok?1000:2000)},
+    SP.next(this,p,ok?1000:2000,!ok)},
   timeout(p){this.ans(p,-1)}
  },
  timsoh:{
@@ -416,14 +420,14 @@ const IMPL={
   grid(p,t){p.pb.innerHTML=`<div class="ttq">${t}</div><div class="cg" style="--tc:${G.teams[p.i].c}">${p.pz.map((z,k)=>{const o=p.open[k];return `<button class="cell${o?(z<0?' neg':' pos'):''}" data-k="${k}" ${o?'disabled':''}>${o?(z<0?'🐊':'+'+z):'?'}</button>`}).join('')}</div>`;
     p.pb.querySelector('.cg').onclick=e=>{const b=e.target.closest('[data-k]');if(b&&p.ph==='cell'&&!p.lock)this.cell(p,+b.dataset.k)}},
   cell(p,k){p.ph='q';p.cur=k;const it=p.it,perm=shuffle(it.o.map((_,i)=>i));p.perm=perm;
-    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><div class="mo">${perm.map((o,i)=>`<button data-o="${i}">${esc(it.o[o])}</button>`).join('')}</div>`;
+    p.pb.innerHTML=`<div class="ttq">${QH(it.q)}</div><div class="mo">${perm.map((o,i)=>`<button data-o="${i}">${esc(it.o[o])}</button>`).join('')}</div>`;
     p.pb.querySelector('.mo').onclick=e=>{const b=e.target.closest('[data-o]');if(b)this.ans(p,+b.dataset.o)}},
   ans(p,i){if(p.lock)return;if(p.ph==='cell'){const free=p.pz.map((_,k)=>k).filter(k=>!p.open[k]);p.cur=pick(free);p.ph='q';p.perm=p.perm||[]}p.lock=1;clearInterval(p.iv);
     const it=p.it,ok=i>=0&&p.perm[i]===it.c,z=p.pz[p.cur];
     if(ok){p.open[p.cur]=1;const t=G.teams[p.i];t.score=Math.max(0,t.score+z);drawScores();if(z<0){snd('bad');SP.say(p,'🐊 Timsoh tishladi! −2 ball','bad')}else{snd('good');SP.say(p,`🎉 Toʻgʻri! +${z} ball${z===3?' — jackpot!':''}`,'good');if(z===3)burst(innerWidth/2,innerHeight/2,40)}}
     else{snd('bad');miss(it.q,it.o[it.c]);SP.say(p,i<0?`⏰ Vaqt tugadi. Javob: ${it.o[it.c]}`:`Afsus! Toʻgʻri javob: ${it.o[it.c]}`,'bad')}
     p.pb.querySelectorAll('.mo button').forEach((b,k)=>{b.disabled=true;if(p.perm[k]===it.c)b.classList.add('ok');else if(k===i)b.classList.add('bad')});
-    setTimeout(()=>{if(G.over)return;if(ok)this.grid(p,ok&&z<0?'🐊':'✅')},900);SP.next(this,p,ok?2000:2600)},
+    setTimeout(()=>{if(G.over)return;if(ok)this.grid(p,ok&&z<0?'🐊':'✅')},900);SP.next(this,p,ok?2000:2600,!ok,1)},
   timeout(p){this.ans(p,-1)}
  },
  million:{
@@ -432,7 +436,7 @@ const IMPL={
   pts(p){const k=p.k,per=p.q.length;return k<per/3?1:k<2*per/3?2:3},
   draw(p,it){p.it=it;p.gone=[];p.perm=shuffle(it.o.map((_,i)=>i));this.paint(p)},
   paint(p){const it=p.it,c=G.teams[p.i].c;
-    p.pb.innerHTML=`<div class="lvl">🪜 Pogʻona ${p.k+1} / ${p.q.length} · <b>+${this.pts(p)} ball</b></div><div class="ttq">${esc(it.q)}</div><div class="mo">${p.perm.map((o,i)=>`<button data-o="${i}" class="${p.gone.includes(i)?'gone':''}" ${p.gone.includes(i)||p.lock?'disabled':''}>${esc(it.o[o])}</button>`).join('')}</div>
+    p.pb.innerHTML=`<div class="lvl">🪜 Pogʻona ${p.k+1} / ${p.q.length} · <b>+${this.pts(p)} ball</b></div><div class="ttq">${QH(it.q)}</div><div class="mo">${p.perm.map((o,i)=>`<button data-o="${i}" class="${p.gone.includes(i)?'gone':''}" ${p.gone.includes(i)||p.lock?'disabled':''}>${esc(it.o[o])}</button>`).join('')}</div>
       <div class="ll" style="--tc:${c}"><button data-l="5" ${p.l5&&!p.lock?'':'disabled'}>50 / 50</button><button data-l="w" ${p.lw&&p.sp.length&&!p.lock?'':'disabled'}>🔄 Almashtirish</button></div>`;
     p.pb.querySelector('.mo').onclick=e=>{const b=e.target.closest('[data-o]');if(b)this.ans(p,+b.dataset.o)};
     p.pb.querySelector('.ll').onclick=e=>{const b=e.target.closest('[data-l]');if(!b||p.lock)return;
@@ -441,7 +445,7 @@ const IMPL={
   ans(p,i){if(p.lock)return;p.lock=1;clearInterval(p.iv);const it=p.it,ok=i>=0&&p.perm[i]===it.c,z=this.pts(p);
     if(ok){SP.add(p,z);snd('good');SP.say(p,`🎉 Toʻgʻri! +${z} ball`,'good')}else{snd('bad');miss(it.q,it.o[it.c]);SP.say(p,i<0?`⏰ Vaqt tugadi. Javob: ${it.o[it.c]}`:`Afsus! Toʻgʻri javob: ${it.o[it.c]}`,'bad')}
     p.pb.querySelectorAll('.mo button').forEach((b,k)=>{b.disabled=true;if(p.perm[k]===it.c)b.classList.add('ok');else if(k===i)b.classList.add('bad')});p.pb.querySelectorAll('.ll button').forEach(b=>b.disabled=true);
-    SP.next(this,p,ok?1400:2400)},
+    SP.next(this,p,ok?1400:2400,!ok,1)},
   timeout(p){this.ans(p,-1)}
  },
  harf:{
@@ -458,15 +462,15 @@ const IMPL={
   step(){const per=this.per;SP.start(this,i=>this.W.slice(i*per,(i+1)*per))},
   draw(p,it){p.it=it;p.ch=[...it.w];let sh;do{sh=shuffle(p.ch.map((_,i)=>i))}while(sh.every((x,i)=>x===i));p.free=sh;p.put=[];p.att=1;p.done=0;this.paint(p)},
   paint(p){const it=p.it,c=G.teams[p.i].c,n=p.ch.length;
-    p.pb.innerHTML=`<div class="ttq">${esc(it.q)}</div><div class="lt" style="--tc:${c}">${p.ch.map((_,k)=>{const v=p.put[k];return `<div class="ls${v!=null?' full':''}${p.done===1?' ok':''}${p.done===2?' no':''}" data-p="${k}">${p.done===2?esc(p.ch[k]):v!=null?esc(p.ch[v]):''}</div>`}).join('')}</div>
+    p.pb.innerHTML=`<div class="ttq">${QH(it.q)}</div><div class="lt" style="--tc:${c}">${p.ch.map((_,k)=>{const v=p.put[k];return `<div class="ls${v!=null?' full':''}${p.done===1?' ok':''}${p.done===2?' no':''}" data-p="${k}">${p.done===2?esc(p.ch[k]):v!=null?esc(p.ch[v]):''}</div>`}).join('')}</div>
       ${p.done?'':`<div class="lt" style="--tc:${c}">${p.free.map(i=>`<button class="lc" data-f="${i}">${esc(p.ch[i])}</button>`).join('')}</div>`}`;
     if(p.done)return;
     p.pb.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{if(p.lock)return;const i=+b.dataset.f;p.free=p.free.filter(x=>x!==i);p.put.push(i);snd('tick');this.paint(p);if(p.put.length===n)this.check(p)});
     p.pb.querySelectorAll('.ls.full').forEach(s=>s.onclick=()=>{if(p.lock)return;const k=+s.dataset.p;p.free.push(p.put[k]);p.put.splice(k,1);this.paint(p)})},
   check(p,tout){clearInterval(p.iv);const w=p.it.w,got=tout?'':p.put.map(i=>p.ch[i]).join('');
     if(got===w){p.done=1;this.paint(p);const pts=p.att===1?2:1;SP.add(p,pts);snd('win');SP.say(p,`🎉 Toʻgʻri! +${pts} ball`,'good');SP.next(this,p,1500);return}
-    if(p.att===1&&!tout){p.att=2;snd('bad');p.free=shuffle(p.ch.map((_,i)=>i));p.put=[];this.paint(p);SP.say(p,'Notoʻgʻri — yana bir marta urinib koʻring (+1 ball).','bad');return}
-    p.done=2;p.lock=1;this.paint(p);snd('bad');miss(p.it.q,p.it.w);SP.say(p,`${tout?'⏰ Vaqt tugadi. ':''}Toʻgʻri soʻz: ${w}`,'bad');SP.next(this,p,2600)},
+    if(p.att===1&&!tout){p.att=2;p.st=0;SP.fire(p);snd('bad');p.free=shuffle(p.ch.map((_,i)=>i));p.put=[];this.paint(p);SP.say(p,'Notoʻgʻri — yana bir marta urinib koʻring (+1 ball).','bad');return}
+    p.done=2;p.lock=1;this.paint(p);snd('bad');miss(p.it.q,p.it.w);SP.say(p,`${tout?'⏰ Vaqt tugadi. ':''}Toʻgʻri soʻz: ${w}`,'bad');SP.next(this,p,2600,1)},
   timeout(p){this.check(p,1)},tmul:2
  }
 };
