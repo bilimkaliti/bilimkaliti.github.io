@@ -63,6 +63,13 @@ GAMES = [
     ("toplam", "mental", "🧮 Mental arifmetika", "ongda hisoblash"),
     ("toplam", "juft", "🃏 Juftini top", "xotira va diqqat"),
     ("toplam", "zanjir", "🔗 Son zanjiri", "ketma-ket amallar"),
+    ("bilim", "togri", "✅ Toʻgʻri yoki notoʻgʻri", "istalgan fan uchun"),
+    ("bilim", "jlash", "🔗 Juftlash", "soʻz ↔ tarjima, sana ↔ voqea"),
+    ("bilim", "tartib", "📅 Tartibga sol", "gap va voqealarni tartibla"),
+    ("bilim", "guruh", "🗂️ Guruhlarga ajrat", "soʻzlarni savatlarga joyla"),
+    ("bilim", "timsoh", "🐊 Timsohli katakchalar", "katakni tanla — ball yoki timsoh"),
+    ("bilim", "million", "💰 Million", "savollar tobora ogʻirlashadi"),
+    ("bilim", "harf", "🔤 Anagram", "aralash harflardan soʻz top"),
 ]
 
 # Sinflar va mavzular (build vaqtida games/grades.json ga yoziladi)
