@@ -1173,7 +1173,7 @@ async function bankForFan(f){const slug=BANKS[f];if(!slug||BKL[f])return;BKL[f]=
     (j.topics||[]).forEach(t=>{const items=(t.items||[]).filter(i=>i.o||i.a!==undefined).map(i=>i.o?{q:i.q,o:i.o,c:i.c}:{q:i.q,a:i.a});const id='BK-'+slug+'-'+t.id;
       if(items.length&&!SETS.some(x=>x.id===id))SETS.push({id,name:t.name,fan:f,sinf:'',items,bank:1,bob:t.bob||'',sinfs:(t.sinf||[]).map(String)})});BKL[f]='ok'}
   catch(e){BKL[f]='err'}
-  if(!$('#setup').classList.contains('hidden'))renderSettings()}
+  if(GK&&!$('#setup').classList.contains('hidden'))renderSettings()}
 async function libItems(s){if(s.items.length||s.loading)return;s.loading=true;
   try{const r=await fetch(APIB()+'/api/lib/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:s.lib})});const j=await r.json();
     s.items=((j.set&&j.set.items)||[]).map(normIt).filter(Boolean);fetch(APIB()+'/api/lib/play',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:s.lib})}).catch(()=>{})}catch(e){}
@@ -1996,8 +1996,10 @@ async function loadSets(){
     try{const r=await fetch((TG&&TG.initData?'':API)+'/api/hw/get',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:hw})});const j=await r.json().catch(()=>({}));
       if(j.ok&&j.hw){HW={...j.hw,id:hw};out.push({id:'H-'+hw,name:j.hw.name,items:j.hw.items})}else HW={err:j.error||'Uy vazifasi topilmadi.'}}
     catch(e){HW={err:'Serverga ulanib boʻlmadi. Internetni tekshirib, sahifani yangilang.'}}}
+  const KEEP=SETS.filter(s=>s.bank||s.remote);
   SETS=out.filter(s=>s&&s.id&&Array.isArray(s.items)).map(s=>({id:String(s.id),name:String(s.name||'Toʻplam').slice(0,60),fixed:/^k-/.test(String(s.id)),
     fan:/^(Algebra|Geometriya)$/.test(s.fan)?'Matematika':FANS.includes(s.fan)?s.fan:'',sinf:String(s.sinf||''),items:convPairs(s.items).map(normIt).filter(Boolean)})).filter(s=>s.items.length);
+  KEEP.forEach(k=>{if(!SETS.some(x=>x.id===k.id))SETS.push(k)});
   const sid=lib?'L-'+lib:(bz&&bm)?'B-'+bm+'-'+bd:P.get('set');
   if(sid&&setById(sid)){cfg.sets=[sid];cfg.topics=[];const s=setById(sid);
     if(s.fan)cfg.fan=s.fan;else if(s.items.some(isMC)&&isMathFan()&&!P.get('fan'))cfg.fan='';}
