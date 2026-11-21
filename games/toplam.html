@@ -1167,6 +1167,7 @@ async function libForFan(f){if(LIBF[f])return;LIBF[f]='loading';
     (j.sets||[]).forEach(m=>{const id='L-'+m.id;if(!SETS.some(s=>s.id===id))SETS.push({id,name:String(m.name||'Toʻplam').slice(0,60),fan:f,sinf:String(m.sinf||''),lib:m.id,n:m.n||0,items:[],remote:true})});LIBF[f]='ok'}
   catch(e){LIBF[f]='err'}
   if(GK&&!$('#setup').classList.contains('hidden'))renderSettings()}
+let FK={};try{fetch('kinds.json?v='+BZ_V).then(r=>r.json()).then(j=>{FK=j;if(typeof GK!=='undefined'&&GK&&!$('#setup').classList.contains('hidden'))renderSettings()}).catch(()=>{})}catch(e){}
 const BANKS={'Ingliz tili':'ingliz','Rus tili':'rus-tili','Ona tili va adabiyot':'ona-tili'},BKL={};
 async function bankForFan(f){const slug=BANKS[f];if(!slug||BKL[f])return;BKL[f]='loading';
   try{const r=await fetch('baza/'+slug+'.json?v='+BZ_V),j=await r.json();
@@ -1209,7 +1210,7 @@ function renderSettings(){
   $('#topics').innerHTML=`<div class="tg">${cfg.grade}-sinf mavzulari</div>`+mine.map(lab).join('')+`<details id="otherTopics" style="grid-column:1/-1;margin-top:6px"${opened?' open':''}><summary style="cursor:pointer;font-weight:800">Boshqa sinflar mavzulari</summary><div class="topics" style="margin-top:6px">${other}</div></details>`;
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
   {const L=$('#bzLink'),ok=+cfg.grade>=1&&+cfg.grade<=7;L.classList.toggle('hidden',!ok);if(ok){L.href='../#/sinf/'+cfg.grade;L.textContent=`📘 ${cfg.grade}-sinf: tayyor mavzular (Oson / Oʻrta / Qiyin) →`}}
-  $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
+  $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.filter(f=>f===cfg.fan||MATHF.includes(f)||(FK[f]||[]).includes('mc')||SETS.some(x=>x.fan===f&&(x.remote||x.items.length))).map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
   const M=isMathFan();$('#mathTopics').classList.toggle('hidden',!M);$('#fanSets').classList.toggle('hidden',M);
   if(!M&&g.big)$('#bigBox').classList.add('hidden');
   if(!M){

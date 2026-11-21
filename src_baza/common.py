@@ -88,4 +88,14 @@ def update_version():
         fp = os.path.join(ROOT, f); s = open(fp, encoding='utf-8').read()
         s2 = re.sub(r"const BZ_V='[0-9a-f]*';", f"const BZ_V='{v}';", s, count=1)
         if s2 != s: open(fp, 'w', encoding='utf-8').write(s2)
+    # games/kinds.json: qaysi fanda qanday turdagi savollar bor (oʻyinlar fan roʻyxatini shu bilan filtrlaydi)
+    import json as _j
+    K = {}
+    for f in sorted(glob.glob(os.path.join(ROOT, 'games', 'baza', '*.json'))):
+        j = _j.load(open(f, encoding='utf-8')); ks = set()
+        for t in j['topics']:
+            for i in t['items']:
+                ks.add('mc' if ('o' in i or 'a' in i) else 'order' if 's' in i else 'group' if 'g' in i else 'x')
+        K[j['fan']] = sorted(ks - {'x'})
+    _j.dump(K, open(os.path.join(ROOT, 'games', 'kinds.json'), 'w', encoding='utf-8'), ensure_ascii=False)
     print('versiya', v)

@@ -377,6 +377,9 @@ html.bk #start .go{animation:none}
     (anchor||st.firstChild).after(box);
     var mathBox=id==='eshik'?null:(st.querySelectorAll('.setgrid .box')[1]||null);
     var loading=false;
+    var FK={},SF={};
+    fetch('kinds.json').then(function(r){return r.json()}).then(function(j){FK=j;draw()}).catch(function(){});
+    fetch('sets.json').then(function(r){return r.json()}).then(function(j){(j||[]).forEach(function(x){if(x.fan&&conv(x.items).some(okMC))SF[x.fan]=1});draw()}).catch(function(){});
     function sets(){return B.sets.filter(function(s){return s.fan===B.fan})}
     function gradesOf(s){return s.sinfs||(s.sinf?[String(s.sinf)]:[])}
     function bkLab(s){return '<label class="'+(B.sel.indexOf(s.id)>=0?'on':'')+'"><input type="checkbox" data-bk="'+E(s.id)+'"'+(B.sel.indexOf(s.id)>=0?' checked':'')+'><span>'+E(s.name)+'<small>'+E(s.tag)+(s.sinfs?(s.sinfs.length?' · '+E(s.sinfs.join(', '))+'-sinf':''):s.sinf?' · '+E(s.sinf)+'-sinf':'')+' · '+(s.items?s.items.filter(okMC).length:s.n||'…')+' ta savol</small></span></label>'}
@@ -388,7 +391,7 @@ html.bk #start .go{animation:none}
       var n=B.sel.reduce(function(a,id){var s=B.sets.filter(function(x){return x.id===id})[0];return a+(s&&s.items?s.items.filter(okMC).length:0)},0);
       B.on=!!(B.fan&&B.sel.length);
       if(mathBox)mathBox.classList.toggle('bkoff',B.on);
-      var opts='<option value="">🧮 Matematika (oddiy rejim)</option>'+FANS.map(function(f){return '<option value="'+E(f)+'"'+(f===B.fan?' selected':'')+'>'+(IC[f]||'📘')+' '+E(f)+'</option>'}).join('');
+      var opts='<option value="">🧮 Matematika (oddiy rejim)</option>'+FANS.filter(function(f){return f===B.fan||(FK[f]||[]).indexOf('mc')>=0||SF[f]}).map(function(f){return '<option value="'+E(f)+'"'+(f===B.fan?' selected':'')+'>'+(IC[f]||'📘')+' '+E(f)+'</option>'}).join('');
       var all=sets(),grs=[];all.forEach(function(s){gradesOf(s).forEach(function(g){if(grs.indexOf(g)<0)grs.push(g)})});grs.sort(function(a,b){return a-b});
       if(B.gr&&grs.indexOf(B.gr)<0)B.gr='';
       var l=B.gr?all.filter(function(s){return gradesOf(s).indexOf(B.gr)>=0}):all;
