@@ -818,7 +818,7 @@ header .bar{gap:12px}
 /* ===== Pifagor jadvali ===== */
 .pbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .pf{font-size:clamp(1.3rem,3vw,2.2rem);font-weight:900;min-height:1.4em}.pf span{color:#7048e8}
-.labbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.labbar .f{margin:0}.labbar select,.labbar input{padding:9px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font:inherit;font-weight:800;color:var(--ink)}.labbar #labSeed{width:110px}
+.mzic{width:1.05em;height:1.05em;vertical-align:-.15em;display:inline-block}.ic .mzic{width:1.35em;height:1.35em}.labbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.labbar .f{margin:0}.labbar select,.labbar input{padding:9px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font:inherit;font-weight:800;color:var(--ink)}.labbar #labSeed{width:110px}
 .labwrap{display:grid;gap:14px;justify-items:center}.labwrap.duel{grid-template-columns:1fr 1fr}.labbox{width:100%;max-width:760px}.labwrap:not(.duel) .labbox{max-width:min(100%,720px)}.labst{font-weight:800;text-align:center;margin-bottom:4px}
 .labsvg{width:100%;height:auto;display:block;user-select:none;-webkit-user-select:none}
 .lc polygon{fill:#ffe38a;stroke:#f59f00;stroke-width:4;stroke-linejoin:round;transition:fill .25s,stroke .2s;cursor:pointer}.lc:hover polygon{stroke:#e8590c;stroke-width:5}
@@ -1015,7 +1015,7 @@ html.nofx .labsvg *{animation:none!important}@media (prefers-reduced-motion:redu
    <a href="#/uy"><span>📝</span>Uy vazifalari</a>
    <a href="#/fayllar"><span>📁</span>Fayllarim</a>
    <a href="#/vosita/pifagor"><span>🔢</span>Pifagor jadvali</a>
-   <a href="#/vosita/labirint"><span>🐝</span>Labirint</a>
+   <a href="#/vosita/labirint"><span><svg class="mzic" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" fill="#fff3bf"/><path d="M6 1.6V18H12V12H18V18H22.6" fill="none" stroke="#20c997" stroke-width="2" stroke-dasharray="2.2 1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3H21V15M21 21H3V3M9 3V15M15 9V21M9 9H15" fill="none" stroke="#e8590c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="4.2" r="1.9" fill="#f59f00" stroke="#1b1f3b" stroke-width=".8"/></svg></span>Labirint</a>
    <a href="#/ai/darslik"><span>📸</span>Darslikdan oʻyin</a>
    <a href="#/admin" class="ms-adm hidden"><span>📊</span>Statistika</a>
    <a href="#" data-install><span>📲</span>Ilovani oʻrnatish</a>
@@ -1060,7 +1060,7 @@ const TOOLS=[
  {e:'⏱️',n:'Taymer va sekundomer',d:'Katta raqamli taymer: guruh ishi va mustaqil ish uchun.',c:'#f5b301',href:'#/vosita/taymer'},
  {e:'✏️',n:'Chizish doskasi',d:'Qalam, chizgʻich, shakllar, katakli yoki qora doska foni.',c:'#2f8cff',href:'#/vosita/doska'},
  {e:'🔢',n:'Pifagor jadvali',d:'Karra jadvali: koʻrsatish, yashirib soʻrash va doskada mashq qilish.',c:'#7048e8',href:'#/vosita/pifagor'},
- {e:'🐝',n:'Labirint',d:'Misollarni yechib uyga yoʻl toping: oʻynash, ikki guruh va chop etish.',c:'#e8a317',href:'#/vosita/labirint'},
+ {e:'<svg class="mzic" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" fill="#fff3bf"/><path d="M6 1.6V18H12V12H18V18H22.6" fill="none" stroke="#20c997" stroke-width="2" stroke-dasharray="2.2 1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3H21V15M21 21H3V3M9 3V15M15 9V21M9 9H15" fill="none" stroke="#e8590c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="4.2" r="1.9" fill="#f59f00" stroke="#1b1f3b" stroke-width=".8"/></svg>',n:'Labirint',d:'Misollarni yechib uyga yoʻl toping: oʻynash, ikki guruh va chop etish.',c:'#e8a317',href:'#/vosita/labirint'},
  {e:'✨',n:'AI yordamchi',d:'Test, taqdimot, dars ishlanma, krossvord, fleshkartalar va AI chat.',c:'#7b5cff',href:'#/ai'},
  {e:'🎮',n:'AI bilan oʻyin savollari',d:'Mavzuni yozing — AI qisqa savollar tuzadi va guruh oʻyinlariga qoʻshadi.',c:'#f5b301',href:'#/ai/savollar'},
 ];
@@ -1658,7 +1658,7 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()
 const TPAL=['#ff6b4a','#2f8cff','#12a38f','#f5b301','#7b5cff','#d6336c','#0b7285','#ff8a3d','#5f3dc4','#2b8a3e'];
 const TOOLDEFS={
  pifagor:{e:'🔢',n:'Pifagor jadvali',d:'Karra jadvali: koʻrsatish, yashirib soʻrash va mashq.'},
- labirint:{e:'🐝',n:'Labirint',d:'Misollarni yechib uyga yoʻl topish: oʻynash, ikki guruh bellashuvi va chop etish.'},
+ labirint:{e:'<svg class="mzic" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" fill="#fff3bf"/><path d="M6 1.6V18H12V12H18V18H22.6" fill="none" stroke="#20c997" stroke-width="2" stroke-dasharray="2.2 1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3H21V15M21 21H3V3M9 3V15M15 9V21M9 9H15" fill="none" stroke="#e8590c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="4.2" r="1.9" fill="#f59f00" stroke="#1b1f3b" stroke-width=".8"/></svg>',n:'Labirint',d:'Misollarni yechib uyga yoʻl topish: oʻynash, ikki guruh bellashuvi va chop etish.'},
  tanlash:{e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi. Sinfni guruhlarga ham boʻlib beradi.'},
  sukunat:{e:'🤫',n:'Sukunat oʻlchagich',d:'Mikrofon sinf shovqinini oʻlchaydi: shovqin oshsa, sharlar yoriladi.'},
  taymer:{e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer: guruh ishi, mustaqil ish uchun.'},
@@ -1774,7 +1774,7 @@ function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=18,C=M.C,Rw=M.R;
   s+=`<text class="lstart" x="${lx0.toFixed(1)}" y="${(ly0+5).toFixed(1)}" font-size="15" text-anchor="middle">Boshlash</text>`;
   return s+'</svg>'}
 function labHtml(){const o=(id,list,v)=>`<label class="f"><span>${id}</span><select data-k="${list[0]}">${list[1].map(x=>`<option value="${x[0]}"${x[0]===v?' selected':''}>${x[1]}</option>`).join('')}</select></label>`;
-  return `<div class="thead"><h2>🐝 Labirint</h2>${fsBtn()}</div>
+  return `<div class="thead"><h2><svg class="mzic" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" fill="#fff3bf"/><path d="M6 1.6V18H12V12H18V18H22.6" fill="none" stroke="#20c997" stroke-width="2" stroke-dasharray="2.2 1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3H21V15M21 21H3V3M9 3V15M15 9V21M9 9H15" fill="none" stroke="#e8590c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="4.2" r="1.9" fill="#f59f00" stroke="#1b1f3b" stroke-width=".8"/></svg> Labirint</h2>${fsBtn()}</div>
  <div class="labbar">
   ${o('Amal',['amal',[['kop','Koʻpaytirish ×'],['qos','Qoʻshish +'],['ayi','Ayirish −'],['bol','Boʻlish ÷'],['aralash','Aralash']]],LAB.amal)}
   ${o('Qiyinlik',['qiy',[['oson','Oson'],['orta','Oʻrta'],['qiyin','Qiyin']]],LAB.qiy)}
