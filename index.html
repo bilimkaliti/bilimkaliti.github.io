@@ -827,6 +827,7 @@ header .bar{gap:12px}
 .bee circle{fill:#fff;stroke:#d9480f;stroke-width:3}.bee{pointer-events:none;animation:labBob 1.2s ease-in-out infinite}@keyframes labBob{50%{transform:translateY(-4px)}}
 .lhome circle{fill:#fff;stroke:#8d6e00;stroke-width:3;stroke-dasharray:7 6;cursor:pointer}.lhome text{cursor:pointer}.lstart{fill:#8d6e00;font-weight:800}
 @media (max-width:900px){.labwrap.duel{grid-template-columns:1fr}}
+@media (max-width:600px){.labwrap{overflow-x:auto;justify-items:start}.labwrap .labbox{min-width:560px}}
 #labPrint0{display:none}
 @media print{body.labprint>*:not(#labPrint0){display:none!important}body.labprint #labPrint0{display:block!important;color:#000;background:#fff}#labPrint0 h1{font-size:22px;margin:0 0 4px}#labPrint0 p{margin:0 0 8px;font-size:13px}#labPrint0 .labsvg{max-height:230mm}#labPrint0 .lc polygon,#labPrint0 .lc.sol polygon{fill:#fff}#labPrint0 .lc.sol polygon{fill:#e6fcf5}}
 .pgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;max-width:min(100%,calc(78vh*1.05));margin:0 auto}
@@ -1776,7 +1777,7 @@ function labHtml(){const o=(id,list,v)=>`<label class="f"><span>${id}</span><sel
  <div class="labwrap" id="labWrap"></div>`}
 function labDraw(){const w=$('#labWrap');if(!w||!LAB.M)return;const T=LAB.P;
   w.className='labwrap'+(LAB.duel?' duel':'');
-  w.innerHTML=T.map((p,i)=>`<div class="labbox" data-i="${i}"><div class="labst" style="${LAB.duel?'color:'+p.col:''}">${LAB.duel?`<b>${p.name}</b> · `:''}Qadam: <b>${p.steps}</b> · Xato: <b>${p.err}</b>${p.done?' · 🏆':''}</div>${labSvg(LAB.M,p,LAB.show,LAB.duel?p.col:'')}</div>`).join('')}
+  w.innerHTML=T.map((p,i)=>`<div class="labbox" data-i="${i}"><div class="labst" style="${LAB.duel?'color:'+p.col:''}">${LAB.duel?`<b>${p.name}</b> · `:''}Qadam: <b>${p.steps}</b> · Xato: <b>${p.err}</b>${p.done?(LAB.duel?' · 🏆 Yutdi!':' · 🏆 Uyga yetdingiz!'):''}</div>${labSvg(LAB.M,p,LAB.show,LAB.duel?p.col:'')}</div>`).join('')}
 function labNew(seed){LAB.seed=seed||1+Math.floor(Math.random()*99999);LAB.M=labGen(LAB.seed);LAB.show=false;labReset();const i=$('#labSeed');if(i)i.value=LAB.seed;const b=$('#labShow');if(b)b.textContent='👁 Javobni koʻrsat'}
 function labReset(){LAB.P=(LAB.duel?[{name:'1-guruh',col:'#12a38f'},{name:'2-guruh',col:'#d6336c'}]:[{name:'',col:''}]).map(p=>({...p,idx:0,steps:0,err:0,done:false}));labDraw()}
 function bindLab(){
