@@ -823,7 +823,7 @@ header .bar{gap:12px}
 .labsvg{width:100%;height:auto;display:block;user-select:none;-webkit-user-select:none}
 .lc polygon{fill:#fff;stroke:#e8a317;stroke-width:4;stroke-linejoin:round;transition:fill .2s;cursor:pointer}.lc:hover polygon{fill:#fff8e1}
 .lc.vis polygon{fill:color-mix(in srgb,var(--tc,#f5b301) 22%,#fff)}.lc.cur polygon{fill:#ffe08a;stroke:#d9480f}.lc.sol polygon{fill:#e6fcf5}
-.lx{font-weight:900;fill:#2a1d00;pointer-events:none}.ln{font-weight:900;fill:#5c4a14;pointer-events:none}.ln.ok{fill:#0b7285;font-size:19px}
+.lx{font-weight:900;fill:#2a1d00;pointer-events:none}.ln{font-weight:900;fill:#5c4a14;pointer-events:none}.ln.ok{fill:#0b7285;font-weight:900}
 .bee circle{fill:#fff;stroke:#d9480f;stroke-width:3}.bee{pointer-events:none;animation:labBob 1.2s ease-in-out infinite}@keyframes labBob{50%{transform:translateY(-4px)}}
 .lhome circle{fill:#fff;stroke:#8d6e00;stroke-width:3;stroke-dasharray:7 6;cursor:pointer}.lhome text{cursor:pointer}.lstart{fill:#8d6e00;font-weight:800}
 @media (max-width:900px){.labwrap.duel{grid-template-columns:1fr}}
@@ -1732,7 +1732,7 @@ function labGen(seed){const R=labRng(seed*7919+13),[C,Rw]=LAB_OLC[LAB.olc];
   const nextD={};path.forEach((p,i)=>{const n=path[i+1];nextD[p[0]*C+p[1]]=n?nb(p[0],p[1]).findIndex(q=>q[0]===n[0]&&q[1]===n[1]):5});
   const cells=[];for(let r=0;r<Rw;r++)for(let c=0;c<C;c++){const e=labExpr(R,LAB.amal,LAB.qiy),k=r*C+c,ad=k in nextD?nextD[k]:Math.floor(R()*6);
     const used=new Set([e.a]),lab=[];const cand=[1,2,3,10,e.h[0],e.h[1],e.h[0]+e.h[1],5,4,11,9];
-    for(let d=0;d<6;d++){if(d===ad){lab.push(e.a);continue}let v,g=0;do{const s=R()<.5?1:-1;v=e.a+s*cand[Math.floor(R()*cand.length)];if(g++>25)v=e.a+g+d}while(v<0||used.has(v));used.add(v);lab.push(v)}
+    for(let d=0;d<6;d++){if(d===ad){lab.push(e.a);continue}let v,g=0;do{const s=R()<.5?1:-1;v=e.a+s*cand[Math.floor(R()*cand.length)];if(g++>25)v=e.a+g+d}while(v<1||used.has(v));used.add(v);lab.push(v)}
     cells.push({r,c,t:e.t,a:e.a,ad,lab})}
   return{C,R:Rw,cells,path}}
 function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=26,C=M.C,Rw=M.R;
@@ -1746,10 +1746,10 @@ function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=26,C=M.C,Rw=M.R;
     const pts=[0,1,2,3,4,5].map(i=>{const a=(30+60*i)*Math.PI/180;return(x+S*Math.cos(a)).toFixed(1)+','+(y+S*Math.sin(a)).toFixed(1)}).join(' ');
     const isCur=cur&&cur[0]===cl.r&&cur[1]===cl.c;
     s+=`<g class="lc${isCur?' cur':''}${vis.has(k)?' vis':''}${solve&&onp.has(k)?' sol':''}" data-r="${cl.r}" data-c="${cl.c}"${vis.has(k)&&col?` style="--tc:${col}"`:''}><polygon points="${pts}"/>`;
-    const fs=cl.t.length>=9?19:cl.t.length>=7?22:25;
+    const fs=Math.min(25,Math.round(74/(.58*cl.t.length)));
     s+=`<text class="lx" x="${x.toFixed(1)}" y="${(y+fs*.35).toFixed(1)}" font-size="${fs}" text-anchor="middle">${cl.t}</text>`;
-    cl.lab.forEach((v,d)=>{const a=ang[d]*Math.PI/180,rr=S*.80,lx=x+Math.cos(a)*rr,ly=y+Math.sin(a)*rr;
-      s+=`<text class="ln${solve&&onp.has(k)&&d===cl.ad?' ok':''}" transform="translate(${lx.toFixed(1)} ${(ly+5).toFixed(1)}) rotate(${rot[d]})" font-size="${String(v).length>=3?15:17}" text-anchor="middle">${v}</text>`});
+    cl.lab.forEach((v,d)=>{const a=ang[d]*Math.PI/180,b=a+Math.PI/2,rr=(d===0||d===3)?S*.80:S*.69,tt=(d===0||d===3)?S*.27:S*.25,lx=x+Math.cos(a)*rr+Math.cos(b)*tt,ly=y+Math.sin(a)*rr+Math.sin(b)*tt;
+      s+=`<text class="ln${solve&&onp.has(k)&&d===cl.ad?' ok':''}" transform="translate(${lx.toFixed(1)} ${(ly+5).toFixed(1)}) rotate(${rot[d]})" font-size="${String(v).length>=4?12.5:String(v).length>=3?14:16}" text-anchor="middle">${v}</text>`});
     if(isCur)s+=`<g class="bee"><circle cx="${x.toFixed(1)}" cy="${(y-S*.9).toFixed(1)}" r="15"/><text x="${x.toFixed(1)}" y="${(y-S*.9+7).toFixed(1)}" font-size="20" text-anchor="middle">🐝</text></g>`;
     s+='</g>'});
   const hx=cx(0,C-1)+W/2,hy=cy(0)-1.5*S;
