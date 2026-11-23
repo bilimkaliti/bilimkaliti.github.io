@@ -1002,6 +1002,7 @@ const selSets=()=>(cfg.sets||[]).map(setById).filter(Boolean);
 const okAns=(a,wide)=>wide?a>=0&&a<=9999:a>=1&&a<=9;
 const setNeedsBig=()=>selSets().some(s=>s.items.some(it=>it.a>9));
 const isMC=it=>Array.isArray(it.o);
+const usable=s=>s.items.some(it=>isMC(it)?GK!=='bomba':okAns(it.a,GK!=='bomba'));
 function setItem(s,wide){const ok=s.items.map((_,i)=>i).filter(i=>{const it=s.items[i];return isMC(it)?GK!=='bomba':okAns(it.a,wide)});if(!ok.length)return null;
   const it=s.items[bag('s'+s.id+(wide?'w':'d')+GK,()=>shuffle(ok)).pop()];
   if(isMC(it)){const perm=shuffle(it.o.map((_,k)=>k)),ans=perm.indexOf(it.c)+1,opts=perm.map(k=>it.o[k]);
@@ -1210,7 +1211,8 @@ function renderSettings(){
   $('#topics').innerHTML=`<div class="tg">${cfg.grade}-sinf mavzulari</div>`+mine.map(lab).join('')+`<details id="otherTopics" style="grid-column:1/-1;margin-top:6px"${opened?' open':''}><summary style="cursor:pointer;font-weight:800">Boshqa sinflar mavzulari</summary><div class="topics" style="margin-top:6px">${other}</div></details>`;
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
   {const L=$('#bzLink'),ok=+cfg.grade>=1&&+cfg.grade<=7;L.classList.toggle('hidden',!ok);if(ok){L.href='../#/sinf/'+cfg.grade;L.textContent=`📘 ${cfg.grade}-sinf: tayyor mavzular (Oson / Oʻrta / Qiyin) →`}}
-  $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.filter(f=>f===cfg.fan||MATHF.includes(f)||(FK[f]||[]).includes('mc')||SETS.some(x=>x.fan===f&&(x.remote||x.items.length))).map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
+  if(GK==='bomba'&&cfg.fan&&!MATHF.includes(cfg.fan)&&!SETS.some(x=>x.fan===cfg.fan&&!x.remote&&x.items.length&&usable(x))){cfg.fan='Matematika';save()}
+  $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.filter(f=>f===cfg.fan||MATHF.includes(f)||(GK==='bomba'?SETS.some(x=>x.fan===f&&!x.remote&&x.items.length&&usable(x)):(FK[f]||[]).includes('mc')||SETS.some(x=>x.fan===f&&(x.remote||x.items.length)))).map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
   const M=isMathFan();$('#mathTopics').classList.toggle('hidden',!M);$('#fanSets').classList.toggle('hidden',M);
   if(!M&&g.big)$('#bigBox').classList.add('hidden');
   if(!M){
@@ -1218,7 +1220,7 @@ function renderSettings(){
     const sel=cfg.sets||[],lab=s=>`<label class="${s.loading?'lload':''}"><input type="checkbox" data-s="${esc(s.id)}" ${sel.includes(s.id)?'checked':''}> ${esc(s.name)} <span class="small">(${s.items.length||s.n||'…'}${s.sinf?` · ${esc(s.sinf)}-sinf`:''})</span></label>`;
     const inF=s=>s.fan===cfg.fan,okS=s=>!FSINF||!s.sinf||s.sinf===String(FSINF)||sel.includes(s.id),allF=SETS.filter(inF);
     const grs=[...new Set(allF.flatMap(s=>s.bank?s.sinfs:[s.sinf]).filter(Boolean))].sort((a,b)=>a-b);
-    const bkAll=allF.filter(s=>s.bank&&(!FSINF||!s.sinfs.length||s.sinfs.includes(String(FSINF))||sel.includes(s.id))),ready=allF.filter(s=>!s.remote&&!s.bank&&okS(s)),lib=allF.filter(s=>s.remote&&okS(s)),loose=cfg.fan?SETS.filter(s=>!s.fan&&!s.fixed&&!s.remote&&s.items.some(isMC)):[];
+    const bkAll=allF.filter(s=>s.bank&&usable(s)&&(!FSINF||!s.sinfs.length||s.sinfs.includes(String(FSINF))||sel.includes(s.id))),ready=allF.filter(s=>!s.remote&&!s.bank&&okS(s)&&usable(s)),lib=GK==='bomba'?[]:allF.filter(s=>s.remote&&okS(s)),loose=cfg.fan&&GK!=='bomba'?SETS.filter(s=>!s.fan&&!s.fixed&&!s.remote&&s.items.some(isMC)):[];
     const ic=FAN_IC[cfg.fan]||'📦';
     $('#fanSets').innerHTML=`<div class="fset"><h3>${ic} ${esc(cfg.fan||'Tanlangan toʻplam')}${cfg.fan?': savollar toʻplamlari':''}</h3><p class="small">Oʻyin faqat belgilangan toʻplamlardagi savollardan tuziladi. Bir nechtasini belgilasangiz, aralashib chiqadi.</p>
       ${grs.length>1?`<div class="seg" id="fsinf" style="margin:8px 0 4px"><button type="button" data-fs="0" aria-pressed="${!FSINF}">Barcha sinflar</button>${grs.map(x=>`<button type="button" data-fs="${x}" aria-pressed="${String(FSINF)===x}">${x}-sinf</button>`).join('')}</div>`:''}
