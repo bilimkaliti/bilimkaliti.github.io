@@ -1033,7 +1033,7 @@ const TOOLS=[
  {e:'✨',n:'AI yordamchi',d:'Test, taqdimot, dars ishlanma, krossvord, fleshkartalar va AI chat.',c:'#7b5cff',href:'#/ai'},
  {e:'🎮',n:'AI bilan oʻyin savollari',d:'Mavzuni yozing — AI qisqa savollar tuzadi va guruh oʻyinlariga qoʻshadi.',c:'#f5b301',href:'#/ai/savollar'},
 ];
-const SUBJECTS=[['🧮','Matematika',1],['📖','Ona tili va oʻqish'],['🔤','Ingliz tili'],['🇷🇺','Rus tili'],['🌍','Tabiiy fan'],['🧪','Kimyo'],['⚛️','Fizika'],['🧬','Biologiya'],['🏛️','Tarix'],['🗺️','Geografiya'],['💻','Informatika']];
+const SUBJECTS=[['🧮','Matematika',1],['📖','Ona tili va oʻqish'],['🔤','Ingliz tili'],['🗣️','Rus tili'],['🌍','Tabiiy fan'],['🧪','Kimyo'],['⚛️','Fizika'],['🧬','Biologiya'],['🏛️','Tarix'],['🗺️','Geografiya'],['💻','Informatika']];
 let GRADES={};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1862,7 +1862,7 @@ function bindDraw(){
 let STATIC_SETS=null;
 async function staticSets(){if(STATIC_SETS)return STATIC_SETS;try{const r=await fetch('games/sets.json?v='+Date.now());STATIC_SETS=r.ok?await r.json():[]}catch(e){STATIC_SETS=[]}
   STATIC_SETS=STATIC_SETS.map(s=>({id:'k-'+s.id,name:s.name,fan:s.fan,sinf:s.sinf,mavzu:s.mavzu||'',author:s.author||'Bilim Kaliti',n:s.items.length,mc:s.items.some(i=>i.o),kind:setKind(s.items),plays:null,items:s.items,fixed:1}));return STATIC_SETS}
-const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🇬🇧','Rus tili':'🇷🇺','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
+const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🔤','Rus tili':'🗣️','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
 const fanSlug=f=>encodeURIComponent(f);
 const itKind=it=>it.o?'mc':'t' in it?'tf':'b' in it?'pair':it.s?'order':it.g?'group':'num';
 const setKind=items=>{const k=new Set((items||[]).map(itKind));return k.size===1?[...k][0]:k.has('mc')?'mc':'mix'};
