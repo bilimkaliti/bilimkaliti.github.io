@@ -1074,8 +1074,8 @@ const PAGES={
    ${gradesGrid()}
   </div></section>
   <section><div class="wrap">
-   <div class="sh"><div><h2>Boshqa fanlar</h2><p class="sub">Ona tili, ingliz tili, tarix, biologiya… — xuddi shu oʻyinlarda, test savollari bilan.</p></div><a class="btn ghost" href="#/kutubxona">📚 Kutubxona →</a></div>
-   <div class="subjects">${FANLAR.filter(f=>f!=='Matematika').slice(0,12).map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}</div></a>`).join('')}</div>
+   <div class="sh"><div><h2>Fanlar</h2><p class="sub">Matematika, ona tili, ingliz tili, tarix, biologiya… — hammasi shu oʻyinlarda.</p></div><a class="btn ghost" href="#/kutubxona">📚 Kutubxona →</a></div>
+   <div class="subjects">${FANLAR.slice(0,12).map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}</div></a>`).join('')}</div>
   </div></section>
   <section><div class="wrap">
    <div class="sh"><div><h2>Mashhur oʻyinlar</h2><p class="sub">Har biri 2–4 guruh uchun, bitta kompyuter va doskada.</p></div><a class="btn ghost" href="#/oyinlar">Hammasi →</a></div>
