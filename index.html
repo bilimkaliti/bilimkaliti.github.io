@@ -132,6 +132,10 @@ h2{font-size:30px;letter-spacing:-.6px;margin:0;font-weight:900}
 .subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
 .subj{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px;font-weight:800}
 .subj .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:var(--bg2)}
+.subj.mathcard{grid-column:span 2;flex-direction:column;align-items:stretch;gap:10px;border-color:var(--gold)}
+.subj.mathcard .mt{display:flex;align-items:center;gap:12px}
+.gch{display:flex;gap:6px;flex-wrap:wrap}.gch a{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--bg2);font-weight:900;transition:transform .12s,background .12s}.gch a:hover{background:var(--gold);transform:translateY(-2px)}
+@media (max-width:420px){.subj.mathcard{grid-column:1/-1}}
 .subj.off{opacity:.55}
 .subj small{display:block;color:var(--muted);font-size:12.5px}
 .tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -1070,12 +1074,11 @@ const PAGES={
    <div id="dailyBox"></div>
   </div>
   <section><div class="wrap">
-   <div class="sh"><div><h2>🧮 Matematika — sinfni tanlang</h2><p class="sub">Mavzularni belgilang — oʻyin shu mavzulardan savol beradi.</p></div></div>
-   ${gradesGrid()}
-  </div></section>
-  <section><div class="wrap">
-   <div class="sh"><div><h2>Fanlar</h2><p class="sub">Matematika, ona tili, ingliz tili, tarix, biologiya… — hammasi shu oʻyinlarda.</p></div><a class="btn ghost" href="#/kutubxona">📚 Kutubxona →</a></div>
-   <div class="subjects">${FANLAR.slice(0,12).map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}</div></a>`).join('')}</div>
+   <div class="sh"><div><h2>Fanni tanlang</h2><p class="sub">Hamma fan bir joyda — oʻyin tanlangan fandan savol beradi.</p></div><a class="btn ghost" href="#/kutubxona">📚 Hammasi →</a></div>
+   <div class="subjects">
+    <div class="subj mathcard"><a class="mt" href="#/fan/Matematika"><span class="ic">${FAN_IC['Matematika']}</span><div>Matematika<small>sinfni tanlang:</small></div></a><div class="gch">${[1,2,3,4,5,6,7].map(n=>`<a href="#/sinf/${n}">${n}</a>`).join('')}</div></div>
+    ${FANLAR.slice(1,11).map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}</div></a>`).join('')}
+   </div>
   </div></section>
   <section><div class="wrap">
    <div class="sh"><div><h2>Mashhur oʻyinlar</h2><p class="sub">Har biri 2–4 guruh uchun, bitta kompyuter va doskada.</p></div><a class="btn ghost" href="#/oyinlar">Hammasi →</a></div>
