@@ -217,7 +217,7 @@ h1,h2,h3{margin:0}
 .mflag{position:absolute;right:20px;top:-6px;font-size:1.3rem;z-index:3}
 
 /* mozaika — galereya */
-.frame{max-width:660px;margin:0 auto 14px;padding:16px;border-radius:12px;background:linear-gradient(135deg,#d9a441,#8a5a1a 30%,#e6b85a 55%,#7a4a12 80%,#c8923a);box-shadow:0 14px 30px rgba(0,0,0,.35),inset 0 0 0 3px rgba(255,255,255,.25);position:relative}
+.frame{max-width:min(660px,max(300px,calc((100vh - 380px)*1.35)));margin:0 auto 14px;padding:16px;border-radius:12px;background:linear-gradient(135deg,#d9a441,#8a5a1a 30%,#e6b85a 55%,#7a4a12 80%,#c8923a);box-shadow:0 14px 30px rgba(0,0,0,.35),inset 0 0 0 3px rgba(255,255,255,.25);position:relative}
 .frame::after{content:"";position:absolute;left:50%;top:-30px;width:70%;height:60px;transform:translateX(-50%);background:radial-gradient(ellipse at top,rgba(255,250,220,.55),transparent 70%);pointer-events:none}
 .pic{position:relative;border-radius:4px;overflow:hidden;aspect-ratio:4/3;background:#000;box-shadow:inset 0 0 18px rgba(0,0,0,.6)}
 .pic svg{position:absolute;inset:0;width:100%;height:100%}
