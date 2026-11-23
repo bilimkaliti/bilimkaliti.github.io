@@ -192,13 +192,13 @@ details.adv h3{margin-top:12px}
 
 <section id="play" class="hidden">
   <div class="bar"><span class="ttl" id="ttl"></span>
-    <div class="right"><span class="chip" id="timer">00:00</span><button class="ghost" id="sndBtn" aria-label="Tovush">🔊</button><button class="ghost" id="finBtn">Yakunlash</button><button class="ghost" id="setBtn">⚙ Sozlamalar</button></div></div>
+    <div class="right"><span class="chip" id="timer">00:00</span><button class="ghost" id="sndBtn" aria-label="Tovush">🔊</button><button class="ghost" id="finBtn">Yakunlash</button><button class="ghost" id="setBtn">⚙ Sozlamalar</button><button class="ghost" id="exitBtn">🚪 Chiqish</button></div></div>
   <div class="scores" id="scores"></div>
   <div class="stage" id="stage"></div>
 </section>
 </div>
 <div class="ov hidden" id="end"><div class="endc"><div class="cup">🏆</div><h2 id="endT">Natijalar</h2><div class="res" id="res"></div>
-  <div class="ebtn"><button class="go" id="again" style="min-width:0;padding:12px 26px;font-size:1.1rem">🔁 Yana oʻynash</button><button class="ghost" id="toSet">⚙ Sozlamalar</button></div></div></div>
+  <div class="ebtn"><button class="go" id="again" style="min-width:0;padding:12px 26px;font-size:1.1rem">🔁 Yana oʻynash</button><button class="ghost" id="toSet">⚙ Sozlamalar</button><button class="ghost" id="exitEnd">🚪 Chiqish</button></div></div></div>
 
 <script>
 const TG=(window.Telegram&&window.Telegram.WebApp)||null;try{if(TG){TG.ready();TG.expand()}}catch(e){}
@@ -497,7 +497,7 @@ function finish(){if(G.over)return;G.over=true;stopTimer();clearInterval(G.clk);
   $('#end').classList.remove('hidden');snd('win');const w=innerWidth;burst(w*.3,innerHeight*.35,70,2.2);setTimeout(()=>burst(w*.7,innerHeight*.35,70,2.2),250)}
 $('#startBtn').onclick=startGame;$('#again').onclick=startGame;
 const toSetup=()=>{G.over=true;stopTimer();clearInterval(G.clk);$('#end').classList.add('hidden');$('#play').classList.add('hidden');$('#setup').classList.remove('hidden');render()};
-$('#toSet').onclick=toSetup;$('#setBtn').onclick=toSetup;
+$('#toSet').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{location.href=BKHOME()};$('#exitBtn').onclick=()=>{if(confirm('Oʻyindan chiqamizmi? Natija saqlanmaydi.'))location.href=BKHOME()};$('#setBtn').onclick=toSetup;
 $('#finBtn').onclick=()=>{if(confirm('Oʻyinni hozir yakunlab, natijani koʻrsataylikmi?'))finish()};
 $('#sndBtn').onclick=()=>{cfg.sound=cfg.sound?0:1;save();$('#sndBtn').textContent=cfg.sound?'🔊':'🔇'};
 /* toʻliq ekran */

@@ -442,6 +442,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <button class="ghost" id="finishBtn">Yakunlash</button>
       <button class="ghost" id="restartBtn">↻ Qaytadan</button>
       <button class="ghost" id="settingsBtn">⚙ Sozlamalar</button>
+      <button class="ghost" id="exitBtn">🚪 Chiqish</button>
     </div>
   </div>
   <div id="stage"></div>
@@ -452,7 +453,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
     <div style="font-size:3rem">🏆</div>
     <h2 id="winTitle"></h2>
     <div class="rank" id="rank"></div>
-    <div class="mbtns"><button class="go" id="reviewBtn">📋 Oʻyin tahlili</button><button class="go" id="againBtn">Yana oʻynash</button><button class="ghost" id="fSettings" style="padding:10px 20px">⚙ Sozlamalar</button></div>
+    <div class="mbtns"><button class="go" id="reviewBtn">📋 Oʻyin tahlili</button><button class="go" id="againBtn">Yana oʻynash</button><button class="ghost" id="fSettings" style="padding:10px 20px">⚙ Sozlamalar</button><button class="ghost" id="exitEnd" style="padding:10px 20px">🚪 Chiqish</button></div>
   </div>
 </div>
 <div class="overlay hidden" id="review">
@@ -1922,7 +1923,7 @@ $('#startBtn').onclick=startGame;
 $('#againBtn').onclick=startGame;
 $('#reviewBtn').onclick=showReview;
 $('#reviewClose').onclick=()=>$('#review').classList.add('hidden');
-$('#fSettings').onclick=toSetup;
+$('#fSettings').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{location.href=BKHOME()};$('#exitBtn').onclick=()=>ask('Oʻyindan chiqamizmi? Natija saqlanmaydi.',()=>{location.href=BKHOME()});
 $('#settingsBtn').onclick=()=>ask('Oʻyin toʻxtatilib, sozlamalarga qaytilsinmi?',toSetup);
 $('#restartBtn').onclick=()=>ask('Oʻyin yangi misollar bilan boshidan boshlansinmi?',startGame);
 $('#finishBtn').onclick=()=>ask('Oʻyinni hozir yakunlab, natijani koʻrsataylikmi?',endGame);

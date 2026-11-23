@@ -474,6 +474,7 @@ html.bk #start .go{animation:none}
       <button class="ghost" id="finishBtn">Yakunlash</button>
       <button class="ghost" id="restartBtn">↻ Qaytadan</button>
       <button class="ghost" id="settingsBtn">⚙ Sozlamalar</button>
+      <button class="ghost" type="button" onclick="if(confirm('Oʻyindan chiqamizmi? Natija saqlanmaydi.')){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'}">🚪 Chiqish</button>
     </div>
   </div>
   <div class="arena" id="arena"></div>
@@ -485,7 +486,7 @@ html.bk #start .go{animation:none}
     <h2 id="winTitle"></h2>
     <div class="cols" id="finalCols"></div>
     <p class="note">Ball = yulduzlar + birinchi chiqqan guruhga 2 bonus.</p>
-    <button class="go" id="againBtn">Yangi oʻyin</button>
+    <button class="go" id="againBtn">Yangi oʻyin</button><button class="ghost" type="button" onclick="location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'">🚪 Chiqish</button>
   </div>
 </div>
 <div class="overlay hidden" id="keyOv">
