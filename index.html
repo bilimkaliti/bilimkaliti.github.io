@@ -1912,6 +1912,7 @@ const BZ_PH={'Matematika':'kasr, foiz, burchak','Ona tili va adabiyot':'sifat, k
 function bazaBlock(sinf,fan){return `<div class="bz" id="bz"><h3>📘 ${sinf?sinf+'-sinf: tayyor mavzular':'Tayyor mavzular'}</h3><p class="sub" style="margin:4px 0 0">Darsda oʻtilgan mavzuni tanlang — savollar tayyor. Keyin darajani tanlab, oʻyinni boshlang.</p>
   <input class="bzq" id="bzQ" placeholder="🔍 Mavzuni qidiring: ${BZ_PH[fan||'Matematika']||'mavzu nomi'}…" autocomplete="off">${sinf?'':'<div class="bzchips" id="bzSinf"></div>'}<div class="bzchips" id="bzChips"></div><div class="sgrid" id="bzList">${skel(4)}</div></div>`}
 let BAZA={};
+try{fetch('games/kinds.json?v='+BZ_V).then(r=>r.json()).then(j=>{let ch=0;Object.entries(j).forEach(([fan,v])=>{if(v&&v.slug&&BAZA_FAN[fan]!==v.slug){BAZA_FAN[fan]=v.slug;ch=1}});if(ch&&typeof route==='function')route()}).catch(()=>{})}catch(e){}
 async function bazaGet(f){if(BAZA[f])return BAZA[f];const r=await fetch('games/baza/'+f+'.json?v='+BZ_V);if(!r.ok)throw new Error('Mavzular yuklanmadi');const j=await r.json();j.slug=f;return BAZA[f]=j}
 const BZ_LV=[[1,'🟢','Oson','#2f9e44','#51cf66'],[2,'🟡','Oʻrta','#e67700','#fab005'],[3,'🔴','Qiyin','#c92a2a','#ff6b6b'],[0,'🎲','Aralash','#5f3dc4','#845ef7']];
 function bazaPlay(f,t){

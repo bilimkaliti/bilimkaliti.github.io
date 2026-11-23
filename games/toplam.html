@@ -369,7 +369,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
 @keyframes jok{50%{transform:scale(1.06)}}
 .jside .board{margin-bottom:10px}
 .mco{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px;font-size:.8em;font-weight:700;text-align:left}
-.mcb{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;font-weight:800;color:var(--ink);background:var(--panel,#fff);border:2.5px solid var(--line);border-radius:14px;padding:10px 12px;min-height:56px;cursor:pointer;box-shadow:0 4px 0 var(--line);transition:transform .08s,box-shadow .08s,border-color .15s;line-height:1.2;word-break:normal;overflow-wrap:break-word;hyphens:none}
+.mcn{cursor:default}.mcb{display:flex;gap:10px;align-items:center;text-align:left;font:inherit;font-weight:800;color:var(--ink);background:var(--panel,#fff);border:2.5px solid var(--line);border-radius:14px;padding:10px 12px;min-height:56px;cursor:pointer;box-shadow:0 4px 0 var(--line);transition:transform .08s,box-shadow .08s,border-color .15s;line-height:1.2;word-break:normal;overflow-wrap:break-word;hyphens:none}
 .mcb b{flex:none;display:grid;place-items:center;width:1.9em;height:1.9em;border-radius:9px;color:#fff;font-size:.85em}
 .mcb:nth-child(1) b{background:#e5484d}.mcb:nth-child(2) b{background:#2f8cff}.mcb:nth-child(3) b{background:#f5a300}.mcb:nth-child(4) b{background:#12a38f}
 .mcb:hover{border-color:var(--tc,#3e7bfa)}.mcb:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
@@ -1002,11 +1002,11 @@ const selSets=()=>(cfg.sets||[]).map(setById).filter(Boolean);
 const okAns=(a,wide)=>wide?a>=0&&a<=9999:a>=1&&a<=9;
 const setNeedsBig=()=>selSets().some(s=>s.items.some(it=>it.a>9));
 const isMC=it=>Array.isArray(it.o);
-const usable=s=>s.items.some(it=>isMC(it)?GK!=='bomba':okAns(it.a,GK!=='bomba'));
-function setItem(s,wide){const ok=s.items.map((_,i)=>i).filter(i=>{const it=s.items[i];return isMC(it)?GK!=='bomba':okAns(it.a,wide)});if(!ok.length)return null;
+const usable=s=>s.items.some(it=>isMC(it)||okAns(it.a,GK!=='bomba'));
+function setItem(s,wide){const ok=s.items.map((_,i)=>i).filter(i=>{const it=s.items[i];return isMC(it)||okAns(it.a,wide)});if(!ok.length)return null;
   const it=s.items[bag('s'+s.id+(wide?'w':'d')+GK,()=>shuffle(ok)).pop()];
   if(isMC(it)){const perm=shuffle(it.o.map((_,k)=>k)),ans=perm.indexOf(it.c)+1,opts=perm.map(k=>it.o[k]);
-    return{html:`${esc(it.q)}<span class="mco">${opts.map((o,i)=>`<button type="button" class="mcb" data-mcv="${i+1}"><b>${'ABCD'[i]}</b>${esc(o)}</button>`).join('')}</span>`,ans,topic:s.name,mc:{q:it.q,opts}}}
+    return{html:`${esc(it.q)}<span class="mco">${opts.map((o,i)=>GK==='bomba'?`<span class="mcb mcn"><b>${i+1}</b>${esc(o)}</span>`:`<button type="button" class="mcb" data-mcv="${i+1}"><b>${'ABCD'[i]}</b>${esc(o)}</button>`).join('')}</span>`,ans,topic:s.name,mc:{q:it.q,opts}}}
   return{html:esc(it.q),ans:it.a,topic:s.name}}
 /* mavzular va toʻplamlar navbat bilan: toʻplamlar umumiy hisobda yarmini egallaydi */
 function srcList(){const T=TOPS(),ss=selSets(),w=Math.max(1,Math.ceil(T.length/Math.max(1,ss.length)));return shuffle([...T,...ss.flatMap(s=>Array(w).fill('S'+s.id))])}
@@ -1145,7 +1145,7 @@ const GAMES={
  xazina:{big:1,icon:'🗺️',name:'Xazina xaritasi',desc:'Kema orolma-orol suzib, xazinaga yetib boradi. Ayrim orollarda tinch yoki boʻronli yoʻlni tanlash mumkin.',len:{t:'Orollar soni',o:[8,10,12],d:10},lvl:1,topics:1,cool:1},
  raketa:{big:1,icon:'🚀',name:'Raketa poygasi',desc:'Guruh misol qiyinligini oʻzi tanlaydi: oson 1 qadam, oʻrta 2, qiyin 3. Meteorlar zonasida xato raketani orqaga qaytaradi.',len:{t:'Oygacha masofa (qadam)',o:[10,15,20],d:15},lvl:0,topics:1,cool:1},
  mozaika:{big:1,icon:'🧩',name:'Rasm ochish',desc:'Har bir toʻgʻri javob yashirin rasmdan bitta katakni ochadi. Rasmni birinchi topgan guruh +5 ball oladi.',len:{t:'Kataklar soni',o:['4×3','5×4','6×5'],d:'5×4'},lvl:1,topics:1,cool:1},
- bomba:{icon:'💣',name:'Bombani zararsizlantirish',desc:'Misollar javobi qaysi simni kesishni koʻrsatadi. Notoʻgʻri sim kesilsa, taymer tezlashadi.',len:{t:'Bombalar soni',o:[2,3,5],d:3},lvl:1,topics:1,cool:0},
+ bomba:{icon:'💣',name:'Bombani zararsizlantirish',desc:'Javob qaysi simni kesishni koʻrsatadi (test savolida — toʻgʻri variant raqami). Notoʻgʻri sim kesilsa, taymer tezlashadi.',len:{t:'Bombalar soni',o:[2,3,5],d:3},lvl:1,topics:1,cool:0},
  tez:{big:1,icon:'⚡',name:'Kim tezroq',desc:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob bergan guruh ball oladi.',len:{t:'Savollar soni',o:[8,10,15],d:10},lvl:1,topics:1,cool:0},
  nishon:{big:1,icon:'🎯',name:'Nishon',desc:'Har guruhning oʻz nishoni bor, hamma bir vaqtda oʻynaydi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
  mental:{icon:'🧮',name:'Mental arifmetika',desc:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. Birinchi toʻgʻri javob +2, keyingi toʻgʻri javoblar +1 ball.',len:{t:'Raundlar soni',o:[5,8,10],d:8},lvl:1,topics:0,cool:0},
@@ -1168,8 +1168,8 @@ async function libForFan(f){if(LIBF[f])return;LIBF[f]='loading';
     (j.sets||[]).forEach(m=>{const id='L-'+m.id;if(!SETS.some(s=>s.id===id))SETS.push({id,name:String(m.name||'Toʻplam').slice(0,60),fan:f,sinf:String(m.sinf||''),lib:m.id,n:m.n||0,items:[],remote:true})});LIBF[f]='ok'}
   catch(e){LIBF[f]='err'}
   if(GK&&!$('#setup').classList.contains('hidden'))renderSettings()}
-let FK={};try{fetch('kinds.json?v='+BZ_V).then(r=>r.json()).then(j=>{FK=j;if(typeof GK!=='undefined'&&GK&&!$('#setup').classList.contains('hidden'))renderSettings()}).catch(()=>{})}catch(e){}
-const BANKS={'Ingliz tili':'ingliz','Rus tili':'rus-tili','Ona tili va adabiyot':'ona-tili'},BKL={};
+let FK={};setTimeout(()=>{try{fetch('kinds.json?v='+BZ_V).then(r=>r.json()).then(j=>{FK=j;if(typeof cfg!=='undefined'&&cfg.fan)bankForFan(cfg.fan);if(typeof GK!=='undefined'&&GK&&!$('#setup').classList.contains('hidden'))renderSettings()}).catch(()=>{})}catch(e){}},0);
+const BANKS=new Proxy({},{get:(_,f)=>(!MATHF.includes(f)&&(FK[f]||{}).slug)||undefined}),BKL={};
 async function bankForFan(f){const slug=BANKS[f];if(!slug||BKL[f])return;BKL[f]='loading';
   try{const r=await fetch('baza/'+slug+'.json?v='+BZ_V),j=await r.json();
     (j.topics||[]).forEach(t=>{const items=(t.items||[]).filter(i=>i.o||i.a!==undefined).map(i=>i.o?{q:i.q,o:i.o,c:i.c}:{q:i.q,a:i.a});const id='BK-'+slug+'-'+t.id;
@@ -1211,8 +1211,7 @@ function renderSettings(){
   $('#topics').innerHTML=`<div class="tg">${cfg.grade}-sinf mavzulari</div>`+mine.map(lab).join('')+`<details id="otherTopics" style="grid-column:1/-1;margin-top:6px"${opened?' open':''}><summary style="cursor:pointer;font-weight:800">Boshqa sinflar mavzulari</summary><div class="topics" style="margin-top:6px">${other}</div></details>`;
   $('#tcount').textContent=`Tanlangan: ${cfg.topics.length} ta`;
   {const L=$('#bzLink'),ok=+cfg.grade>=1&&+cfg.grade<=7;L.classList.toggle('hidden',!ok);if(ok){L.href='../#/sinf/'+cfg.grade;L.textContent=`📘 ${cfg.grade}-sinf: tayyor mavzular (Oson / Oʻrta / Qiyin) →`}}
-  if(GK==='bomba'&&cfg.fan&&!MATHF.includes(cfg.fan)&&!SETS.some(x=>x.fan===cfg.fan&&!x.remote&&x.items.length&&usable(x))){cfg.fan='Matematika';save()}
-  $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.filter(f=>f===cfg.fan||MATHF.includes(f)||(GK==='bomba'?SETS.some(x=>x.fan===f&&!x.remote&&x.items.length&&usable(x)):(FK[f]||[]).includes('mc')||SETS.some(x=>x.fan===f&&(x.remote||x.items.length)))).map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
+  $('#fanSel').innerHTML=(cfg.fan===''?'<option value="" selected>📦 Fani koʻrsatilmagan</option>':'')+FANS.filter(f=>f===cfg.fan||MATHF.includes(f)||(((FK[f]||{}).kinds||[]).includes('mc')||SETS.some(x=>x.fan===f&&(x.remote||x.items.length)))).map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
   const M=isMathFan();$('#mathTopics').classList.toggle('hidden',!M);$('#fanSets').classList.toggle('hidden',M);
   if(!M&&g.big)$('#bigBox').classList.add('hidden');
   if(!M){
@@ -1220,7 +1219,7 @@ function renderSettings(){
     const sel=cfg.sets||[],lab=s=>`<label class="${s.loading?'lload':''}"><input type="checkbox" data-s="${esc(s.id)}" ${sel.includes(s.id)?'checked':''}> ${esc(s.name)} <span class="small">(${s.items.length||s.n||'…'}${s.sinf?` · ${esc(s.sinf)}-sinf`:''})</span></label>`;
     const inF=s=>s.fan===cfg.fan,okS=s=>!FSINF||!s.sinf||s.sinf===String(FSINF)||sel.includes(s.id),allF=SETS.filter(inF);
     const grs=[...new Set(allF.flatMap(s=>s.bank?s.sinfs:[s.sinf]).filter(Boolean))].sort((a,b)=>a-b);
-    const bkAll=allF.filter(s=>s.bank&&usable(s)&&(!FSINF||!s.sinfs.length||s.sinfs.includes(String(FSINF))||sel.includes(s.id))),ready=allF.filter(s=>!s.remote&&!s.bank&&okS(s)&&usable(s)),lib=GK==='bomba'?[]:allF.filter(s=>s.remote&&okS(s)),loose=cfg.fan&&GK!=='bomba'?SETS.filter(s=>!s.fan&&!s.fixed&&!s.remote&&s.items.some(isMC)):[];
+    const bkAll=allF.filter(s=>s.bank&&usable(s)&&(!FSINF||!s.sinfs.length||s.sinfs.includes(String(FSINF))||sel.includes(s.id))),ready=allF.filter(s=>!s.remote&&!s.bank&&okS(s)&&usable(s)),lib=allF.filter(s=>s.remote&&okS(s)),loose=cfg.fan?SETS.filter(s=>!s.fan&&!s.fixed&&!s.remote&&s.items.some(isMC)):[];
     const ic=FAN_IC[cfg.fan]||'📦';
     $('#fanSets').innerHTML=`<div class="fset"><h3>${ic} ${esc(cfg.fan||'Tanlangan toʻplam')}${cfg.fan?': savollar toʻplamlari':''}</h3><p class="small">Oʻyin faqat belgilangan toʻplamlardagi savollardan tuziladi. Bir nechtasini belgilasangiz, aralashib chiqadi.</p>
       ${grs.length>1?`<div class="seg" id="fsinf" style="margin:8px 0 4px"><button type="button" data-fs="0" aria-pressed="${!FSINF}">Barcha sinflar</button>${grs.map(x=>`<button type="button" data-fs="${x}" aria-pressed="${String(FSINF)===x}">${x}-sinf</button>`).join('')}</div>`:''}
@@ -1266,7 +1265,7 @@ function startGame(){
   const g=GAMES[GK];
   if(g.topics&&!TOPS().length&&!selSets().length){$('#startErr').textContent=isMathFan()?'Kamida bitta mavzu yoki toʻplamni belgilang.':`${cfg.fan||'Kamida'} ${cfg.fan?'boʻyicha kamida ':''}bitta toʻplamni belgilang.`;return}
   if(g.topics&&selSets().some(s=>s.loading)){$('#startErr').textContent='Toʻplam yuklanmoqda… bir soniyadan keyin qayta bosing.';return}
-  if(g.topics&&!TOPS().length&&new Set(selSets().flatMap(s=>s.items.filter(it=>isMC(it)?GK!=='bomba':okAns(it.a,BIG())).map(it=>isMC(it)?'mc:'+it.q:it.a))).size<(GK==='bomba'?4:1)){$('#startErr').textContent=GK==='bomba'?'Bomba uchun javobi 1–9 boʻlgan kamida 4 xil son-javobli savol kerak (test savollari bombaga mos emas). Boshqa oʻyinni tanlang.':'Bu oʻyin uchun javobi 1 dan 9 gacha boʻlgan savollar kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.';return}
+  if(g.topics&&!TOPS().length&&new Set(selSets().flatMap(s=>s.items.filter(it=>isMC(it)||okAns(it.a,BIG())).map(it=>isMC(it)?'mc:'+it.q:it.a))).size<(GK==='bomba'?4:1)){$('#startErr').textContent=GK==='bomba'?'Bomba uchun javobi 1–9 boʻlgan kamida 4 xil son-javobli savol kerak (test savollari bombaga mos emas). Boshqa oʻyinni tanlang.':'Bu oʻyin uchun javobi 1 dan 9 gacha boʻlgan savollar kerak. Mavzu qoʻshing yoki boshqa oʻyinni tanlang.';return}
   $('#startErr').textContent='';save();L=cfg.L;
   S.over=false;S.ending=false;S.start=Date.now();S.finished=0;S.log=[];QB={};musLabel();MUSIC.start(GK);
   const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;

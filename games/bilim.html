@@ -262,7 +262,7 @@ async function loadSets(){
   if(s){cfg.sets=[s.id];if(s.fan)cfg.fan=s.fan}
   const fp=P.get('fan');if(fp&&FANS.includes(fp)&&!s)cfg.fan=fp;
   render();libForFan(cfg.fan);bankForFan(cfg.fan)}
-const BANKS={'Matematika':'matematika','Ona tili va adabiyot':'ona-tili','Ingliz tili':'ingliz','Rus tili':'rus-tili'},BKL={};
+const BANKS=new Proxy({},{get:(_,f)=>(FK[f]||{}).slug}),BKL={};
 async function bankForFan(f){const slug=BANKS[f];if(!slug||BKL[f])return;BKL[f]='loading';render();
   try{const r=await fetch('baza/'+slug+'.json?v='+BZ_V),j=await r.json();
     (j.topics||[]).forEach(t=>addSet({id:'BK-'+slug+'-'+t.id,name:t.name,fan:f,items:t.items},{fixed:1,bank:1,bob:t.bob||'',sinfs:(t.sinf||[]).map(String)}));BKL[f]='ok'}catch(e){BKL[f]='err'}
@@ -280,7 +280,7 @@ function render(){$('#dlBox').classList.toggle('hidden',!BANKS[cfg.fan]);$('#dir
   document.querySelectorAll('#setup .seg[data-key]').forEach(el=>{const k=el.dataset.key,cur=k==='len'?lenOf():cfg[k];el.innerHTML=SEGS[k].map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')});
   $('#names').innerHTML=Array.from({length:cfg.n},(_,i)=>`<input data-i="${i}" style="--tc:${TC[i]}" value="${esc(cfg.names[i]||'')}" maxlength="18" aria-label="${i+1}-guruh nomi">`).join('');
   $('#sndChk').checked=!!cfg.sound;
-  const fanOk=f=>f===cfg.fan||(MK==='harf'&&/^(Matematika|Algebra|Geometriya|Boshlangʻich taʼlim)$/.test(f)?false:((FK[f]||[]).some(k=>M.kinds.includes(k))||SETS.some(x=>x.fan===f&&x.items.some(it=>M.kinds.includes(it.k)))));
+  const fanOk=f=>f===cfg.fan||(MK==='harf'&&/^(Matematika|Algebra|Geometriya|Boshlangʻich taʼlim)$/.test(f)?false:(((FK[f]||{}).kinds||[]).some(k=>M.kinds.includes(k))||SETS.some(x=>x.fan===f&&x.items.some(it=>M.kinds.includes(it.k)))));
   $('#fanSel').innerHTML=FANS.filter(fanOk).map(f=>`<option value="${esc(f)}" ${f===cfg.fan?'selected':''}>${FAN_IC[f]||'📘'} ${esc(f)}</option>`).join('');
   const hint={togri:'Test savollari va «toʻgʻri/notoʻgʻri» gaplari mos keladi.',jlash:'Test savollari va «juft» toʻplamlari mos keladi.',tartib:'Faqat «tartibga sol» toʻplamlari mos keladi.',guruh:'Faqat «guruhlarga ajrat» toʻplamlari mos keladi.'}[MK];
   $('#setsHint').textContent=hint;

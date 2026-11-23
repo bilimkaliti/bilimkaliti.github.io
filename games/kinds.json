@@ -1,1 +1,1 @@
-{"Ingliz tili": ["group", "mc", "order"], "Matematika": ["group", "mc", "order"], "Ona tili va adabiyot": ["group", "mc", "order"], "Rus tili": ["group", "mc", "order"]}
+{"Ingliz tili": {"slug": "ingliz", "kinds": ["group", "mc", "order"]}, "Matematika": {"slug": "matematika", "kinds": ["group", "mc", "order"]}, "Ona tili va adabiyot": {"slug": "ona-tili", "kinds": ["group", "mc", "order"]}, "Rus tili": {"slug": "rus-tili", "kinds": ["group", "mc", "order"]}}

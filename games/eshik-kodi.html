@@ -356,7 +356,7 @@ html.bk #start .go{animation:none}
   var conv=function(items){items=items||[];var pr=items.filter(function(it){return it&&it.a!=null&&it.b!=null&&!it.o});if(pr.length<4)return items;
     var bs=[];pr.forEach(function(x){if(bs.indexOf(String(x.b))<0)bs.push(String(x.b))});
     return items.map(function(it){if(!(it&&it.a!=null&&it.b!=null&&!it.o))return it;var w=SH(bs.filter(function(b){return b!==String(it.b)})).slice(0,3);return w.length===3?{q:'«'+it.a+'» — ?',o:[String(it.b)].concat(w),c:0}:null}).filter(Boolean)};
-  var BANKS={'Ingliz tili':'ingliz','Rus tili':'rus-tili','Ona tili va adabiyot':'ona-tili'};
+  var BANKS={};
   var okMC=function(it){return it&&typeof it.q==='string'&&Array.isArray(it.o)&&it.o.length===4&&it.c>=0&&it.c<4};
   var B=window.BKQ={on:false,fan:'',gr:'',sets:[],sel:[],
     mk:function(it){var p=SH([0,1,2,3]),o=p.map(function(k){return it.o[k]});
@@ -389,7 +389,7 @@ html.bk #start .go{animation:none}
       var n=B.sel.reduce(function(a,id){var s=B.sets.filter(function(x){return x.id===id})[0];return a+(s&&s.items?s.items.filter(okMC).length:0)},0);
       B.on=!!(B.fan&&B.sel.length);
       if(mathBox)mathBox.classList.toggle('bkoff',B.on);
-      var opts='<option value="">🧮 Matematika (oddiy rejim)</option>'+FANS.filter(function(f){return f===B.fan||(FK[f]||[]).indexOf('mc')>=0||SF[f]}).map(function(f){return '<option value="'+E(f)+'"'+(f===B.fan?' selected':'')+'>'+(IC[f]||'📘')+' '+E(f)+'</option>'}).join('');
+      var opts='<option value="">🧮 Matematika (oddiy rejim)</option>'+FANS.filter(function(f){return f===B.fan||((FK[f]||{}).kinds||[]).indexOf('mc')>=0||SF[f]}).map(function(f){return '<option value="'+E(f)+'"'+(f===B.fan?' selected':'')+'>'+(IC[f]||'📘')+' '+E(f)+'</option>'}).join('');
       var all=sets(),grs=[];all.forEach(function(s){gradesOf(s).forEach(function(g){if(grs.indexOf(g)<0)grs.push(g)})});grs.sort(function(a,b){return a-b});
       if(B.gr&&grs.indexOf(B.gr)<0)B.gr='';
       var l=B.gr?all.filter(function(s){return gradesOf(s).indexOf(B.gr)>=0}):all;
@@ -404,7 +404,7 @@ html.bk #start .go{animation:none}
       if(!B.own){B.own=1;var tok=null;try{tok=JSON.parse(localStorage.getItem('bk_token'))}catch(e){}
         if(TG||tok)jobs.push(post('/api/sets',TG?{initData:TG}:{token:tok}).then(function(j){(j.sets||[]).forEach(function(s){var it=conv(s.items);if(it.some(okMC))B.sets.push({id:s.id,name:s.name,fan:s.fan||'',items:it,tag:'📦 Meniki'})})}).catch(function(){}))}
       if(f&&!B['lib'+f])jobs.push(post('/api/lib/list',{fan:f,sort:'top'}).then(function(j){B['lib'+f]=1;(j.sets||[]).forEach(function(m){if(m.mc||m.kind==='pair')B.sets.push({id:'L-'+m.id,lib:m.id,name:m.name,fan:f,sinf:String(m.sinf||''),n:m.n,tag:'📚 '+(m.author||'Kutubxona')})})}).catch(function(){}));
-      var slug=BANKS[f];if(slug&&!B['bk'+f])jobs.push(fetch('baza/'+slug+'.json').then(function(r){return r.json()}).then(function(j){B['bk'+f]=1;(j.topics||[]).forEach(function(t){var it=(t.items||[]).filter(okMC).map(function(i){return{q:i.q,o:i.o,c:i.c}});if(it.length>=4)B.sets.push({id:'BK-'+slug+'-'+t.id,name:t.name,fan:f,sinfs:(t.sinf||[]).map(String),bob:t.bob||'',items:it,tag:'📘 Baza'})})}).catch(function(){}));
+      var slug=(FK[f]||{}).slug;if(slug==='matematika')slug=null;if(slug&&!B['bk'+f])jobs.push(fetch('baza/'+slug+'.json').then(function(r){return r.json()}).then(function(j){B['bk'+f]=1;(j.topics||[]).forEach(function(t){var it=(t.items||[]).filter(okMC).map(function(i){return{q:i.q,o:i.o,c:i.c}});if(it.length>=4)B.sets.push({id:'BK-'+slug+'-'+t.id,name:t.name,fan:f,sinfs:(t.sinf||[]).map(String),bob:t.bob||'',items:it,tag:'📘 Baza'})})}).catch(function(){}));
       return Promise.all(jobs).then(function(){loading=false;draw()})}
     function pick(sid,on){var s=B.sets.filter(function(x){return x.id===sid})[0];if(!s)return;
       if(on&&B.sel.indexOf(sid)<0)B.sel.push(sid);if(!on)B.sel=B.sel.filter(function(x){return x!==sid});

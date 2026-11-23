@@ -96,6 +96,6 @@ def update_version():
         for t in j['topics']:
             for i in t['items']:
                 ks.add('mc' if ('o' in i or 'a' in i) else 'order' if 's' in i else 'group' if 'g' in i else 'x')
-        K[j['fan']] = sorted(ks - {'x'})
+        K[j['fan']] = {'slug': os.path.splitext(os.path.basename(f))[0], 'kinds': sorted(ks - {'x'})}
     _j.dump(K, open(os.path.join(ROOT, 'games', 'kinds.json'), 'w', encoding='utf-8'), ensure_ascii=False)
     print('versiya', v)
