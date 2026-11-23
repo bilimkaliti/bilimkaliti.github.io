@@ -1076,8 +1076,7 @@ const PAGES={
   <section><div class="wrap">
    <div class="sh"><div><h2>Fanni tanlang</h2><p class="sub">Hamma fan bir joyda — oʻyin tanlangan fandan savol beradi.</p></div><a class="btn ghost" href="#/kutubxona">📚 Hammasi →</a></div>
    <div class="subjects">
-    <div class="subj mathcard"><a class="mt" href="#/fan/Matematika"><span class="ic">${FAN_IC['Matematika']}</span><div>Matematika<small>sinfni tanlang:</small></div></a><div class="gch">${[1,2,3,4,5,6,7].map(n=>`<a href="#/sinf/${n}">${n}</a>`).join('')}</div></div>
-    ${FANLAR.slice(1,11).map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}</div></a>`).join('')}
+    ${FANLAR.slice(0,11).map(f=>`<a class="subj" href="#/fan/${fanSlug(f)}"><span class="ic">${FAN_IC[f]||'📘'}</span><div>${esc(f)}</div></a>`).join('')}
    </div>
   </div></section>
   <section><div class="wrap">
@@ -1907,7 +1906,7 @@ function libPage(fan){
    ${BAZA_FAN[fan]?bazaBlock(0,fan):''}
    ${fan&&!MATH_FANLAR.includes(fan)?`<div class="fangames"><div class="sh" style="margin:0 0 10px"><div><h3 style="margin:0">🎮 ${esc(fan)} bilan oʻynash</h3><p class="sub" style="margin:2px 0 0">Oʻyinni tanlang — u ${esc(fan)} savollari bilan ochiladi.</p></div><button class="btn gold" data-wiz="${esc(fan)}">▶️ Darsni boshlash</button></div>
      <div class="pmgames">${[...gamesFor({kind:'mc'}),GAMES.find(g=>g.id==='tartib'),GAMES.find(g=>g.id==='guruh')].map(g=>`<a class="pmg" href="${gameUrl(g,'&fan='+encodeURIComponent(fan))}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')}</div></div>`:''}
-   ${fan==='Matematika'?`<div class="note" style="margin:0 0 16px">🧮 Matematikada savollar har gal yangidan yaratiladi: <a href="#/sinflar" style="color:var(--teal)">sinf va mavzuni tanlang →</a></div>`:''}
+   
    <div class="lfilter"><select id="lFan">${fans.map(f=>`<option value="${esc(f)}" ${f===fan?'selected':''}>${f?esc(f):'Barcha fanlar'}</option>`).join('')}</select>
     <select id="lSinf"><option value="">Barcha sinflar</option>${[...Array(11)].map((_,i)=>`<option value="${i+1}">${i+1}-sinf</option>`).join('')}</select>
     <input id="lQ" placeholder="🔍 Mavzu yoki nom boʻyicha qidirish"><select id="lSort"><option value="new">Yangilari</option><option value="top">Koʻp oʻynalgan</option></select></div>
