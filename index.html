@@ -1758,7 +1758,7 @@ function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=18,C=M.C,Rw=M.R;
     const tk=cl.t.split(' '),two=cl.t.length>7&&tk.length===3,ml=two?Math.max(tk[0].length,tk[1].length+tk[2].length+1):cl.t.length,fs=Math.min(24,Math.round((two?46:56)/(.58*ml)));
     s+=two?`<text class="lx" text-anchor="middle" font-size="${fs}"><tspan x="${x.toFixed(1)}" y="${(y-fs*.15).toFixed(1)}">${tk[0]}</tspan><tspan x="${x.toFixed(1)}" y="${(y+fs*.95).toFixed(1)}">${tk[1]} ${tk[2]}</tspan></text>`
      :`<text class="lx" x="${x.toFixed(1)}" y="${(y+fs*.35).toFixed(1)}" font-size="${fs}" text-anchor="middle">${cl.t}</text>`;
-    cl.lab.forEach((v,d)=>{const a=ang[d]*Math.PI/180,rr=(d===0||d===3)?S*(String(v).length>=4?.6:.64):S*.66,lx=x+Math.cos(a)*rr,ly=y+Math.sin(a)*rr,L=String(v).length,rt=[0,-30,30,0,-30,30][d];
+    cl.lab.forEach((v,d)=>{const a=ang[d]*Math.PI/180,rr=(d===0||d===3)?S*.71:S*.66,lx=x+Math.cos(a)*rr,ly=y+Math.sin(a)*rr,L=String(v).length,rt=[90,-30,30,-90,-30,30][d];
       s+=`<text class="ln${solve&&onp.has(k)&&d===cl.ad?' ok':''}" transform="translate(${lx.toFixed(1)} ${ly.toFixed(1)}) rotate(${rt})" y="4.5" font-size="${L>=4?10.5:L>=3?12.5:15}" text-anchor="middle">${v}</text>`});
     if(isCur)s+=`<g class="bee"><circle cx="${x.toFixed(1)}" cy="${(y-S*.9).toFixed(1)}" r="15"/><text x="${x.toFixed(1)}" y="${(y-S*.9+7).toFixed(1)}" font-size="20" text-anchor="middle">🐝</text></g>`;
     s+='</g>'});
