@@ -902,6 +902,7 @@ header .bar{gap:12px}
 @media (max-width:480px){#splash .sp-lock{width:220px;height:144px}#splash .sp-name{font-size:32px}}
 @media (prefers-reduced-motion:reduce){#splash *,#splash *::after{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.15s!important}}
 </style>
+<link rel="stylesheet" href="fx.css?v=1"><script defer src="fx.js?v=1"></script>
 <script>try{var _t=JSON.parse(localStorage.getItem('bk_theme'));if(_t)document.documentElement.dataset.theme=_t}catch(e){}</script>
 <div id="splash" role="status" aria-label="Yuklanmoqda">
  <div class="sp-door sp-l"></div><div class="sp-door sp-r"></div><div class="sp-seam"></div>
@@ -968,7 +969,7 @@ header .bar{gap:12px}
 
 <main id="app"></main>
 
-<footer><div class="wrap"><span>© Bilim Kaliti · bepul taʼlimiy oʻyinlar · <a href="#/" onclick="setTimeout(()=>{const a=document.getElementById('about');a&&a.scrollIntoView({behavior:'smooth'})},400)" style="color:var(--teal)">Biz haqimizda</a></span><span>📢 Kanal: <a href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_uz</a> · Taklif va savollar: <a href="https://t.me/bilimkaliti_bot" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_bot</a></span></div></footer>
+<footer><div class="wrap"><span>© Bilim Kaliti · bepul taʼlimiy oʻyinlar · <a href="#/" onclick="setTimeout(()=>{const a=document.getElementById('about');a&&a.scrollIntoView({behavior:'smooth'})},400)" style="color:var(--teal)">Biz haqimizda</a></span><span>📢 Kanal: <a href="https://t.me/bilimkaliti_uz" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_uz</a> · Taklif va savollar: <a href="https://t.me/bilimkaliti_bot" target="_blank" rel="noopener" style="color:var(--teal)">@bilimkaliti_bot</a> · <button type="button" class="fxlink">✨ Animatsiya: yoqiq</button></span></div></footer>
 
 <nav class="mnav">
   <a href="#/" data-r=""><span>🏠</span>Asosiy</a>
@@ -2147,7 +2148,7 @@ function heroStart(){
     const [q,ans]=HB_Q[k++%HB_Q.length];Q.classList.remove('in');void Q.offsetWidth;Q.textContent=`${q} = ?`;Q.classList.add('in');
     at(()=>{const w=Math.random()<.55?'a':'b',el=w==='a'?A:B;H[w]++;S[w]++;
       const f=document.createElement('div');f.className='floor drop';el.appendChild(f);
-      el.classList.remove('win');void el.offsetWidth;el.classList.add('win');el.querySelector('.hsc').textContent=S[w];
+      el.classList.remove('win');void el.offsetWidth;el.classList.add('win');el.querySelector('.hsc').textContent=S[w];{const rb=$('#roboSvg');if(rb){rb.classList.remove('jump');void rb.getBoundingClientRect();rb.classList.add('jump')}}
       Q.textContent=`${q} = ${ans} ✓`;Q.classList.add('ok');at(()=>Q.classList.remove('ok'),900);
       if(H[w]>=6){at(()=>{el.classList.add('champ');burstAt(el,40)},500);at(()=>{A.classList.remove('champ');B.classList.remove('champ');floors(A,1);floors(B,1);H.a=H.b=1;S.a=S.b=0;A.querySelector('.hsc').textContent=0;B.querySelector('.hsc').textContent=0},2600)}
     },1250);

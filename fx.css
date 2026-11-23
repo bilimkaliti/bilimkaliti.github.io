@@ -1,0 +1,67 @@
+/* Bilim Kaliti — umumiy jonli effektlar (2.5D). Hammasi yengil CSS; html.nofx bilan oʻchiriladi. */
+@keyframes fxShake{15%,55%{transform:translateX(-9px) rotate(-.6deg)}35%,75%{transform:translateX(9px) rotate(.6deg)}}
+@keyframes fxPulse{0%{transform:scale(1)}40%{transform:scale(1.035)}100%{transform:scale(1)}}
+@keyframes fxPop{0%{transform:scale(1)}35%{transform:scale(1.55) rotate(-4deg)}100%{transform:scale(1)}}
+@keyframes fxGlowG{0%{box-shadow:0 0 0 0 rgba(18,163,143,.55)}100%{box-shadow:0 0 0 22px rgba(18,163,143,0)}}
+@keyframes fxGlowR{0%{box-shadow:0 0 0 0 rgba(240,84,84,.5)}100%{box-shadow:0 0 0 20px rgba(240,84,84,0)}}
+.fx-shake{animation:fxShake .45s}
+.fx-pulse{animation:fxPulse .45s}
+.fx-pop{display:inline-block;animation:fxPop .5s cubic-bezier(.3,1.6,.5,1)}
+.fx-glowg{animation:fxGlowG .7s ease-out}
+.fx-glowr{animation:fxGlowR .6s ease-out}
+.fxp{position:fixed;left:0;top:0;pointer-events:none;z-index:9999;font-size:18px;will-change:transform,opacity}
+
+/* qalin (bosiladigan) tugmalar */
+html .btn,html .go,html .check,html .gbtn,html .ghost{transition:transform .09s,box-shadow .09s,filter .15s}
+html .btn.gold,html .go,html .check{box-shadow:0 5px 0 #b98300,0 12px 20px rgba(185,131,0,.25)}
+html .btn.main{box-shadow:0 5px 0 rgba(0,0,0,.4),0 12px 20px rgba(22,33,62,.2)}
+html .btn.ghost,html .ghost{box-shadow:0 4px 0 var(--line,#d9d2c3)}
+html .btn.tg{box-shadow:0 5px 0 #17749f}
+html .btn:hover:not(:disabled),html .go:hover:not(:disabled),html .check:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.04)}
+html .btn:active:not(:disabled),html .go:active:not(:disabled),html .check:active:not(:disabled),html .ghost:active:not(:disabled),html .gbtn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+/* kartalar teginganda koʻtariladi */
+@media (hover:hover){
+ html .game,html .tool.tlink,html .grade{transition:transform .22s cubic-bezier(.3,1.4,.5,1),box-shadow .22s}
+ html .game:hover,html .tool.tlink:hover,html .grade:hover{transform:translateY(-6px) rotate(-.4deg);box-shadow:0 18px 34px rgba(22,33,62,.2)}
+}
+html .game:active,html .grade:active{transform:translateY(-1px) scale(.98)}
+.hero .board{transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out}
+
+/* Robo-doʻst: oʻyinlarda burchakda */
+#fxBot{position:fixed;left:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:40;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:radial-gradient(circle at 35% 30%,#fff,#dfe7ff);box-shadow:0 5px 0 #aab8e6,0 10px 18px rgba(0,0,0,.25);cursor:pointer;user-select:none;animation:fxBob 3.2s ease-in-out infinite;transition:transform .2s}
+#fxBot.happy{animation:fxHop .7s cubic-bezier(.3,1.6,.5,1)}
+#fxBot.sad{animation:fxShake .5s}
+#fxBot b{position:absolute;left:60px;bottom:8px;white-space:nowrap;background:#fff;color:#16213e;font-size:13px;font-weight:800;padding:5px 11px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.25);opacity:0;transform:translateX(-6px);transition:.25s;pointer-events:none}
+#fxBot.say b{opacity:1;transform:none}
+@keyframes fxBob{50%{transform:translateY(-5px)}}
+@keyframes fxHop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-26px) scale(1.15) rotate(-8deg)}70%{transform:translateY(0) scale(.95)}100%{transform:none}}
+@media (max-width:640px){#fxBot{width:44px;height:44px;font-size:24px}}
+
+/* animatsiya tugmasi */
+#fxBtn{position:fixed;right:168px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;border:0;border-radius:999px;padding:9px 14px;font:inherit;font-weight:800;font-size:14px;background:#14203a;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:.85;cursor:pointer}
+#fxBtn:hover{opacity:1}
+@media (max-width:640px){#fxBtn{right:auto;left:62px;bottom:calc(14px + env(safe-area-inset-bottom,0px));padding:7px 11px;font-size:12px}}
+.fxlink{background:none;border:0;padding:0;font:inherit;font-weight:800;color:var(--teal,#12a38f);cursor:pointer}
+
+/* gʻolib postamenti */
+.fx-pod{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:6px auto 14px;max-width:460px;min-height:150px}
+.fx-pod .fpc{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.fx-pod .fpn{font-weight:900;font-size:clamp(.85rem,2.2vw,1.05rem);line-height:1.15;margin-bottom:4px;word-break:break-word}
+.fx-pod .fpm{font-size:34px;line-height:1;animation:fxHop 1s .9s both}
+.fx-pod .fpb{width:100%;border-radius:14px 14px 4px 4px;background:linear-gradient(180deg,var(--c1),var(--c2));color:#fff;font-weight:900;font-size:1.5rem;display:grid;place-items:start center;padding-top:6px;height:0;animation:fxRise .8s cubic-bezier(.3,1.2,.5,1) forwards;animation-delay:var(--d);box-shadow:0 6px 0 rgba(0,0,0,.18);text-shadow:0 2px 0 rgba(0,0,0,.2)}
+.fx-pod .p1{--c1:#ffd25c;--c2:#e8a400;--h:112px;--d:.5s;order:2}
+.fx-pod .p2{--c1:#cfd6e4;--c2:#8f9bb3;--h:78px;--d:.25s;order:1}
+.fx-pod .p3{--c1:#e6a771;--c2:#b8743a;--h:54px;--d:0s;order:3}
+.fx-pod .p1 .fpm{font-size:44px}
+.fx-pod .p1 .fpn{font-size:clamp(1rem,2.6vw,1.25rem)}
+@keyframes fxRise{to{height:var(--h)}}
+.fx-cup{display:inline-block;font-size:70px;animation:fxCup 2.4s ease-in-out infinite;filter:drop-shadow(0 8px 10px rgba(232,164,0,.45))}
+@keyframes fxCup{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-10px) rotate(5deg) scale(1.08)}}
+
+/* oʻchirilgan holat (sekin kompyuter / doska) */
+html.nofx *,html.nofx *::before,html.nofx *::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+html.nofx .cfl,html.nofx .cf,html.nofx .fxp{display:none!important}
+html.nofx .fx-pod .fpb{height:var(--h)}
+html.nofx .game:hover,html.nofx .grade:hover{transform:none}
+@media (prefers-reduced-motion:reduce){.fx-pod .fpb{height:var(--h)}}
