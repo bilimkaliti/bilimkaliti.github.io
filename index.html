@@ -818,6 +818,17 @@ header .bar{gap:12px}
 /* ===== Pifagor jadvali ===== */
 .pbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .pf{font-size:clamp(1.3rem,3vw,2.2rem);font-weight:900;min-height:1.4em}.pf span{color:#7048e8}
+.labbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.labbar .f{margin:0}.labbar select,.labbar input{padding:9px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font:inherit;font-weight:800;color:var(--ink)}.labbar #labSeed{width:110px}
+.labwrap{display:grid;gap:14px;justify-items:center}.labwrap.duel{grid-template-columns:1fr 1fr}.labbox{width:100%;max-width:760px}.labwrap:not(.duel) .labbox{max-width:min(100%,720px)}.toolstage:fullscreen .labwrap:not(.duel) .labbox{max-width:min(100%,calc(100vh - 190px))}.toolstage:fullscreen .labwrap.duel .labbox{max-width:min(100%,calc(100vh - 190px))}.labst{font-weight:800;text-align:center;margin-bottom:4px}
+.labsvg{width:100%;height:auto;display:block;user-select:none;-webkit-user-select:none}
+.lc polygon{fill:#fff;stroke:#e8a317;stroke-width:4;stroke-linejoin:round;transition:fill .2s;cursor:pointer}.lc:hover polygon{fill:#fff8e1}
+.lc.vis polygon{fill:color-mix(in srgb,var(--tc,#f5b301) 22%,#fff)}.lc.cur polygon{fill:#ffe08a;stroke:#d9480f}.lc.sol polygon{fill:#e6fcf5}
+.lx{font-weight:900;fill:#2a1d00;pointer-events:none}.ln{font-weight:900;fill:#5c4a14;pointer-events:none}.ln.ok{fill:#0b7285;font-size:19px}
+.bee circle{fill:#fff;stroke:#d9480f;stroke-width:3}.bee{pointer-events:none;animation:labBob 1.2s ease-in-out infinite}@keyframes labBob{50%{transform:translateY(-4px)}}
+.lhome circle{fill:#fff;stroke:#8d6e00;stroke-width:3;stroke-dasharray:7 6;cursor:pointer}.lhome text{cursor:pointer}.lstart{fill:#8d6e00;font-weight:800}
+@media (max-width:900px){.labwrap.duel{grid-template-columns:1fr}}
+#labPrint0{display:none}
+@media print{body.labprint>*:not(#labPrint0){display:none!important}body.labprint #labPrint0{display:block!important;color:#000;background:#fff}#labPrint0 h1{font-size:22px;margin:0 0 4px}#labPrint0 p{margin:0 0 8px;font-size:13px}#labPrint0 .labsvg{max-height:230mm}#labPrint0 .lc polygon,#labPrint0 .lc.sol polygon{fill:#fff}#labPrint0 .lc.sol polygon{fill:#e6fcf5}}
 .pgrid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:4px;max-width:min(100%,calc(78vh*1.05));margin:0 auto}
 .toolstage:fullscreen .pgrid{max-width:min(100%,calc(86vh*1.05))}
 .pc{aspect-ratio:1;display:grid;place-items:center;border-radius:10px;font:inherit;font-weight:800;font-size:clamp(12px,2.1vw,26px);border:1.5px solid var(--line);background:var(--bg);color:var(--ink);padding:0;transition:background-color .15s,transform .15s,color .15s,box-shadow .15s;font-variant-numeric:tabular-nums}
@@ -994,6 +1005,7 @@ header .bar{gap:12px}
    <a href="#/uy"><span>📝</span>Uy vazifalari</a>
    <a href="#/fayllar"><span>📁</span>Fayllarim</a>
    <a href="#/vosita/pifagor"><span>🔢</span>Pifagor jadvali</a>
+   <a href="#/vosita/labirint"><span>🍯</span>Labirint</a>
    <a href="#/ai/darslik"><span>📸</span>Darslikdan oʻyin</a>
    <a href="#/admin" class="ms-adm hidden"><span>📊</span>Statistika</a>
    <a href="#" data-install><span>📲</span>Ilovani oʻrnatish</a>
@@ -1038,6 +1050,7 @@ const TOOLS=[
  {e:'⏱️',n:'Taymer va sekundomer',d:'Katta raqamli taymer: guruh ishi va mustaqil ish uchun.',c:'#f5b301',href:'#/vosita/taymer'},
  {e:'✏️',n:'Chizish doskasi',d:'Qalam, chizgʻich, shakllar, katakli yoki qora doska foni.',c:'#2f8cff',href:'#/vosita/doska'},
  {e:'🔢',n:'Pifagor jadvali',d:'Karra jadvali: koʻrsatish, yashirib soʻrash va doskada mashq qilish.',c:'#7048e8',href:'#/vosita/pifagor'},
+ {e:'🍯',n:'Labirint',d:'Misollarni yechib uyga yoʻl toping: oʻynash, ikki guruh va chop etish.',c:'#e8a317',href:'#/vosita/labirint'},
  {e:'✨',n:'AI yordamchi',d:'Test, taqdimot, dars ishlanma, krossvord, fleshkartalar va AI chat.',c:'#7b5cff',href:'#/ai'},
  {e:'🎮',n:'AI bilan oʻyin savollari',d:'Mavzuni yozing — AI qisqa savollar tuzadi va guruh oʻyinlariga qoʻshadi.',c:'#f5b301',href:'#/ai/savollar'},
 ];
@@ -1635,6 +1648,7 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()
 const TPAL=['#ff6b4a','#2f8cff','#12a38f','#f5b301','#7b5cff','#d6336c','#0b7285','#ff8a3d','#5f3dc4','#2b8a3e'];
 const TOOLDEFS={
  pifagor:{e:'🔢',n:'Pifagor jadvali',d:'Karra jadvali: koʻrsatish, yashirib soʻrash va mashq.'},
+ labirint:{e:'🍯',n:'Labirint',d:'Misollarni yechib uyga yoʻl topish: oʻynash, ikki guruh bellashuvi va chop etish.'},
  tanlash:{e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi. Sinfni guruhlarga ham boʻlib beradi.'},
  sukunat:{e:'🤫',n:'Sukunat oʻlchagich',d:'Mikrofon sinf shovqinini oʻlchaydi: shovqin oshsa, sharlar yoriladi.'},
  taymer:{e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer: guruh ishi, mustaqil ish uchun.'},
@@ -1645,8 +1659,8 @@ function bindFs(){const b=$('#fsTool');if(b)b.onclick=()=>{const el=$('#toolStag
 function toolPage(id){
   const t=TOOLDEFS[id];if(!t)return PAGES.vositalar();
   return `<div class="wrap fade"><div class="crumbs"><a href="#/vositalar">Vositalar</a><span>›</span><span>${t.n}</span></div>
-    <div class="toolstage tool-${id}" id="toolStage">${({tanlash:wheelHtml,sukunat:noiseHtml,taymer:timerHtml,doska:drawHtml,pifagor:pifHtml})[id]()}</div></div>`}
-function bindTool(id){({tanlash:bindWheel,sukunat:bindNoise,taymer:bindTimer,doska:bindDraw,pifagor:bindPif})[id]();bindFs()}
+    <div class="toolstage tool-${id}" id="toolStage">${({tanlash:wheelHtml,sukunat:noiseHtml,taymer:timerHtml,doska:drawHtml,pifagor:pifHtml,labirint:labHtml})[id]()}</div></div>`}
+function bindTool(id){({tanlash:bindWheel,sukunat:bindNoise,taymer:bindTimer,doska:bindDraw,pifagor:bindPif,labirint:bindLab})[id]();bindFs()}
 /* ===== Pifagor jadvali ===== */
 const PIF={mode:'show',n:store.get('pifN',10),hid:new Set(),rows:[2,3,4,5,6,7,8,9],q:null,ok:0,all:0,streak:0,done:new Set()};
 function pifHtml(){return `
@@ -1696,6 +1710,91 @@ function bindPif(){
 }
 function pifHide(how){const N=PIF.n;PIF.hid.clear();if(how==='open')return;const all=[];for(let a=1;a<=N;a++)for(let b=1;b<=N;b++)all.push(a+'x'+b);
   (how==='rnd'?shuffle(all).slice(0,15):all).forEach(k=>PIF.hid.add(k))}
+
+/* ===== 🍯 Labirint ===== */
+const LAB={amal:store.get('labAmal','kop'),qiy:store.get('labQiy','orta'),olc:store.get('labOlc','orta'),seed:0,duel:false,show:false,M:null,P:[]};
+const LAB_OLC={kichik:[5,5],orta:[7,7],katta:[8,9]},LAB_SYM={kop:'×',qos:'+',ayi:'−',bol:'÷'};
+function labRng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function labExpr(R,amal,qiy){const ri=(a,b)=>a+Math.floor(R()*(b-a+1));
+  if(amal==='aralash')amal=['kop','qos','ayi','bol'][ri(0,3)];
+  const lv=({oson:0,orta:1,qiyin:2})[qiy];
+  if(amal==='kop'){const m=[5,12,20][lv],a=ri(2,m),b=ri(2,m);return{t:`${a} × ${b}`,a:a*b,h:[a,b]}}
+  if(amal==='qos'){const [lo,hi]=[[1,20],[10,99],[100,999]][lv],a=ri(lo,hi),b=ri(lo,hi);return{t:`${a} + ${b}`,a:a+b,h:[a,b]}}
+  if(amal==='ayi'){const [lo,hi]=[[1,20],[10,99],[100,999]][lv];let a=ri(lo,hi),b=ri(lo,hi);if(b>a)[a,b]=[b,a];return{t:`${a} − ${b}`,a:a-b,h:[a,b]}}
+  const m=[5,12,20][lv],b=ri(2,m),q=ri(2,m);return{t:`${b*q} ÷ ${b}`,a:q,h:[b,q]}}
+function labGen(seed){const R=labRng(seed*7919+13),[C,Rw]=LAB_OLC[LAB.olc];
+  const nb=(r,c)=>{const o=r&1;return[[r,c+1],[r+1,o?c+1:c],[r+1,o?c:c-1],[r,c-1],[r-1,o?c:c-1],[r-1,o?c+1:c]]};
+  const ins=(r,c)=>r>=0&&r<Rw&&c>=0&&c<C;
+  const sr=Rw-1,sc=0,er=0,ec=C-1,seen=new Set([sr*C+sc]),path=[[sr,sc]];
+  (function dfs(r,c){if(r===er&&c===ec)return true;
+    const ns=nb(r,c).map((p,d)=>({p,d,w:R()+(p[0]<r?.55:0)+(p[1]>c?.25:0)})).filter(x=>ins(...x.p)&&!seen.has(x.p[0]*C+x.p[1])).sort((a,b)=>b.w-a.w);
+    for(const x of ns){const k=x.p[0]*C+x.p[1];seen.add(k);path.push(x.p);if(dfs(...x.p))return true;path.pop()}return false})(sr,sc);
+  const nextD={};path.forEach((p,i)=>{const n=path[i+1];nextD[p[0]*C+p[1]]=n?nb(p[0],p[1]).findIndex(q=>q[0]===n[0]&&q[1]===n[1]):5});
+  const cells=[];for(let r=0;r<Rw;r++)for(let c=0;c<C;c++){const e=labExpr(R,LAB.amal,LAB.qiy),k=r*C+c,ad=k in nextD?nextD[k]:Math.floor(R()*6);
+    const used=new Set([e.a]),lab=[];const cand=[1,2,3,10,e.h[0],e.h[1],e.h[0]+e.h[1],5,4,11,9];
+    for(let d=0;d<6;d++){if(d===ad){lab.push(e.a);continue}let v,g=0;do{const s=R()<.5?1:-1;v=e.a+s*cand[Math.floor(R()*cand.length)];if(g++>25)v=e.a+g+d}while(v<0||used.has(v));used.add(v);lab.push(v)}
+    cells.push({r,c,t:e.t,a:e.a,ad,lab})}
+  return{C,R:Rw,cells,path}}
+function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=26,C=M.C,Rw=M.R;
+  const cx=(r,c)=>pad+W/2+c*W+((r&1)?W/2:0),cy=r=>pad+S*2.3+r*1.5*S;
+  const VW=pad*2+W*C+W/2,VH=cy(Rw-1)+S+pad;
+  const ang=[0,60,120,180,240,300],rot=[90,-30,30,-90,-30,30];
+  let s=`<svg class="labsvg" viewBox="0 0 ${VW.toFixed(1)} ${VH.toFixed(1)}" xmlns="http://www.w3.org/2000/svg">`;
+  const vis=new Set((st?M.path.slice(0,st.idx+1):[]).map(p=>p[0]*C+p[1])),cur=st?M.path[st.idx]:null;
+  const onp=new Set(M.path.map(p=>p[0]*C+p[1]));
+  M.cells.forEach(cl=>{const x=cx(cl.r,cl.c),y=cy(cl.r),k=cl.r*C+cl.c;
+    const pts=[0,1,2,3,4,5].map(i=>{const a=(30+60*i)*Math.PI/180;return(x+S*Math.cos(a)).toFixed(1)+','+(y+S*Math.sin(a)).toFixed(1)}).join(' ');
+    const isCur=cur&&cur[0]===cl.r&&cur[1]===cl.c;
+    s+=`<g class="lc${isCur?' cur':''}${vis.has(k)?' vis':''}${solve&&onp.has(k)?' sol':''}" data-r="${cl.r}" data-c="${cl.c}"${vis.has(k)&&col?` style="--tc:${col}"`:''}><polygon points="${pts}"/>`;
+    const fs=cl.t.length>=9?19:cl.t.length>=7?22:25;
+    s+=`<text class="lx" x="${x.toFixed(1)}" y="${(y+fs*.35).toFixed(1)}" font-size="${fs}" text-anchor="middle">${cl.t}</text>`;
+    cl.lab.forEach((v,d)=>{const a=ang[d]*Math.PI/180,rr=S*.80,lx=x+Math.cos(a)*rr,ly=y+Math.sin(a)*rr;
+      s+=`<text class="ln${solve&&onp.has(k)&&d===cl.ad?' ok':''}" transform="translate(${lx.toFixed(1)} ${(ly+5).toFixed(1)}) rotate(${rot[d]})" font-size="${String(v).length>=3?15:17}" text-anchor="middle">${v}</text>`});
+    if(isCur)s+=`<g class="bee"><circle cx="${x.toFixed(1)}" cy="${(y-S*.9).toFixed(1)}" r="15"/><text x="${x.toFixed(1)}" y="${(y-S*.9+7).toFixed(1)}" font-size="20" text-anchor="middle">🐝</text></g>`;
+    s+='</g>'});
+  const hx=cx(0,C-1)+W/2,hy=cy(0)-1.5*S;
+  s+=`<g class="lhome" data-home="1"><circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="${(S*.78).toFixed(1)}"/><text x="${hx.toFixed(1)}" y="${(hy+S*.28).toFixed(1)}" font-size="${(S*.8).toFixed(1)}" text-anchor="middle">🏠</text></g>`;
+  const sx=cx(Rw-1,0),sy=cy(Rw-1);s+=`<text class="lstart" x="${sx.toFixed(1)}" y="${(sy+S*1.32).toFixed(1)}" font-size="15" text-anchor="middle">▲ Boshlash</text>`;
+  return s+'</svg>'}
+function labHtml(){const o=(id,list,v)=>`<label class="f"><span>${id}</span><select data-k="${list[0]}">${list[1].map(x=>`<option value="${x[0]}"${x[0]===v?' selected':''}>${x[1]}</option>`).join('')}</select></label>`;
+  return `<div class="thead"><h2>🍯 Labirint</h2>${fsBtn()}</div>
+ <div class="labbar">
+  ${o('Amal',['amal',[['kop','Koʻpaytirish ×'],['qos','Qoʻshish +'],['ayi','Ayirish −'],['bol','Boʻlish ÷'],['aralash','Aralash']]],LAB.amal)}
+  ${o('Qiyinlik',['qiy',[['oson','Oson'],['orta','Oʻrta'],['qiyin','Qiyin']]],LAB.qiy)}
+  ${o('Oʻlcham',['olc',[['kichik','Kichik'],['orta','Oʻrta'],['katta','Katta']]],LAB.olc)}
+  <label class="f"><span>Variant №</span><input id="labSeed" type="number" min="1" max="99999" value="${LAB.seed}"></label>
+  <button class="btn gold sm" id="labNew">🔄 Yangi labirint</button><button class="btn ghost sm" id="labShow">👁 Javobni koʻrsat</button><button class="btn ghost sm" id="labRe">↺ Qaytadan</button>
+  <button class="btn ghost sm" id="labDuel">👥 Ikki guruh: oʻchiq</button><button class="btn ghost sm" id="labPrint">🖨 Chop etish</button>
+ </div>
+ <p class="small" style="margin:8px 0">Misolni yeching, javobi yozilgan tomondagi qoʻshni katakchani bosing. Oxirida 🏠 ni bosing. Xato boʻlsa, ikki guruh rejimida 🐝 bir qadam orqaga qaytadi.</p>
+ <div class="labwrap" id="labWrap"></div>`}
+function labDraw(){const w=$('#labWrap');if(!w||!LAB.M)return;const T=LAB.P;
+  w.className='labwrap'+(LAB.duel?' duel':'');
+  w.innerHTML=T.map((p,i)=>`<div class="labbox" data-i="${i}"><div class="labst" style="${LAB.duel?'color:'+p.col:''}">${LAB.duel?`<b>${p.name}</b> · `:''}Qadam: <b>${p.steps}</b> · Xato: <b>${p.err}</b>${p.done?' · 🏆':''}</div>${labSvg(LAB.M,p,LAB.show,LAB.duel?p.col:'')}</div>`).join('')}
+function labNew(seed){LAB.seed=seed||1+Math.floor(Math.random()*99999);LAB.M=labGen(LAB.seed);LAB.show=false;labReset();const i=$('#labSeed');if(i)i.value=LAB.seed;const b=$('#labShow');if(b)b.textContent='👁 Javobni koʻrsat'}
+function labReset(){LAB.P=(LAB.duel?[{name:'1-guruh',col:'#12a38f'},{name:'2-guruh',col:'#d6336c'}]:[{name:'',col:''}]).map(p=>({...p,idx:0,steps:0,err:0,done:false}));labDraw()}
+function bindLab(){
+  labNew(LAB.seed||0);
+  const bar=document.querySelector('.labbar');
+  bar.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;LAB[k]=e.target.value;store.set('lab'+k[0].toUpperCase()+k.slice(1),e.target.value);labNew(LAB.seed)});
+  $('#labSeed').onchange=e=>labNew(Math.max(1,Math.min(99999,+e.target.value||1)));
+  $('#labNew').onclick=()=>labNew(0);
+  $('#labRe').onclick=labReset;
+  $('#labShow').onclick=e=>{LAB.show=!LAB.show;e.target.textContent=LAB.show?'🙈 Javobni yashirish':'👁 Javobni koʻrsat';labDraw()};
+  $('#labDuel').onclick=e=>{LAB.duel=!LAB.duel;e.target.textContent='👥 Ikki guruh: '+(LAB.duel?'yoqiq':'oʻchiq');labReset()};
+  $('#labPrint').onclick=labPrint;
+  $('#labWrap').addEventListener('click',e=>{const box=e.target.closest('.labbox');if(!box)return;const p=LAB.P[+box.dataset.i];if(p.done||LAB.P.some(q=>q.done))return;
+    const M=LAB.M,C=M.C,cur=M.path[p.idx],cl=M.cells[cur[0]*C+cur[1]];const o=cur[0]&1;
+    const nb=[[cur[0],cur[1]+1],[cur[0]+1,o?cur[1]+1:cur[1]],[cur[0]+1,o?cur[1]:cur[1]-1],[cur[0],cur[1]-1],[cur[0]-1,o?cur[1]:cur[1]-1],[cur[0]-1,o?cur[1]+1:cur[1]]];
+    const g=e.target.closest('.lc'),hm=e.target.closest('.lhome');let d=-1;
+    if(hm)d=5;else if(g){const r=+g.dataset.r,c=+g.dataset.c;d=nb.findIndex(q=>q[0]===r&&q[1]===c)}
+    if(d<0)return;const last=p.idx===M.path.length-1;
+    if(d===cl.ad&&(!last||hm)){if(last){p.done=true;p.steps++;labDraw();const bx=$(`.labbox[data-i="${box.dataset.i}"]`);burstAt(bx,90)}else{p.idx++;p.steps++;labDraw()}}
+    else if(!(hm&&!last)){p.err++;if(LAB.duel&&p.idx>0)p.idx--;labDraw();const b2=$(`.labbox[data-i="${box.dataset.i}"] .labsvg`);b2&&b2.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'none'}],{duration:260})}})}
+function labPrint(){let d=$('#labPrint0');if(!d){d=document.createElement('div');d.id='labPrint0';document.body.appendChild(d)}
+  const head=`<h1>Labirint · Variant № ${LAB.seed}</h1><p>Ism: ____________________ &nbsp; Sana: ____________ &nbsp; Misolni yeching, javobi yozilgan tomondan keyingi katakchaga oʻting. 🐝 ➜ 🏠</p>`;
+  d.innerHTML=`<section>${head}${labSvg(LAB.M,null,false)}</section><section style="break-before:page"><h1>Javob · Variant № ${LAB.seed}</h1>${labSvg(LAB.M,null,true)}</section>`;
+  document.body.classList.add('labprint');const done=()=>{document.body.classList.remove('labprint');window.removeEventListener('afterprint',done)};window.addEventListener('afterprint',done);setTimeout(()=>{window.print()},150)}
 
 /* ---------- 🎡 tasodifiy tanlash ---------- */
 function wheelHtml(){return `
