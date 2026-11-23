@@ -934,9 +934,12 @@ header .bar{gap:12px}
  var sp=document.getElementById('splash'),nm=document.getElementById('spName'),fill=document.getElementById('spFill'),pct=document.getElementById('spPct');
  var w='Bilim Kaliti',html='';for(var k=0;k<w.length;k++){var c=w[k];html+='<span style="--i:'+k+'" class="'+(c===' '?'sp':(k>5?'g':''))+'">'+(c===' '?'&nbsp;':c)+'</span>'}nm.innerHTML=html;
  var t0=Date.now(),first=true;try{first=!sessionStorage.getItem('bk_seen');sessionStorage.setItem('bk_seen','1')}catch(e){}
+ var nt='navigate';try{nt=performance.getEntriesByType('navigation')[0].type}catch(e){}
+ var inner=false;try{inner=nt!=='reload'&&!!document.referrer&&new URL(document.referrer).origin===location.origin}catch(e){}
+ if(inner){sp.style.display='none';first=false}
  if(!first)sp.classList.add('quick');
  var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
- var min=first?900:300,done=false,p=0,target=0,fin=false;
+ var min=inner?0:first?900:300,done=false,p=0,target=0,fin=false;
  /* haqiqiy yuklanish bosqichlari: hujjat, rasmlar/shriftlar, ma'lumotlar */
  function bump(v){target=Math.max(target,v)}
  bump(18);if(document.readyState!=='loading')bump(45);else document.addEventListener('DOMContentLoaded',function(){bump(45)});
@@ -944,10 +947,10 @@ header .bar{gap:12px}
  (function tick(){var goal=fin?100:Math.min(target+((Date.now()-t0)/90),94);p+=(goal-p)*(fin?.28:.08);if(fin&&p>99.4)p=100;
   fill.style.transform='scaleX('+(p/100)+')';pct.textContent=Math.round(p)+'%';if(p<100)requestAnimationFrame(tick)})();
  function finish(){var s=sp;if(!s)return;fin=true;
-  var unlockDelay=RM?0:(first?120:0);
+  var unlockDelay=RM||inner?0:(first?120:0);
   setTimeout(function(){s.classList.add('unlock');
    setTimeout(function(){s.classList.add('open');document.documentElement.classList.add('ready');
-    setTimeout(function(){s.classList.add('open2');window.__afterReady&&window.__afterReady();setTimeout(function(){s.remove()},1000)},RM?0:230)},RM?0:(first?500:300))},unlockDelay)}
+    setTimeout(function(){s.classList.add('open2');window.__afterReady&&window.__afterReady();setTimeout(function(){s.remove()},1000)},RM||inner?0:230)},RM||inner?0:(first?500:300))},unlockDelay)}
  window.__hideSplash=function(){if(done)return;done=true;setTimeout(finish,Math.max(0,min-(Date.now()-t0)))};
  setTimeout(window.__hideSplash,3000);})();</script>
 <header>
