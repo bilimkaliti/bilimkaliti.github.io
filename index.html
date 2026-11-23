@@ -1725,21 +1725,28 @@ function labExpr(R,amal,qiy){const ri=(a,b)=>a+Math.floor(R()*(b-a+1));
 function labGen(seed){const R=labRng(seed*7919+13),[C,Rw]=LAB_OLC[LAB.olc];
   const nb=(r,c)=>{const o=r&1;return[[r,c+1],[r+1,o?c+1:c],[r+1,o?c:c-1],[r,c-1],[r-1,o?c:c-1],[r-1,o?c+1:c]]};
   const ins=(r,c)=>r>=0&&r<Rw&&c>=0&&c<C;
-  const sr=Rw-1,sc=0,er=0,ec=C-1,seen=new Set([sr*C+sc]),path=[[sr,sc]];
-  (function dfs(r,c){if(r===er&&c===ec)return true;
-    const ns=nb(r,c).map((p,d)=>({p,d,w:R()+(p[0]<r?.55:0)+(p[1]>c?.25:0)})).filter(x=>ins(...x.p)&&!seen.has(x.p[0]*C+x.p[1])).sort((a,b)=>b.w-a.w);
+  const bord=[];for(let r=0;r<Rw;r++)for(let c=0;c<C;c++){const outs=nb(r,c).map((p,d)=>ins(...p)?-1:d).filter(d=>d>=0);if(outs.length)bord.push({r,c,outs})}
+  const hd=(r1,c1,r2,c2)=>{const q=(r,c)=>{const x=c-(r-(r&1))/2;return[x,r,-x-r]},A=q(r1,c1),B=q(r2,c2);return Math.max(Math.abs(A[0]-B[0]),Math.abs(A[1]-B[1]),Math.abs(A[2]-B[2]))};
+  const minD=Math.floor((Rw+C)*.62);let S0,E0,g0=0;
+  do{S0=bord[Math.floor(R()*bord.length)];E0=bord[Math.floor(R()*bord.length)]}while(hd(S0.r,S0.c,E0.r,E0.c)<minD&&++g0<200);
+  const sr=S0.r,sc=S0.c,er=E0.r,ec=E0.c,exitD=E0.outs[Math.floor(R()*E0.outs.length)],startD=S0.outs[Math.floor(R()*S0.outs.length)],seen=new Set([sr*C+sc]),path=[[sr,sc]];
+  (function dfs(r,c){if(r===er&&c===ec)return true;const dc=hd(r,c,er,ec);
+    const ns=nb(r,c).map((p,d)=>({p,d,w:R()+(ins(...p)&&hd(p[0],p[1],er,ec)<dc?.5:0)})).filter(x=>ins(...x.p)&&!seen.has(x.p[0]*C+x.p[1])).sort((a,b)=>b.w-a.w);
     for(const x of ns){const k=x.p[0]*C+x.p[1];seen.add(k);path.push(x.p);if(dfs(...x.p))return true;path.pop()}return false})(sr,sc);
-  const nextD={};path.forEach((p,i)=>{const n=path[i+1];nextD[p[0]*C+p[1]]=n?nb(p[0],p[1]).findIndex(q=>q[0]===n[0]&&q[1]===n[1]):5});
+  const nextD={};path.forEach((p,i)=>{const n=path[i+1];nextD[p[0]*C+p[1]]=n?nb(p[0],p[1]).findIndex(q=>q[0]===n[0]&&q[1]===n[1]):exitD});
   const cells=[];for(let r=0;r<Rw;r++)for(let c=0;c<C;c++){const e=labExpr(R,LAB.amal,LAB.qiy),k=r*C+c,ad=k in nextD?nextD[k]:Math.floor(R()*6);
     const used=new Set([e.a]),lab=[];const cand=[1,2,3,10,e.h[0],e.h[1],e.h[0]+e.h[1],5,4,11,9];
     for(let d=0;d<6;d++){if(d===ad){lab.push(e.a);continue}let v,g=0;do{const s=R()<.5?1:-1;v=e.a+s*cand[Math.floor(R()*cand.length)];if(g++>25)v=e.a+g+d}while(v<1||used.has(v));used.add(v);lab.push(v)}
     cells.push({r,c,t:e.t,a:e.a,ad,lab})}
-  return{C,R:Rw,cells,path}}
-function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=26,C=M.C,Rw=M.R;
-  const cx=(r,c)=>pad+W/2+c*W+((r&1)?W/2:0),cy=r=>pad+S*2.3+r*1.5*S;
-  const VW=pad*2+W*C+W/2,VH=cy(Rw-1)+S+pad;
+  return{C,R:Rw,cells,path,exit:{r:er,c:ec,d:exitD},start:{r:sr,c:sc,d:startD}}}
+function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=18,C=M.C,Rw=M.R;
+  const cx=(r,c)=>W/2+c*W+((r&1)?W/2:0),cy=r=>S+r*1.5*S;
+  const DV=d=>[Math.cos(d*Math.PI/3),Math.sin(d*Math.PI/3)];
+  const ex=M.exit,hx=cx(ex.r,ex.c)+DV(ex.d)[0]*W,hy=cy(ex.r)+DV(ex.d)[1]*W,sd=M.start,lx0=cx(sd.r,sd.c)+DV(sd.d)[0]*S*1.7,ly0=cy(sd.r)+DV(sd.d)[1]*S*1.7;
+  const x0=Math.min(0,hx-S*.8,lx0-S*.9)-pad,x1=Math.max(W*C+W/2,hx+S*.8,lx0+S*.9)+pad,y0=Math.min(0,hy-S*.8,ly0-S*.4)-pad,y1=Math.max(cy(Rw-1)+S,hy+S*.8,ly0+S*.4)+pad;
+  const VW=x1-x0,VH=y1-y0;
   const ang=[0,60,120,180,240,300],rot=[90,-30,30,-90,-30,30];
-  let s=`<svg class="labsvg" viewBox="0 0 ${VW.toFixed(1)} ${VH.toFixed(1)}" xmlns="http://www.w3.org/2000/svg">`;
+  let s=`<svg class="labsvg" viewBox="${x0.toFixed(1)} ${y0.toFixed(1)} ${VW.toFixed(1)} ${VH.toFixed(1)}" xmlns="http://www.w3.org/2000/svg">`;
   const vis=new Set((st?M.path.slice(0,st.idx+1):[]).map(p=>p[0]*C+p[1])),cur=st?M.path[st.idx]:null;
   const onp=new Set(M.path.map(p=>p[0]*C+p[1]));
   M.cells.forEach(cl=>{const x=cx(cl.r,cl.c),y=cy(cl.r),k=cl.r*C+cl.c;
@@ -1752,9 +1759,8 @@ function labSvg(M,st,solve,col){const S=58,W=Math.sqrt(3)*S,pad=26,C=M.C,Rw=M.R;
       s+=`<text class="ln${solve&&onp.has(k)&&d===cl.ad?' ok':''}" transform="translate(${lx.toFixed(1)} ${(ly+5).toFixed(1)}) rotate(${rot[d]})" font-size="${String(v).length>=4?12.5:String(v).length>=3?14:16}" text-anchor="middle">${v}</text>`});
     if(isCur)s+=`<g class="bee"><circle cx="${x.toFixed(1)}" cy="${(y-S*.9).toFixed(1)}" r="15"/><text x="${x.toFixed(1)}" y="${(y-S*.9+7).toFixed(1)}" font-size="20" text-anchor="middle">🐝</text></g>`;
     s+='</g>'});
-  const hx=cx(0,C-1)+W/2,hy=cy(0)-1.5*S;
   s+=`<g class="lhome" data-home="1"><circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="${(S*.78).toFixed(1)}"/><text x="${hx.toFixed(1)}" y="${(hy+S*.28).toFixed(1)}" font-size="${(S*.8).toFixed(1)}" text-anchor="middle">🏠</text></g>`;
-  const sx=cx(Rw-1,0),sy=cy(Rw-1);s+=`<text class="lstart" x="${sx.toFixed(1)}" y="${(sy+S*1.32).toFixed(1)}" font-size="15" text-anchor="middle">▲ Boshlash</text>`;
+  s+=`<text class="lstart" x="${lx0.toFixed(1)}" y="${(ly0+5).toFixed(1)}" font-size="15" text-anchor="middle">Boshlash</text>`;
   return s+'</svg>'}
 function labHtml(){const o=(id,list,v)=>`<label class="f"><span>${id}</span><select data-k="${list[0]}">${list[1].map(x=>`<option value="${x[0]}"${x[0]===v?' selected':''}>${x[1]}</option>`).join('')}</select></label>`;
   return `<div class="thead"><h2>🍯 Labirint</h2>${fsBtn()}</div>
@@ -1787,7 +1793,7 @@ function bindLab(){
     const M=LAB.M,C=M.C,cur=M.path[p.idx],cl=M.cells[cur[0]*C+cur[1]];const o=cur[0]&1;
     const nb=[[cur[0],cur[1]+1],[cur[0]+1,o?cur[1]+1:cur[1]],[cur[0]+1,o?cur[1]:cur[1]-1],[cur[0],cur[1]-1],[cur[0]-1,o?cur[1]:cur[1]-1],[cur[0]-1,o?cur[1]+1:cur[1]]];
     const g=e.target.closest('.lc'),hm=e.target.closest('.lhome');let d=-1;
-    if(hm)d=5;else if(g){const r=+g.dataset.r,c=+g.dataset.c;d=nb.findIndex(q=>q[0]===r&&q[1]===c)}
+    if(hm)d=(p.idx===M.path.length-1)?cl.ad:-1;else if(g){const r=+g.dataset.r,c=+g.dataset.c;d=nb.findIndex(q=>q[0]===r&&q[1]===c)}
     if(d<0)return;const last=p.idx===M.path.length-1;
     if(d===cl.ad&&(!last||hm)){if(last){p.done=true;p.steps++;labDraw();const bx=$(`.labbox[data-i="${box.dataset.i}"]`);burstAt(bx,90)}else{p.idx++;p.steps++;labDraw()}}
     else if(!(hm&&!last)){p.err++;if(LAB.duel&&p.idx>0)p.idx--;labDraw();const b2=$(`.labbox[data-i="${box.dataset.i}"] .labsvg`);b2&&b2.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'none'}],{duration:260})}})}
