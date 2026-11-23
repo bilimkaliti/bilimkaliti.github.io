@@ -460,7 +460,7 @@ const IMPL={
         continue}
       if(D)continue;
       add(it.k==='mc'?it.q:it.a,it.k==='mc'?it.o[it.c]:it.b)}
-    this.W=shuffle(W);this.per=Math.min(lenOf(),Math.floor(W.length/n));return this.per>=3?'':'Anagram uchun kamida '+3*n+' ta soʻz kerak (tarjima savollari bor til mavzusini tanlang).'},
+    this.W=shuffle(W);this.per=Math.min(lenOf(),Math.floor(W.length/n));return this.per>=3?'':'Anagram uchun kamida 6 ta bir soʻzli javob kerak. Koʻproq toʻplam belgilang.'+3*n+' ta soʻz kerak (tarjima savollari bor til mavzusini tanlang).'},
   step(){const per=this.per;SP.start(this,i=>this.W.slice(i*per,(i+1)*per))},
   draw(p,it){p.it=it;p.ch=[...it.w];let sh;do{sh=shuffle(p.ch.map((_,i)=>i))}while(sh.every((x,i)=>x===i));p.free=sh;p.put=[];p.att=1;p.done=0;this.paint(p)},
   paint(p){const it=p.it,c=G.teams[p.i].c,n=p.ch.length;
