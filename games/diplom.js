@@ -62,6 +62,9 @@
     var who = winnerFrom(title && title.textContent);
     var game = gameName();
     var why = '«' + game + '» oʻyinida ' + (who ? 'birinchi oʻrinni egallagani' : 'faol ishtirok etib, yuqori natija koʻrsatgani') + ', bilimi, diqqati va jamoaviy ruhi uchun taqdirlanadi.';
+    var X = null; try { X = window.bkDiplomInfo && window.bkDiplomInfo() } catch (e) {}
+    var H1 = 'DIPLOM', SUB = 'Sinf chempioni', CUP = '🏆';
+    if (X) { H1 = X.h1 || H1; SUB = X.sub || SUB; CUP = X.cup || CUP; why = X.why || why; if (X.who != null) who = X.who }
     var teacher = LS.get('bk_teacher', '');
     var school = LS.get('bk_school', '');
     var ov = document.createElement('div'); ov.id = 'bkdOv';
@@ -73,8 +76,8 @@
         '<div class="cn" style="left:3.3cqw;top:3.3cqw">⭐</div><div class="cn" style="right:3.3cqw;top:3.3cqw">⭐</div>' +
         '<div class="cn" style="left:3.3cqw;bottom:3.3cqw">🌟</div><div class="cn" style="right:3.3cqw;bottom:3.3cqw">🌟</div>' +
         '<div class="in">' +
-          '<div class="cup">🏆</div><h1>DIPLOM</h1><div class="sub">Sinf chempioni</div>' +
-          '<div class="to">Ushbu diplom</div>' +
+          '<div class="cup">' + CUP + '</div><h1>' + esc(H1) + '</h1><div class="sub">' + esc(SUB) + '</div>' +
+          '<div class="to">Ushbu ' + (H1 === 'DIPLOM' ? 'diplom' : 'sertifikat') + '</div>' +
           '<div class="nm" contenteditable="true" data-k="nm">' + esc(who || 'Ism Familiya') + '</div>' +
           '<div class="why" contenteditable="true">' + esc(why) + '</div>' +
           '<div class="ft">' +

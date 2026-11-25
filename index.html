@@ -663,7 +663,7 @@ html.vt-theme::view-transition-old(root){z-index:1}html.vt-theme::view-transitio
 .dl-tonly{display:none}.dl-test .dl-tonly{display:flex}.dl-test .dl-aonly{display:none}
 #dlKey{width:100%;box-sizing:border-box;font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);resize:vertical}
 .dl-warn{margin:0 0 6px;font-size:13.5px;font-weight:700;color:#c2410c}.dl-warn.r{color:var(--muted)}.dl-q.sus{border-color:#f59f00!important;box-shadow:0 0 0 3px color-mix(in srgb,#f59f00 25%,transparent)}
-.dl-info{background:color-mix(in srgb,var(--teal) 9%,var(--card));border:1.5px solid color-mix(in srgb,var(--teal) 35%,var(--line));border-radius:14px;padding:12px 16px;margin:0 0 14px}.dl-info p{margin:3px 0;font-size:14.5px}
+.dl-info{background:color-mix(in srgb,var(--teal) 9%,var(--card));border:1.5px solid color-mix(in srgb,var(--teal) 35%,var(--line));border-radius:14px;padding:12px 16px;margin:0 0 14px}.dl-info p{margin:3px 0;font-size:14.5px}.dl-info.warn{background:color-mix(in srgb,#f59f00 10%,var(--card));border-color:color-mix(in srgb,#f59f00 40%,var(--line))}#dlFrom{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
 .dl-opt input[type=text]{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-weight:700;color:var(--ink);outline:none;padding:6px 0}
 .dl-opt label{display:grid;place-items:center;cursor:pointer;font-size:12px;font-weight:900;color:var(--muted);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);flex:none}
 .dl-opt.ok label{background:var(--teal);border-color:var(--teal);color:#fff}
@@ -2380,7 +2380,7 @@ function themeSwitch(apply,btn){
 }
 
 /* ================= DARSLIKDAN OʻYIN (rasm / PDF → savollar) ================= */
-const DL={files:[],res:null,opt:{fan:'Matematika',sinf:5,tur:'auto',n:12,qiyin:2,til:'uz',manba:'mavzu',kalit:''}};
+const DL={files:[],res:null,opt:{fan:'Matematika',sinf:5,tur:'auto',n:12,qiyin:2,til:'uz',manba:'mavzu',kalit:'',dan:''}};
 const fmtSize=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
 function darslikPage(){
   return `<section><div class="wrap fade narrow">
@@ -2405,6 +2405,7 @@ function dlSrcHtml(){
    ${f.length?`<div class="fgrid ${o.manba==='test'?'dl-test':''}" id="dlGrid" style="margin-top:20px">
      <div class="f wide"><span>Faylda nima bor?</span>${seg('manba',[['mavzu','📖 Mavzu yoki darslik','AI yangi savollar tuzadi'],['test','📝 Tayyor test','oʻzgartirmasdan olinadi']])}</div>
      <label class="f wide dl-tonly"><span>Javoblar kaliti <em>(ixtiyoriy)</em></span><textarea id="dlKey" rows="2" maxlength="3000" placeholder="Masalan: 1-B, 2-A, 3-D, 4-C …">${esc(o.kalit||'')}</textarea><small class="small">Kalit boshqa betda boʻlsa, oʻsha betning rasmini ham fayllarga qoʻshing. Kalit boʻlmasa, AI javoblarni oʻzi topadi va ikkinchi marta tekshiradi.</small></label>
+     <label class="f dl-tonly"><span>Nechanchi savoldan <em>(ixtiyoriy)</em></span><input id="dlFrom" type="number" min="1" max="999" placeholder="1" value="${esc(o.dan||'')}"><small class="small">Bir martada 60 tagacha savol olinadi. Katta test qismlarga boʻlinadi.</small></label>
      <label class="f"><span>Fan</span><select id="dlFan">${FANLAR.map(x=>`<option ${x===o.fan?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
      <label class="f"><span>Sinf</span><select id="dlSinf">${[...Array(11)].map((_,i)=>`<option value="${i+1}" ${+o.sinf===i+1?'selected':''}>${i+1}-sinf</option>`).join('')}</select></label>
      <div class="f wide dl-aonly"><span>Savol turi</span>${seg('tur',[['auto','✨ Avtomatik','fanga qarab'],['mc','📝 Test','4 ta variant'],['num','🔢 Son javob','matematika uchun'],['tf','✅ Toʻgʻri/notoʻgʻri','har qanday fan'],['pair','🔗 Juftlash','soʻz ↔ maʼno'],['order','📅 Tartibga sol','voqea, bosqich'],['group','🗂️ Guruhlarga ajrat','turkumlash']])}</div>
@@ -2417,7 +2418,7 @@ function dlSrcHtml(){
      <div class="wide factions"><button class="btn gold big" id="dlGo" type="button">${o.manba==='test'?'📝 Testni olish':'✨ Savollarni yaratish'}</button><span class="small" id="dlMsg">AI sahifani oʻqib chiqadi — 20–60 soniya.</span></div></div>`:''}`}
 function dlDraw(){const b=$('#dlBody');if(!b)return;b.innerHTML=dlSrcHtml();dlStep(DL.files.length?2:1);dlBindSrc()}
 function dlReadOpts(){const o=DL.opt,v=id=>{const e=$(id);return e?e.value.trim():''};
-  if($('#dlFan')){o.fan=v('#dlFan');o.sinf=v('#dlSinf');o.mavzu=v('#dlMav');o.betlar=v('#dlPages');o.til=v('#dlTil');o.extra=v('#dlExtra');o.kalit=v('#dlKey')}}
+  if($('#dlFan')){o.fan=v('#dlFan');o.sinf=v('#dlSinf');o.mavzu=v('#dlMav');o.betlar=v('#dlPages');o.til=v('#dlTil');o.extra=v('#dlExtra');o.kalit=v('#dlKey');o.dan=v('#dlFrom')}}
 async function dlImage(file){
   const url=URL.createObjectURL(file);
   try{const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
@@ -2472,7 +2473,7 @@ async function dlAdd(list){
     const nm=(f.name||'').toLowerCase();
     try{
       if(f.type==='application/pdf'||nm.endsWith('.pdf')){toast('⏳ PDF ochilmoqda…');DL.files=[await dlPdf(f)];DL.opt.betlar='';toast(DL.files[0].must?'PDF katta — kerakli betlarni yozing':'PDF qoʻshildi');break}
-      if(nm.endsWith('.docx')||f.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){toast('⏳ Word oʻqilmoqda…');const d=await dlDocx(f);DL.files=[d];toast(d.cut?'Hujjat uzun — birinchi qismi olindi':'Word hujjat qoʻshildi');break}
+      if(nm.endsWith('.docx')||f.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){toast('⏳ Word oʻqilmoqda…');const d=await dlDocx(f);DL.files=[d];if(DL.opt.manba!=='test'&&((d.text||'').match(/(^|\s)[A-DА-Г]\s*\)\s*\S/gm)||[]).length>=8){DL.opt.manba='test';setTimeout(()=>toast('📝 Fayl tayyor testga oʻxshaydi — «Tayyor test» tanlandi'),900)}toast(d.cut?'Hujjat uzun — birinchi qismi olindi':'Word hujjat qoʻshildi');break}
       if(nm.endsWith('.doc')){toast('Eski .doc format: Word’da «Saqlash» → .docx yoki PDF qilib qayta saqlang');continue}
       if(!/^image\//.test(f.type)){toast('Faqat rasm, PDF yoki Word (.docx)');continue}
       if(DL.files.some(x=>x.pdf||x.docx))DL.files=[];
@@ -2524,10 +2525,11 @@ async function dlGenerate(){
   mark();const iv=setInterval(()=>{if(si<stages.length-1){si++;mark()}},8000);
   try{
     const j=await api('/api/darslik',{token:AUTH.tok,files:pay.files,
-      p:{fan:o.fan,sinf:o.sinf,tur:o.tur,n:o.n,qiyin:o.qiyin,mavzu:o.mavzu,betlar:pay.betlar,til:o.til,extra:o.extra,matn:pay.matn,manba:o.manba,kalit:T?o.kalit:''}},240000);
+      p:{fan:o.fan,sinf:o.sinf,tur:o.tur,n:o.n,qiyin:o.qiyin,mavzu:o.mavzu,betlar:pay.betlar,til:o.til,extra:o.extra,matn:pay.matn,manba:o.manba,kalit:T?o.kalit:'',dan:T?o.dan:''}},240000);
     si=stages.length;mark();
     const inf=j.info||{},sh=new Set(inf.shubha||[]),rs=new Set(inf.rasmidx||[]);
-    DL.res={name:j.name,mavzu:j.mavzu,izoh:j.izoh,tur:j.tur,manba:j.manba,info:inf,items:j.items.map((x,i)=>({...x,_s:sh.has(i)?1:0,_r:rs.has(i)?1:0})),left:j.left};
+    const part=T&&+o.dan>1?` (${o.dan}-savoldan)`:'';
+    DL.res={name:(j.name||'')+part,testga:!T&&!!j.testga,mavzu:j.mavzu,izoh:j.izoh,tur:j.tur,manba:j.manba,info:inf,items:j.items.map((x,i)=>({...x,_s:sh.has(i)?1:0,_r:rs.has(i)?1:0})),left:j.left};
     setTimeout(()=>{dlResult();burstTop(110)},350);
   }catch(e){body.innerHTML=`<div class="empty" style="padding:26px 0"><div>⚠️</div><p>${esc(e.message)}</p><button class="btn gold" id="dlBack">↩ Orqaga</button></div>`;$('#dlBack').onclick=dlDraw}
   finally{clearInterval(iv)}
@@ -2556,7 +2558,7 @@ function dlResult(){
   const r=DL.res;dlStep(3);
   $('#dlBody').innerHTML=`<div class="dl-res-h"><div>${r.mavzu?`<span class="mz">🎯 ${esc(r.mavzu)}</span>`:''}${r.izoh?`<p class="sub" style="margin:8px 0 0">${esc(r.izoh)}</p>`:''}</div>
      <button class="btn ghost sm" id="dlAgain">🔁 Qayta yaratish</button></div>
-    ${r.manba==='test'?dlTestInfo(r):''}
+    ${r.manba==='test'?dlTestInfo(r):''}${r.testga?`<div class="dl-info warn"><p>📝 <b>Bu fayl tayyor testga oʻxshaydi.</b> AI undan yangi savollar tuzdi. Testning oʻzini oʻzgartirmasdan olishni xohlaysizmi?</p><button class="btn gold sm" id="dlAsTest" style="margin-top:8px">📝 Tayyor test sifatida olish</button></div>`:''}
     <p class="small" style="margin:0 0 12px">✏️ Bosib tahrirlashingiz mumkin. ${r.tur==='mc'?'Toʻgʻri javobni doirachani bosib belgilang.':r.tur==='tf'?'Har bir gap uchun toʻgʻri yoki notoʻgʻri ekanini belgilang.':''}</p>
     <div class="dl-list" id="dlList">${r.items.map(dlItemHtml).join('')}</div>
     <button class="btn ghost" id="dlAddQ" style="margin-top:12px">＋ Savol qoʻshish</button>
@@ -2573,7 +2575,10 @@ function dlResult(){
   dlFitAll();
   $('#dlAgain').onclick=()=>{DL.res=null;dlDraw()};
   $('#dlSave').onclick=dlSave;if($('#dlPrint'))$('#dlPrint').onclick=dlPrint;
+  if($('#dlAsTest'))$('#dlAsTest').onclick=()=>{DL.opt.manba='test';DL.opt.dan='';DL.res=null;dlDraw();dlGenerate()};
+  if($('#dlNext'))$('#dlNext').onclick=dlNextPart;
 }
+function dlNextPart(){const f=(DL.res||{}).info||{};DL.opt.manba='test';DL.opt.dan=String((+f.oxirgi||0)+1);DL.res=null;dlDraw();dlGenerate()}
 function dlTestInfo(r){const f=r.info||{},n=r.items.length,L=[];
   L.push(`📝 <b>${n} ta savol</b> testdan oʻzgartirmasdan olindi.`);
   if(f.qolda)L.push(`🔑 ${f.qolda} ta javob siz bergan kalitdan olindi.`);
@@ -2582,6 +2587,7 @@ function dlTestInfo(r){const f=r.info||{},n=r.items.length,L=[];
   if(f.kesildi)L.push(`✂️ ${f.kesildi} ta savolda 5-variant bor edi — oʻyin uchun 4 tasi qoldirildi.`);
   if(f.tashlandi)L.push(`🚫 ${f.tashlandi} ta savol olinmadi (4 tadan kam variant yoki oʻqib boʻlmadi).`);
   if(f.rasm)L.push(`🖼 ${f.rasm} ta savol rasmga bogʻliq — ularni oʻchirib tashlash mumkin.`);
+  if(f.davomi)L.push(`➡️ Testda yana savollar bor. Bu qismni saqlang, keyin <b>«Keyingi qism»</b> tugmasi bilan ${(+f.oxirgi||0)+1}-savoldan davom ettiring.`);
   return `<div class="dl-info">${L.map(x=>`<p>${x}</p>`).join('')}</div>`}
 function dlPrint(){const r=DL.res,items=r.items.map(dlClean).filter(it=>it&&it.o);if(!items.length){toast('Chop etish uchun toʻliq savol yoʻq');return}
   const nm=esc(($('#dlName')||{}).value||r.name||'Test');
@@ -2601,11 +2607,12 @@ async function dlSave(){
     const s={...j.set,mc:j.set.items.some(x=>x.o),kind:setKind(j.set.items),n:j.set.items.length};
     $('#dlBody').innerHTML=`<div class="dl-done"><div class="big">🎉</div><h2 style="margin:6px 0 4px">${esc(s.name)}</h2><p class="sub">${s.n} ta savol saqlandi. Oʻyinni tanlang — darhol doskada ochiladi.</p></div>
       <div class="grid" style="margin:16px 0">${gamesFor(s).map(g=>gameCard(g,'&set='+encodeURIComponent(s.id)+'&fan='+encodeURIComponent(DL.opt.fan))).join('')}</div>
-      <div class="mrow" style="justify-content:center"><button class="btn gold" id="dlPlay">▶️ Robo yoki yakka rejim</button><button class="btn ghost" id="dlPub">📚 Kutubxonaga ulashish</button><button class="btn ghost" id="dlNew">📸 Yangi sahifa</button></div>`;
+      <div class="mrow" style="justify-content:center"><button class="btn gold" id="dlPlay">▶️ Robo yoki yakka rejim</button><button class="btn ghost" id="dlHw">📝 Uy vazifasi</button><button class="btn ghost" id="dlPub">📚 Kutubxonaga ulashish</button>${r.info&&r.info.davomi?`<button class="btn gold" id="dlNext2">➡️ Keyingi qism (${(+r.info.oxirgi||0)+1}-savoldan)</button>`:''}<button class="btn ghost" id="dlNew">📸 Yangi sahifa</button></div>`;
     burstTop(150);
     $('#dlPlay').onclick=()=>playModal(s,'&set='+encodeURIComponent(s.id));
     $('#dlPub').onclick=()=>pubModal(s,{fan:DL.opt.fan,sinf:DL.opt.sinf,mavzu:r.mavzu});
-    $('#dlNew').onclick=()=>{DL.files=[];DL.res=null;dlDraw()};
+    $('#dlNew').onclick=()=>{DL.files=[];DL.res=null;DL.opt.dan='';dlDraw()};
+    $('#dlHw').onclick=()=>hwModal(s);if($('#dlNext2'))$('#dlNext2').onclick=dlNextPart;
   }catch(e){toast(e.message);btn.disabled=false;btn.textContent='💾 Saqlash va oʻynash'}
 }
 function pubModal(s,def={}){

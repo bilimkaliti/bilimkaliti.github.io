@@ -399,7 +399,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <h3>👥 Kim oʻynaydi?</h3>
       <div class="seg big" data-key="n"></div>
       <div class="names" id="names"></div>
-      <div id="mlvBox" class="hidden"><h3>➕ Amal</h3><div class="seg" data-key="MA"></div><h3>🧮 Daraja</h3><div class="seg mlv" data-key="ML"></div><p class="small" id="mlvHint"></p><h3>👁️ Koʻrinish</h3><div class="seg" data-key="MV"></div><h3>⏱️ Tezlik</h3><div class="seg" data-key="MT"></div><h3>📈 Raund sayin qiyinlashsin</h3><div class="seg" data-key="MP"></div><p class="small">Yoqilsa, har 2 raundda daraja bittaga oshadi. ✅ — oʻzlashtirilgan daraja (5+ raundda 80% toʻgʻri).</p><button type="button" class="ghost" id="mPrint" style="margin-top:10px;padding:9px 16px">🖨️ Misollar varagʻini chop etish</button></div>
+      <div id="mlvBox" class="hidden"><h3>➕ Amal</h3><div class="seg" data-key="MA"></div><h3>🧮 Daraja</h3><div class="seg mlv" data-key="ML"></div><p class="small" id="mlvHint"></p><h3>👁️ Koʻrinish</h3><div class="seg" data-key="MV"></div><h3>⏱️ Tezlik</h3><div class="seg" data-key="MT"></div><h3>📈 Raund sayin qiyinlashsin</h3><div class="seg" data-key="MP"></div><p class="small">Yoqilsa, har 2 raundda daraja bittaga oshadi. ✅ — oʻzlashtirilgan daraja (5+ raundda 80% toʻgʻri).</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button type="button" class="ghost" id="mDaily" style="padding:9px 16px">📅 Bugungi 5 daqiqalik mashq</button><button type="button" class="ghost" id="mPrint" style="padding:9px 16px">🖨️ Misollar varagʻini chop etish</button></div><p class="small" id="mDailyHint">Bugungi mashq: 8 raund — 3 ta oson, 3 ta oʻrta, 2 ta qiyin (tanlangan darajaga nisbatan). Misollar bugun hamma uchun bir xil.</p></div>
       <details class="adv" id="adv"><summary><span>⚙️ Qoʻshimcha sozlamalar</span><small id="advSum"></small></summary>
       <div id="roboBox"><h3>🤖 Kompyuter raqib (Robo)</h3><div class="seg" data-key="robo"></div><p class="small" id="roboHint">Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!</p></div>
       <div id="lenBox"><h3 id="lenTitle"></h3><div class="seg" data-key="len"></div></div>
@@ -1800,6 +1800,7 @@ IMPL.mental={
    {t:'uch xonali, koʻp son',n:6,ms:1900,d:[100,999],neg:.45},
    {t:'chempion: aralash, juda tez',n:8,ms:1300,d:[5,999],neg:.45}],
   start(st,N){
+    this.dl=!!this.daily;this.daily=false;if(this.dl)N=8;window.bkDiplomInfo=null;
     this.N=N;this.r=0;this.base=Math.max(1,Math.min(10,+cfg.ML||3));this.lv=this.LV[this.base-1];
     const sg=document.createElement('div');sg.className='stage mstage';sg.innerHTML=`<div class="badge" id="mbadge"></div><div class="mnum" id="mnum"></div><div class="mseq" id="mseq"></div><div class="tbar"><i id="mbar"></i></div>`;st.appendChild(sg);
     teamPanels(st,t=>`<div class="msg"></div><div class="padw"></div>`);
@@ -1831,10 +1832,10 @@ IMPL.mental={
   sym(it){return it.o==='*'?'×':it.o==='/'?'÷':it.o==='-'?'−':'+'},
   round(){
     if(S.over)return;if(this.r>=this.N){endGame();return}
-    this.r++;this.lvN=cfg.MP?Math.min(10,this.base+Math.floor((this.r-1)/2)):this.base;this.lv=this.LV[this.lvN-1];this.AT=12+this.lv.n*2+(this.lv.d[1]>99?6:this.lv.d[1]>9?3:0);
-    this.phase='show';this.first=null;const g=this.gen();this.seq=g.seq;this.sum=g.sum;
+    this.r++;this.lvN=this.dl?Math.max(1,Math.min(10,this.base+[-1,-1,-1,0,0,0,1,1][this.r-1])):cfg.MP?Math.min(10,this.base+Math.floor((this.r-1)/2)):this.base;this.lv=this.LV[this.lvN-1];this.AT=12+this.lv.n*2+(this.lv.d[1]>99?6:this.lv.d[1]>9?3:0);
+    this.phase='show';this.first=null;let g;if(this.dl){const d=new Date(),sd=(d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate())*131+this.r*977+this.lvN*31+'qkba'.indexOf((cfg.MA||'qa')[0])*7;let a=sd>>>0;const mr=Math.random;Math.random=()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};try{g=this.gen()}finally{Math.random=mr}}else g=this.gen();this.seq=g.seq;this.sum=g.sum;
     this.q={html:(cfg.MA||'qa')==='qa'?this.seq.map((it,i)=>i?` ${this.sym(it)} ${it.x}`:String(it.x)).join(''):this.seq.map((it,i)=>i?` ➝ ${this.sym(it)}${it.x}`:String(it.x)).join(''),ans:this.sum,topic:`${MAMAL[cfg.MA||'qa']} · ${this.lvN}-daraja`};const SP=MSPEED[cfg.MT]||1,V=cfg.MV||'raqam';
-    $('#mbadge').textContent=`${this.r}-raund / ${this.N} · ${this.lvN}-daraja${cfg.MP&&this.r>1&&this.lvN>this.base+Math.floor((this.r-2)/2)?' ⬆️':''} · diqqat bilan qarang!`;$('#mseq').textContent='';$('#mbar').style.transform='scaleX(1)';
+    $('#mbadge').textContent=`${this.dl?'📅 Bugungi mashq · ':''}${this.r}-raund / ${this.N} · ${this.lvN}-daraja${cfg.MP&&this.r>1&&this.lvN>this.base+Math.floor((this.r-2)/2)?' ⬆️':''} · diqqat bilan qarang!`;$('#mseq').textContent='';$('#mbar').style.transform='scaleX(1)';
     S.teams.forEach(t=>{t.done=false;t.pad.disable(true);t.pad.reset();setMsg(t,'👀 Ekranga qarang…');q(t,'.sc').textContent=`⭐ ${t.score}`});
     keyUpd();let i=0;const el=$('#mnum');
     const ask=()=>{el.innerHTML='<span class="mq">?</span>';this.phase='answer';this.left=this.AT;
@@ -1865,9 +1866,14 @@ IMPL.mental={
     S.teams.forEach(t=>q(t,'.sc').textContent=`⭐ ${t.score}`);setTimeout(()=>this.round(),3200)},
   key(){return `${this.r}-raund: ${this.q?this.q.html+' = '+this.sum:''}`},
   result(){return S.teams.map(t=>({t,score:t.score,detail:`${t.right} / ${this.r} toʻgʻri`}))},
-  after(rows){if(cfg.MP||this.r<5)return;const A=cfg.MA||'qa',L=this.base,st=mStore();st[A]=st[A]||{};const o=st[A][L]||{ok:false,best:0};
+  after(rows){const el0=$('#winTitle'),bb=document.querySelector('#final .bkd-btn');if(bb)bb.textContent='🏅 Diplom';
+    if(this.dl){const hum=rows.filter(r=>!r.t.robo);if(hum.length){const p=Math.max(...hum.map(r=>Math.round(100*r.t.right/this.r)));el0.textContent+=` · 📅 Bugungi mashq: ${p}%`}return}
+    if(cfg.MP||this.r<5)return;const A=cfg.MA||'qa',L=this.base,st=mStore();st[A]=st[A]||{};const o=st[A][L]||{ok:false,best:0};
     const hum=rows.filter(r=>!r.t.robo);if(!hum.length)return;const p=Math.max(...hum.map(r=>Math.round(100*r.t.right/this.r)));
     const was=o.ok;o.best=Math.max(o.best,p);if(p>=80)o.ok=true;st[A][L]=o;mSave(st);
+    if(p>=80){const best=hum.slice().sort((a,b)=>b.t.right-a.t.right)[0],nm=/^\d+-guruh$/.test(best.t.name)?'':best.t.name;
+      window.bkDiplomInfo=()=>({h1:'SERTIFIKAT',sub:`Mental arifmetika · ${L}-daraja`,who:nm,why:`Mental arifmetika («${MAMAL[A]}») ${L}-darajasini ${p}% natija bilan muvaffaqiyatli oʻzlashtirgani uchun beriladi.`,cup:'🧮'});
+      if(bb)bb.textContent='🏅 Sertifikat'}
     const el=$('#winTitle');if(o.ok&&!was)el.textContent+=` · ✅ ${L}-daraja oʻzlashtirildi!${L<10?' Endi '+(L+1)+'-darajani sinab koʻring':''}`;
     else if(!o.ok)el.textContent+=` · ${L}-daraja: ${p}% (oʻzlashtirish uchun 80%)`}
 };
@@ -1985,7 +1991,7 @@ addEventListener('popstate',()=>{if(!(history.state&&history.state.bkd)&&!$('#pl
 function toSetupCore(){clearInterval(S.tickId);S.over=true;MUSIC.stop();['final','keyOv'].forEach(id=>$('#'+id).classList.add('hidden'));renderSettings();show('setup')}
 $('#startBtn').onclick=startGame;
 $('#againBtn').onclick=startGame;
-$('#reviewBtn').onclick=showReview;$('#mPrint').onclick=mentalPrint;
+$('#reviewBtn').onclick=showReview;$('#mPrint').onclick=mentalPrint;$('#mDaily').onclick=()=>{IMPL.mental.daily=true;startGame()};
 $('#reviewClose').onclick=()=>$('#review').classList.add('hidden');
 $('#fSettings').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()};$('#exitBtn').onclick=()=>ask('Oʻyindan chiqamizmi? Natija saqlanmaydi.',()=>{(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()});
 $('#settingsBtn').onclick=()=>ask('Oʻyin toʻxtatilib, sozlamalarga qaytilsinmi?',toSetup);

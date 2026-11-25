@@ -1742,7 +1742,7 @@ DARSLIK_PROMPT = """Sen tajribali {fan} oʻqituvchisisan. Ilova qilingan darslik
 Sinf: {sinf}. {mavzu_line}{pages_line}
 Qoidalar:
 - FAQAT manbadagi maʼlumotga tayan: matn, qoidalar, misollar, jadval va rasmlardan foydalan; manbada yoʻq faktni qoʻshma;
-- avval manba nima haqida ekanini aniqla (mavzu nomi);
+- avval manba nima haqida ekanini aniqla (mavzu nomi); agar manba tayyor test boʻlsa (raqamlangan savollar va A/B/C/D variantlar), JSONga "test": true qoʻsh;
 - savollar QISQA (1–2 gap), oʻquvchi 10–30 soniyada javob beradi; diqqat, tushunish va mantiqni tekshirsin, qiyinligi asta-sekin oshsin;
 - savollar takrorlanmasin, manbaning turli qismlarini qamrasin;
 - qiyinlik: {qiyin};
@@ -1767,8 +1767,9 @@ TEST_EXTRACT_PROMPT = """Ilova qilingan fayl(lar)da TAYYOR TEST bor. Vazifang �
 - toʻgʻri javob: faylda javoblar kaliti yoki belgilangan javob boʻlsa, FAQAT undan ol va "k": "kalit" yoz; kalit boʻlmasa, savolni oʻzing yech va "k": "ai" yoz;
 - savol rasm yoki chizmasiz tushunarsiz boʻlsa, uni ham koʻchir va "rasm": true qoʻsh;
 - test boʻlmagan matnni (sarlavha, koʻrsatma) savolga aylantirma; yangi savol qoʻshma;
+- {dan_line}eng koʻpi 60 ta savol koʻchir; testda bulardan keyin yana savol qolsa "davomi": true yoz;
 - "n" — savolning testdagi asl raqami (boʻlmasa tartib raqami).
-{kalit_line}JSON: {{"name": "test nomi (faylda boʻlsa — aynan)", "mavzu": "test mavzusi", "kalit": true, "items": [{{"n": 1, "q": "savol matni", "o": ["A varianti", "B varianti", "C varianti", "D varianti"], "c": 0, "k": "kalit"}}]}}
+{kalit_line}JSON: {{"name": "test nomi (faylda boʻlsa — aynan)", "mavzu": "test mavzusi", "kalit": true, "davomi": false, "items": [{{"n": 1, "q": "savol matni", "o": ["A varianti", "B varianti", "C varianti", "D varianti"], "c": 0, "k": "kalit"}}]}}
 "c" — toʻgʻri variantning tartib raqami (0 dan); "kalit" — faylda javoblar kaliti bor-yoʻqligi. Faqat JSON qaytar."""
 
 CHECK_PROMPT = """Quyidagi test savollarini mustaqil yech. Har bir savol uchun toʻgʻri variantning tartib raqamini (0 dan) yoz.
@@ -1831,8 +1832,13 @@ async def darslik_test(uid, parts: list, p: dict) -> web.Response:
     key = parse_key(clip(p.get("kalit"), 3000))
     kalit_line = ("Oʻqituvchi javoblar kalitini alohida berdi — toʻgʻri javobni oʻzing aniqlama, \"k\": \"kalit\" yoz: "
                   + ", ".join(f"{n}-{'ABCDEF'[v]}" for n, v in sorted(key.items())) + "\n") if key else ""
+    try:
+        dan = max(1, min(999, int(p.get("dan") or 1)))
+    except (TypeError, ValueError):
+        dan = 1
     parts.append({"text": TEST_EXTRACT_PROMPT.format(pages_line=f"PDFdan faqat shu betlarni oʻqi: {pages}.\n" if pages else "",
-                                                     kalit_line=kalit_line)})
+                                                     kalit_line=kalit_line,
+                                                     dan_line=f"faqat {dan}-savoldan boshlab koʻchir, undan oldingilarini tashla; " if dan > 1 else "")})
     ai_use(uid)
     stat_inc("pdf", sub="tools", name="tayyor-test")
     try:
@@ -1849,7 +1855,11 @@ async def darslik_test(uid, parts: list, p: dict) -> web.Response:
         return jerr("AI javobini oʻqib boʻlmadi. Yana bir bor urinib koʻring.", 502)
     if isinstance(obj, list):
         obj = {"items": obj}
-    items, info = norm_test(obj.get("items") if isinstance(obj, dict) else None, key)
+    raw_items = obj.get("items") if isinstance(obj, dict) else None
+    nums = [int(x["n"]) for x in raw_items or [] if isinstance(x, dict) and str(x.get("n", "")).isdigit()]
+    items, info = norm_test(raw_items, key)
+    info["oxirgi"] = max(nums) if nums else dan - 1 + len(raw_items or [])
+    info["davomi"] = bool(obj.get("davomi")) or len(raw_items or []) > MAX_ITEMS
     if len(items) < 2:
         return jerr("Faylda 4 variantli test topilmadi. Test aniq koʻrinadigan rasm yoki PDF yuklang.")
     info["shubha"], info["tekshirildi"] = [], False
@@ -1948,7 +1958,8 @@ async def api_darslik(request: web.Request) -> web.Response:
         return jerr("Manbadan yetarlicha savol tuzib boʻlmadi. Sahifa aniqroq tushgan rasmni yuklang yoki boshqa savol turini tanlang.")
     return web.json_response({"ok": True, "left": ai_left(uid), "tur": tur,
                               "name": clip(obj.get("name"), 60) or clip(obj.get("mavzu"), 60) or "Darslikdan savollar",
-                              "mavzu": clip(obj.get("mavzu"), 120), "izoh": clip(obj.get("izoh"), 300), "items": items[:n]})
+                              "mavzu": clip(obj.get("mavzu"), 120), "izoh": clip(obj.get("izoh"), 300), "items": items[:n],
+                              "testga": obj.get("test") in (True, 1, "true")})
 
 
 CHAT_SYSTEM = ("Sen «Bilim Kaliti» saytidagi oʻqituvchilar yordamchisisan. Oʻqituvchiga dars rejalash, mavzuni "
