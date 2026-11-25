@@ -65,3 +65,8 @@ html.nofx .cfl,html.nofx .cf,html.nofx .fxp{display:none!important}
 html.nofx .fx-pod .fpb{height:var(--h)}
 html.nofx .game:hover,html.nofx .grade:hover{transform:none}
 @media (prefers-reduced-motion:reduce){.fx-pod .fpb{height:var(--h)}}
+
+/* kasr: surat ustida, maxraj pastda */
+.bkfr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-size:.86em}
+.bkfr>span{display:block;padding:0 .12em}
+.bkfr>span:first-child{border-bottom:.09em solid currentColor}

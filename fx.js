@@ -73,6 +73,15 @@ window.BKLEAVE=function(){var home=location.pathname.replace(/games\/[^\/]*$/,''
  function qwatch(){if(!isGame||!window.MutationObserver)return;new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes&&m.addedNodes.forEach(function(n){if(n.nodeType!==1)return;
    if(n.matches&&n.matches(QSEL))qin(n);n.querySelectorAll&&Array.prototype.forEach.call(n.querySelectorAll(QSEL),qin)})})}).observe(document.body,{childList:true,subtree:true})}
  if(document.body)qwatch();else document.addEventListener('DOMContentLoaded',qwatch);
+ /* kasrlar doim surat/maxraj koʻrinishida: 3/4 -> ustma-ust (faqat oʻyinlarda, matn tugunlarida) */
+ var FRX=/(^|[^\d\/.,:])(\d{1,6})\/(\d{1,6})(?![\d\/])/;
+ function frNode(tn){var v=tn.nodeValue;if(!v||v.indexOf('/')<0||!FRX.test(v))return;var pe=tn.parentNode;if(!pe||pe.closest&&pe.closest('input,textarea,script,style,svg,code,.bkfr,.fr,[contenteditable],.nofr'))return;
+   var frag=document.createDocumentFragment(),m,rest=v;while((m=FRX.exec(rest))){var i=m.index+m[1].length;frag.appendChild(document.createTextNode(rest.slice(0,i)));
+     var f=document.createElement('span');f.className='bkfr';f.innerHTML='<span>'+m[2]+'</span><span>'+m[3]+'</span>';f.setAttribute('aria-label',m[2]+'/'+m[3]);frag.appendChild(f);rest=rest.slice(i+m[2].length+1+m[3].length)}
+   frag.appendChild(document.createTextNode(rest));pe.replaceChild(frag,tn)}
+ function frScan(n){if(n.nodeType===3){frNode(n);return}if(n.nodeType!==1||/^(INPUT|TEXTAREA|SCRIPT|STYLE|SVG)$/i.test(n.nodeName))return;var w=document.createTreeWalker(n,NodeFilter.SHOW_TEXT,null),a=[],t;while((t=w.nextNode()))if(t.nodeValue.indexOf('/')>=0)a.push(t);a.forEach(frNode)}
+ function frWatch(){if(!isGame||!window.MutationObserver)return;frScan(document.body);new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='characterData')frNode(m.target);else m.addedNodes&&m.addedNodes.forEach(frScan)})}).observe(document.body,{childList:true,subtree:true,characterData:true})}
+ if(document.body)frWatch();else document.addEventListener('DOMContentLoaded',frWatch);
  window.BKFX={spark:spark,shake:function(e){re(e,'fx-shake',500)},pop:function(e){re(e,'fx-pop',550)},get on(){return on},set:set};
  if(document.body)init();else document.addEventListener('DOMContentLoaded',init);
 })();
