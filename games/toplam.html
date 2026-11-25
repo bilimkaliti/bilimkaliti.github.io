@@ -349,9 +349,9 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
 @keyframes rth{0%,100%{opacity:.2}50%{opacity:1}}
 .pad button.rpress{transform:scale(.88);filter:brightness(1.25);box-shadow:0 0 0 3px var(--tc,#6b7a99)}
 .mstage{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.mnum{height:150px;display:grid;place-items:center}
+.mnum{min-height:150px;display:grid;place-items:center}
 .mn{font-size:clamp(4rem,12vw,8rem);font-weight:900;line-height:1;animation:mpop .25s ease-out;text-shadow:0 6px 24px rgba(0,0,0,.45)}
-.mn.neg{color:#ff9b9b}.mn.mul{color:#ffd43b}.mn.ans{color:#7dffb2}.mq{font-size:6rem;font-weight:900;opacity:.85;animation:mpop .3s}
+.mn.neg{color:#ff9b9b}.mn.mul{color:#ffd43b}.mab{display:flex;align-items:center;gap:14px;animation:mpop .25s ease-out}.mab .mn{font-size:clamp(3rem,9vw,6rem)}.abk{height:auto;filter:drop-shadow(0 6px 18px rgba(0,0,0,.45))}.mflash{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 22px;max-width:92%;font-size:clamp(2.2rem,6.5vw,4.6rem);font-weight:900;line-height:1.15;animation:mpop .2s ease-out}.mflash .neg{color:#ff9b9b}.mflash .mul{color:#ffd43b}.mn.ans{color:#7dffb2}.mq{font-size:6rem;font-weight:900;opacity:.85;animation:mpop .3s}
 @keyframes mpop{from{transform:scale(.4);opacity:0}}
 .mseq{font-size:1.3rem;font-weight:700;min-height:1.6em;opacity:.9}
 .jwrap{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
@@ -399,7 +399,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <h3>👥 Kim oʻynaydi?</h3>
       <div class="seg big" data-key="n"></div>
       <div class="names" id="names"></div>
-      <div id="mlvBox" class="hidden"><h3>➕ Amal</h3><div class="seg" data-key="MA"></div><h3>🧮 Daraja</h3><div class="seg mlv" data-key="ML"></div><p class="small" id="mlvHint"></p><h3>📈 Raund sayin qiyinlashsin</h3><div class="seg" data-key="MP"></div><p class="small">Yoqilsa, har 2 raundda daraja bittaga oshadi.</p></div>
+      <div id="mlvBox" class="hidden"><h3>➕ Amal</h3><div class="seg" data-key="MA"></div><h3>🧮 Daraja</h3><div class="seg mlv" data-key="ML"></div><p class="small" id="mlvHint"></p><h3>👁️ Koʻrinish</h3><div class="seg" data-key="MV"></div><h3>⏱️ Tezlik</h3><div class="seg" data-key="MT"></div><h3>📈 Raund sayin qiyinlashsin</h3><div class="seg" data-key="MP"></div><p class="small">Yoqilsa, har 2 raundda daraja bittaga oshadi. ✅ — oʻzlashtirilgan daraja (5+ raundda 80% toʻgʻri).</p><button type="button" class="ghost" id="mPrint" style="margin-top:10px;padding:9px 16px">🖨️ Misollar varagʻini chop etish</button></div>
       <details class="adv" id="adv"><summary><span>⚙️ Qoʻshimcha sozlamalar</span><small id="advSum"></small></summary>
       <div id="roboBox"><h3>🤖 Kompyuter raqib (Robo)</h3><div class="seg" data-key="robo"></div><p class="small" id="roboHint">Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!</p></div>
       <div id="lenBox"><h3 id="lenTitle"></h3><div class="seg" data-key="len"></div></div>
@@ -1154,8 +1154,8 @@ const GAMES={
  juft:{big:1,icon:'🃏',name:'Juftini top',desc:'Har guruhning oʻz kartalari bor: misolni uning javobi bilan juftlang. Hammasini birinchi topgan guruh gʻolib. Xotira oʻyini.',len:{t:'Juftlar soni',o:[6,8,10],d:8},lvl:1,topics:1,cool:0},
  zanjir:{icon:'🔗',name:'Son zanjiri',desc:'Bitta sondan boshlab ketma-ket amallar bajariladi. Har bir halqa tekshiriladi, xato qayerda ekani darhol koʻrinadi.',len:{t:'Zanjirlar soni',o:[2,3,5],d:3},lvl:1,topics:0,cool:1}
 };
-const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']],ML:[1,2,3,4,5,6,7,8,9,10].map(v=>[v,String(v)]),MP:[[0,'Yoʻq'],[1,'Ha']],MA:[['qa','➕➖ Qoʻshish-ayirish'],['kop','✖️ Koʻpaytirish'],['bol','➗ Boʻlish'],['aralash','🔀 Toʻrt amal']]};
-let cfg={grade:6,big:1,music:1,n:2,L:1,ML:3,MP:0,MA:'qa',cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
+const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']],ML:[1,2,3,4,5,6,7,8,9,10].map(v=>[v,String(v)]),MP:[[0,'Yoʻq'],[1,'Ha']],MV:[['raqam','🔢 Raqam'],['abakus','🧮 Abakus'],['flesh','⚡ Flesh']],MT:[['s','🐢 Sekin'],['o','Odatiy'],['t','🐇 Tez']],MA:[['qa','➕➖ Qoʻshish-ayirish'],['kop','✖️ Koʻpaytirish'],['bol','➗ Boʻlish'],['aralash','🔀 Toʻrt amal']]};
+let cfg={grade:6,big:1,music:1,n:2,L:1,ML:3,MP:0,MA:'qa',MV:'raqam',MT:'o',cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
 try{const s=JSON.parse(localStorage.getItem('bk8-cfg')||'null');if(s)cfg={...cfg,...s}}catch(e){}
 cfg.names=(cfg.names||[]).slice(0,4);while(cfg.names.length<4)cfg.names.push(`${cfg.names.length+1}-guruh`);
 const FANS=['Matematika','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
@@ -1200,7 +1200,7 @@ function renderSettings(){
   $('#lenTitle').textContent=g.len.t;$('#sDesc').textContent=WM(g.desc);
   const lbl=(k,v)=>((SEGS[k]||[]).find(x=>x[0]===v)||[,''])[1];
   $('#advSum').textContent=[`Robo: ${cfg.robo?lbl('robo',cfg.robo).replace(/^\S+\s/,''):'yoʻq'}`,g.lvl?`qiyinlik: ${lbl('L',cfg.L).toLowerCase()}`:'',`${g.len.t.toLowerCase()}: ${lenOf(GK)}`,cfg.sound?'tovush bor':'tovushsiz'].filter(Boolean).join(' · ');
-  $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#mlvBox').classList.toggle('hidden',GK!=='mental');if(GK==='mental'){const L=IMPL.mental.LV[cfg.ML-1]||IMPL.mental.LV[2];const ml=cfg.ML,fm=ml<=4?'2–5':ml<=7?'2–9':'2–12';$('#mlvHint').textContent=(cfg.MA||'qa')==='qa'?`${ml}-daraja: ${L.t} · ${L.n} ta son · har biri ${(L.ms/1000).toFixed(1)} s`:`${ml}-daraja: ×/÷ ${fm} gacha sonlar, natija ${ml<=4?100:ml<=7?1000:10000} dan oshmaydi · ${Math.max(3,Math.min(L.n,ml<=4?4:ml<=7?5:6))} ta amal · amallar ketma-ket bajariladi`}$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
+  $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#mlvBox').classList.toggle('hidden',GK!=='mental');if(GK==='mental'){const PS=mStore()[cfg.MA||'qa']||{};document.querySelectorAll('#mlvBox .seg[data-key="ML"] button').forEach(b=>{const r=PS[b.dataset.v];if(r&&r.ok)b.textContent=b.dataset.v+' ✅';b.title=r?`Eng yaxshi: ${r.best}%`:''});const L=IMPL.mental.LV[cfg.ML-1]||IMPL.mental.LV[2];const ml=cfg.ML,fm=ml<=4?'2–5':ml<=7?'2–9':'2–12';$('#mlvHint').textContent=(cfg.MA||'qa')==='qa'?`${ml}-daraja: ${L.t} · ${L.n} ta son · har biri ${(L.ms/1000).toFixed(1)} s`:`${ml}-daraja: ×/÷ ${fm} gacha sonlar, natija ${ml<=4?100:ml<=7?1000:10000} dan oshmaydi · ${Math.max(3,Math.min(L.n,ml<=4?4:ml<=7?5:6))} ta amal · amallar ketma-ket bajariladi`}$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
   const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
   $('#roboHint').textContent=cfg.robo&&cfg.n===4?'Robo bilan birga eng koʻpi 3 ta guruh oʻynaydi (jami 4 ta panel).':'Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!';
   $('#names').innerHTML=Array.from({length:hum},(_,i)=>`<input data-i="${i}" style="--tc:${TC[i]}" value="${esc(cfg.names[i]||'')}" maxlength="18" aria-label="${i+1}-guruh nomi">`).join('');
@@ -1303,13 +1303,13 @@ function locks(){
 const locked=t=>t.lockUntil&&Date.now()<t.lockUntil;
 function keyText(){try{return S.game&&S.game.key?`🔑 ${GAMES[GK].name}\n\n`+S.game.key():''}catch(e){return ''}}
 function keyUpd(){if(!S.over&&!S.starting)reportKey(keyText())}
-function mark(t,q,ok){try{S.log.push({team:t.name,color:t.color,qh:q.html,topic:q.topic,ans:q.ans,ok:!!ok,robo:!!t.robo})}catch(e){}return ok}
+function mark(t,q,ok,got){try{S.log.push({team:t.name,color:t.color,qh:q.html,topic:q.topic,ans:q.ans,ok:!!ok,robo:!!t.robo,got})}catch(e){}return ok}
 function topicStats(){const m=new Map();S.log.forEach(r=>{if(!r.team||r.robo)return;const s=m.get(r.topic)||{ok:0,n:0};s.n++;if(r.ok)s.ok++;m.set(r.topic,s)});return [...m.entries()].map(([k,s])=>({k,...s,p:Math.round(100*s.ok/s.n)})).sort((a,b)=>a.p-b.p)}
 function showReview(){
-  const qs=new Map();S.log.forEach(r=>{let e=qs.get(r.qh);if(!e){e={qh:r.qh,ans:r.ans,topic:r.topic,res:new Map()};qs.set(r.qh,e)}if(r.team&&!r.robo){const x=e.res.get(r.team)||{c:r.color,ok:0,bad:0};r.ok?x.ok++:x.bad++;e.res.set(r.team,x)}});
+  const qs=new Map();S.log.forEach(r=>{let e=qs.get(r.qh);if(!e){e={qh:r.qh,ans:r.ans,topic:r.topic,res:new Map()};qs.set(r.qh,e)}if(r.team&&!r.robo){const x=e.res.get(r.team)||{c:r.color,ok:0,bad:0,got:[]};r.ok?x.ok++:x.bad++;if(!r.ok&&r.got!=null&&r.got!=='')x.got.push(r.got);e.res.set(r.team,x)}});
   const st=topicStats();
   $('#reviewBody').innerHTML=(st.length?`<div class="rv-st">${st.map(s=>`<div><b>${esc(s.k)}</b><span class="bar"><i style="width:${s.p}%;background:${s.p>=70?'var(--good)':s.p>=40?'var(--gold)':'var(--bad)'}"></i></span><span>${s.ok}/${s.n} · ${s.p}%</span></div>`).join('')}</div>`:'')+
-    `<ol class="rv-list">${[...qs.values()].map(e=>`<li><div class="rv-q"><span class="tn">${esc(e.topic||'')}</span>${e.qh} <b class="rv-a">= ${e.ans}</b></div><div class="rv-r">${[...e.res.entries()].map(([n,x])=>`<span style="--tc:${x.c}">${x.ok?'✅':'❌'} ${esc(n)}${x.bad?` <small>(${x.bad} xato)</small>`:''}</span>`).join('')||'<span>— hech kim javob bermadi</span>'}</div></li>`).join('')}</ol>`;
+    `<ol class="rv-list">${[...qs.values()].map(e=>`<li><div class="rv-q"><span class="tn">${esc(e.topic||'')}</span>${e.qh} <b class="rv-a">= ${e.ans}</b></div><div class="rv-r">${[...e.res.entries()].map(([n,x])=>`<span style="--tc:${x.c}">${x.ok?'✅':'❌'} ${esc(n)}${x.bad?` <small>(${x.got&&x.got.length?'javob: '+x.got.map(esc).join(', '):x.bad+' xato'})</small>`:''}</span>`).join('')||'<span>— hech kim javob bermadi</span>'}</div></li>`).join('')}</ol>`;
   $('#review').classList.remove('hidden');
 }
 function reportText(rows){
@@ -1334,6 +1334,7 @@ function endGame(){
   else $('#winTitle').textContent=win.length>1?'Durang: '+win.map(r=>r.t.name).join(' va '):`Gʻolib: ${win[0].t.name}`;
   let place=0,prev=null;
   $('#rank').innerHTML=rows.map((r,i)=>{if(r.score!==prev){place=i+1;prev=r.score}return `<div style="--tc:${r.t.color}"><span class="pl">${['🥇','🥈','🥉'][place-1]||place}</span><span><b>${esc(r.t.name)}</b><small>${r.detail}</small></span><span class="pts">${r.score}</span></div>`}).join('');
+  try{S.game.after&&S.game.after(rows)}catch(e){}
   $('#final').classList.remove('hidden');snd('win');
   try{reportKey(reportText(rows),true,'report')}catch(e){}
   try{hwSubmit(rows)}catch(e){}
@@ -1768,6 +1769,23 @@ IMPL.zanjir={
 
 
 /* ---------- 9. Mental arifmetika ---------- */
+function mStore(){try{return JSON.parse(localStorage.getItem('bk8-ment')||'{}')}catch(e){return{}}}
+function mSave(o){try{localStorage.setItem('bk8-ment',JSON.stringify(o))}catch(e){}}
+const MSPEED={s:1.5,o:1,t:.7};
+const MAMAL={qa:'Qoʻshish-ayirish',kop:'Koʻpaytirish',bol:'Boʻlish',aralash:'Toʻrt amal'};
+function abacus(n){const d=String(Math.abs(n)).split('').map(Number),W=46,H=150,w=d.length*W+16;
+  let g=`<svg class="abk" viewBox="0 0 ${w} ${H}" style="height:min(30vh,230px);width:auto"><rect x="2" y="2" width="${w-4}" height="${H-4}" rx="10" fill="#7a4a1e" /><rect x="8" y="8" width="${w-16}" height="${H-16}" rx="6" fill="#f8ecd4"/><rect x="8" y="44" width="${w-16}" height="6" fill="#7a4a1e"/>`;
+  d.forEach((v,i)=>{const x=8+i*W+W/2,top=v>=5,lo=v%5;g+=`<line x1="${x}" y1="10" x2="${x}" y2="${H-10}" stroke="#8b6b4a" stroke-width="3"/>`;
+    const bead=(y,on)=>`<ellipse cx="${x}" cy="${y}" rx="18" ry="8.5" fill="${on?'#e8590c':'#c9b79a'}" stroke="${on?'#a63e00':'#a89678'}" stroke-width="1.5"/>`;
+    g+=bead(top?35:17,top);for(let k=0;k<4;k++){const on=k<lo;g+=bead(on?61+k*18:H-17-(3-k)*18,on)}});
+  return g+'</svg>'}
+function mentalPrint(){const M=IMPL.mental,A=cfg.MA||'qa',L=Math.max(1,Math.min(10,+cfg.ML||3));M.lvN=L;M.lv=M.LV[L-1];
+  const qs=[];for(let i=0;i<24;i++)qs.push(M.gen());
+  const card=(g,i)=>A==='qa'?`<div class="c"><b>${i+1}</b><div class="col">${g.seq.map((it,j)=>`<div>${j?(it.o==='-'?'−':'+'):''}${it.x}</div>`).join('')}</div><div class="ans"></div></div>`
+    :`<div class="c w"><b>${i+1}</b><div class="row">${g.seq.map((it,j)=>j?` → ${M.sym(it)}${it.x}`:it.x).join('')} = <span class="bl"></span></div></div>`;
+  const head=`<h1>🧮 Mental arifmetika — ${MAMAL[A]}, ${L}-daraja</h1><p>Ism: ______________________ &nbsp; Sinf: ______ &nbsp; Sana: __________ ${A==='qa'?'':'&nbsp; (amallarni ketma-ket bajaring)'}</p>`;
+  const w=window.open('','_blank');if(!w){alert('Brauzer yangi oynani toʻsib qoʻydi. Ruxsat bering.');return}
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Mental arifmetika ${L}-daraja</title><style>body{font-family:system-ui,Arial,sans-serif;margin:14mm;color:#111}h1{font-size:20px;margin:0 0 6px}p{margin:0 0 12px;font-size:14px}.g{display:grid;grid-template-columns:repeat(${A==='qa'?6:2},1fr);gap:10px}.c{border:1.5px solid #999;border-radius:8px;padding:8px 10px;break-inside:avoid;font-size:${A==='qa'?18:17}px}.c b{font-size:12px;color:#666}.col{text-align:right;font-variant-numeric:tabular-nums;line-height:1.35;font-weight:600}.ans{border-top:2px solid #111;height:30px;margin-top:4px}.row{font-weight:600;margin-top:2px}.bl{display:inline-block;width:70px;border-bottom:2px solid #111}.key{break-before:page}.key .g{grid-template-columns:repeat(6,1fr)}.key .c{font-size:16px}</style></head><body>${head}<div class="g">${qs.map(card).join('')}</div><div class="key"><h1>🔑 Javoblar — ${MAMAL[A]}, ${L}-daraja</h1><div class="g">${qs.map((g,i)=>`<div class="c"><b>${i+1}.</b> ${g.sum}</div>`).join('')}</div></div><script>setTimeout(()=>print(),300)<\/script></body></html>`);w.document.close()}
 IMPL.mental={
   LV:[
    {t:'bir xonali, faqat qoʻshish',n:3,ms:2000,d:[1,9],neg:0},
@@ -1814,22 +1832,29 @@ IMPL.mental={
     if(S.over)return;if(this.r>=this.N){endGame();return}
     this.r++;this.lvN=cfg.MP?Math.min(10,this.base+Math.floor((this.r-1)/2)):this.base;this.lv=this.LV[this.lvN-1];this.AT=12+this.lv.n*2+(this.lv.d[1]>99?6:this.lv.d[1]>9?3:0);
     this.phase='show';this.first=null;const g=this.gen();this.seq=g.seq;this.sum=g.sum;
-    this.q={html:(cfg.MA||'qa')==='qa'?this.seq.map((it,i)=>i?` ${this.sym(it)} ${it.x}`:String(it.x)).join(''):this.seq.map((it,i)=>i?` ➝ ${this.sym(it)}${it.x}`:String(it.x)).join(''),ans:this.sum,topic:'Mental arifmetika'};
+    this.q={html:(cfg.MA||'qa')==='qa'?this.seq.map((it,i)=>i?` ${this.sym(it)} ${it.x}`:String(it.x)).join(''):this.seq.map((it,i)=>i?` ➝ ${this.sym(it)}${it.x}`:String(it.x)).join(''),ans:this.sum,topic:`${MAMAL[cfg.MA||'qa']} · ${this.lvN}-daraja`};const SP=MSPEED[cfg.MT]||1,V=cfg.MV||'raqam';
     $('#mbadge').textContent=`${this.r}-raund / ${this.N} · ${this.lvN}-daraja${cfg.MP&&this.r>1&&this.lvN>this.base+Math.floor((this.r-2)/2)?' ⬆️':''} · diqqat bilan qarang!`;$('#mseq').textContent='';$('#mbar').style.transform='scaleX(1)';
     S.teams.forEach(t=>{t.done=false;t.pad.disable(true);t.pad.reset();setMsg(t,'👀 Ekranga qarang…');q(t,'.sc').textContent=`⭐ ${t.score}`});
     keyUpd();let i=0;const el=$('#mnum');
+    const ask=()=>{el.innerHTML='<span class="mq">?</span>';this.phase='answer';this.left=this.AT;
+        $('#mbadge').textContent=`${this.r}-raund · natijani kiriting!`;S.teams.forEach(t=>{t.pad.disable(false);setMsg(t,'Natija nechchi?')});snd('ding')};
+    if(V==='flesh'){const fl=Math.round(Math.max(700,(this.lv.ms*.45)*this.seq.length)*SP);let k=3;
+      const cd=()=>{if(S.over)return;if(k>0){el.innerHTML=`<span class="mn">${k}</span>`;snd('tk');k--;setTimeout(cd,600);return}
+        el.innerHTML=`<div class="mflash">${this.seq.map((it,j)=>`<span class="${it.o==='-'?'neg':it.o==='*'||it.o==='/'?'mul':''}">${j?this.sym(it):''}${it.x}</span>`).join('')}</div>`;snd('ding');
+        setTimeout(()=>{if(!S.over)ask()},fl)};
+      cd();return}
     const show=()=>{if(S.over)return;
-      if(i>=this.seq.length){el.innerHTML='<span class="mq">?</span>';this.phase='answer';this.left=this.AT;
-        $('#mbadge').textContent=`${this.r}-raund · natijani kiriting!`;S.teams.forEach(t=>{t.pad.disable(false);setMsg(t,'Natija nechchi?')});snd('ding');return}
-      const it=this.seq[i];el.innerHTML=`<span class="mn ${it.o==='-'?'neg':it.o==='*'||it.o==='/'?'mul':''}">${i===0?it.x:this.sym(it)+it.x}</span>`;snd('tk');i++;
-      const dur=this.lv.ms*(it.o==='*'||it.o==='/'?1.35:1);setTimeout(()=>{if(!S.over){el.innerHTML='';setTimeout(show,180)}},dur-180)};
+      if(i>=this.seq.length){ask();return}
+      const it=this.seq[i],cl=it.o==='-'?'neg':it.o==='*'||it.o==='/'?'mul':'',sg=i===0?'':this.sym(it);
+      el.innerHTML=V==='abakus'?`<div class="mab"><span class="mn ${cl}">${sg}</span>${abacus(it.x)}</div>`:`<span class="mn ${cl}">${sg}${it.x}</span>`;snd('tk');i++;
+      const dur=this.lv.ms*SP*(it.o==='*'||it.o==='/'?1.35:1)*(V==='abakus'?1.6:1);setTimeout(()=>{if(!S.over){el.innerHTML='';setTimeout(show,180)}},dur-180)};
     show();
   },
   tick(dt){if(this.phase!=='answer')return;this.left-=dt;$('#mbar').style.transform=`scaleX(${Math.max(0,this.left/this.AT)})`;
     if(this.left<=0){S.teams.forEach(t=>{if(!t.done){t.done=true;t.pad.disable(true);mark(t,this.q,false);setMsg(t,'⏰ Vaqt tugadi','bad')}});this.reveal()}},
   ans(t,v){
     if(S.over||this.phase!=='answer'||t.done)return;t.done=true;t.pad.disable(true);
-    if(mark(t,this.q,+v===this.sum)){const k=this.first?1:2;if(!this.first)this.first=t;t.score+=k;t.right++;snd('ok');setMsg(t,k===2?'⚡ Birinchi toʻgʻri! +2':'Toʻgʻri! +1','good');if(k===2)confetti(t.el,26)}
+    if(mark(t,this.q,+v===this.sum,v)){const k=this.first?1:2;if(!this.first)this.first=t;t.score+=k;t.right++;snd('ok');setMsg(t,k===2?'⚡ Birinchi toʻgʻri! +2':'Toʻgʻri! +1','good');if(k===2)confetti(t.el,26)}
     else{snd('bad');t.pad.shake();setMsg(t,`Notoʻgʻri (${v})`,'bad')}
     q(t,'.sc').textContent=`⭐ ${t.score}`;
     if(S.teams.every(x=>x.done))this.reveal();
@@ -1838,7 +1863,12 @@ IMPL.mental={
     $('#mnum').innerHTML=`<span class="mn ans">${this.sum}</span>`;$('#mseq').innerHTML=this.q.html+' = <b>'+this.sum+'</b>';
     S.teams.forEach(t=>q(t,'.sc').textContent=`⭐ ${t.score}`);setTimeout(()=>this.round(),3200)},
   key(){return `${this.r}-raund: ${this.q?this.q.html+' = '+this.sum:''}`},
-  result(){return S.teams.map(t=>({t,score:t.score,detail:`${t.right} / ${this.r} toʻgʻri`}))}
+  result(){return S.teams.map(t=>({t,score:t.score,detail:`${t.right} / ${this.r} toʻgʻri`}))},
+  after(rows){if(cfg.MP||this.r<5)return;const A=cfg.MA||'qa',L=this.base,st=mStore();st[A]=st[A]||{};const o=st[A][L]||{ok:false,best:0};
+    const hum=rows.filter(r=>!r.t.robo);if(!hum.length)return;const p=Math.max(...hum.map(r=>Math.round(100*r.t.right/this.r)));
+    const was=o.ok;o.best=Math.max(o.best,p);if(p>=80)o.ok=true;st[A][L]=o;mSave(st);
+    const el=$('#winTitle');if(o.ok&&!was)el.textContent+=` · ✅ ${L}-daraja oʻzlashtirildi!${L<10?' Endi '+(L+1)+'-darajani sinab koʻring':''}`;
+    else if(!o.ok)el.textContent+=` · ${L}-daraja: ${p}% (oʻzlashtirish uchun 80%)`}
 };
 
 /* ---------- 10. Juftini top ---------- */
@@ -1952,7 +1982,7 @@ $('#askNo').onclick=()=>{$('#ask').classList.add('hidden');askCb=null};
 function toSetup(){clearInterval(S.tickId);S.over=true;MUSIC.stop();['final','keyOv'].forEach(id=>$('#'+id).classList.add('hidden'));renderSettings();show('setup')}
 $('#startBtn').onclick=startGame;
 $('#againBtn').onclick=startGame;
-$('#reviewBtn').onclick=showReview;
+$('#reviewBtn').onclick=showReview;$('#mPrint').onclick=mentalPrint;
 $('#reviewClose').onclick=()=>$('#review').classList.add('hidden');
 $('#fSettings').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{location.href=BKHOME()};$('#exitBtn').onclick=()=>ask('Oʻyindan chiqamizmi? Natija saqlanmaydi.',()=>{location.href=BKHOME()});
 $('#settingsBtn').onclick=()=>ask('Oʻyin toʻxtatilib, sozlamalarga qaytilsinmi?',toSetup);
