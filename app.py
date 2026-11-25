@@ -61,7 +61,7 @@ GAMES = [
     ("toplam", "nishon", "🎯 Nishon", "har guruhning oʻz nishoni"),
     ("toplam", "mental", "🧮 Mental arifmetika", "ongda hisoblash"),
     ("toplam", "juft", "🃏 Juftini top", "xotira va diqqat"),
-    ("toplam", "zanjir", "🔗 Son zanjiri", "ketma-ket amallar"),
+    ("toplam", "zanjir", "🔢 Son zanjiri", "ketma-ket amallar"),
     ("bilim", "togri", "✅ Toʻgʻri yoki notoʻgʻri", "istalgan fan uchun"),
     ("bilim", "jlash", "🔗 Juftlash", "soʻz ↔ tarjima, sana ↔ voqea"),
     ("bilim", "tartib", "📅 Tartibga sol", "gap va voqealarni tartibla"),

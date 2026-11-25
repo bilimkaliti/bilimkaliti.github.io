@@ -103,7 +103,7 @@ h2{font-size:30px;letter-spacing:-.6px;margin:0;font-weight:900}
 /* === yangi dizayn: Clash Display sarlavhalar, 3D ikonlar, yorugʻlik kartochka, yaltiroq tugma === */
 h1,h2,.hero h1,.sh h2{font-family:'Clash Display',Satoshi,Nunito,system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
 .i3d{display:inline-block;width:1em;height:1em;object-fit:contain;vertical-align:middle;filter:drop-shadow(0 .08em .1em rgba(0,0,0,.22))}
-.art .em .i3d{width:92px;height:92px}
+.art .em .i3d{width:92px;height:92px}.art-minora .em .i3d{width:118px;height:118px}
 .pmg>span .i3d{width:1.35em;height:1.35em}
 .tool .ic .i3d{width:1.5em;height:1.5em;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}.tool:hover .ic .i3d{transform:translateY(-3px) rotate(-8deg) scale(1.08)}
 .tour .tic .i3d.big{width:84px;height:84px}.tsteps .i3d.ts{width:38px;height:38px;flex:none}
@@ -1057,7 +1057,7 @@ const GAMES=[
  {id:'nishon',f:'toplam',g:'nishon',e:'🎯',n:'Nishon',d:'Har guruhning oʻz nishoni bor, hamma bir vaqtda oʻq otadi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',c:['#d6336c','#ff7aa8'],t:['Bir vaqtda','Tavakkal']},
  {id:'mental',f:'toplam',g:'mental',e:'🧮',n:'Mental arifmetika',d:'Sonlar va amallar ekranda birin-ketin chiqadi — ongda hisoblang. Toʻrt amal va 10 ta daraja.',c:['#0ca678','#63e6be'],t:['Diqqat','Ogʻzaki hisob']},
  {id:'juft',f:'toplam',g:'juft',e:'🃏',n:'Juftini top',d:'Har guruhning oʻz kartalari bor: misolni javobi bilan juftlang. Hammasini birinchi topgan guruh gʻolib.',c:['#6d5dfc','#a69bff'],t:['Xotira','Mavzular']},
- {id:'zanjir',f:'toplam',g:'zanjir',e:'🔗',n:'Son zanjiri',d:'Sondan boshlab ketma-ket amallarni bajarib, zanjir oxiriga yeting.',c:['#0b7285','#3bb3c9'],t:['Ogʻzaki hisob']},
+ {id:'zanjir',f:'toplam',g:'zanjir',e:'🔢',n:'Son zanjiri',d:'Sondan boshlab ketma-ket amallarni bajarib, zanjir oxiriga yeting.',c:['#0b7285','#3bb3c9'],t:['Ogʻzaki hisob']},
  {id:'togri',f:'bilim',g:'togri',e:'✅',n:'Toʻgʻri yoki notoʻgʻri',d:'Ekran guruhlarga boʻlinadi: har guruh oʻz gapini koʻrib, «Toʻgʻri» yoki «Notoʻgʻri»ni tanlaydi. Istalgan fan uchun.',c:['#0f9d8a','#2fb9a3'],t:['Barcha fanlar','Yangi']},
  {id:'jlash',f:'bilim',g:'jlash',e:'🔗',n:'Juftlash',d:'Soʻz ↔ tarjima, sana ↔ voqea, element ↔ belgi: chapdagini oʻngdagi jufti bilan ulang. Har guruh oʻz oynasida.',c:['#2f8cff','#6aa8ff'],t:['Tillar','Tarix']},
  {id:'tartib',f:'bilim',g:'tartib',e:'📅',n:'Tartibga sol',d:'Voqealar, bosqichlar, jarayonlar va gap boʻlaklarini toʻgʻri ketma-ketlikda joylang.',c:['#f08c00','#ffb347'],t:['Tarix','Tillar','Biologiya']},
@@ -1091,7 +1091,7 @@ let GRADES={};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* 3D ikonlar (3dicons.co, CC0) — boʻlmasa emoji qoladi */
-const I3D={'raketa':'rocket','mozaika':'picture','tez':'flash','nishon':'target','mental':'calculator','million':'dollar','togri':'tick','sirli':'key','eshik':'lock','juft':'puzzle','guruh':'folder','minora':'cube','xazina':'flag'};
+const I3D={'raketa':'rocket','mozaika':'picture','tez':'flash','nishon':'target','mental':'calculator','million':'dollar','togri':'tick','sirli':'key','eshik':'lock','juft':'puzzle','guruh':'folder','minora':'tower','xazina':'explorer'};
 const i3=(n,em,c='')=>n?`<img class="i3d ${c}" src="img/3d/${n}.webp" alt="" loading="lazy" decoding="async" onerror="this.replaceWith(document.createTextNode(this.dataset.e))" data-e="${esc(em||'')}">`:em;
 const gIc=g=>i3(I3D[g.id],g.e);
 const store={get(k,d){try{const v=localStorage.getItem('bk_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('bk_'+k,JSON.stringify(v))}catch(e){}}};
@@ -2833,7 +2833,7 @@ document.addEventListener('change',e=>{const t=e.target;if(t.dataset.top==null)r
 /* birinchi kirish: qisqa koʻrsatma */
 function tourMaybe(){if(store.get('tour',0)||location.hash.replace(/^#\/?/,''))return;
   setTimeout(()=>{if($('#modal'))return;const md=modal(`<div class="tour"><div class="tic">${i3('trophy','👋','big')}</div><h3>Xush kelibsiz!</h3><p class="sub">Bilim Kaliti bilan darsda oʻyin — 3 qadam:</p>
-    <ol class="tsteps"><li><b>1</b>${i3('notebook','','ts')}<span><b>Fanni tanlang</b><small>Matematika yoki boshqa fan</small></span></li><li><b>2</b>${i3('puzzle','','ts')}<span><b>Sinf va mavzuni belgilang</b><small>yoki tayyor savollar toʻplamini</small></span></li><li><b>3</b>${i3('rocket','','ts')}<span><b>Oʻyinni tanlab, doskada boshlang</b><small>guruhlar bellashadi, ochkolar oʻzi hisoblanadi</small></span></li></ol>
+    <ol class="tsteps"><li><b>1</b>${i3('notebook','','ts')}<span><b>Fanni tanlang</b><small>Matematika yoki boshqa fan</small></span></li><li><b>2</b>${i3('file-text','','ts')}<span><b>Sinf va mavzuni belgilang</b><small>yoki tayyor savollar toʻplamini</small></span></li><li><b>3</b>${i3('rocket','','ts')}<span><b>Oʻyinni tanlab, doskada boshlang</b><small>guruhlar bellashadi, ochkolar oʻzi hisoblanadi</small></span></li></ol>
     <div class="mrow" style="justify-content:center"><button class="btn gold big" id="tGo">▶️ Hoziroq boshlash</button><button class="btn ghost" id="tLater">Keyinroq</button></div></div>`);
     store.set('tour',1);md.querySelector('#tGo').onclick=()=>wizard();md.querySelector('#tLater').onclick=closeModal},900)}
 
