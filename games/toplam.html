@@ -399,6 +399,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
       <h3>👥 Kim oʻynaydi?</h3>
       <div class="seg big" data-key="n"></div>
       <div class="names" id="names"></div>
+      <div id="mlvBox" class="hidden"><h3>🧮 Daraja</h3><div class="seg mlv" data-key="ML"></div><p class="small" id="mlvHint"></p><h3>📈 Raund sayin qiyinlashsin</h3><div class="seg" data-key="MP"></div><p class="small">Yoqilsa, har 2 raundda daraja bittaga oshadi.</p></div>
       <details class="adv" id="adv"><summary><span>⚙️ Qoʻshimcha sozlamalar</span><small id="advSum"></small></summary>
       <div id="roboBox"><h3>🤖 Kompyuter raqib (Robo)</h3><div class="seg" data-key="robo"></div><p class="small" id="roboHint">Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!</p></div>
       <div id="lenBox"><h3 id="lenTitle"></h3><div class="seg" data-key="len"></div></div>
@@ -1149,12 +1150,12 @@ const GAMES={
  bomba:{icon:'💣',name:'Bombani zararsizlantirish',desc:'Javob qaysi simni kesishni koʻrsatadi (test savolida — toʻgʻri variant raqami). Notoʻgʻri sim kesilsa, taymer tezlashadi.',len:{t:'Bombalar soni',o:[2,3,5],d:3},lvl:1,topics:1,cool:0},
  tez:{big:1,icon:'⚡',name:'Kim tezroq',desc:'Ekranda bitta misol, har bir guruhda 4 ta javob. Birinchi toʻgʻri javob bergan guruh ball oladi.',len:{t:'Savollar soni',o:[8,10,15],d:10},lvl:1,topics:1,cool:0},
  nishon:{big:1,icon:'🎯',name:'Nishon',desc:'Har guruhning oʻz nishoni bor, hamma bir vaqtda oʻynaydi. Markazga yaqin halqa — qiyinroq misol va koʻproq ball.',len:{t:'Har bir guruhga oʻqlar',o:[3,5,7],d:5},lvl:0,topics:1,cool:0},
- mental:{icon:'🧮',name:'Mental arifmetika',desc:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. Birinchi toʻgʻri javob +2, keyingi toʻgʻri javoblar +1 ball.',len:{t:'Raundlar soni',o:[5,8,10],d:8},lvl:1,topics:0,cool:0},
+ mental:{icon:'🧮',name:'Mental arifmetika',desc:'Sonlar ekranda birin-ketin chiqadi — ongda qoʻshib-ayirib boring. 10 ta daraja: bir xonalidan uch xonaligacha. Birinchi toʻgʻri javob +2, keyingi toʻgʻri javoblar +1 ball.',len:{t:'Raundlar soni',o:[5,8,10,12],d:8},lvl:0,topics:0,cool:0},
  juft:{big:1,icon:'🃏',name:'Juftini top',desc:'Har guruhning oʻz kartalari bor: misolni uning javobi bilan juftlang. Hammasini birinchi topgan guruh gʻolib. Xotira oʻyini.',len:{t:'Juftlar soni',o:[6,8,10],d:8},lvl:1,topics:1,cool:0},
  zanjir:{icon:'🔗',name:'Son zanjiri',desc:'Bitta sondan boshlab ketma-ket amallar bajariladi. Har bir halqa tekshiriladi, xato qayerda ekani darhol koʻrinadi.',len:{t:'Zanjirlar soni',o:[2,3,5],d:3},lvl:1,topics:0,cool:1}
 };
-const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']]};
-let cfg={grade:6,big:1,music:1,n:2,L:1,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
+const SEGS={grade:[1,2,3,4,5,6,7].map(g=>[g,g+'-sinf']),big:[[1,'Koʻp xonali (12, 45, 130…)'],[0,'Bir xonali (1–9)']],n:[[1,'👤 1 oʻquvchi'],[2,'2 guruh'],[3,'3 guruh'],[4,'4 guruh']],robo:[[0,'Yoʻq'],[1,'🐢 Oson'],[2,'🙂 Oʻrta'],[3,'🔥 Kuchli']],L:[[0,'Oson'],[1,'Oʻrta'],[2,'Qiyin']],cool:[[0,'Yoʻq'],[5,'5 soniya'],[10,'10 soniya']],ML:[1,2,3,4,5,6,7,8,9,10].map(v=>[v,String(v)]),MP:[[0,'Yoʻq'],[1,'Ha']]};
+let cfg={grade:6,big:1,music:1,n:2,L:1,ML:3,MP:0,cool:5,sound:1,topics:G6.slice(),names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{}};
 try{const s=JSON.parse(localStorage.getItem('bk8-cfg')||'null');if(s)cfg={...cfg,...s}}catch(e){}
 cfg.names=(cfg.names||[]).slice(0,4);while(cfg.names.length<4)cfg.names.push(`${cfg.names.length+1}-guruh`);
 const FANS=['Matematika','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
@@ -1199,7 +1200,7 @@ function renderSettings(){
   $('#lenTitle').textContent=g.len.t;$('#sDesc').textContent=WM(g.desc);
   const lbl=(k,v)=>((SEGS[k]||[]).find(x=>x[0]===v)||[,''])[1];
   $('#advSum').textContent=[`Robo: ${cfg.robo?lbl('robo',cfg.robo).replace(/^\S+\s/,''):'yoʻq'}`,g.lvl?`qiyinlik: ${lbl('L',cfg.L).toLowerCase()}`:'',`${g.len.t.toLowerCase()}: ${lenOf(GK)}`,cfg.sound?'tovush bor':'tovushsiz'].filter(Boolean).join(' · ');
-  $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
+  $('#lvlBox').classList.toggle('hidden',!g.lvl);$('#mlvBox').classList.toggle('hidden',GK!=='mental');if(GK==='mental'){const L=IMPL.mental.LV[cfg.ML-1]||IMPL.mental.LV[2];$('#mlvHint').textContent=`${cfg.ML}-daraja: ${L.t} · ${L.n} ta son · har biri ${(L.ms/1000).toFixed(1)} s`}$('#bigBox').classList.toggle('hidden',!g.big);$('#coolBox').classList.toggle('hidden',!g.cool);$('#topicBox').classList.toggle('hidden',!g.topics);
   const hum=cfg.robo?Math.min(cfg.n,3):cfg.n;
   $('#roboHint').textContent=cfg.robo&&cfg.n===4?'Robo bilan birga eng koʻpi 3 ta guruh oʻynaydi (jami 4 ta panel).':'Robo alohida guruh boʻlib oʻynaydi va oʻquvchilarning kuchiga moslashadi. Bitta oʻquvchini doskaga chiqarib, Robo bilan bellashtiring!';
   $('#names').innerHTML=Array.from({length:hum},(_,i)=>`<input data-i="${i}" style="--tc:${TC[i]}" value="${esc(cfg.names[i]||'')}" maxlength="18" aria-label="${i+1}-guruh nomi">`).join('');
@@ -1768,23 +1769,36 @@ IMPL.zanjir={
 
 /* ---------- 9. Mental arifmetika ---------- */
 IMPL.mental={
-  LV:[{n:4,ms:1700,d:[1,9],neg:.2},{n:5,ms:1300,d:[1,9],neg:.4},{n:6,ms:1000,d:[2,25],neg:.45}],
-  AT:20,
+  LV:[
+   {t:'bir xonali, faqat qoʻshish',n:3,ms:2000,d:[1,9],neg:0},
+   {t:'bir xonali, qoʻshish-ayirish',n:4,ms:1700,d:[1,9],neg:.4},
+   {t:'bir xonali, qoʻshish-ayirish',n:5,ms:1400,d:[1,9],neg:.45},
+   {t:'bir xonali, tez',n:7,ms:1100,d:[1,9],neg:.45},
+   {t:'ikki xonali (10–50)',n:4,ms:2000,d:[10,50],neg:.4},
+   {t:'ikki xonali (10–99)',n:5,ms:1700,d:[10,99],neg:.45},
+   {t:'ikki xonali, tez',n:7,ms:1300,d:[10,99],neg:.45},
+   {t:'uch xonali (100–999)',n:4,ms:2300,d:[100,999],neg:.4},
+   {t:'uch xonali, koʻp son',n:6,ms:1900,d:[100,999],neg:.45},
+   {t:'chempion: aralash, juda tez',n:8,ms:1300,d:[5,999],neg:.45}],
   start(st,N){
-    this.N=N;this.r=0;this.lv=this.LV[cfg.L]||this.LV[1];
+    this.N=N;this.r=0;this.base=Math.max(1,Math.min(10,+cfg.ML||3));this.lv=this.LV[this.base-1];
     const sg=document.createElement('div');sg.className='stage mstage';sg.innerHTML=`<div class="badge" id="mbadge"></div><div class="mnum" id="mnum"></div><div class="mseq" id="mseq"></div><div class="tbar"><i id="mbar"></i></div>`;st.appendChild(sg);
     teamPanels(st,t=>`<div class="msg"></div><div class="padw"></div>`);
-    S.teams.forEach(t=>{t.score=0;t.right=0;t.pad=makePad(q(t,'.padw'),{max:4,onSubmit:v=>this.ans(t,v)})});
+    S.teams.forEach(t=>{t.score=0;t.right=0;t.pad=makePad(q(t,'.padw'),{max:5,onSubmit:v=>this.ans(t,v)})});
     setTimeout(()=>this.round(),700);
   },
-  gen(){const L=this.lv;let v=R(L.d[0],L.d[1]);const seq=[v];
-    for(let i=1;i<L.n;i++){let x=R(L.d[0],L.d[1]);if(Math.random()<L.neg&&v-x>=0){seq.push(-x);v-=x}else{seq.push(x);v+=x}}
+  gen(){const L=this.lv,[a,b]=L.d,mix=L.d[1]===999&&L.d[0]<100;
+    const pick=()=>mix?(Math.random()<.5?R(5,99):R(100,999)):R(a,b);
+    let v=pick();const seq=[v];
+    for(let i=1;i<L.n;i++){let x=pick(),k=0;while((x===Math.abs(seq[i-1])||(a<10&&x+Math.abs(seq[i-1])===10&&Math.random()<.5))&&k++<8)x=pick();
+      if(Math.random()<L.neg&&v-x>=0){seq.push(-x);v-=x}else{seq.push(x);v+=x}}
     return{seq,sum:v}},
   round(){
     if(S.over)return;if(this.r>=this.N){endGame();return}
-    this.r++;this.phase='show';this.first=null;const g=this.gen();this.seq=g.seq;this.sum=g.sum;
+    this.r++;this.lvN=cfg.MP?Math.min(10,this.base+Math.floor((this.r-1)/2)):this.base;this.lv=this.LV[this.lvN-1];this.AT=12+this.lv.n*2+(this.lv.d[1]>99?6:this.lv.d[1]>9?3:0);
+    this.phase='show';this.first=null;const g=this.gen();this.seq=g.seq;this.sum=g.sum;
     this.q={html:this.seq.map((x,i)=>i?(x<0?` − ${-x}`:` + ${x}`):String(x)).join(''),ans:this.sum,topic:'Mental arifmetika'};
-    $('#mbadge').textContent=`${this.r}-raund / ${this.N} · diqqat bilan qarang!`;$('#mseq').textContent='';$('#mbar').style.transform='scaleX(1)';
+    $('#mbadge').textContent=`${this.r}-raund / ${this.N} · ${this.lvN}-daraja${cfg.MP&&this.r>1&&this.lvN>this.base+Math.floor((this.r-2)/2)?' ⬆️':''} · diqqat bilan qarang!`;$('#mseq').textContent='';$('#mbar').style.transform='scaleX(1)';
     S.teams.forEach(t=>{t.done=false;t.pad.disable(true);t.pad.reset();setMsg(t,'👀 Ekranga qarang…');q(t,'.sc').textContent=`⭐ ${t.score}`});
     keyUpd();let i=0;const el=$('#mnum');
     const show=()=>{if(S.over)return;
