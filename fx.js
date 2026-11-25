@@ -64,6 +64,15 @@ window.BKLEAVE=function(){var home=location.pathname.replace(/games\/[^\/]*$/,''
  document.addEventListener('mouseleave',function(){var b=document.querySelector('.hero .board');if(b){b.style.setProperty('--rx','0deg');b.style.setProperty('--ry','0deg')}});
  document.addEventListener('click',function(e){var l=e.target.closest&&e.target.closest('.fxlink');if(l)set(!on)});
  function init(){if(isGame){mkBot();var b=document.createElement('button');b.id='fxBtn';b.type='button';b.onclick=function(){set(!on)};document.body.appendChild(b)}apply();watch()}
+ /* yangi savol paydo boʻlganda — 3D aylanib kirish (matn oʻzgargandagina, qayta chizishda emas) */
+ var QSEL='.stmt,.ttq,.qc,.qtxt,.card .q,.mo,.mq,.mn';var LAST=new WeakMap();
+ function qin(el){if(!on||!el.animate||RMQ())return;var txt=(el.textContent||'').trim().slice(0,160),par=el.parentNode;if(!par)return;
+   var key=par.__bkq||(par.__bkq={});var cls=el.className&&String(el.className).split(' ')[0];if(key[cls]===txt)return;key[cls]=txt;
+   el.animate([{opacity:0,transform:'perspective(700px) rotateX(-55deg) translateY(-10px) scale(.96)'},{opacity:1,transform:'perspective(700px) rotateX(6deg)',offset:.7},{opacity:1,transform:'none'}],{duration:520,easing:'cubic-bezier(.25,1.1,.4,1)'})}
+ function RMQ(){try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
+ function qwatch(){if(!isGame||!window.MutationObserver)return;new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes&&m.addedNodes.forEach(function(n){if(n.nodeType!==1)return;
+   if(n.matches&&n.matches(QSEL))qin(n);n.querySelectorAll&&Array.prototype.forEach.call(n.querySelectorAll(QSEL),qin)})})}).observe(document.body,{childList:true,subtree:true})}
+ if(document.body)qwatch();else document.addEventListener('DOMContentLoaded',qwatch);
  window.BKFX={spark:spark,shake:function(e){re(e,'fx-shake',500)},pop:function(e){re(e,'fx-pop',550)},get on(){return on},set:set};
  if(document.body)init();else document.addEventListener('DOMContentLoaded',init);
 })();

@@ -931,7 +931,7 @@ html.nofx .labsvg *{animation:none!important}@media (prefers-reduced-motion:redu
 @media (max-width:480px){#splash .sp-lock{width:220px;height:144px}#splash .sp-name{font-size:32px}}
 @media (prefers-reduced-motion:reduce){#splash *,#splash *::after{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.15s!important}}
 </style>
-<link rel="stylesheet" href="fx.css?v=1"><script defer src="fx.js?v=2"></script>
+<link rel="stylesheet" href="fx.css?v=2"><script defer src="fx.js?v=3"></script>
 <script>try{var _t=JSON.parse(localStorage.getItem('bk_theme'));if(_t)document.documentElement.dataset.theme=_t}catch(e){}</script>
 <div id="splash" role="status" aria-label="Yuklanmoqda">
  <div class="sp-door sp-l"></div><div class="sp-door sp-r"></div><div class="sp-seam"></div>
@@ -1048,7 +1048,6 @@ const GAMES=[
  {id:'timsoh',f:'bilim',g:'timsoh',e:'🐊',n:'Timsohli katakchalar',d:'Har guruhning oʻz jadvali: katakni tanlang, savolga javob bering — ichidan ball yoki timsoh chiqadi.',c:['#12a38f','#5fd1bf'],t:['Tavakkal','Barcha fanlar','Yangi']},
  {id:'million',f:'bilim',g:'million',e:'💰',n:'Million',d:'Savollar pogʻonama-pogʻona ogʻirlashadi, ball koʻpayadi. Yordam: 50/50 va savolni almashtirish.',c:['#5f3dc4','#9775fa'],t:['Barcha fanlar','Yangi']},
  {id:'harf',f:'bilim',g:'harf',e:'🔤',n:'Anagram',d:'Harflar aralashib ketgan — soʻzni toping. Ingliz, rus va ona tili soʻzlari uchun.',c:['#e8590c','#ffa94d'],t:['Tillar','Yangi']},
- {id:'kosmik',f:'kosmik-baza',g:'',e:'🛸',n:'Kosmik baza',d:'Har bir guruh oʻz eshiklarini kod bilan ochib, bazani qutqaradi.',c:['#283c86','#5a6fd0'],t:['Kod topish','Mavzular']},
  {id:'sirli',f:'sirli-xonalar',g:'',e:'🗝️',n:'Sirli xonalar',d:'Qulflangan xonalardan chiqish: har bir xona — yangi jumboq.',c:['#5f3dc4','#9775fa'],t:['Escape-room','Mantiq']},
  {id:'eshik',f:'eshik-kodi',g:'',e:'🏰',n:'Eshik kodi',d:'Besh eshikli qasr: misollarni yechib, har bir eshik kodini toping.',c:['#8d5b2d','#c98e55'],t:['Kod topish']},
 ];
@@ -2025,7 +2024,7 @@ const KIND_LBL={mc:'test',tf:'toʻgʻri/notoʻgʻri',pair:'juftlar',order:'tarti
 function gamesFor(s){const k=s.kind||(s.mc?'mc':'num');
   if(k==='tf')return GAMES.filter(g=>g.id==='togri');if(k==='order')return GAMES.filter(g=>g.id==='tartib');if(k==='group')return GAMES.filter(g=>g.id==='guruh');
   const top=GAMES.filter(g=>g.f==='toplam'&&!['mental','zanjir'].includes(g.g)&&!(k!=='num'&&g.g==='bomba')&&!(g.g==='bomba'&&s.bz&&!s.bomb));
-  const old=GAMES.filter(g=>['kosmik','sirli','eshik'].includes(g.id));
+  const old=GAMES.filter(g=>['sirli','eshik'].includes(g.id));
   const lang=s.fan&&s.fan!=='Matematika',X=[...(s.ord?[GAMES.find(g=>g.id==='tartib')]:[]),...(lang&&(k==='mc'||k==='pair')?[GAMES.find(g=>g.id==='harf')]:[])];
   return k==='pair'?[GAMES.find(g=>g.id==='jlash'),...top,...old,...X]:(k==='num'||k==='mix')&&s.bz?[...top,...GAMES.filter(g=>['togri','timsoh','million'].includes(g.id)),...old,...X]:k==='mc'?[...top,...GAMES.filter(g=>['togri','jlash','timsoh','million'].includes(g.id)),...old,...X]:[...top,...X]}
 const itemTxt=it=>{const k=itKind(it);return k==='mc'?`${ex(it.q)}<br><b>→ ${ex(it.o[it.c||0])}</b>`:k==='num'?`${ex(it.q)}<br><b>→ ${ex(it.a)}</b>`:k==='tf'?`${ex(it.q)} <b>→ ${it.t?'✅ toʻgʻri':'❌ notoʻgʻri'}</b>`:k==='pair'?`<b>${ex(it.a)}</b> ↔ ${ex(it.b)}`:k==='order'?`${ex(it.q)}<br><b>${it.s.map(ex).join(' → ')}</b>`:`${ex(it.q)}<br>${it.g.map(g=>`<b>${ex(g.n)}:</b> ${g.w.map(ex).join(', ')}`).join('<br>')}`};

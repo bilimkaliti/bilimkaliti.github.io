@@ -51,7 +51,6 @@ GAMES_DIR = Path(__file__).parent / "games"
 # (fayl, ?g= parametri, tugma nomi, qisqa tavsif)
 GAMES = [
     ("sirli-xonalar", "", "🗝️ Sirli xonalar", "qulflangan xonalardan chiqish"),
-    ("kosmik-baza", "", "🛸 Kosmik baza", "har bir guruh oʻz eshiklarini ochadi"),
     ("eshik-kodi", "", "🏰 Eshik kodi", "5 ta eshikli qasr"),
     ("toplam", "minora", "🏗️ Minora qurish", "toʻgʻri javob — yangi qavat"),
     ("toplam", "xazina", "🗺️ Xazina xaritasi", "orolma-orol xazinaga"),

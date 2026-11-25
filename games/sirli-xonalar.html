@@ -150,6 +150,38 @@ table.mg td{width:44px;height:44px;border:2px solid var(--ink);text-align:center
 .keylist div{border-left:6px solid var(--tc);background:var(--bg);border-radius:8px;padding:8px 12px;font-weight:700}
 .keylist .code{font-size:1.7rem;font-weight:800;letter-spacing:6px}
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+/* === 3D eshik va jonli animatsiyalar === */
+.rrow{display:flex;gap:12px;align-items:center}
+.door3d{position:relative;width:58px;height:78px;flex:0 0 auto;perspective:420px;border-radius:8px 8px 3px 3px;background:radial-gradient(circle at 50% 40%,#fff6c9,#ffd23f 45%,#f59f00);box-shadow:inset 0 0 0 4px color-mix(in srgb,var(--tc) 70%,#3b2a14),0 6px 14px rgba(0,0,0,.18)}
+.door3d .dlight{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle,#fffbe6 0,transparent 70%);opacity:0;transition:opacity .6s .25s}
+.door3d .dleaf{position:absolute;inset:4px;border-radius:6px 6px 2px 2px;transform-origin:left center;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.3,1.3,.5,1);background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 55%,#5a3a1a),color-mix(in srgb,var(--tc) 35%,#3a2410));box-shadow:inset 0 0 0 3px rgba(255,255,255,.12),inset 0 -10px 0 rgba(0,0,0,.12);display:grid;place-items:center}
+.door3d .dleaf::before,.door3d .dleaf::after{content:"";position:absolute;left:8px;right:8px;height:24%;border:2px solid rgba(255,255,255,.18);border-radius:4px}
+.door3d .dleaf::before{top:10%}.door3d .dleaf::after{bottom:10%}
+.door3d .dnum{color:#fff;font-weight:900;font-size:1.25rem;text-shadow:0 2px 0 rgba(0,0,0,.35);z-index:1}
+.door3d .dknob{position:absolute;right:7px;top:50%;width:7px;height:7px;border-radius:50%;background:#ffd43b;box-shadow:0 0 0 2px #a86b00}
+.door3d .dlock{position:absolute;bottom:-6px;right:-8px;font-style:normal;font-size:1.05rem;transition:transform .4s,opacity .4s}
+.door3d.open .dleaf{transform:rotateY(-105deg)}
+.door3d.open .dlight{opacity:1}
+.door3d.open .dlock{transform:translateY(-14px) rotate(-25deg);opacity:0}
+.door3d.enter{animation:doorIn .55s cubic-bezier(.3,1.4,.5,1)}
+@keyframes doorIn{from{transform:scale(.4) rotate(-12deg);opacity:0}}
+.rbody.rin .clue{animation:clueIn .55s cubic-bezier(.25,1.2,.4,1) both}
+.rbody.rin .clue:nth-child(2){animation-delay:.08s}.rbody.rin .clue:nth-child(3){animation-delay:.16s}.rbody.rin .clue:nth-child(4){animation-delay:.24s}.rbody.rin .clue:nth-child(n+5){animation-delay:.32s}
+@keyframes clueIn{from{opacity:0;transform:perspective(600px) rotateX(-70deg) translateY(-12px)}}
+.cards{perspective:900px}
+.clue{transition:transform .25s,box-shadow .25s}
+.cards.reveal .clue{animation:clueOk .6s ease both}
+@keyframes clueOk{50%{transform:perspective(600px) rotateY(12deg) scale(1.03);box-shadow:0 8px 18px color-mix(in srgb,var(--good) 30%,transparent)}}
+.slot.pop{animation:slotPop .25s ease-out}
+@keyframes slotPop{from{transform:scale(1.35) translateY(-4px)}}
+.slots.good .slot{animation:slotWin .5s ease both}
+.slots.good .slot:nth-child(2){animation-delay:.06s}.slots.good .slot:nth-child(3){animation-delay:.12s}.slots.good .slot:nth-child(4){animation-delay:.18s}
+@keyframes slotWin{40%{transform:translateY(-8px) rotateX(25deg);box-shadow:0 10px 18px color-mix(in srgb,var(--good) 35%,transparent)}}
+.done{animation:clueIn .5s ease both}
+.donebox{animation:boxIn .6s cubic-bezier(.3,1.3,.5,1) both}.donebox .cup{animation:cupIn 1s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes boxIn{from{opacity:0;transform:scale(.85)}}@keyframes cupIn{from{transform:scale(0) rotate(-180deg)}}
+html.nofx .door3d,html.nofx .door3d *,html.nofx .rbody .clue,html.nofx .slot,html.nofx .done,html.nofx .donebox,html.nofx .donebox .cup{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.door3d,.door3d *,.rbody .clue,.slot,.done,.donebox,.donebox .cup{animation:none!important}}
 .shake{animation:shake .45s}
 @media (prefers-reduced-motion:reduce){.shake{animation:none}}
 </style>
@@ -431,7 +463,7 @@ html.bk #start .go{animation:none}
     }
   });
 })();
-</script><link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=2"></script><!--/bkSkin--></head>
+</script><link rel="stylesheet" href="../fx.css?v=2"><script defer src="../fx.js?v=3"></script><!--/bkSkin--></head>
 <body>
 <div class="wrap">
 
@@ -1322,7 +1354,7 @@ function startGame(){
 function buildPanel(t){
   t.el.innerHTML=`
   <div class="thead"><span class="tname">${esc(t.name)}</span><div class="dots"></div><span class="tstars">⭐ 0</span></div>
-  <div><h3 class="rtitle"></h3><p class="rhint"></p></div>
+  <div class="rrow"><div class="door3d" aria-hidden="true"><div class="dlight"></div><div class="dleaf"><span class="dnum"></span><i class="dknob"></i><i class="dlock">🔒</i></div></div><div><h3 class="rtitle"></h3><p class="rhint"></p></div></div>
   <div class="rbody">
     <div class="cards"></div>
     <div class="side">
@@ -1347,6 +1379,8 @@ function enterRoom(t){
   q(t,'.rtitle').textContent=`${t.ri+1}-xona: ${st.rooms[t.ri].name}`;
   q(t,'.rhint').textContent=t.room.hint;
   const cards=q(t,'.cards');cards.classList.remove('reveal');cards.innerHTML=t.room.clues.map(clueHtml).join('');
+  const dr=q(t,'.door3d');dr.classList.remove('open');q(t,'.dnum').textContent=t.ri+1;dr.classList.remove('enter');void dr.offsetWidth;dr.classList.add('enter');
+  const rb=q(t,'.rbody');rb.classList.remove('rin');void rb.offsetWidth;rb.classList.add('rin');
   q(t,'.done').classList.add('hidden');q(t,'.pad').classList.remove('hidden');
   setFb(t,'','');setPad(t,false);redraw(t);renderHead(t);renderSlots(t);
 }
@@ -1367,7 +1401,7 @@ function press(t,k){
   const n=t.room.code.length;
   if(k==='✓'){check(t);return}
   if(k==='⌫')t.code.pop();else if(t.code.length<n)t.code.push(k);
-  setFb(t,'','');renderSlots(t);
+  setFb(t,'','');renderSlots(t);if(k!=='⌫'){const sl=q(t,'.slots').children[t.code.length-1];sl&&sl.classList.add('pop')}
 }
 function check(t){
   const n=t.room.code.length,right=t.room.code.map(String);
@@ -1386,7 +1420,7 @@ function solve(t){
   const s=Math.max(0,3-Math.floor(t.wrong/3));t.stars.push(s);
   t.f.open=true;redraw(t);renderSlots(t,'good');setPad(t,true);renderHead(t);
   setFb(t,'Toʻgʻri! Eshik ochildi.','good');
-  q(t,'.cards').classList.add('reveal');
+  q(t,'.cards').classList.add('reveal');q(t,'.door3d').classList.add('open');
   const last=t.ri===st.rooms.length-1,dn=q(t,'.done');
   q(t,'.pad').classList.add('hidden');
   dn.innerHTML=`<div>🚪 ${t.ri+1}-xona ochildi! ${'⭐'.repeat(s)}${'☆'.repeat(3-s)}</div><button class="nextBtn">${last?'Yakunlash 🏁':'Keyingi xona →'}</button>`;
