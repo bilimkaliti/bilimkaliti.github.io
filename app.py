@@ -845,14 +845,14 @@ def norm_items(raw) -> list[dict]:
             if len(g) >= 2:
                 out.append({"q": _s(it.get("q"), 200) or "Guruhlarga ajrating", "g": g})
             continue
-        q = str(it.get("q", "")).strip()[:300]
+        q = str(it.get("q", "")).strip()[:600]
         if not q:
             continue
         if "t" in it and "o" not in it and "a" not in it:
             out.append({"q": q, "t": 1 if it.get("t") in (1, True, "1", "true", "toʻgʻri") else 0})
             continue
         if isinstance(it.get("o"), list):
-            o = [str(x).strip()[:120] for x in it["o"] if str(x).strip()][:4]
+            o = [str(x).strip()[:200] for x in it["o"] if str(x).strip()][:4]
             try:
                 c = int(it.get("c", 0))
             except (TypeError, ValueError):
@@ -1759,6 +1759,122 @@ JSON: {{"name": "toʻplam uchun qisqa nom", "mavzu": "aniqlangan mavzu", "izoh":
 
 DARSLIK_MAX_FILES = 6
 
+TEST_EXTRACT_PROMPT = """Ilova qilingan fayl(lar)da TAYYOR TEST bor. Vazifang — testni HECH NIMANI OʻZGARTIRMASDAN koʻchirib olish.
+{pages_line}Qoidalar:
+- savol matni va har bir variantni HARFMA-HARF AYNAN koʻchir: soʻz, imlo, tinish belgisi, son, formula — hammasi asl holicha; tahrirlama, qisqartirma, tarjima qilma, tuzatma;
+- savollar va variantlar tartibini saqla; savol raqamini ("1.", "12)") va variant harflarini ("A)", "b.", "C)") olib tashla — faqat matnning oʻzi qolsin;
+- formulani oddiy matn bilan yoz (x², √, ½ kabi belgilar bilan), maʼnosi oʻzgarmasin;
+- toʻgʻri javob: faylda javoblar kaliti yoki belgilangan javob boʻlsa, FAQAT undan ol va "k": "kalit" yoz; kalit boʻlmasa, savolni oʻzing yech va "k": "ai" yoz;
+- savol rasm yoki chizmasiz tushunarsiz boʻlsa, uni ham koʻchir va "rasm": true qoʻsh;
+- test boʻlmagan matnni (sarlavha, koʻrsatma) savolga aylantirma; yangi savol qoʻshma;
+- "n" — savolning testdagi asl raqami (boʻlmasa tartib raqami).
+{kalit_line}JSON: {{"name": "test nomi (faylda boʻlsa — aynan)", "mavzu": "test mavzusi", "kalit": true, "items": [{{"n": 1, "q": "savol matni", "o": ["A varianti", "B varianti", "C varianti", "D varianti"], "c": 0, "k": "kalit"}}]}}
+"c" — toʻgʻri variantning tartib raqami (0 dan); "kalit" — faylda javoblar kaliti bor-yoʻqligi. Faqat JSON qaytar."""
+
+CHECK_PROMPT = """Quyidagi test savollarini mustaqil yech. Har bir savol uchun toʻgʻri variantning tartib raqamini (0 dan) yoz.
+Ishonching komil boʻlmasa ham eng toʻgʻri deb bilganingni tanla.
+JSON: {{"a": [0, 2, 1]}} — roppa-rosa {n} ta son, savollar tartibida. Faqat JSON qaytar.
+
+{qs}"""
+
+_LET = {**{ch: i for i, ch in enumerate("ABCDEF")}, **{ch: i for i, ch in enumerate("АБВГДЕ")}}
+
+
+def parse_key(text: str) -> dict:
+    """«1-B, 2) a, 3.D» yoki «1B 2A» -> {1: 1, 2: 0, 3: 3}."""
+    out = {}
+    for m in re.finditer(r"(\d{1,3})\s*[-–—.):=]?\s*([A-Fa-fА-Еа-е])(?![A-Za-zА-Яа-яʻ’'])", str(text or "")):
+        out[int(m.group(1))] = _LET[m.group(2).upper()]
+    return out
+
+
+def norm_test(raw, key: dict | None = None) -> tuple[list[dict], dict]:
+    """Tayyor testni oʻzgartirmasdan oʻyin formatiga oʻtkazadi (4 variant). key: {savol raqami: variant}."""
+    out, info = [], {"ai": 0, "rasm": 0, "kesildi": 0, "tashlandi": 0, "qolda": 0, "aiidx": [], "rasmidx": []}
+    for it in raw if isinstance(raw, list) else []:
+        if not isinstance(it, dict):
+            continue
+        q = str(it.get("q") or "").strip()[:600]
+        o = [str(x).strip()[:200] for x in (it.get("o") or []) if str(x).strip()] if isinstance(it.get("o"), list) else []
+        try:
+            c = int(it.get("c", -1))
+        except (TypeError, ValueError):
+            c = -1
+        try:
+            num = int(it.get("n"))
+        except (TypeError, ValueError):
+            num = None
+        k = str(it.get("k"))
+        if key and num in key and key[num] < len(o):
+            c, k = key[num], "qolda"
+        if not q or len(o) < 4 or not 0 <= c < len(o) or len(set(o)) != len(o):
+            info["tashlandi"] += 1
+            continue
+        if len(o) > 4:
+            keep = sorted([c] + [i for i in range(len(o)) if i != c][:3])
+            c, o = keep.index(c), [o[i] for i in keep]
+            info["kesildi"] += 1
+        if k == "qolda":
+            info["qolda"] += 1
+        elif k != "kalit":
+            info["ai"] += 1
+            info["aiidx"].append(len(out))
+        if it.get("rasm") in (True, 1, "true"):
+            info["rasm"] += 1
+            info["rasmidx"].append(len(out))
+        out.append({"q": q, "o": o, "c": c})
+    return out[:MAX_ITEMS], info
+
+
+async def darslik_test(uid, parts: list, p: dict) -> web.Response:
+    pages = clip(p.get("betlar"), 40)
+    key = parse_key(clip(p.get("kalit"), 3000))
+    kalit_line = ("Oʻqituvchi javoblar kalitini alohida berdi — toʻgʻri javobni oʻzing aniqlama, \"k\": \"kalit\" yoz: "
+                  + ", ".join(f"{n}-{'ABCDEF'[v]}" for n, v in sorted(key.items())) + "\n") if key else ""
+    parts.append({"text": TEST_EXTRACT_PROMPT.format(pages_line=f"PDFdan faqat shu betlarni oʻqi: {pages}.\n" if pages else "",
+                                                     kalit_line=kalit_line)})
+    ai_use(uid)
+    stat_inc("pdf", sub="tools", name="tayyor-test")
+    try:
+        obj = parse_json_text(await gemini_call([{"role": "user", "parts": parts}], temperature=0.1, max_tokens=16384))
+    except RuntimeError as e:
+        log.warning("test: %s", e)
+        if str(e) == "limit":
+            return jerr("AI hozir band (bepul limit). Bir daqiqadan keyin urinib koʻring.", 429)
+        if "http 400" in str(e):
+            return jerr("AI faylni oʻqiy olmadi. Rasm aniqroq boʻlsin yoki PDF hajmini kamaytiring.", 400)
+        return jerr("AI javob bermadi. Birozdan keyin yana urinib koʻring.", 502)
+    except Exception as e:
+        log.warning("test parse: %s", e)
+        return jerr("AI javobini oʻqib boʻlmadi. Yana bir bor urinib koʻring.", 502)
+    if isinstance(obj, list):
+        obj = {"items": obj}
+    items, info = norm_test(obj.get("items") if isinstance(obj, dict) else None, key)
+    if len(items) < 2:
+        return jerr("Faylda 4 variantli test topilmadi. Test aniq koʻrinadigan rasm yoki PDF yuklang.")
+    info["shubha"], info["tekshirildi"] = [], False
+    idx = info["aiidx"]
+    if idx and ai_left(uid) > 0:
+        qs = "\n\n".join(f"{j + 1}. {items[i]['q']}\n" + "\n".join(f"  {v}) {x}" for v, x in enumerate(items[i]["o"])) for j, i in enumerate(idx))
+        try:
+            ai_use(uid)
+            chk = parse_json_text(await gemini_call([{"role": "user", "parts": [{"text": CHECK_PROMPT.format(n=len(idx), qs=qs)}]}],
+                                                    temperature=0.1))
+            arr = chk.get("a") if isinstance(chk, dict) else chk
+            if isinstance(arr, list) and len(arr) == len(idx):
+                info["tekshirildi"] = True
+                for i, a in zip(idx, arr):
+                    try:
+                        if int(a) != items[i]["c"]:
+                            info["shubha"].append(i)
+                    except (TypeError, ValueError):
+                        info["shubha"].append(i)
+        except Exception as e:
+            log.warning("test check: %s", e)
+    return web.json_response({"ok": True, "left": ai_left(uid), "tur": "mc", "manba": "test", "info": info,
+                              "name": clip(obj.get("name"), 60) or clip(obj.get("mavzu"), 60) or "Tayyor test",
+                              "mavzu": clip(obj.get("mavzu"), 120), "izoh": "", "items": items})
+
 
 async def api_darslik(request: web.Request) -> web.Response:
     """Darslik sahifasi rasmi yoki PDF -> AI savollar (saqlanmaydi: oʻqituvchi tahrirlab saqlaydi)."""
@@ -1782,6 +1898,8 @@ async def api_darslik(request: web.Request) -> web.Response:
         return jerr("Darslik sahifasining rasmini, PDF yoki Word faylni yuklang.")
     if ai_left(uid) <= 0:
         return jerr("Bugungi AI limit tugadi. Ertaga yana urinib koʻring.", 429, limit=True)
+    if str(p.get("manba")) == "test":
+        return await darslik_test(uid, parts, p)
     fan = clip(p.get("fan"), 60) or "Matematika"
     sinf = clip(p.get("sinf"), 10)
     tur = KIND_ALIAS.get(str(p.get("tur") or "auto"), str(p.get("tur") or "auto"))
