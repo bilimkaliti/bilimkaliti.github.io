@@ -1,0 +1,34 @@
+name: Fetch design assets
+on:
+  push:
+    paths: ['.github/assets-list.txt']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 3D icons (3dicons.co, CC0)
+        run: |
+          mkdir -p img/3d
+          while read n f; do
+            [ -z "$n" ] && continue
+            curl -fsSL "https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/${f}-dynamic-color.png" -o "/tmp/$n.png" || continue
+            python3 -c "from PIL import Image;i=Image.open('/tmp/$n.png').convert('RGBA');i.thumbnail((256,256));i.save('img/3d/$n.webp','WEBP',quality=88,method=6)"
+          done < .github/assets-list.txt
+      - name: Fonts (fontshare.com, ITF Free Font License)
+        run: |
+          mkdir -p fonts /tmp/ff
+          for f in satoshi clash-display; do
+            curl -fsSL "https://api.fontshare.com/v2/fonts/download/$f" -o /tmp/ff/$f.zip && (cd /tmp/ff && unzip -oq $f.zip -d $f) || echo "no $f"
+          done
+          find /tmp/ff -iname '*.woff2' | grep -i -E 'variable|Satoshi-(Regular|Medium|Bold|Black)|ClashDisplay-(Semibold|Bold)' | while read p; do cp "$p" fonts/; done
+          find /tmp/ff -iname '*license*' -exec cp {} fonts/ \; || true
+          ls -la fonts img/3d
+      - name: Commit
+        run: |
+          git config user.name "assets-bot"; git config user.email "assets-bot@users.noreply.github.com"
+          git add img/3d fonts
+          git diff --cached --quiet || (git commit -m "Dizayn: 3D ikonlar va shriftlar (avtomatik yuklandi)" && git push)
