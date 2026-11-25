@@ -332,6 +332,8 @@ function setMsg(t,c){const m=$('#msg');if(m){m.textContent=t;m.className='msg '+
 function score(n){cur().score+=n;drawScores()}
 const QH=q=>{const m=/^(\p{Extended_Pictographic}\uFE0F?)\s+(.*)$/su.exec(String(q));return m?`<span class="bigem">${m[1]}</span><br>${esc(m[2])}`:esc(q)};
 function miss(q,a){G.wr.push({q:String(q).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,170),a:String(a).slice(0,120)})}
+/* savol variantlarsiz tushunarsizmi (qaysi…, which…, какой…) */
+const NEEDO=q=>{q=String(q||'').trim();if(/^((в|во|к|ко|на|у|с|со|о|об|из)\s+)?(qaysi|quyidagi|berilgan|which|как(ой|ая|ое|ие|ую|ом|ому|ого|им|их)|выбери|укажи|найди|отметь|что из|где |choose|select|find the)/i.test(q))return true;if(/:\s*\S{2}/.test(q))return false;if(/[«»"“”„]|\p{Extended_Pictographic}/u.test(q))return false;return /ortiqcha|лишн|odd one|eng (katta|kichik|uzun|qisqa|koʻp|kam)|qaysi (son|soʻz|kasr|harf|gap|qator|biri|javob|ifoda|tenglik|misol|shakl|juftlik)|из (данных|перечисленных)/i.test(q)};
 function pool(kind){return shuffle(cfg.sets.map(id=>SETS.find(s=>s.id===id)).filter(Boolean).flatMap(s=>s.items.filter(it=>kind.includes(it.k)&&(!s.bank||!cfg.dl||it.d===cfg.dl))))}
 /* ---------- ikkiga boʻlingan ekran: guruhlar bir vaqtda oʻynaydi ---------- */
 const SP={
@@ -351,7 +353,7 @@ const IMPL={
  togri:{
   init(){this.q=pool(['tf','mc']).map(it=>{if(it.k==='tf')return{txt:esc(it.q),t:it.t,why:'',pl:it.q,pa:it.t?'Toʻgʻri':'Notoʻgʻri'};
       const tr=Math.random()<.5,w=it.o.filter((_,i)=>i!==it.c),show=tr?it.o[it.c]:pick(w);
-      const need=/qaysi|quyidagi|berilgan|ortiqcha|toping|tanlang|belgilang|ajrating|choose|select|find the|найди|укажи|отметь|eng (katta|kichik|uzun|qisqa|koʻp|kam)|which|odd one|как(ой|ая|ое|ие|ую|ом|ому|ого|им|их)|выбери|лишн|из (данных|перечисленных)/i.test(it.q),ol=need?`<span class="ol">${it.o.map(esc).join(' · ')}</span>`:'';
+      const need=NEEDO(it.q),ol=need?`<span class="ol">${it.o.map(esc).join(' · ')}</span>`:'';
       return{txt:`<small>${esc(it.q)}</small>${ol}<span class="an"><i>Javob:</i> ${esc(show)}</span>`,t:tr?1:0,why:tr?'':`Toʻgʻri javob: ${it.o[it.c]}`,pl:`${it.q}${need?' ('+it.o.join(', ')+')':''} — ${show}`,pa:tr?'Toʻgʻri':`Notoʻgʻri (toʻgʻrisi: ${it.o[it.c]})`}});
     this.per=Math.min(lenOf(),Math.floor(this.q.length/cfg.n));G.total=this.per*cfg.n;return this.per>=3?'':'Kamida '+3*cfg.n+' ta savol kerak.'},
   step(){const n=G.teams.length,per=this.per;G.turn=-1;drawScores();this.P=G.teams.map((t,i)=>({i,k:0,lock:0,q:this.q.slice(i*per,(i+1)*per)}));G.pIv=[];
@@ -368,7 +370,7 @@ const IMPL={
     setTimeout(()=>{if(G.over)return;p.k++;if(p.k>=this.per){p.fin=1;el.innerHTML=`<div class="ph"><span>${esc(G.teams[p.i].name)}</span><em>${this.per} / ${this.per}</em></div><div class="fin">✅ Tugadi!<br>${G.teams[p.i].score} ball</div>`;if(this.P.every(x=>x.fin))setTimeout(finish,900)}else this.show(p)},ok?1100:2200)}
  },
  jlash:{
-  init(){const seen=new Set(),n=cfg.n;const p=pool(['pair','mc']).map(it=>it.k==='pair'?{a:it.a,b:it.b}:{a:it.q,b:it.o[it.c]}).filter(x=>{const k=x.b.toLowerCase();if(seen.has(k))return false;seen.add(k);return true});
+  init(){const seen=new Set(),n=cfg.n;const p=pool(['pair','mc']).filter(it=>it.k==='pair'||!NEEDO(it.q)).map(it=>it.k==='pair'?{a:it.a,b:it.b}:{a:it.q,b:it.o[it.c]}).filter(x=>{const k=x.b.toLowerCase(),k2='q:'+String(x.a).toLowerCase();if(seen.has(k)||seen.has(k2))return false;seen.add(k);seen.add(k2);return true});
     this.per=Math.min(lenOf(),Math.floor(p.length/n));this.p=p;return this.per>=3?'':'Kamida '+3*n+' ta juft kerak.'},
   step(){const per=this.per;SP.start(this,i=>{const mine=this.p.slice(i*per,(i+1)*per),B=[];for(let k=0;k<mine.length;k+=5)B.push(mine.slice(k,k+5).map((x,id)=>({...x,id})));if(B.length>1&&B[B.length-1].length<2){const last=B.pop(),prev=B[B.length-1];B[B.length-1]=prev.concat(last.map((x,id)=>({...x,id:prev.length+id})))}return B})},
   draw(p,B){p.bd=B;p.left=B.length;p.sel=null;const R=shuffle(B.map(x=>x.id)),c=G.teams[p.i].c;
@@ -461,6 +463,7 @@ const IMPL={
         else if(t){/* X — chet tili, Y — oʻzbekcha */ if(D===1)add(it.q,Y);else add(`«${Y}» ${lg} qanday?`,t[1])}
         continue}
       if(D)continue;
+      if(it.k==='mc'&&NEEDO(it.q))continue;
       add(it.k==='mc'?it.q:it.a,it.k==='mc'?it.o[it.c]:it.b)}
     this.W=shuffle(W);this.per=Math.min(lenOf(),Math.floor(W.length/n));return this.per>=3?'':'Anagram uchun kamida '+3*n+' ta bir soʻzli javob kerak. Koʻproq toʻplam belgilang.'},
   step(){const per=this.per;SP.start(this,i=>this.W.slice(i*per,(i+1)*per))},
