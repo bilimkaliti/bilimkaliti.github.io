@@ -1237,6 +1237,7 @@ function doRoute(){
   if(r==='admin')bindAdmin();
   if(r==='uy')bindHw();
   if(r==='')bindDaily();
+  restoreScroll();
   if(r!=='ai'||parts[1]!=='darslik')document.removeEventListener('paste',dlPaste);
   hit('view',{p:parts.slice(0,2).join('/')||'home'});
   const tc=$('#tc');if(tc){const all=new Set(Object.values(GRADES).flat().map(t=>t.i));if(all.size)tc.dataset.count=all.size+83}
@@ -1289,9 +1290,21 @@ const wake=()=>api('/api/ping',{},70000).catch(()=>{});
 /* ---------- toast & modal ---------- */
 function toast(t){let el=$('#toast');if(!el){el=document.createElement('div');el.id='toast';document.body.appendChild(el)}
   el.textContent=t;el.className='show';clearTimeout(toast.t);toast.t=setTimeout(()=>el.className='',2600)}
+/* Modal tarixda: telefon/brauzer «orqaga» tugmasi avval oynani yopadi */
+const HS=()=>history.state||{};
 function modal(html){closeModal();const m=document.createElement('div');m.id='modal';m.innerHTML=`<div class="mbox">${html}<button class="mx" aria-label="Yopish">✕</button></div>`;
-  m.onclick=e=>{if(e.target===m||e.target.closest('.mx'))closeModal()};document.body.appendChild(m);return m}
+  m.onclick=e=>{if(e.target===m||e.target.closest('.mx')){userClose();return}
+    const a=e.target.closest('a[href]');if(!a||a.target==='_blank'||e.ctrlKey||e.metaKey||a.hasAttribute('download'))return;const h=a.getAttribute('href');if(!HS().bkm)return;
+    e.preventDefault();e.stopPropagation();if(h.startsWith('#')){closeModal();history.replaceState({},'',h);route()}else{modal.pend=a.href;history.back()}};
+  document.body.appendChild(m);try{if(!HS().bkm)history.pushState({bkm:1},'')}catch(e){}return m}
+function userClose(){if($('#modal')&&HS().bkm)history.back();else closeModal()}
 function closeModal(){const m=$('#modal');if(m){m.remove();modal.closed=(modal.closed||0)+1}}
+addEventListener('popstate',()=>{if(modal.pend){const u=modal.pend;modal.pend=null;location.href=u;return}if(!HS().bkm&&$('#modal'))closeModal()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modal')&&!document.fullscreenElement)userClose()});
+/* Orqaga qaytganda sahifa oʻrni tiklanadi */
+try{history.scrollRestoration='manual'}catch(e){}
+{let st;addEventListener('scroll',()=>{clearTimeout(st);st=setTimeout(()=>{try{history.replaceState({...HS(),sy:Math.round(scrollY)},'')}catch(e){}},250)},{passive:true})}
+function restoreScroll(){const y=HS().sy;if(!y){return}let n=0;const t=()=>{if(document.documentElement.scrollHeight>=y+innerHeight*.5||n>8){scrollTo(0,y);if(n<3){n++;setTimeout(t,250)}return}n++;setTimeout(t,200)};setTimeout(t,30)}
 
 /* ---------- kirish ---------- */
 function drawAuth(){
@@ -2773,11 +2786,18 @@ function tourMaybe(){if(store.get('tour',0)||location.hash.replace(/^#\/?/,''))r
 
 document.addEventListener('click',e=>{const w=e.target.closest('[data-wiz]');if(w){e.preventDefault();wizard(w.dataset.wiz||'')}});
 /* mobil «Yana» paneli */
-const msOpen=o=>{const s=document.getElementById('msheet');if(s)s.classList.toggle('hidden',!o)};
+const msOpen=(o,u)=>{const s=document.getElementById('msheet');if(!s)return;const was=!s.classList.contains('hidden');
+  if(o&&!was){try{if(!HS().bks)history.pushState({bks:1},'')}catch(e){}}
+  if(!o&&was&&u&&HS().bks){history.back();return}
+  s.classList.toggle('hidden',!o)};
+addEventListener('popstate',()=>{if(!HS().bks)msOpen(false)});
 document.addEventListener('click',e=>{
   if(e.target.closest('#moreBtn')){e.preventDefault();msOpen(true);return}
-  if(e.target.closest('[data-msc]')){msOpen(false);return}
-  const a=e.target.closest('#msheet a');if(!a)return;msOpen(false);
+  if(e.target.closest('[data-msc]')){msOpen(false,1);return}
+  const a=e.target.closest('#msheet a');if(!a)return;
+  if(HS().bks&&!a.hasAttribute('data-install')&&!a.hasAttribute('data-about')){const h=a.getAttribute('href')||'';e.preventDefault();document.getElementById('msheet').classList.add('hidden');
+    if(h.startsWith('#')){history.replaceState({},'',h);route()}else{modal.pend=a.href;history.back()}return}
+  msOpen(false);
   if(a.hasAttribute('data-install')){e.preventDefault();if(window.bkInstall)window.bkInstall();return}
   if(a.hasAttribute('data-about')){e.preventDefault();location.hash='#/';setTimeout(()=>{const x=document.getElementById('about');x&&x.scrollIntoView({behavior:'smooth'})},500)}});
 window.addEventListener('hashchange',()=>msOpen(false));
