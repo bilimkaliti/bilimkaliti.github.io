@@ -379,8 +379,8 @@ html.bk #start .go{animation:none}
 /* ===== Boshqa fanlar: test toʻplamlari bilan oʻynash (BKQ) ===== */
 (function(){
   var MATHF=['Matematika','Algebra','Geometriya','Boshlangʻich taʼlim'];
-  var FANS=['Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
-  var IC={'Ona tili va adabiyot':'📖','Ingliz tili':'🔤','Rus tili':'🗣️','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
+  var FANS=['Matematika','Ona tili va adabiyot','Ingliz tili','Rus tili','Tabiiy fan','Fizika','Kimyo','Biologiya','Tarix','Geografiya','Informatika','Huquq','Iqtisodiyot','Tarbiya','Texnologiya','Musiqa','Tasviriy sanʼat','Jismoniy tarbiya'];
+  var IC={'Matematika':'🧮','Ona tili va adabiyot':'📖','Ingliz tili':'🔤','Rus tili':'🗣️','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
   var A=/onrender\.com$/.test(location.hostname)?'':'https://bilim-kaliti.onrender.com';
   var TG=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData?Telegram.WebApp.initData:'';
   var E=function(s){var d=document.createElement('div');d.textContent=String(s);return d.innerHTML};
@@ -410,6 +410,12 @@ html.bk #start .go{animation:none}
     var mathBox=id==='eshik'?null:(st.querySelectorAll('.setgrid .box')[1]||null);
     var loading=false;
     var FK={},SF={};
+    /* son javobli savol -> 4 variantli test (yaqin notoʻgʻri javoblar bilan) */
+    function numMC(i){if(!i||i.o||i.a==null)return i;var v=String(i.a).trim(),n=Number(v.replace(',','.'));if(!/^-?\d+([.,]\d+)?$/.test(v)||!isFinite(n))return i;
+      var dec=(v.split(/[.,]/)[1]||'').length,st=dec?Math.pow(10,-dec):1,sep=v.indexOf(',')>=0?',':'.',fm=function(x){var t=x.toFixed(dec);return sep===','?t.replace('.',','):t};
+      var cand=[1,-1,2,-2,10,-10,3,-3,5,-5].map(function(k){return Math.round((n+k*st*(Math.abs(n)>=50&&Math.abs(k)<10?Math.max(1,Math.round(Math.abs(n)/50)):1))*1e6)/1e6}).filter(function(x){return x!==n&&(n<0||x>=0)});
+      var seen={},w=[];cand.sort(function(){return Math.random()-.5}).forEach(function(x){var t=fm(x);if(!seen[t]&&t!==v&&w.length<3){seen[t]=1;w.push(t)}});if(w.length<3)return i;
+      var o=w.concat([v]).sort(function(){return Math.random()-.5});return{q:i.q,o:o,c:o.indexOf(v)}}
     fetch('kinds.json').then(function(r){return r.json()}).then(function(j){FK=j;draw()}).catch(function(){});
     fetch('sets.json').then(function(r){return r.json()}).then(function(j){(j||[]).forEach(function(x){if(x.fan&&conv(x.items).some(okMC))SF[x.fan]=1});draw()}).catch(function(){});
     function sets(){return B.sets.filter(function(s){return s.fan===B.fan})}
@@ -423,7 +429,7 @@ html.bk #start .go{animation:none}
       var n=B.sel.reduce(function(a,id){var s=B.sets.filter(function(x){return x.id===id})[0];return a+(s&&s.items?s.items.filter(okMC).length:0)},0);
       B.on=!!(B.fan&&B.sel.length);
       if(mathBox)mathBox.classList.toggle('bkoff',B.on);
-      var opts='<option value="">🧮 Matematika (oddiy rejim)</option>'+FANS.filter(function(f){return f===B.fan||((FK[f]||{}).kinds||[]).indexOf('mc')>=0||SF[f]}).map(function(f){return '<option value="'+E(f)+'"'+(f===B.fan?' selected':'')+'>'+(IC[f]||'📘')+' '+E(f)+'</option>'}).join('');
+      var opts='<option value="">🧩 Oddiy rejim (misollar va jumboqlar)</option>'+FANS.filter(function(f){return f===B.fan||((FK[f]||{}).kinds||[]).indexOf('mc')>=0||SF[f]}).map(function(f){return '<option value="'+E(f)+'"'+(f===B.fan?' selected':'')+'>'+(IC[f]||'📘')+' '+E(f)+'</option>'}).join('');
       var all=sets(),grs=[];all.forEach(function(s){gradesOf(s).forEach(function(g){if(grs.indexOf(g)<0)grs.push(g)})});grs.sort(function(a,b){return a-b});
       if(B.gr&&grs.indexOf(B.gr)<0)B.gr='';
       var l=B.gr?all.filter(function(s){return gradesOf(s).indexOf(B.gr)>=0}):all;
@@ -431,14 +437,14 @@ html.bk #start .go{animation:none}
       box.innerHTML='<div class="bkfan-h"><div><b>📚 Boshqa fan savollari bilan oʻynash</b><small>Har bir test savolining toʻgʻri javob raqami (1–4) kodning bitta raqami boʻladi.</small></div><select id="bkFan" aria-label="Fan">'+opts+'</select></div>'+
         (B.fan?(loading?'<p class="bkmuted">⏳ Toʻplamlar yuklanmoqda…</p>':l.length?grBar+bkGroups(l)
           :'<p class="bkmuted">Bu fan boʻyicha hali toʻplam yoʻq. <a href="'+location.pathname.replace(/games\/[^\/]*$/,'')+'#/ai/darslik">📸 Darslikdan yaratish →</a></p>'):'')+
-        (B.on?'<div class="bkon">✅ '+(IC[B.fan]||'')+' '+E(B.fan)+': '+n+' ta savol · '+Math.floor(n/4)+' ta eshik/xona tayyor. Matematika mavzulari ishlatilmaydi.</div>':'');
+        (B.on?'<div class="bkon">✅ '+(IC[B.fan]||'')+' '+E(B.fan)+': '+n+' ta savol · '+Math.floor(n/4)+' ta eshik/xona tayyor. Oddiy rejim mavzulari ishlatilmaydi.</div>':'');
     }
     function load(f){loading=true;draw();var jobs=[];
       if(!B.static)jobs.push(fetch('sets.json').then(function(r){return r.json()}).then(function(j){B.static=1;(j||[]).forEach(function(s){var it=conv(s.items);if(it.some(okMC))B.sets.push({id:'k-'+s.id,name:s.name,fan:s.fan,sinf:String(s.sinf||''),items:it,tag:'⭐ Tayyor'})})}).catch(function(){}));
       if(!B.own){B.own=1;var tok=null;try{tok=JSON.parse(localStorage.getItem('bk_token'))}catch(e){}
         if(TG||tok)jobs.push(post('/api/sets',TG?{initData:TG}:{token:tok}).then(function(j){(j.sets||[]).forEach(function(s){var it=conv(s.items);if(it.some(okMC))B.sets.push({id:s.id,name:s.name,fan:s.fan||'',items:it,tag:'📦 Meniki'})})}).catch(function(){}))}
       if(f&&!B['lib'+f])jobs.push(post('/api/lib/list',{fan:f,sort:'top'}).then(function(j){B['lib'+f]=1;(j.sets||[]).forEach(function(m){if(m.mc||m.kind==='pair')B.sets.push({id:'L-'+m.id,lib:m.id,name:m.name,fan:f,sinf:String(m.sinf||''),n:m.n,tag:'📚 '+(m.author||'Kutubxona')})})}).catch(function(){}));
-      var slug=(FK[f]||{}).slug;if(slug==='matematika')slug=null;if(slug&&!B['bk'+f])jobs.push(fetch('baza/'+slug+'.json').then(function(r){return r.json()}).then(function(j){B['bk'+f]=1;(j.topics||[]).forEach(function(t){var it=(t.items||[]).filter(okMC).map(function(i){return{q:i.q,o:i.o,c:i.c}});if(it.length>=4)B.sets.push({id:'BK-'+slug+'-'+t.id,name:t.name,fan:f,sinfs:(t.sinf||[]).map(String),bob:t.bob||'',items:it,tag:'📘 Baza'})})}).catch(function(){}));
+      var slug=(FK[f]||{}).slug;if(slug&&!B['bk'+f])jobs.push(fetch('baza/'+slug+'.json').then(function(r){return r.json()}).then(function(j){B['bk'+f]=1;(j.topics||[]).forEach(function(t){var it=(t.items||[]).map(numMC).filter(okMC).map(function(i){return{q:i.q,o:i.o,c:i.c}});if(it.length>=4)B.sets.push({id:'BK-'+slug+'-'+t.id,name:t.name,fan:f,sinfs:(t.sinf||[]).map(String),bob:t.bob||'',items:it,tag:'📘 Baza'})})}).catch(function(){}));
       return Promise.all(jobs).then(function(){loading=false;draw()})}
     function pick(sid,on){var s=B.sets.filter(function(x){return x.id===sid})[0];if(!s)return;
       if(on&&B.sel.indexOf(sid)<0)B.sel.push(sid);if(!on)B.sel=B.sel.filter(function(x){return x!==sid});
