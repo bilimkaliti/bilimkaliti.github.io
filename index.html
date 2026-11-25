@@ -706,6 +706,29 @@ nav.top a{white-space:nowrap}
 .adm-ch{overflow-x:clip}
 @media (max-width:1320px){nav.top a{padding-left:9px!important;padding-right:9px!important;font-size:14.5px}}
 .adm-ch .cross,.adm-ch #admDot{visibility:hidden}.adm-ch.hov .cross,.adm-ch.hov #admDot{visibility:visible}
+.hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 0}
+.hst{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:16px 12px;text-align:center}
+.hst b{display:block;font-family:'Clash Display',Satoshi,Nunito,sans-serif;font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1.05;color:#6d4aff;font-variant-numeric:tabular-nums}
+[data-theme="dark"] .hst b{color:#a993ff}
+.hst span{color:var(--muted);font-weight:700}
+@media (max-width:640px){.hstats{grid-template-columns:repeat(2,1fr)}}
+.fmq{margin:14px 0 0;overflow:hidden;border:1.5px solid var(--line);border-radius:20px;background:var(--card);padding:10px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.fmq-t{display:flex;gap:10px;width:max-content;animation:fmq 55s linear infinite}
+.fmq:hover .fmq-t{animation-play-state:paused}
+.fmq a{white-space:nowrap;background:var(--bg);border-radius:30px;padding:8px 16px;font-weight:800;color:var(--ink);text-decoration:none}
+.fmq a:hover{background:color-mix(in srgb,var(--gold,#f5b301) 25%,var(--bg))}
+@keyframes fmq{to{transform:translateX(-50%)}}
+html.nofx .fmq-t{animation:none}@media (prefers-reduced-motion:reduce){.fmq-t{animation:none}}
+.bento{display:grid;grid-template-columns:2fr 1fr 1fr;grid-auto-rows:150px;gap:14px;margin:18px 0 0}
+.bento .bt{position:relative;overflow:hidden;border-radius:22px;padding:18px 20px;display:flex;flex-direction:column;gap:4px;color:#fff;text-decoration:none;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 8px 20px color-mix(in srgb,var(--a) 28%,transparent);transition:transform .2s,box-shadow .2s}
+.bento .bt:hover{transform:translateY(-3px);box-shadow:0 14px 28px color-mix(in srgb,var(--a) 38%,transparent)}
+.bento .bt.dk{color:#1b1400}
+.bento .bt b{font-family:'Clash Display',Satoshi,Nunito,sans-serif;font-size:22px;font-weight:700;position:relative;z-index:1}
+.bento .bt small{font-weight:700;font-size:14px;opacity:.92;max-width:62%;position:relative;z-index:1}
+.bento .bt .i3d{position:absolute;right:10px;bottom:8px;width:86px;height:86px;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.bento .bt:hover .i3d{transform:translateY(-6px) rotate(-8deg) scale(1.06)}
+.bento .big{grid-row:span 2}.bento .big b{font-size:32px}.bento .big .i3d{width:150px;height:150px;right:16px;bottom:16px}
+@media (max-width:760px){.bento{grid-template-columns:1fr 1fr;grid-auto-rows:auto}.bento .bt{min-height:150px;padding:14px 14px 66px}.bento .big{grid-column:1/-1;grid-row:auto;min-height:130px;padding-bottom:18px}.bento .big small{max-width:60%}.bento .bt small{max-width:100%;font-size:13px}.bento .bt .i3d{width:56px;height:56px;right:8px;bottom:8px}.bento .big .i3d{width:96px;height:96px;bottom:12px}.bento .bt b{font-size:19px}.bento .big b{font-size:26px}}
 .feat-new{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:20px 22px;border-radius:24px;color:#fff;text-decoration:none;background:linear-gradient(120deg,#0f9d8a,#12a38f 40%,#2f8cff);box-shadow:0 16px 36px rgba(15,157,138,.28);overflow:hidden;isolation:isolate;margin:26px 0 0;transition:transform .3s var(--ease),box-shadow .3s}
 .feat-new:hover{transform:translateY(-3px);box-shadow:0 22px 44px rgba(15,157,138,.34)}
 .feat-new::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(300px 160px at 90% 0,rgba(255,255,255,.25),transparent 70%)}
@@ -1121,6 +1144,20 @@ const PAGES={
    </div>
    <a class="feat-new" href="#/ai/darslik"><span class="nw">YANGI</span><span class="fi">📸</span><span><b>Darslikdan oʻyin</b><small>Darslik sahifasi rasmi, PDF yoki Word hujjat — AI savollar tuzadi, bir daqiqada sinf bilan oʻynaysiz.</small></span><span class="go">Sinab koʻrish →</span></a>
    <div id="dailyBox"></div>
+   <div class="hstats">
+    <div class="hst"><b data-count="7700" data-suf="+">7 700+</b><span>tayyor savol</span></div>
+    <div class="hst"><b data-count="${GAMES.length}">${GAMES.length}</b><span>guruh oʻyini</span></div>
+    <div class="hst"><b data-count="${FANLAR.length}">${FANLAR.length}</b><span>fan</span></div>
+    <div class="hst"><b data-count="${AI_TOOLS.length}">${AI_TOOLS.length}</b><span>AI vosita</span></div>
+   </div>
+   <div class="fmq" aria-label="Fanlar"><div class="fmq-t">${[0,1].map(k=>FANLAR.map(f=>`<a href="#/fan/${fanSlug(f)}"${k?' tabindex="-1" aria-hidden="true"':''}>${FAN_IC[f]||'📘'} ${esc(f)}</a>`).join('')).join('')}</div></div>
+   <div class="bento">
+    <a class="bt big" href="#/oyinlar" style="--a:#6d4aff;--b:#9b7bff"><b>🎮 Oʻyinlar</b><small>${GAMES.length} ta oʻyin · 1–4 guruh · Robo bilan</small>${i3('puzzle','')}</a>
+    <a class="bt" href="#/ai" style="--a:#12a38f;--b:#3cc9b3"><b>✨ AI yordamchi</b><small>Test, taqdimot, dars ishlanma</small>${i3('magic-trick','')}</a>
+    <a class="bt dk" href="#/vositalar" style="--a:#f5b301;--b:#ffcf4d"><b>🧰 Vositalar</b><small>Taymer, gʻildirak, labirint</small>${i3('clock','')}</a>
+    <a class="bt" href="#/kutubxona" style="--a:#ef476f;--b:#ff7a95"><b>📚 Kutubxona</b><small>Tayyor toʻplamlar</small>${i3('notebook','')}</a>
+    <a class="bt" href="#/uy" style="--a:#1c7ed6;--b:#4dabf7"><b>📝 Uy vazifasi</b><small>Havola — oʻquvchi uyda yechadi</small>${i3('file-text','')}</a>
+   </div>
   </div>
   <section><div class="wrap">
    <div class="sh"><div><h2>Fanni tanlang</h2><p class="sub">Hamma fan bir joyda — oʻyin tanlangan fandan savol beradi.</p></div><a class="btn ghost" href="#/kutubxona">📚 Hammasi →</a></div>
@@ -2386,8 +2423,12 @@ document.addEventListener('pointerdown',e=>{
 const RV_SEL='.sh,.grid,.grades,.aigrid,.tools,.subjects,.sgrid,.banner,.formcard,.lfilter,.whys,.hows,.about,.faq';
 const RV_IO='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');RV_IO.unobserve(en.target)}}),{rootMargin:'0px 0px -8% 0px',threshold:.06}):null;
 function revealInit(){document.querySelectorAll('#app '+RV_SEL.split(',').join(',#app ')).forEach(el=>{if(el.classList.contains('rv'))return;el.classList.add('rv');if(RV_IO&&!REDUCED)RV_IO.observe(el);else el.classList.add('in')})}
-function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{const n=+el.dataset.count;if(!n||REDUCED){el.textContent=n||el.textContent;return}
-  const t0=performance.now(),D=1300;const f=now=>{const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3);el.textContent=Math.round(n*e);if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
+function countUp(){const fm=(v,el)=>(v>=1000?v.toLocaleString('ru-RU').replace(/\u00a0/g,' '):String(v))+(el.dataset.suf||'');
+  const run=el=>{if(el.dataset.done)return;el.dataset.done=1;const n=+el.dataset.count;if(!n||REDUCED){el.textContent=fm(n,el);return}
+    const t0=performance.now(),D=1400;const f=now=>{const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3);el.textContent=fm(Math.round(n*e),el);if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)};
+  const els=[...document.querySelectorAll('[data-count]')].filter(el=>!el.dataset.done);if(!els.length)return;
+  if(!window.IntersectionObserver){els.forEach(run);return}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);run(e.target)}}),{threshold:.5});els.forEach(el=>io.observe(el))}
 
 /* --- kun/tun: tugmadan doira boʻlib tarqaladi --- */
 function themeSwitch(apply,btn){
