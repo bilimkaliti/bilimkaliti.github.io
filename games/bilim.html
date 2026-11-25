@@ -351,7 +351,7 @@ const IMPL={
  togri:{
   init(){this.q=pool(['tf','mc']).map(it=>{if(it.k==='tf')return{txt:esc(it.q),t:it.t,why:'',pl:it.q,pa:it.t?'Toʻgʻri':'Notoʻgʻri'};
       const tr=Math.random()<.5,w=it.o.filter((_,i)=>i!==it.c),show=tr?it.o[it.c]:pick(w);
-      const need=/qaysi|quyidagi|berilgan|ortiqcha|toping|tanlang|belgilang|ajrating|choose|select|find the|найди|укажи|отметь|eng (katta|kichik|uzun|qisqa|koʻp|kam)|which|odd one|какой|какая|какое|какие|какую|выбери|лишн|из (данных|перечисленных)/i.test(it.q),ol=need?`<span class="ol">${it.o.map(esc).join(' · ')}</span>`:'';
+      const need=/qaysi|quyidagi|berilgan|ortiqcha|toping|tanlang|belgilang|ajrating|choose|select|find the|найди|укажи|отметь|eng (katta|kichik|uzun|qisqa|koʻp|kam)|which|odd one|как(ой|ая|ое|ие|ую|ом|ому|ого|им|их)\b|выбери|лишн|из (данных|перечисленных)/i.test(it.q),ol=need?`<span class="ol">${it.o.map(esc).join(' · ')}</span>`:'';
       return{txt:`<small>${esc(it.q)}</small>${ol}<span class="an"><i>Javob:</i> ${esc(show)}</span>`,t:tr?1:0,why:tr?'':`Toʻgʻri javob: ${it.o[it.c]}`,pl:`${it.q}${need?' ('+it.o.join(', ')+')':''} — ${show}`,pa:tr?'Toʻgʻri':`Notoʻgʻri (toʻgʻrisi: ${it.o[it.c]})`}});
     this.per=Math.min(lenOf(),Math.floor(this.q.length/cfg.n));G.total=this.per*cfg.n;return this.per>=3?'':'Kamida '+3*cfg.n+' ta savol kerak.'},
   step(){const n=G.teams.length,per=this.per;G.turn=-1;drawScores();this.P=G.teams.map((t,i)=>({i,k:0,lock:0,q:this.q.slice(i*per,(i+1)*per)}));G.pIv=[];
