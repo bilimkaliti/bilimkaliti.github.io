@@ -380,7 +380,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
 .tops button.mct{font-size:clamp(.95rem,1.6vw,1.3rem);line-height:1.2;text-align:left}
 .jf.ans.txt{font-size:clamp(.95rem,1.8vw,1.4rem);color:#2f6fe0}
 </style>
-<link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=1"></script></head>
+<link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=2"></script></head>
 <body>
 <div class="wrap">
 
@@ -391,7 +391,7 @@ body.tgfs{padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-
 </section>
 
 <section id="setup" class="setup hidden">
-  <button class="back" id="toMenu">← Barcha oʻyinlar</button>
+  <button class="back" id="toMenu">← Orqaga</button>
   <h1 id="sTitle"></h1>
   <p class="lead" id="sDesc" style="margin-bottom:0"></p>
   <div class="setgrid">
@@ -1257,7 +1257,7 @@ $('#setup').addEventListener('change',e=>{
   if(t.id==='musicChk'&&t.checked!==MUSIC.on)MUSIC.toggle();
 });
 $('#names').addEventListener('input',e=>{if(e.target.dataset.i!==undefined)cfg.names[+e.target.dataset.i]=e.target.value});
-$('#toMenu').onclick=()=>{save();show('menu')};
+$('#toMenu').onclick=()=>{save();if(new URLSearchParams(location.search).get('g'))(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})();else show('menu')};
 
 /* ===== game runtime ===== */
 const S={over:true,teams:[],start:0,tickId:null,game:null};
@@ -1281,6 +1281,7 @@ function startGame(){
   clearInterval(S.tickId);let last=Date.now();
   S.tickId=setInterval(()=>{const now=Date.now(),dt=(now-last)/1000;last=now;if(S.over)return;$('#timer').textContent=fmt(now-S.start);locks();if(S.game.tick)S.game.tick(dt);roboTick()},250);
   $('#timer').textContent='00:00';
+  if(!(history.state&&history.state.bkd))try{history.pushState({bkd:1},'')}catch(e){}
   show('play');
   reportKey(keyText(),true);
 }
@@ -1979,12 +1980,14 @@ function ask(txt,cb){$('#askText').textContent=txt;askCb=cb;$('#ask').classList.
 $('#askYes').onclick=()=>{$('#ask').classList.add('hidden');const c=askCb;askCb=null;if(c)c()};
 $('#askNo').onclick=()=>{$('#ask').classList.add('hidden');askCb=null};
 
-function toSetup(){clearInterval(S.tickId);S.over=true;MUSIC.stop();['final','keyOv'].forEach(id=>$('#'+id).classList.add('hidden'));renderSettings();show('setup')}
+function toSetup(){if(history.state&&history.state.bkd){history.back();return}toSetupCore()}
+addEventListener('popstate',()=>{if(!(history.state&&history.state.bkd)&&!$('#play').classList.contains('hidden'))toSetupCore()});
+function toSetupCore(){clearInterval(S.tickId);S.over=true;MUSIC.stop();['final','keyOv'].forEach(id=>$('#'+id).classList.add('hidden'));renderSettings();show('setup')}
 $('#startBtn').onclick=startGame;
 $('#againBtn').onclick=startGame;
 $('#reviewBtn').onclick=showReview;$('#mPrint').onclick=mentalPrint;
 $('#reviewClose').onclick=()=>$('#review').classList.add('hidden');
-$('#fSettings').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{location.href=BKHOME()};$('#exitBtn').onclick=()=>ask('Oʻyindan chiqamizmi? Natija saqlanmaydi.',()=>{location.href=BKHOME()});
+$('#fSettings').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()};$('#exitBtn').onclick=()=>ask('Oʻyindan chiqamizmi? Natija saqlanmaydi.',()=>{(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()});
 $('#settingsBtn').onclick=()=>ask('Oʻyin toʻxtatilib, sozlamalarga qaytilsinmi?',toSetup);
 $('#restartBtn').onclick=()=>ask('Oʻyin yangi misollar bilan boshidan boshlansinmi?',startGame);
 $('#finishBtn').onclick=()=>ask('Oʻyinni hozir yakunlab, natijani koʻrsataylikmi?',endGame);

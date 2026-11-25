@@ -467,7 +467,7 @@ html.bk #start .go{animation:none}
     }
   });
 })();
-</script><link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=1"></script><!--/bkSkin--></head>
+</script><link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=2"></script><!--/bkSkin--></head>
 <body>
 <div class="wrap">
 
@@ -525,7 +525,7 @@ html.bk #start .go{animation:none}
       <button class="ghost" id="finishBtn">Yakunlash</button>
       <button class="ghost" id="restartBtn">↻ Qaytadan</button>
       <button class="ghost" id="settingsBtn">⚙ Sozlamalar</button>
-      <button class="ghost" type="button" onclick="if(confirm('Oʻyindan chiqamizmi? Natija saqlanmaydi.')){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'}">🚪 Chiqish</button>
+      <button class="ghost" type="button" onclick="if(confirm('Oʻyindan chiqamizmi? Natija saqlanmaydi.')){(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()}">🚪 Chiqish</button>
     </div>
   </div>
   <div class="arena" id="arena"></div>
@@ -550,7 +550,7 @@ html.bk #start .go{animation:none}
     <h2 id="winTitle"></h2>
     <div class="cols" id="finalCols"></div>
     <p class="note">Ball = yulduzlar + birinchi tugatgan guruhga 2 bonus + sirli eshik uchun 3 bonus.</p>
-    <button class="go" id="againBtn">Yangi oʻyin</button><button class="ghost" type="button" onclick="location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'">🚪 Chiqish</button>
+    <button class="go" id="againBtn">Yangi oʻyin</button><button class="ghost" type="button" onclick="(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()">🚪 Chiqish</button>
   </div>
 </div>
 

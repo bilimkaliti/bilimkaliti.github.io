@@ -1,3 +1,7 @@
+/* Orqaga: oʻyindan kelgan sahifaga qaytish (boʻlmasa — Oʻyinlar) */
+window.BKLEAVE=function(){var home=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar',d=(history.state&&history.state.bkd)||0,ok=false;
+ try{var u=new URL(document.referrer);ok=u.origin===location.origin&&!/\/games\//.test(u.pathname)}catch(e){}
+ if(ok&&history.length>d+1)history.go(-(d+1));else location.href=home};
 /* Bilim Kaliti — umumiy effektlar: silkinish, sakrash, ball "pop", postament, Robo-doʻst, tilt, oʻchirgich */
 (function(){
  var ST=function(){try{return localStorage.getItem('bk_fx')}catch(e){return null}};

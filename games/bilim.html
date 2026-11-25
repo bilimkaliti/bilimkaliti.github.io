@@ -159,11 +159,11 @@ details.adv h3{margin-top:12px}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=1"></script></head>
+<link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=2"></script></head>
 <body>
 <div class="wrap">
 <section id="setup">
-  <div class="top"><a class="back" id="backA" href="../#/oyinlar">← Barcha oʻyinlar</a><a class="brand" id="brandA" href="../"><span>🔑</span><em style="font-style:normal">Bilim <b>Kaliti</b></em></a></div>
+  <div class="top"><a class="back" id="backA" href="../#/oyinlar">← Orqaga</a><a class="brand" id="brandA" href="../"><span>🔑</span><em style="font-style:normal">Bilim <b>Kaliti</b></em></a></div>
   <div class="hero"><div><h1 id="mTitle"></h1><p id="mDesc"></p></div><span class="em" id="mEm"></span></div>
   <div class="grid">
     <div class="box">
@@ -220,7 +220,7 @@ const FANS=['Matematika','Boshlangʻich taʼlim','Ona tili va adabiyot','Ingliz 
 const FAN_IC={'Matematika':'🧮','Algebra':'📐','Geometriya':'📏','Boshlangʻich taʼlim':'🎒','Ona tili va adabiyot':'📖','Ingliz tili':'🔤','Rus tili':'🗣️','Tabiiy fan':'🌿','Fizika':'⚛️','Kimyo':'🧪','Biologiya':'🧬','Tarix':'🏛️','Geografiya':'🗺️','Informatika':'💻','Huquq':'⚖️','Iqtisodiyot':'💰','Tarbiya':'🤝','Texnologiya':'🛠️','Musiqa':'🎵','Tasviriy sanʼat':'🎨','Jismoniy tarbiya':'⚽'};
 const TC=['var(--t1)','var(--t2)','var(--t3)','var(--t4)'],BC=['#0f9d8a','#d6336c','#f08c00','#7048e8'];
 const MK=MODES[P.get('g')]?P.get('g'):'togri',M=MODES[MK];
-const home=location.pathname.replace(/games\/[^\/]*$/,'');$('#backA').href=home+'#/oyinlar';$('#brandA').href=home;
+const home=location.pathname.replace(/games\/[^\/]*$/,'');$('#backA').href=home+'#/oyinlar';$('#backA').onclick=e=>{e.preventDefault();(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()};$('#brandA').href=home;
 document.documentElement.style.setProperty('--mc',M.c[0]);document.documentElement.style.setProperty('--mc2',M.c[1]);
 document.title=M.name+' — Bilim Kaliti';
 let cfg={dl:0,dir:0,n:2,names:['1-guruh','2-guruh','3-guruh','4-guruh'],len:{},tm:0,sound:1,fan:'Tarix',sets:[]};
@@ -485,7 +485,7 @@ function startGame(){
   G.teams=Array.from({length:cfg.n},(_,i)=>({name:cfg.n===1?'Oʻquvchi':((cfg.names[i]||'').trim()||`${i+1}-guruh`),c:TC[i],score:0}));
   G.turn=0;G.done=0;G.wr=[];G.over=false;G.t0=Date.now();
   $('#ttl').innerHTML=`${M.icon} ${esc(M.name)} <span class="badge">${FAN_IC[cfg.fan]||'📘'} ${esc(cfg.fan)}</span>`;$('#sndBtn').textContent=cfg.sound?'🔊':'🔇';
-  $('#setup').classList.add('hidden');$('#play').classList.remove('hidden');$('#end').classList.add('hidden');window.scrollTo(0,0);
+  if(!(history.state&&history.state.bkd))try{history.pushState({bkd:1},'')}catch(e){}$('#setup').classList.add('hidden');$('#play').classList.remove('hidden');$('#end').classList.add('hidden');window.scrollTo(0,0);
   clearInterval(G.clk);G.clk=setInterval(()=>{const s=Math.floor((Date.now()-G.t0)/1000);$('#timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},1000);
   drawScores();I.step()}
 function finish(){if(G.over)return;G.over=true;stopTimer();clearInterval(G.clk);
@@ -496,8 +496,10 @@ function finish(){if(G.over)return;G.over=true;stopTimer();clearInterval(G.clk);
   const old=$('#end .rev');if(old)old.remove();if(L.length)$('#res').insertAdjacentHTML('afterend',`<div class="rev"><h4>📚 Takrorlaymiz</h4><ol>${L.map(x=>`<li>${esc(x.q)}<br><small>→ ${esc(x.a)}${x.n>1?` · ${x.n} marta xato`:''}</small></li>`).join('')}</ol></div>`)}
   $('#end').classList.remove('hidden');snd('win');const w=innerWidth;burst(w*.3,innerHeight*.35,70,2.2);setTimeout(()=>burst(w*.7,innerHeight*.35,70,2.2),250)}
 $('#startBtn').onclick=startGame;$('#again').onclick=startGame;
-const toSetup=()=>{G.over=true;stopTimer();clearInterval(G.clk);$('#end').classList.add('hidden');$('#play').classList.add('hidden');$('#setup').classList.remove('hidden');render()};
-$('#toSet').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{location.href=BKHOME()};$('#exitBtn').onclick=()=>{if(confirm('Oʻyindan chiqamizmi? Natija saqlanmaydi.'))location.href=BKHOME()};$('#setBtn').onclick=toSetup;
+const toSetup=()=>{if(history.state&&history.state.bkd){history.back();return}toSetupCore()};
+addEventListener('popstate',()=>{if(!(history.state&&history.state.bkd)&&!$('#play').classList.contains('hidden'))toSetupCore()});
+const toSetupCore=()=>{G.over=true;stopTimer();clearInterval(G.clk);$('#end').classList.add('hidden');$('#play').classList.add('hidden');$('#setup').classList.remove('hidden');render()};
+$('#toSet').onclick=toSetup;const BKHOME=()=>location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar';$('#exitEnd').onclick=()=>{(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()};$('#exitBtn').onclick=()=>{if(confirm('Oʻyindan chiqamizmi? Natija saqlanmaydi.'))(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()};$('#setBtn').onclick=toSetup;
 $('#finBtn').onclick=()=>{if(confirm('Oʻyinni hozir yakunlab, natijani koʻrsataylikmi?'))finish()};
 $('#sndBtn').onclick=()=>{cfg.sound=cfg.sound?0:1;save();$('#sndBtn').textContent=cfg.sound?'🔊':'🔇'};
 /* toʻliq ekran */

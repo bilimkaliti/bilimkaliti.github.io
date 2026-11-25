@@ -429,7 +429,7 @@ html.bk #start .go{animation:none}
     }
   });
 })();
-</script><link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=1"></script><!--/bkSkin--></head>
+</script><link rel="stylesheet" href="../fx.css?v=1"><script defer src="../fx.js?v=2"></script><!--/bkSkin--></head>
 <body>
 <main class="app">
 
@@ -499,7 +499,7 @@ html.bk #start .go{animation:none}
     <div class="score" id="endScore"></div>
     <p id="endTime"></p>
     <p id="endMsg"></p>
-    <button class="big" id="againBtn">Yangi misollar bilan oʻynash</button><button class="big" style="background:#14203a;margin-top:10px" type="button" onclick="location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'">🚪 Chiqish</button>
+    <button class="big" id="againBtn">Yangi misollar bilan oʻynash</button><button class="big" style="background:#14203a;margin-top:10px" type="button" onclick="(window.BKLEAVE||function(){location.href=location.pathname.replace(/games\/[^\/]*$/,'')+'#/oyinlar'})()">🚪 Chiqish</button>
   </div>
 </section>
 
