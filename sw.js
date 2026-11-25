@@ -2,7 +2,7 @@
    Sahifalar va oʻyinlar: avval internetdan (har doim yangi versiya), internet boʻlmasa — saqlangan nusxa.
    Rasmlar va shriftlar: saqlangan nusxa darhol, orqada yangilanadi.
    Saytni yangilaganda shu yerdagi VERSION raqamini oshirish shart emas — sahifalar baribir internetdan olinadi. */
-const VERSION = 'bk-v67';
+const VERSION = 'bk-v68';
 const CORE = [
   '/',
   '/index.html',
