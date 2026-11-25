@@ -42,4 +42,11 @@ dollar dollar
 cube cube
 sphere sphere
 
-# 1795628304
+explorer explorer
+map-pin map-pin
+location location
+copy copy
+file-plus file-plus
+boy boy
+girl girl
+fav-folder fav-folder
