@@ -26,10 +26,11 @@ jobs:
             curl -fsSL "https://api.fontshare.com/v2/fonts/download/$f" -o /tmp/ff/$f.zip && (cd /tmp/ff && unzip -oq $f.zip -d $f) || echo "no $f"
           done
           find /tmp/ff -iname '*.woff2' | grep -i -E 'variable|Satoshi-(Regular|Medium|Bold|Black)|ClashDisplay-(Semibold|Bold)' | while read p; do cp "$p" fonts/; done
-          find /tmp/ff -iname '*license*' -exec cp {} fonts/ \; || true
+          find /tmp/ff -type f -ipath '*license*' -exec cp {} fonts/ \; || true
           ls -la fonts img/3d
       - name: Commit
         run: |
           git config user.name "assets-bot"; git config user.email "assets-bot@users.noreply.github.com"
-          git add img/3d fonts
+          rm -f fonts/*Italic.woff2 fonts/Satoshi-Regular.woff2 fonts/Satoshi-Medium.woff2 fonts/Satoshi-Bold.woff2 fonts/Satoshi-Black.woff2 fonts/ClashDisplay-Bold.woff2 fonts/ClashDisplay-Semibold.woff2
+          git add -A img/3d fonts
           git diff --cached --quiet || (git commit -m "Dizayn: 3D ikonlar va shriftlar (avtomatik yuklandi)" && git push)

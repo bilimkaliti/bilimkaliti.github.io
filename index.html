@@ -28,6 +28,7 @@
 <!-- GOOGLE-VERIFY: Search Console tasdiqlash kodi shu yerga qoʻyiladi -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="fonts.css?v=1">
 <style>
 :root{
   --bg:#fbf7ef;--bg2:#f3ecdf;--card:#ffffff;--ink:#16213e;--ink2:#4a5372;--muted:#8a90a6;--line:#e8e0d0;
@@ -39,7 +40,7 @@
 :root[data-theme="dark"]{--bg:#11152a;--bg2:#171c36;--card:#1c2240;--ink:#f1f2f8;--ink2:#c3c8dd;--muted:#8d93ad;--line:#2b3257;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35)}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Satoshi,Nunito,system-ui,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer}
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
@@ -99,6 +100,22 @@ h2{font-size:30px;letter-spacing:-.6px;margin:0;font-weight:900}
 .game:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .art{height:128px;display:grid;place-items:center;position:relative;overflow:hidden}
 .art .em{font-size:62px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.18));transition:transform .25s}
+/* === yangi dizayn: Clash Display sarlavhalar, 3D ikonlar, yorugʻlik kartochka, yaltiroq tugma === */
+h1,h2,.hero h1,.sh h2{font-family:'Clash Display',Satoshi,Nunito,system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
+.i3d{display:inline-block;width:1em;height:1em;object-fit:contain;vertical-align:middle;filter:drop-shadow(0 .08em .1em rgba(0,0,0,.22))}
+.art .em .i3d{width:92px;height:92px}
+.pmg>span .i3d{width:1.35em;height:1.35em}
+.tool .ic .i3d{width:1.5em;height:1.5em;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}.tool:hover .ic .i3d{transform:translateY(-3px) rotate(-8deg) scale(1.08)}
+.tour .tic .i3d.big{width:84px;height:84px}.tsteps .i3d.ts{width:38px;height:38px;flex:none}
+.game{--mx:50%;--my:50%;position:relative}
+.game::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(240px circle at var(--mx) var(--my),rgba(255,214,90,.22),transparent 60%);opacity:0;transition:opacity .3s}
+.game:hover::after{opacity:1}
+html.nofx .game::after{display:none}
+.btn.gold.big{position:relative;overflow:hidden}
+.btn.gold.big::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent);transform:skewX(-20deg);animation:bkShine 3.2s ease-in-out infinite;pointer-events:none}
+@keyframes bkShine{55%,100%{left:130%}}
+html.nofx .btn.gold.big::after{animation:none;display:none}
+@media (prefers-reduced-motion:reduce){.btn.gold.big::after{animation:none;display:none}}
 
 .art::before,.art::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.22)}
 .art::before{width:120px;height:120px;left:-30px;top:-40px}
@@ -882,7 +899,7 @@ html.nofx .labsvg *{animation:none!important}@media (prefers-reduced-motion:redu
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
 </style>
 <style id="splashCss">
-#splash{--sg:#f5b301;position:fixed;inset:0;z-index:9999;font-family:Nunito,system-ui,sans-serif;color:var(--ink,#16213e);pointer-events:all}
+#splash{--sg:#f5b301;position:fixed;inset:0;z-index:9999;font-family:Satoshi,Nunito,system-ui,sans-serif;color:var(--ink,#16213e);pointer-events:all}
 #splash .sp-door{position:absolute;top:0;bottom:0;width:50.5%;background:var(--bg,#fbf7ef);transition:transform .95s cubic-bezier(.77,0,.18,1);will-change:transform;overflow:hidden}
 #splash .sp-door::before{content:"";position:absolute;inset:0;background-image:radial-gradient(color-mix(in srgb,var(--ink,#16213e) 9%,transparent) 1.2px,transparent 1.3px);background-size:26px 26px;-webkit-mask-image:radial-gradient(circle at var(--mx) 50%,#000 0,transparent 62vmax);mask-image:radial-gradient(circle at var(--mx) 50%,#000 0,transparent 62vmax)}
 #splash .sp-l{left:0;--mx:100%;box-shadow:inset -1px 0 0 transparent}#splash .sp-r{right:0;--mx:0%}
@@ -1054,35 +1071,39 @@ const GAMES=[
 const TOPICAL=new Set(['toplam']);
 const SOON=[
  {e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi.',c:'#ff6b4a',href:'#/vosita/tanlash'},
- {e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer.',c:'#f5b301',href:'#/vosita/taymer'},
- {e:'✏️',n:'Chizish doskasi',d:'Shakllar va katakli fon bilan chizish.',c:'#2f8cff',href:'#/vosita/doska'},
- {e:'📚',n:'Kutubxona',d:'Oʻqituvchilar ulashgan va tayyor toʻplamlar: fan va sinf boʻyicha.',c:'#0b7285',href:'#/kutubxona'},
+ {i:'clock',e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer.',c:'#f5b301',href:'#/vosita/taymer'},
+ {i:'pencil',e:'✏️',n:'Chizish doskasi',d:'Shakllar va katakli fon bilan chizish.',c:'#2f8cff',href:'#/vosita/doska'},
+ {i:'notebook',e:'📚',n:'Kutubxona',d:'Oʻqituvchilar ulashgan va tayyor toʻplamlar: fan va sinf boʻyicha.',c:'#0b7285',href:'#/kutubxona'},
 ];
 const TOOLS=[
  {e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi, sinfni guruhlarga boʻladi.',c:'#ff6b4a',href:'#/vosita/tanlash'},
  {e:'🤫',n:'Sukunat oʻlchagich',d:'Sinf jim boʻlsa sharlar tinch, shovqin oshsa — yoriladi. Mikrofon orqali.',c:'#12a38f',href:'#/vosita/sukunat'},
- {e:'⏱️',n:'Taymer va sekundomer',d:'Katta raqamli taymer: guruh ishi va mustaqil ish uchun.',c:'#f5b301',href:'#/vosita/taymer'},
- {e:'✏️',n:'Chizish doskasi',d:'Qalam, chizgʻich, shakllar, katakli yoki qora doska foni.',c:'#2f8cff',href:'#/vosita/doska'},
+ {i:'clock',e:'⏱️',n:'Taymer va sekundomer',d:'Katta raqamli taymer: guruh ishi va mustaqil ish uchun.',c:'#f5b301',href:'#/vosita/taymer'},
+ {i:'pencil',e:'✏️',n:'Chizish doskasi',d:'Qalam, chizgʻich, shakllar, katakli yoki qora doska foni.',c:'#2f8cff',href:'#/vosita/doska'},
  {e:'🔢',n:'Pifagor jadvali',d:'Karra jadvali: koʻrsatish, yashirib soʻrash va doskada mashq qilish.',c:'#7048e8',href:'#/vosita/pifagor'},
  {e:'<svg class="mzic" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" fill="#fff3bf"/><path d="M6 1.6V18H12V12H18V18H22.6" fill="none" stroke="#20c997" stroke-width="2" stroke-dasharray="2.2 1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3H21V15M21 21H3V3M9 3V15M15 9V21M9 9H15" fill="none" stroke="#e8590c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="4.2" r="1.9" fill="#f59f00" stroke="#1b1f3b" stroke-width=".8"/></svg>',n:'Labirint',d:'Misollarni yechib uyga yoʻl toping: oʻynash, ikki guruh va chop etish.',c:'#e8a317',href:'#/vosita/labirint'},
- {e:'🧮',n:'Mental arifmetika',d:'Ongda hisoblash: toʻrt amal, 10 ta daraja. Bitta oʻquvchi yoki 2–4 guruh.',c:'#0ca678',href:'games/toplam.html?g=mental'},
- {e:'✨',n:'AI yordamchi',d:'Test, taqdimot, dars ishlanma, krossvord, fleshkartalar va AI chat.',c:'#7b5cff',href:'#/ai'},
- {e:'🎮',n:'AI bilan oʻyin savollari',d:'Mavzuni yozing — AI qisqa savollar tuzadi va guruh oʻyinlariga qoʻshadi.',c:'#f5b301',href:'#/ai/savollar'},
+ {i:'calculator',e:'🧮',n:'Mental arifmetika',d:'Ongda hisoblash: toʻrt amal, 10 ta daraja. Bitta oʻquvchi yoki 2–4 guruh.',c:'#0ca678',href:'games/toplam.html?g=mental'},
+ {i:'magic-trick',e:'✨',n:'AI yordamchi',d:'Test, taqdimot, dars ishlanma, krossvord, fleshkartalar va AI chat.',c:'#7b5cff',href:'#/ai'},
+ {i:'chat-bubble',e:'🎮',n:'AI bilan oʻyin savollari',d:'Mavzuni yozing — AI qisqa savollar tuzadi va guruh oʻyinlariga qoʻshadi.',c:'#f5b301',href:'#/ai/savollar'},
 ];
 const SUBJECTS=[['🧮','Matematika',1],['📖','Ona tili va oʻqish'],['🔤','Ingliz tili'],['🗣️','Rus tili'],['🌍','Tabiiy fan'],['🧪','Kimyo'],['⚛️','Fizika'],['🧬','Biologiya'],['🏛️','Tarix'],['🗺️','Geografiya'],['💻','Informatika']];
 let GRADES={};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* 3D ikonlar (3dicons.co, CC0) — boʻlmasa emoji qoladi */
+const I3D={'raketa':'rocket','mozaika':'picture','tez':'flash','nishon':'target','mental':'calculator','million':'dollar','togri':'tick','sirli':'key','eshik':'lock','juft':'puzzle','guruh':'folder','minora':'cube','xazina':'flag'};
+const i3=(n,em,c='')=>n?`<img class="i3d ${c}" src="img/3d/${n}.webp" alt="" loading="lazy" decoding="async" onerror="this.replaceWith(document.createTextNode(this.dataset.e))" data-e="${esc(em||'')}">`:em;
+const gIc=g=>i3(I3D[g.id],g.e);
 const store={get(k,d){try{const v=localStorage.getItem('bk_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('bk_'+k,JSON.stringify(v))}catch(e){}}};
 function gameUrl(g,extra=''){return `games/${g.f}.html?${g.g?'g='+g.g:''}${extra}`}
 
 function gameCard(g,extra=''){
   const href=gameUrl(g,g.f==='toplam'||g.f==='bilim'||/[?&](set|lib)=/.test('?'+extra.slice(1))?extra:'');
   return `<a class="game" href="${href}">
-    <div class="art art-${g.id}" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${g.e}</span>${FX[g.id]||''}<i class="shine"></i></div>
+    <div class="art art-${g.id}" style="background:linear-gradient(135deg,${g.c[0]},${g.c[1]})"><span class="em">${gIc(g)}</span>${FX[g.id]||''}<i class="shine"></i></div>
     <div class="gb"><h3>${esc(g.n)}</h3><p>${esc(g.d)}</p>
     <div class="tags"><span class="tag">👥 1–4 guruh</span>${g.f==='toplam'?'<span class="tag new">🤖 Robo</span>':''}${g.t.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div></a>`}
-function soonCard(s){const tg=s.href?'a':'div';return `<${tg} class="tool${s.href?' tlink':''}"${s.href?` href="${s.href}"`:''}><div class="ic" style="background:color-mix(in srgb,${s.c} 16%,transparent)">${s.e}</div><div><h3>${esc(s.n)}</h3><p>${esc(s.d)}</p>${s.href?`<span class="tag new">Ochish →</span>`:'<span class="tag soon">Tez orada</span>'}</div></${tg}>`}
+function soonCard(s){const tg=s.href?'a':'div';return `<${tg} class="tool${s.href?' tlink':''}"${s.href?` href="${s.href}"`:''}><div class="ic" style="background:color-mix(in srgb,${s.c} 16%,transparent)">${i3(s.i,s.e)}</div><div><h3>${esc(s.n)}</h3><p>${esc(s.d)}</p>${s.href?`<span class="tag new">Ochish →</span>`:'<span class="tag soon">Tez orada</span>'}</div></${tg}>`}
 function gradesGrid(on){return `<div class="grades">${[1,2,3,4,5,6,7].map(n=>`<a class="grade ${on==n?'on':''}" href="#/sinf/${n}"><b>${n}</b><span>${n}-SINF</span><small>${BZ_CNT[n]?BZ_CNT[n]+' tayyor mavzu':(GRADES[n]||[]).length+' mavzu'}</small></a>`).join('')}</div>`}
 
 /* ===== sahifalar ===== */
@@ -1679,8 +1700,8 @@ const TOOLDEFS={
  labirint:{e:'<svg class="mzic" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" fill="#fff3bf"/><path d="M6 1.6V18H12V12H18V18H22.6" fill="none" stroke="#20c997" stroke-width="2" stroke-dasharray="2.2 1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3H21V15M21 21H3V3M9 3V15M15 9V21M9 9H15" fill="none" stroke="#e8590c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="4.2" r="1.9" fill="#f59f00" stroke="#1b1f3b" stroke-width=".8"/></svg>',n:'Labirint',d:'Misollarni yechib uyga yoʻl topish: oʻynash, ikki guruh bellashuvi va chop etish.'},
  tanlash:{e:'🎡',n:'Tasodifiy tanlash',d:'Gʻildirak doskaga chiqadigan oʻquvchini tanlaydi. Sinfni guruhlarga ham boʻlib beradi.'},
  sukunat:{e:'🤫',n:'Sukunat oʻlchagich',d:'Mikrofon sinf shovqinini oʻlchaydi: shovqin oshsa, sharlar yoriladi.'},
- taymer:{e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer: guruh ishi, mustaqil ish uchun.'},
- doska:{e:'✏️',n:'Chizish doskasi',d:'Qalam, shakllar, katakli fon. Elektron doskada barmoq yoki qalam bilan.'},
+ taymer:{i:'clock',e:'⏱️',n:'Taymer',d:'Katta raqamli taymer va sekundomer: guruh ishi, mustaqil ish uchun.'},
+ doska:{i:'pencil',e:'✏️',n:'Chizish doskasi',d:'Qalam, shakllar, katakli fon. Elektron doskada barmoq yoki qalam bilan.'},
 };
 function fsBtn(){return `<button class="btn ghost sm" id="fsTool">⛶ Toʻliq ekran</button>`}
 function bindFs(){const b=$('#fsTool');if(b)b.onclick=()=>{const el=$('#toolStage');try{document.fullscreenElement?document.exitFullscreen():el.requestFullscreen()}catch(e){}}}
@@ -2035,7 +2056,7 @@ function playModal(s,param){
     <div class="pmgames" id="pmGames"></div>`);
   md.querySelector('.mbox').classList.add('wide');
   const draw=()=>{md.querySelectorAll('#pmMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===store.get('mode','g')));
-    md.querySelector('#pmGames').innerHTML=gamesFor(s).filter(g=>!s.bz||g.f==='toplam'||g.f==='bilim').map(g=>`<a class="pmg" href="${gameUrl(g,param+mx())}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')};
+    md.querySelector('#pmGames').innerHTML=gamesFor(s).filter(g=>!s.bz||g.f==='toplam'||g.f==='bilim').map(g=>`<a class="pmg" href="${gameUrl(g,param+mx())}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${gIc(g)}</span><b>${esc(g.n)}</b></a>`).join('')};
   md.querySelector('#pmMode').onclick=e=>{const b=e.target.closest('[data-m]');if(b){store.set('mode',b.dataset.m);draw()}};draw()}
 function viewModal(name,items){
   const md=modal(`<h3>👁 ${esc(name)}</h3><ol class="pvlist">${items.map(it=>`<li>${itemTxt(it)}${it.o?`<small> · ${it.o.filter((_,k)=>k!==(it.c||0)).map(ex).join(' · ')}</small>`:''}</li>`).join('')}</ol>`);
@@ -2053,7 +2074,7 @@ function libPage(fan){
     <div class="mrow"><a class="btn ghost" href="#/toplamlar">📦 Mening toʻplamlarim</a><a class="btn ghost" href="#/ai/darslik">📸 Darslikdan</a><a class="btn gold" href="#/ai/savollar" id="libAi">✨ AI bilan yaratish</a></div></div>
    ${BAZA_FAN[fan]?bazaBlock(0,fan):''}
    ${fan&&!MATH_FANLAR.includes(fan)?`<div class="fangames"><div class="sh" style="margin:0 0 10px"><div><h3 style="margin:0">🎮 ${esc(fan)} bilan oʻynash</h3><p class="sub" style="margin:2px 0 0">Oʻyinni tanlang — u ${esc(fan)} savollari bilan ochiladi.</p></div><button class="btn gold" data-wiz="${esc(fan)}">▶️ Darsni boshlash</button></div>
-     <div class="pmgames">${[...gamesFor({kind:'mc'}),GAMES.find(g=>g.id==='tartib'),GAMES.find(g=>g.id==='guruh')].map(g=>`<a class="pmg" href="${gameUrl(g,'&fan='+encodeURIComponent(fan))}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></a>`).join('')}</div></div>`:''}
+     <div class="pmgames">${[...gamesFor({kind:'mc'}),GAMES.find(g=>g.id==='tartib'),GAMES.find(g=>g.id==='guruh')].map(g=>`<a class="pmg" href="${gameUrl(g,'&fan='+encodeURIComponent(fan))}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${gIc(g)}</span><b>${esc(g.n)}</b></a>`).join('')}</div></div>`:''}
    
    <div class="lfilter"><select id="lFan">${fans.map(f=>`<option value="${esc(f)}" ${f===fan?'selected':''}>${f?esc(f):'Barcha fanlar'}</option>`).join('')}</select>
     <select id="lSinf"><option value="">Barcha sinflar</option>${[...Array(11)].map((_,i)=>`<option value="${i+1}">${i+1}-sinf</option>`).join('')}</select>
@@ -2194,7 +2215,7 @@ async function hwModal(s){
    <div class="fgrid"><label class="f wide"><span>Vazifa nomi</span><input id="hwN" maxlength="60" value="${esc(s.name)}"></label>
    <label class="f wide"><span>Oʻquvchilarga izoh (ixtiyoriy)</span><input id="hwNote" maxlength="200" placeholder="Masalan: Juma kunigacha bajaring. Omad!"></label></div>
    <p class="small" id="hwGL" style="margin:12px 0 6px"><b>Oʻyinni tanlang:</b></p>
-   <div class="pmgames" id="hwG">${gl.map((g,i)=>`<button type="button" class="pmg${i?'':' on'}" data-g="${g.id}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b></button>`).join('')}</div>
+   <div class="pmgames" id="hwG">${gl.map((g,i)=>`<button type="button" class="pmg${i?'':' on'}" data-g="${g.id}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${gIc(g)}</span><b>${esc(g.n)}</b></button>`).join('')}</div>
    <div class="mrow" style="margin-top:14px"><button class="btn gold" id="hwGo">🔗 Havola olish</button><span class="small" id="hwMsg"></span></div><div id="hwOut"></div>`);
   md.querySelector('.mbox').classList.add('wide');
   let g=gl[0].id;
@@ -2786,7 +2807,7 @@ function wzDraw(){
     box.innerHTML=wzHead('Qaysi oʻyinni oʻynaymiz?',BZ?`📘 ${esc(bt.name)} · ${BZ_LV.find(x=>x[0]===WZ.bd)[2]}`:SB?`📘 ${esc(WZ.set.name)} — darajani tanlang`:M?`${WZ.sinf}-sinf · ${WZ.topics.length} ta mavzu`:`${esc(WZ.set.name)}`)+
      (SB?`<div class="wzgr" style="margin:0 0 12px">${BZ_LV.map(([d,e,n])=>`<button data-wbd="${d}" class="${d===sd?'on':''}">${e} ${n}</button>`).join('')}</div>`:'')+
      `<div class="tabs" id="wzMode" style="margin:0 0 12px"><button data-m="g" class="${mode==='g'?'on':''}">👥 Guruhlar</button><button data-m="r" class="${mode==='r'?'on':''}">🤖 Kompyuterga qarshi</button><button data-m="s" class="${mode==='s'?'on':''}">👤 Bitta oʻquvchi</button></div>
-      <div class="pmgames">${games.map(g=>`<a class="pmg" href="${gameUrl(g,base+mx)}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${g.e}</span><b>${esc(g.n)}</b><small>${esc(g.t[0]||'')}</small></a>`).join('')}</div>
+      <div class="pmgames">${games.map(g=>`<a class="pmg" href="${gameUrl(g,base+mx)}" style="--c1:${g.c[0]};--c2:${g.c[1]}"><span>${gIc(g)}</span><b>${esc(g.n)}</b><small>${esc(g.t[0]||'')}</small></a>`).join('')}</div>
       <p class="small" style="margin-top:12px">💡 Oʻyin ochilgach, guruhlar sonini tanlab, katta <b>«Oʻyinni boshlash»</b> tugmasini bosing.</p>`+wzFoot();
   }
 }
@@ -2811,11 +2832,12 @@ document.addEventListener('change',e=>{const t=e.target;if(t.dataset.top==null)r
   const n=$('#wz [data-wz="next"]');if(n)n.disabled=!WZ.topics.length});
 /* birinchi kirish: qisqa koʻrsatma */
 function tourMaybe(){if(store.get('tour',0)||location.hash.replace(/^#\/?/,''))return;
-  setTimeout(()=>{if($('#modal'))return;const md=modal(`<div class="tour"><div class="tic">👋</div><h3>Xush kelibsiz!</h3><p class="sub">Bilim Kaliti bilan darsda oʻyin — 3 qadam:</p>
-    <ol class="tsteps"><li><b>1</b><span><b>Fanni tanlang</b><small>Matematika yoki boshqa fan</small></span></li><li><b>2</b><span><b>Sinf va mavzuni belgilang</b><small>yoki tayyor savollar toʻplamini</small></span></li><li><b>3</b><span><b>Oʻyinni tanlab, doskada boshlang</b><small>guruhlar bellashadi, ochkolar oʻzi hisoblanadi</small></span></li></ol>
+  setTimeout(()=>{if($('#modal'))return;const md=modal(`<div class="tour"><div class="tic">${i3('trophy','👋','big')}</div><h3>Xush kelibsiz!</h3><p class="sub">Bilim Kaliti bilan darsda oʻyin — 3 qadam:</p>
+    <ol class="tsteps"><li><b>1</b>${i3('notebook','','ts')}<span><b>Fanni tanlang</b><small>Matematika yoki boshqa fan</small></span></li><li><b>2</b>${i3('puzzle','','ts')}<span><b>Sinf va mavzuni belgilang</b><small>yoki tayyor savollar toʻplamini</small></span></li><li><b>3</b>${i3('rocket','','ts')}<span><b>Oʻyinni tanlab, doskada boshlang</b><small>guruhlar bellashadi, ochkolar oʻzi hisoblanadi</small></span></li></ol>
     <div class="mrow" style="justify-content:center"><button class="btn gold big" id="tGo">▶️ Hoziroq boshlash</button><button class="btn ghost" id="tLater">Keyinroq</button></div></div>`);
     store.set('tour',1);md.querySelector('#tGo').onclick=()=>wizard();md.querySelector('#tLater').onclick=closeModal},900)}
 
+document.addEventListener('pointermove',e=>{const g=e.target.closest&&e.target.closest('.game');if(!g||e.pointerType!=='mouse')return;const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)+'px');g.style.setProperty('--my',(e.clientY-r.top)+'px')},{passive:true});
 document.addEventListener('click',e=>{const w=e.target.closest('[data-wiz]');if(w){e.preventDefault();wizard(w.dataset.wiz||'')}});
 /* mobil «Yana» paneli */
 const msOpen=(o,u)=>{const s=document.getElementById('msheet');if(!s)return;const was=!s.classList.contains('hidden');
